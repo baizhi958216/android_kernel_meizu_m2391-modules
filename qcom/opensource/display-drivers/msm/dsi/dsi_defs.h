@@ -10,6 +10,7 @@
 #include <linux/types.h>
 #include <drm/drm_mipi_dsi.h>
 #include "msm_drv.h"
+#include "dsi_hw.h"
 
 #define DSI_H_TOTAL(t) (((t)->h_active) + ((t)->h_back_porch) + \
 			((t)->h_sync_width) + ((t)->h_front_porch))
@@ -325,16 +326,6 @@ enum dsi_clk_gate_type {
 	DSI_PHY = 4,
 	DSI_CLK_ALL = (PIXEL_CLK | BYTE_CLK | DSI_PHY),
 	DSI_CLK_NONE = 8,
-};
-
-/**
- * enum dsi_phy_type - DSI phy types
- * @DSI_PHY_TYPE_DPHY:
- * @DSI_PHY_TYPE_CPHY:
- */
-enum dsi_phy_type {
-	DSI_PHY_TYPE_DPHY,
-	DSI_PHY_TYPE_CPHY
 };
 
 /**

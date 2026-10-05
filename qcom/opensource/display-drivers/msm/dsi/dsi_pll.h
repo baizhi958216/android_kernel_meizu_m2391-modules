@@ -8,14 +8,8 @@
 #define __DSI_PLL_H
 
 #include <linux/clk-provider.h>
-#include <linux/io.h>
-#include <linux/clk.h>
-#include <linux/clkdev.h>
-#include <linux/regmap.h>
-#include "clk-regmap.h"
-#include "clk-regmap-divider.h"
-#include "clk-regmap-mux.h"
-#include "dsi_defs.h"
+#include <linux/platform_device.h>
+#include <drm/drm_print.h>
 #include "dsi_hw.h"
 
 #define DSI_PLL_DBG(p, fmt, ...)	DRM_DEV_DEBUG(NULL, "[msm-dsi-debug]: DSI_PLL_%d: "\
@@ -203,6 +197,11 @@ static inline struct dsi_pll_clk *to_pll_clk_hw(struct clk_hw *hw)
 {
 	return container_of(hw, struct dsi_pll_clk, hw);
 }
+
+int dsi_pll_5nm_configure(void *pll, bool commit);
+int dsi_pll_5nm_toggle(void *pll, bool prepare);
+int dsi_pll_4nm_configure(void *pll, bool commit);
+int dsi_pll_4nm_toggle(void *pll, bool prepare);
 
 int dsi_pll_clock_register_5nm(struct platform_device *pdev,
 				  struct dsi_pll_resource *pll_res);

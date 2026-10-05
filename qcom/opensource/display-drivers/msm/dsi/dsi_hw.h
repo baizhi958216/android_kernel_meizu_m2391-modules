@@ -7,6 +7,16 @@
 #define _DSI_HW_H_
 #include <linux/io.h>
 
+/**
+ * enum dsi_phy_type - DSI phy types
+ * @DSI_PHY_TYPE_DPHY:
+ * @DSI_PHY_TYPE_CPHY:
+ */
+enum dsi_phy_type {
+	DSI_PHY_TYPE_DPHY,
+	DSI_PHY_TYPE_CPHY
+};
+
 #define DSI_GEN_R32(base, offset) readl_relaxed((base) + (offset))
 #define DSI_GEN_W32(base, offset, val) writel_relaxed((val), (base) + (offset))
 
