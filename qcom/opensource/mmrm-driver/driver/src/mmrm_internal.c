@@ -4,6 +4,7 @@
  */
 
 #include <linux/types.h>
+#include <linux/of.h>
 #include <linux/of_platform.h>
 
 #include "mmrm_internal.h"

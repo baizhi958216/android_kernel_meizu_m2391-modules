@@ -4,6 +4,7 @@
  */
 
 #include <linux/module.h>
+#include <linux/of.h>
 #include <linux/of_platform.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
@@ -541,17 +542,11 @@ err_exit:
 	return rc;
 }
 
-static int msm_mmrm_remove(struct platform_device *pdev)
+static void msm_mmrm_remove(struct platform_device *pdev)
 {
-	int rc = 0;
-
-	VERIFY_PDEV(pdev);
-
-	drv_data = dev_get_drvdata(&pdev->dev);
-	if (!drv_data) {
-		d_mpr_e("%s: null driver data\n", __func__);
-		return -EINVAL;
-	}
+	drv_data = platform_get_drvdata(pdev);
+	if (!drv_data)
+		return;
 
 	if (drv_data->is_clk_scaling_supported) {
 		sysfs_remove_group(&pdev->dev.kobj, &mmrm_fs_attrs_group);
@@ -560,14 +555,8 @@ static int msm_mmrm_remove(struct platform_device *pdev)
 		mmrm_free_platform_resources(drv_data);
 	}
 
-	dev_set_drvdata(&pdev->dev, NULL);
+	platform_set_drvdata(pdev, NULL);
 	RESET_DRV_DATA(drv_data);
-
-	return rc;
-
-err_exit:
-	d_mpr_e("%s: error = %d\n", __func__, rc);
-	return rc;
 }
 
 static const struct of_device_id msm_mmrm_dt_match[] = {

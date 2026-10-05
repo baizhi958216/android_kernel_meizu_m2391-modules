@@ -46,6 +46,7 @@ struct mmrm_driver_data {
 
 struct mmrm_platform_data *mmrm_get_platform_data(struct device *dev);
 
+int mmrm_client_get_clk_count(void);
 int mmrm_count_clk_clients_frm_dt(struct platform_device *pdev);
 
 int mmrm_read_platform_resources(
