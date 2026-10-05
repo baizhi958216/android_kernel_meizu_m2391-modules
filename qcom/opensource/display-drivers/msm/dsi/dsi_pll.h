@@ -66,28 +66,25 @@ enum {
 	DISPLAY_PLL_CODEID_MAX
 };
 
-#pragma pack(push)
-#pragma pack(1)
 struct pll_codes_header {
-	u16 magic_id;     /* Magic identifier */
-	u8  version;      /* Version ID, starting with 1 */
-	u8  num_entries;  /* Number of VCO rates in this structure */
-	u16 size;         /* Size of the entrie data structure, including header */
-	u8  reserved[4];  /* Reserved for future use */
-};
+	__le16 magic_id;
+	u8 version;
+	u8 num_entries;
+	__le16 size;
+	u8 reserved[4];
+} __packed;
 
 struct pll_codes_entry {
-	u8  device_id;    /* The PLL ID for this entry, refer to DISPLAY_PLL_CODEID */
-	u32 vco_rate;     /* VCO rate of this entry in Hz */
-	u8  num_codes;    /* Number of codes stored for this entry */
-	u8  pll_codes[8]; /* List of PLL codes */
-};
+	u8 device_id;
+	__le32 vco_rate;
+	u8 num_codes;
+	u8 pll_codes[8];
+} __packed;
 
 struct pll_codes_info {
-	struct pll_codes_header   header;         /* PLL code data header */
-	struct pll_codes_entry   *pll_code_data;  /* PLL code data */
-};
-#pragma pack(pop) // Restore the default packing
+	struct pll_codes_header header;
+	struct pll_codes_entry entries[];
+} __packed;
 
 struct dfps_pll_codes {
 	uint32_t pll_codes_1;
