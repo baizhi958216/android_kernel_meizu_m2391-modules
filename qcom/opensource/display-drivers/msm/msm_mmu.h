@@ -19,7 +19,6 @@
 #define __MSM_MMU_H__
 
 #include <linux/iommu.h>
-#include <linux/qcom-iommu-util.h>
 #include <linux/dma-mapping.h>
 #include <linux/dma-map-ops.h>
 

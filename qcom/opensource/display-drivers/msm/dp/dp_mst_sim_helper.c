@@ -40,7 +40,7 @@
 #include <linux/delay.h>
 #include <drm/drm_fixed.h>
 #include <drm/drm_edid.h>
-#include <drm/drm_dp_mst_helper.h>
+#include <drm/display/drm_dp_mst_helper.h>
 #include "dp_mst_sim_helper.h"
 #include "dp_debug.h"
 

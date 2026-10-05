@@ -7,7 +7,7 @@
 #include <linux/of_platform.h>
 #include <linux/soc/qcom/msm_ext_display.h>
 
-#include <drm/drm_dp_helper.h>
+#include <drm/display/drm_dp_helper.h>
 
 #include "dp_catalog.h"
 #include "dp_audio.h"

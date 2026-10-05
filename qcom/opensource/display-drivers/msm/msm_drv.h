@@ -31,6 +31,7 @@
 #include <linux/slab.h>
 #include <linux/list.h>
 #include <linux/iommu.h>
+#include <linux/iosys-map.h>
 #include <linux/types.h>
 #include <linux/of_graph.h>
 #include <linux/of_device.h>
@@ -48,7 +49,7 @@
 #include <drm/sde_drm.h>
 #include <drm/drm_file.h>
 #include <drm/drm_gem.h>
-#include <drm/drm_dsc.h>
+#include <drm/display/drm_dsc.h>
 #include <drm/drm_bridge.h>
 
 #include "sde_power_handle.h"
@@ -1225,8 +1226,8 @@ int msm_gem_dumb_map_offset(struct drm_file *file, struct drm_device *dev,
 		uint32_t handle, uint64_t *offset);
 struct sg_table *msm_gem_prime_get_sg_table(struct drm_gem_object *obj);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-int msm_gem_prime_vmap(struct drm_gem_object *obj, struct dma_buf_map *map);
-void msm_gem_prime_vunmap(struct drm_gem_object *obj, struct dma_buf_map *map);
+int msm_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map);
+void msm_gem_prime_vunmap(struct drm_gem_object *obj, struct iosys_map *map);
 #else
 void *msm_gem_prime_vmap(struct drm_gem_object *obj);
 void msm_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);

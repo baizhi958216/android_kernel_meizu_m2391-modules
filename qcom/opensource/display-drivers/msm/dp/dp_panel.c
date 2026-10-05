@@ -8,7 +8,7 @@
 #include <linux/unistd.h>
 #include <drm/drm_fixed.h>
 #include "dp_debug.h"
-#include <drm/drm_dsc.h>
+#include <drm/display/drm_dsc.h>
 #include "sde_dsc_helper.h"
 #include <drm/drm_edid.h>
 

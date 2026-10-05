@@ -19,7 +19,7 @@
 #include <linux/debugfs.h>
 #include <linux/platform_device.h>
 #include <drm/drm_edid.h>
-#include <drm/drm_dp_helper.h>
+#include <drm/display/drm_dp_helper.h>
 #include "dp_debug.h"
 #include "dp_mst_sim.h"
 

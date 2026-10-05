@@ -43,10 +43,14 @@ struct sg_table *msm_gem_prime_get_sg_table(struct drm_gem_object *obj)
 }
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-int msm_gem_prime_vmap(struct drm_gem_object *obj, struct dma_buf_map *map)
+int msm_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map)
 {
-	map->vaddr = msm_gem_get_vaddr(obj);
-	return IS_ERR_OR_NULL(map->vaddr);
+	void *addr = msm_gem_get_vaddr(obj);
+
+	if (IS_ERR_OR_NULL(addr))
+		return addr ? PTR_ERR(addr) : -ENOMEM;
+	iosys_map_set_vaddr(map, addr);
+	return 0;
 }
 #else
 void *msm_gem_prime_vmap(struct drm_gem_object *obj)
@@ -56,7 +60,7 @@ void *msm_gem_prime_vmap(struct drm_gem_object *obj)
 #endif
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-void msm_gem_prime_vunmap(struct drm_gem_object *obj, struct dma_buf_map *map)
+void msm_gem_prime_vunmap(struct drm_gem_object *obj, struct iosys_map *map)
 #else
 void msm_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
 #endif

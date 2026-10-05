@@ -6,7 +6,7 @@
 
 #include <linux/debugfs.h>
 #include <linux/slab.h>
-#include <drm/drm_dp_mst_helper.h>
+#include <drm/display/drm_dp_mst_helper.h>
 #include <drm/drm_probe_helper.h>
 
 #include "dp_power.h"

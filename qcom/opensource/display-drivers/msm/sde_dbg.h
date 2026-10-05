@@ -7,10 +7,12 @@
 #ifndef SDE_DBG_H_
 #define SDE_DBG_H_
 
-#include <stdarg.h>
+#include <linux/stdarg.h>
 #include <linux/debugfs.h>
 #include <linux/list.h>
+#if IS_ENABLED(CONFIG_QCOM_VA_MINIDUMP)
 #include <soc/qcom/minidump.h>
+#endif
 #include <drm/drm_print.h>
 
 /* select an uncommon hex value for the limiter */
