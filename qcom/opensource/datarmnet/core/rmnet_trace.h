@@ -29,7 +29,7 @@
 	#elif defined(__arch_um__)
 		#define TRACE_INCLUDE_PATH ../../../../datarmnet/core
 	#else
-		#define TRACE_INCLUDE_PATH ../../../../sm8550-modules/qcom/opensource/datarmnet/core
+		#define TRACE_INCLUDE_PATH ../../../m2391-modules/qcom/opensource/datarmnet/core
 	#endif /* CONFIG_ARCH_KHAJE */
 #endif /* endif LINUX_VERSION_CODE < KERNEL_VERSION(5,5,0) */
 
