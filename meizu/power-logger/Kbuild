@@ -1,0 +1,1 @@
+obj-m += mpower_logger.o
