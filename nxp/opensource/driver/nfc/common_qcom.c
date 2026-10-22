@@ -46,9 +46,9 @@ int is_nfc_data_available_for_read(struct nfc_dev *nfc_dev)
 	nfc_dev->nfc_enable_intr(nfc_dev);
 
 	ret = wait_event_interruptible_timeout(nfc_dev->read_wq,
-			!nfc_dev->i2c_dev.irq_enabled,
+			!nfc_dev->i2c_dev.irq_enabled || READ_ONCE(nfc_dev->removing),
 			msecs_to_jiffies(MAX_IRQ_WAIT_TIME));
-	return ret;
+	return READ_ONCE(nfc_dev->removing) ? -ENODEV : ret;
 }
 
 /**
@@ -122,6 +122,7 @@ int nfc_ldo_config(struct device *dev, struct nfc_dev *nfc_dev)
 	if (ret < 0) {
 		pr_err("%s: LDO voting failed, ret = %d\n", __func__, ret);
 		regulator_put(nfc_dev->reg);
+		nfc_dev->reg = NULL;
 	}
 	return ret;
 }
@@ -167,11 +168,13 @@ int nfc_ldo_unvote(struct nfc_dev *nfc_dev)
  * this routine can be extended to select from multiple
  * sources based on clk name.
  */
-int nfc_clock_select(struct nfc_dev *nfc_dev)
+static int nfc_clock_select_active(struct nfc_dev *nfc_dev)
 {
 	int r = 0;
 
-	nfc_dev->s_clk = clk_get(&nfc_dev->i2c_dev.client->dev, "nfc_ref_clk");
+	if (IS_ERR_OR_NULL(nfc_dev->s_clk))
+		nfc_dev->s_clk = clk_get(&nfc_dev->i2c_dev.client->dev,
+			"nfc_ref_clk");
 
 	if (IS_ERR(nfc_dev->s_clk))
 		return PTR_ERR(nfc_dev->s_clk);
@@ -189,7 +192,7 @@ int nfc_clock_select(struct nfc_dev *nfc_dev)
 /*
  * Routine to disable clocks
  */
-int nfc_clock_deselect(struct nfc_dev *nfc_dev)
+static int nfc_clock_deselect_active(struct nfc_dev *nfc_dev)
 {
 	int r = -EINVAL;
 
@@ -201,4 +204,27 @@ int nfc_clock_deselect(struct nfc_dev *nfc_dev)
 		return 0;
 	}
 	return r;
+}
+
+/* Independent from ioctl waits: secure entry must allow a concurrent eSE
+ * power-off ioctl to release its semaphore, rather than serializing all ioctls.
+ */
+int nfc_clock_select(struct nfc_dev *chip)
+{
+	int rc;
+
+	mutex_lock(&chip->clock_mutex);
+	rc = nfc_clock_select_active(chip);
+	mutex_unlock(&chip->clock_mutex);
+	return rc;
+}
+
+int nfc_clock_deselect(struct nfc_dev *chip)
+{
+	int rc;
+
+	mutex_lock(&chip->clock_mutex);
+	rc = nfc_clock_deselect_active(chip);
+	mutex_unlock(&chip->clock_mutex);
+	return rc;
 }
