@@ -1,0 +1,4 @@
+ST_NFC_ROOT ?= $(src)
+ccflags-y += -I$(ST_NFC_ROOT)/../../../qcom/opensource/securemsm-kernel/smcinvoke -I$(ST_NFC_ROOT)/../../../qcom/opensource/securemsm-kernel/linux
+obj-m += stm_nfc_i2c.o
+stm_nfc_i2c-y := st21nfc.o st21nfc_secure.o
