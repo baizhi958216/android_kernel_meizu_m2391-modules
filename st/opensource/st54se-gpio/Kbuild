@@ -1,0 +1,2 @@
+obj-m += stm_st54se_gpio.o
+stm_st54se_gpio-y := st54spi_gpio.o
