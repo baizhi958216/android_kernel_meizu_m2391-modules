@@ -120,6 +120,9 @@ struct cam_actuator_ctrl_t {
 	struct cam_actuator_query_cap act_info;
 	struct actuator_intf_params bridge_intf;
 	uint32_t last_flush_req;
+	u16 meizu_requested_position;
+	int meizu_enable_status;
+	bool meizu_sysfs_ready;
 };
 
 /**

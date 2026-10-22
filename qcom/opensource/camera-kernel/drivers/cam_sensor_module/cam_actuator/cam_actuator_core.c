@@ -12,6 +12,72 @@
 #include "cam_common_util.h"
 #include "cam_packet_util.h"
 
+/*
+ * Recovered M2391 read-only AF diagnostic leaves. Stock functions pass
+ * ctrl+40 (io_master_info) to camera_io_dev_read with byte addresses,
+ * word data and is_probing=true; failed reads become -EINVAL and leave
+ * the caller's position untouched. See m2391-recovery/stock-af-read.*.
+ * Power, device selection and locking remain the caller's responsibility.
+ */
+int meizu_get_af_pos(struct cam_actuator_ctrl_t *ctrl, int16_t *position,
+	uint32_t address)
+{
+	uint32_t value = 0;
+	int rc;
+
+	rc = camera_io_dev_read(&ctrl->io_master_info, address, &value,
+		CAMERA_SENSOR_I2C_TYPE_BYTE, CAMERA_SENSOR_I2C_TYPE_WORD, true);
+	if (rc < 0) {
+		CAM_ERR(CAM_ACTUATOR, "Meizu AF position read failed: %d", rc);
+		return -EINVAL;
+	}
+	*position = (int16_t)value;
+	return 0;
+}
+
+int meizu_get_auxaf_pos(struct cam_actuator_ctrl_t *ctrl, int16_t *position)
+{
+	return meizu_get_af_pos(ctrl, position, 3);
+}
+
+int meizu_get_aux2af_pos(struct cam_actuator_ctrl_t *ctrl, int16_t *position)
+{
+	return meizu_get_af_pos(ctrl, position, 3);
+}
+
+/* Stock .text 0x14f53c/0x14f6c4/0x14f84c: one word at address 3. */
+int meizu_set_af_pos(struct cam_actuator_ctrl_t *ctrl, uint32_t position)
+{
+	struct cam_sensor_i2c_reg_array reg = {
+		.reg_addr = 3,
+		.reg_data = position,
+	};
+	struct cam_sensor_i2c_reg_setting setting = {
+		.reg_setting = &reg,
+		.size = 1,
+		.addr_type = CAMERA_SENSOR_I2C_TYPE_BYTE,
+		.data_type = CAMERA_SENSOR_I2C_TYPE_WORD,
+	};
+	int rc;
+
+	rc = camera_io_dev_write(&ctrl->io_master_info, &setting);
+	if (rc < 0) {
+		CAM_ERR(CAM_ACTUATOR, "Meizu AF position write failed: %d", rc);
+		return -EINVAL;
+	}
+	return 0;
+}
+
+int meizu_set_auxaf_pos(struct cam_actuator_ctrl_t *ctrl, uint32_t position)
+{
+	return meizu_set_af_pos(ctrl, position);
+}
+
+int meizu_set_aux2af_pos(struct cam_actuator_ctrl_t *ctrl, uint32_t position)
+{
+	return meizu_set_af_pos(ctrl, position);
+}
+
 int32_t cam_actuator_construct_default_power_setting(
 	struct cam_sensor_power_ctrl_t *power_info)
 {
@@ -152,6 +218,17 @@ static int32_t cam_actuator_power_down(struct cam_actuator_ctrl_t *a_ctrl)
 
 	camera_io_release(&a_ctrl->io_master_info);
 
+	return rc;
+}
+
+/* Stock .text 0x14f39c calls these same power helpers without state edits. */
+int meizu_actuator_enable(struct cam_actuator_ctrl_t *ctrl, int enable)
+{
+	int rc = enable ? cam_actuator_power_up(ctrl) :
+		cam_actuator_power_down(ctrl);
+
+	if (rc < 0)
+		CAM_ERR(CAM_ACTUATOR, "Meizu actuator power operation failed: %d", rc);
 	return rc;
 }
 

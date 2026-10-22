@@ -5,6 +5,7 @@
  */
 
 #include "cam_actuator_dev.h"
+#include "cam_actuator_meizu.h"
 #include "cam_req_mgr_dev.h"
 #include "cam_actuator_soc.h"
 #include "cam_actuator_core.h"
@@ -423,6 +424,10 @@ static int cam_actuator_platform_component_bind(struct device *dev,
 	a_ctrl->last_flush_req = 0;
 
 	platform_set_drvdata(pdev, a_ctrl);
+	rc = cam_actuator_meizu_sysfs_init(a_ctrl);
+	if (rc)
+		CAM_WARN(CAM_ACTUATOR, "Meizu AF sysfs unavailable rc %d", rc);
+	rc = 0;
 	a_ctrl->cam_act_state = CAM_ACTUATOR_INIT;
 	CAM_DBG(CAM_ACTUATOR, "Component bound successfully %d",
 		a_ctrl->soc_info.index);
@@ -462,6 +467,7 @@ static void cam_actuator_platform_component_unbind(struct device *dev,
 		return;
 	}
 
+	cam_actuator_meizu_sysfs_remove(a_ctrl);
 	mutex_lock(&(a_ctrl->actuator_mutex));
 	cam_actuator_shutdown(a_ctrl);
 	mutex_unlock(&(a_ctrl->actuator_mutex));

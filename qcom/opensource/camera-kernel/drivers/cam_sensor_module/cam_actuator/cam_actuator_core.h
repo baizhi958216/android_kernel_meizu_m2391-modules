@@ -9,6 +9,15 @@
 
 #include "cam_actuator_dev.h"
 
+int meizu_get_af_pos(struct cam_actuator_ctrl_t *ctrl, int16_t *position,
+	uint32_t address);
+int meizu_get_auxaf_pos(struct cam_actuator_ctrl_t *ctrl, int16_t *position);
+int meizu_get_aux2af_pos(struct cam_actuator_ctrl_t *ctrl, int16_t *position);
+int meizu_set_af_pos(struct cam_actuator_ctrl_t *ctrl, uint32_t position);
+int meizu_set_auxaf_pos(struct cam_actuator_ctrl_t *ctrl, uint32_t position);
+int meizu_set_aux2af_pos(struct cam_actuator_ctrl_t *ctrl, uint32_t position);
+int meizu_actuator_enable(struct cam_actuator_ctrl_t *ctrl, int enable);
+
 /**
  * @power_info: power setting info to control the power
  *
