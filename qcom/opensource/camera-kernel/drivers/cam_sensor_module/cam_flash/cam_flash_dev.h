@@ -52,6 +52,7 @@
 #define CAM_FLASH_PACKET_OPCODE_INIT_FIRE            4
 
 struct cam_flash_ctrl;
+struct cam_flash_meizu_context;
 
 enum cam_flash_switch_trigger_ops {
 	LED_SWITCH_OFF = 0,
@@ -225,6 +226,7 @@ struct cam_flash_ctrl {
 	struct camera_io_master             io_master_info;
 	struct i2c_data_settings            i2c_data;
 	uint32_t                            last_flush_req;
+	struct cam_flash_meizu_context      *meizu;
 	uint32_t                            streamoff_count;
 	int32_t                             apply_streamoff;
 };
