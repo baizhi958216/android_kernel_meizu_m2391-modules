@@ -10,6 +10,7 @@
 #include <linux/err.h>
 #include <linux/version.h>
 #include <linux/pm8941-pwrkey.h>
+#include <video/mipi_display.h>
 
 #include "msm_drv.h"
 #include "sde_connector.h"
@@ -266,6 +267,13 @@ static void dsi_display_meizu_remove_kernel_sysfs(void *data)
 	meizu_primary_display = NULL;
 }
 
+static void dsi_display_meizu_remove_attr_group(void *data)
+{
+	struct device *dev = data;
+
+	sysfs_remove_group(&dev->kobj, &meizu_display_attr_group);
+}
+
 static void dsi_display_meizu_remove_link(void *unused)
 {
 	meizu_sysfslink_remove_name("lcm");
@@ -279,7 +287,10 @@ static int dsi_display_meizu_sysfs_init(struct dsi_display *display)
 	if (!display->panel || !dsi_panel_is_m2391(display->panel) ||
 		strcmp(display->display_type, "primary"))
 		return 0;
-	rc = devm_device_add_group(dev, &meizu_display_attr_group);
+	rc = sysfs_create_group(&dev->kobj, &meizu_display_attr_group);
+	if (rc)
+		return rc;
+	rc = devm_add_action_or_reset(dev, dsi_display_meizu_remove_attr_group, dev);
 	if (rc)
 		return rc;
 	display->meizu_sysfs_group_created = true;
@@ -326,7 +337,7 @@ static const struct of_device_id dsi_display_dt_match[] = {
 	{}
 };
 
-bool is_skip_op_required(struct dsi_display *display)
+static bool is_skip_op_required(struct dsi_display *display)
 {
 	if (!display)
 		return false;
@@ -525,7 +536,7 @@ int dsi_display_set_backlight(struct drm_connector *connector,
 	/* use bl_temp as index of dimming bl lut to find the dimming panel backlight */
 	if (bl_temp != 0 && panel->bl_config.dimming_bl_lut &&
 	    bl_temp < panel->bl_config.dimming_bl_lut->length) {
-		DSI_DEBUG("before dimming bl_temp = %u, after dimming bl_temp = %lu\n",
+		DSI_DEBUG("before dimming bl_temp = %llu, after dimming bl_temp = %u\n",
 			bl_temp, panel->bl_config.dimming_bl_lut->mapped_bl[bl_temp]);
 		bl_temp = panel->bl_config.dimming_bl_lut->mapped_bl[bl_temp];
 	}
@@ -648,6 +659,7 @@ static void dsi_display_aspace_cb_locked(void *cb_data, bool is_detach)
 		/* return the virtual address mapping */
 		msm_gem_put_vaddr(display->tx_cmd_buf);
 		msm_gem_vunmap(display->tx_cmd_buf, OBJ_LOCK_NORMAL);
+		display->vaddr = NULL;
 
 	} else {
 		rc = msm_gem_get_iova(display->tx_cmd_buf,
@@ -661,7 +673,8 @@ static void dsi_display_aspace_cb_locked(void *cb_data, bool is_detach)
 			(void *) msm_gem_get_vaddr(display->tx_cmd_buf);
 
 		if (IS_ERR_OR_NULL(display->vaddr)) {
-			DSI_ERR("failed to get va rc %d\n", rc);
+			display->vaddr = NULL;
+			DSI_ERR("failed to map command buffer\n");
 			goto end;
 		}
 	}
@@ -780,9 +793,10 @@ static int dsi_host_alloc_cmd_tx_buffer(struct dsi_display *display)
 			SZ_4K,
 			MSM_BO_UNCACHED);
 
-	if ((display->tx_cmd_buf) == NULL) {
+	if (IS_ERR_OR_NULL(display->tx_cmd_buf)) {
 		DSI_ERR("Failed to allocate cmd tx buf memory\n");
-		rc = -ENOMEM;
+		rc = display->tx_cmd_buf ? PTR_ERR(display->tx_cmd_buf) : -ENOMEM;
+		display->tx_cmd_buf = NULL;
 		goto error;
 	}
 
@@ -795,7 +809,7 @@ static int dsi_host_alloc_cmd_tx_buffer(struct dsi_display *display)
 		display->aspace = NULL;
 		DSI_DEBUG("IOMMU not present, relying on VRAM\n");
 	} else if (IS_ERR_OR_NULL(display->aspace)) {
-		rc = PTR_ERR(display->aspace);
+		rc = display->aspace ? PTR_ERR(display->aspace) : -ENODEV;
 		display->aspace = NULL;
 		DSI_ERR("failed to get aspace %d\n", rc);
 		goto free_gem;
@@ -838,14 +852,32 @@ static int dsi_host_alloc_cmd_tx_buffer(struct dsi_display *display)
 put_iova:
 	msm_gem_put_iova(display->tx_cmd_buf, display->aspace);
 free_aspace_cb:
-	msm_gem_address_space_unregister_cb(display->aspace,
-			dsi_display_aspace_cb_locked, display);
+	if (display->aspace)
+		msm_gem_address_space_unregister_cb(display->aspace,
+				dsi_display_aspace_cb_locked, display);
 free_gem:
-	mutex_lock(&display->drm_dev->struct_mutex);
-	msm_gem_free_object(display->tx_cmd_buf);
-	mutex_unlock(&display->drm_dev->struct_mutex);
+	drm_gem_object_put(display->tx_cmd_buf);
+	display->tx_cmd_buf = NULL;
+	display->vaddr = NULL;
 error:
 	return rc;
+}
+
+/* DSI controllers borrow this single display allocation. */
+static void dsi_host_free_cmd_tx_buffer(struct dsi_display *display)
+{
+	if (!display->tx_cmd_buf)
+		return;
+	if (display->aspace)
+		msm_gem_address_space_unregister_cb(display->aspace,
+						  dsi_display_aspace_cb_locked, display);
+	if (display->vaddr)
+		msm_gem_put_vaddr(display->tx_cmd_buf);
+	msm_gem_put_iova(display->tx_cmd_buf, display->aspace);
+	drm_gem_object_put(display->tx_cmd_buf);
+	display->tx_cmd_buf = NULL;
+	display->vaddr = NULL;
+	display->cmd_buffer_iova = 0;
 }
 
 static bool dsi_display_validate_reg_read(struct dsi_panel *panel)
@@ -902,7 +934,7 @@ static void dsi_display_parse_demura_data(struct dsi_display *display)
 		DSI_DEBUG("Dummy panel ID node present for this display\n");
 		display->panel_id = ~0x0;
 	} else {
-		DSI_DEBUG("panel id found: %lx\n", display->panel_id);
+		DSI_DEBUG("panel id found: %llx\n", display->panel_id);
 	}
 }
 
@@ -1202,7 +1234,7 @@ static int dsi_display_status_check_te(struct dsi_display *display,
 	return rc;
 }
 
-void dsi_display_toggle_error_interrupt_status(struct dsi_display * display, bool enable)
+static void dsi_display_toggle_error_interrupt_status(struct dsi_display * display, bool enable)
 {
 	int i = 0;
 	struct dsi_display_ctrl *ctrl;
@@ -2256,7 +2288,7 @@ static int dsi_display_debugfs_init(struct dsi_display *display)
 	char secondary_panel_str[] = "_secondary";
 	int i;
 
-	strlcpy(panel_name, display->name, SEC_PANEL_NAME_MAX_LEN);
+	strscpy(panel_name, display->name, SEC_PANEL_NAME_MAX_LEN);
 	if (strcmp(display->display_type, "secondary") == 0)
 		strlcat(panel_name, secondary_panel_str, SEC_PANEL_NAME_MAX_LEN);
 
@@ -2918,7 +2950,7 @@ static int dsi_display_parse_boot_display_selection(void)
 	int i, j;
 
 	for (i = 0; i < MAX_DSI_ACTIVE_DISPLAY; i++) {
-		strlcpy(disp_buf, boot_displays[i].boot_param,
+		strscpy(disp_buf, boot_displays[i].boot_param,
 			MAX_CMDLINE_PARAM_LEN);
 
 		pos = strnstr(disp_buf, ":", strlen(disp_buf));
@@ -3092,7 +3124,7 @@ static int dsi_display_phy_pll_disable(struct dsi_display *display)
 	return dsi_phy_pll_toggle(m_ctrl->phy, false);
 }
 
-int dsi_display_phy_pll_toggle(void *priv, bool prepare)
+static int dsi_display_phy_pll_toggle(void *priv, bool prepare)
 {
 	struct dsi_display *display = priv;
 
@@ -3110,7 +3142,7 @@ int dsi_display_phy_pll_toggle(void *priv, bool prepare)
 		return dsi_display_phy_pll_disable(display);
 }
 
-int dsi_display_phy_configure(void *priv, bool commit)
+static int dsi_display_phy_configure(void *priv, bool commit)
 {
 	int rc = 0;
 	struct dsi_display *display = priv;
@@ -3799,6 +3831,9 @@ static int dsi_display_mipi_host_deinit(struct dsi_display *display)
 	struct mipi_dsi_host *host = &display->host;
 
 	mipi_dsi_host_unregister(host);
+	if (display->post_cmd_tx_workq)
+		flush_workqueue(display->post_cmd_tx_workq);
+	dsi_host_free_cmd_tx_buffer(display);
 
 	host->dev = NULL;
 	host->ops = NULL;
@@ -4743,7 +4778,7 @@ static bool dsi_display_is_seamless_dfps_possible(
 	return true;
 }
 
-void dsi_display_update_byte_intf_div(struct dsi_display *display)
+static void dsi_display_update_byte_intf_div(struct dsi_display *display)
 {
 	struct dsi_host_common_cfg *config;
 	struct dsi_display_ctrl *m_ctrl;
@@ -6414,21 +6449,21 @@ end:
 	return rc;
 }
 
-int dsi_display_dev_remove(struct platform_device *pdev)
+void dsi_display_dev_remove(struct platform_device *pdev)
 {
-	int rc = 0, i = 0;
+	int i;
 	struct dsi_display *display;
 	struct dsi_display_ctrl *ctrl;
 
 	if (!pdev) {
 		DSI_ERR("Invalid device\n");
-		return -EINVAL;
+		return;
 	}
 
 	display = platform_get_drvdata(pdev);
 	if (!display || !display->panel_node) {
 		DSI_ERR("invalid display\n");
-		return -EINVAL;
+		return;
 	}
 
 	dsi_display_meizu_unregister_bark(display);
@@ -6446,7 +6481,7 @@ int dsi_display_dev_remove(struct platform_device *pdev)
 		display->meizu_sysfs_link_registered = false;
 	}
 	if (display->meizu_sysfs_group_created) {
-		devm_device_remove_group(&pdev->dev, &meizu_display_attr_group);
+		devm_release_action(&pdev->dev, dsi_display_meizu_remove_attr_group, &pdev->dev);
 		display->meizu_sysfs_group_created = false;
 	}
 
@@ -6469,7 +6504,6 @@ int dsi_display_dev_remove(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, NULL);
 	devm_kfree(&pdev->dev, display);
-	return rc;
 }
 
 int dsi_display_get_num_of_displays(void)
@@ -6931,7 +6965,7 @@ int dsi_display_drm_ext_bridge_init(struct dsi_display *display,
 		struct drm_encoder *encoder, struct drm_connector *connector)
 {
 	struct drm_device *drm;
-	struct drm_bridge *bridge;
+	struct drm_bridge *bridge __free(drm_bridge_put) = NULL;
 	struct drm_bridge *ext_bridge;
 	struct drm_connector *ext_conn;
 	struct sde_connector *sde_conn;
@@ -7171,7 +7205,7 @@ int dsi_display_get_mode_count(struct dsi_display *display,
 	return 0;
 }
 
-void dsi_display_adjust_mode_timing(struct dsi_display *display,
+static void dsi_display_adjust_mode_timing(struct dsi_display *display,
 			struct dsi_display_mode *dsi_mode,
 			int lanes, int bpp)
 {
@@ -7399,7 +7433,7 @@ void dsi_display_put_mode(struct dsi_display *display,
 	dsi_panel_put_mode(mode);
 }
 
-int dsi_display_get_modes_helper(struct dsi_display *display,
+static int dsi_display_get_modes_helper(struct dsi_display *display,
 	struct dsi_display_ctrl *ctrl, u32 timing_mode_count,
 	struct dsi_dfps_capabilities dfps_caps, struct dsi_qsync_capabilities *qsync_caps,
 	struct dsi_dyn_clk_caps *dyn_clk_caps)
@@ -9179,7 +9213,7 @@ static void dsi_display_handle_poms_te(struct work_struct *work)
 	}
 
 	dsi = &panel->mipi_device;
-	rc = mipi_dsi_dcs_set_tear_off(dsi);
+	rc = mipi_dsi_dcs_write(dsi, MIPI_DCS_SET_TEAR_OFF, NULL, 0);
 
 error:
 	mutex_unlock(&panel->panel_lock);
@@ -9293,7 +9327,7 @@ int dsi_display_update_dyn_bit_clk(struct dsi_display *display,
 		DSI_DEBUG("dynamic bit clock rate cleared\n");
 		return 0;
 	} else if (display->dyn_bit_clk < mode->priv_info->min_dsi_clk_hz) {
-		DSI_ERR("dynamic bit clock rate %llu smaller than minimum value:%llu\n",
+		DSI_ERR("dynamic bit clock rate %u smaller than minimum value:%llu\n",
 				display->dyn_bit_clk, mode->priv_info->min_dsi_clk_hz);
 		return -EINVAL;
 	}

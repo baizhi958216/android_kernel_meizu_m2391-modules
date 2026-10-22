@@ -354,16 +354,6 @@ static int dsi_ctrl_debugfs_deinit(struct dsi_ctrl *dsi_ctrl)
 }
 #endif /* CONFIG_DEBUG_FS */
 
-static inline struct msm_gem_address_space*
-dsi_ctrl_get_aspace(struct dsi_ctrl *dsi_ctrl,
-		int domain)
-{
-	if (!dsi_ctrl || !dsi_ctrl->drm_dev)
-		return NULL;
-
-	return msm_gem_smmu_address_space_get(dsi_ctrl->drm_dev, domain);
-}
-
 static void dsi_ctrl_dma_cmd_wait_for_done(struct dsi_ctrl *dsi_ctrl)
 {
 	int ret = 0;
@@ -1926,71 +1916,6 @@ static int dsi_ctrl_drv_state_init(struct dsi_ctrl *dsi_ctrl)
 	return rc;
 }
 
-static int dsi_ctrl_buffer_deinit(struct dsi_ctrl *dsi_ctrl)
-{
-	struct msm_gem_address_space *aspace = NULL;
-
-	if (dsi_ctrl->tx_cmd_buf) {
-		aspace = dsi_ctrl_get_aspace(dsi_ctrl,
-				MSM_SMMU_DOMAIN_UNSECURE);
-		if (!aspace) {
-			DSI_CTRL_ERR(dsi_ctrl, "failed to get address space\n");
-			return -ENOMEM;
-		}
-
-		msm_gem_put_iova(dsi_ctrl->tx_cmd_buf, aspace);
-
-		mutex_lock(&dsi_ctrl->drm_dev->struct_mutex);
-		msm_gem_free_object(dsi_ctrl->tx_cmd_buf);
-		mutex_unlock(&dsi_ctrl->drm_dev->struct_mutex);
-		dsi_ctrl->tx_cmd_buf = NULL;
-	}
-
-	return 0;
-}
-
-int dsi_ctrl_buffer_init(struct dsi_ctrl *dsi_ctrl)
-{
-	int rc = 0;
-	u64 iova = 0;
-	struct msm_gem_address_space *aspace = NULL;
-
-	aspace = dsi_ctrl_get_aspace(dsi_ctrl, MSM_SMMU_DOMAIN_UNSECURE);
-	if (!aspace) {
-		DSI_CTRL_ERR(dsi_ctrl, "failed to get address space\n");
-		return -ENOMEM;
-	}
-
-	dsi_ctrl->tx_cmd_buf = msm_gem_new(dsi_ctrl->drm_dev,
-					   SZ_4K,
-					   MSM_BO_UNCACHED);
-
-	if (IS_ERR(dsi_ctrl->tx_cmd_buf)) {
-		rc = PTR_ERR(dsi_ctrl->tx_cmd_buf);
-		DSI_CTRL_ERR(dsi_ctrl, "failed to allocate gem, rc=%d\n", rc);
-		dsi_ctrl->tx_cmd_buf = NULL;
-		goto error;
-	}
-
-	dsi_ctrl->cmd_buffer_size = SZ_4K;
-
-	rc = msm_gem_get_iova(dsi_ctrl->tx_cmd_buf, aspace, &iova);
-	if (rc) {
-		DSI_CTRL_ERR(dsi_ctrl, "failed to get iova, rc=%d\n", rc);
-		(void)dsi_ctrl_buffer_deinit(dsi_ctrl);
-		goto error;
-	}
-
-	if (iova & 0x07) {
-		DSI_CTRL_ERR(dsi_ctrl, "Tx command buffer is not 8 byte aligned\n");
-		rc = -ENOTSUPP;
-		(void)dsi_ctrl_buffer_deinit(dsi_ctrl);
-		goto error;
-	}
-error:
-	return rc;
-}
-
 static int dsi_enable_io_clamp(struct dsi_ctrl *dsi_ctrl,
 		bool enable, bool ulps_enabled)
 {
@@ -2147,7 +2072,7 @@ fail:
 	return rc;
 }
 
-static int dsi_ctrl_dev_remove(struct platform_device *pdev)
+static void dsi_ctrl_dev_remove(struct platform_device *pdev)
 {
 	int rc = 0;
 	struct dsi_ctrl *dsi_ctrl;
@@ -2189,7 +2114,6 @@ static int dsi_ctrl_dev_remove(struct platform_device *pdev)
 	devm_kfree(&pdev->dev, dsi_ctrl);
 
 	platform_set_drvdata(pdev, NULL);
-	return 0;
 }
 
 static struct platform_driver dsi_ctrl_driver = {
@@ -2388,10 +2312,10 @@ int dsi_ctrl_drv_deinit(struct dsi_ctrl *dsi_ctrl)
 		DSI_CTRL_ERR(dsi_ctrl, "failed to release debugfs root, rc=%d\n",
 				rc);
 
-	rc = dsi_ctrl_buffer_deinit(dsi_ctrl);
-	if (rc)
-		DSI_CTRL_ERR(dsi_ctrl, "Failed to free cmd buffers, rc=%d\n",
-				rc);
+	/* The display owns the shared command DMA allocation. */
+	dsi_ctrl->tx_cmd_buf = NULL;
+	dsi_ctrl->vaddr = NULL;
+	dsi_ctrl->cmd_buffer_iova = 0;
 
 	mutex_unlock(&dsi_ctrl->ctrl_lock);
 	return rc;

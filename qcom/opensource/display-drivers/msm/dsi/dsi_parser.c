@@ -207,7 +207,7 @@ static void dsi_parser_get_int_value(struct dsi_parser_prop *prop,
 		char *to_int, *tmp;
 		char item[SZ_128];
 
-		strlcpy(item, prop->items[i], SZ_128);
+		strscpy(item, prop->items[i], SZ_128);
 
 		tmp = item;
 
@@ -251,7 +251,7 @@ static bool dsi_parser_parse_prop(struct device *dev,
 	if (!prop->raw)
 		goto end;
 
-	strlcpy(prop->raw, buf, buf_len + 1);
+	strscpy(prop->raw, buf, buf_len + 1);
 
 	found = true;
 
@@ -589,7 +589,7 @@ int dsi_parser_read_u64(const struct device_node *np, const char *propname,
 		goto end;
 	}
 
-	DSI_DEBUG("%s=%d\n", propname, *out_value);
+	DSI_DEBUG("%s=%llu\n", propname, *out_value);
 end:
 	return rc;
 }
@@ -612,7 +612,7 @@ int dsi_parser_read_u32(const struct device_node *np,
 	if (!prop->value)
 		goto end;
 
-	strlcpy(item, prop->value, SZ_128);
+	strscpy(item, prop->value, SZ_128);
 	property = item;
 	to_int = strsep(&property, "x");
 
@@ -655,7 +655,7 @@ int dsi_parser_read_u32_index(const struct device_node *np,
 		goto end;
 	}
 
-	strlcpy(item, prop->items[index], SZ_128);
+	strscpy(item, prop->items[index], SZ_128);
 	property = item;
 	to_int = strsep(&property, "x");
 
@@ -698,7 +698,7 @@ int dsi_parser_read_u32_array(const struct device_node *np,
 		char item[SZ_128];
 		char *to_int, *tmp;
 
-		strlcpy(item, prop->items[i], SZ_128);
+		strscpy(item, prop->items[i], SZ_128);
 
 		tmp = item;
 
@@ -786,7 +786,7 @@ end:
 	return (struct device_node *)matched_node;
 }
 
-struct dsi_parser_node *dsi_parser_get_node_by_name(
+static struct dsi_parser_node *dsi_parser_get_node_by_name(
 				struct dsi_parser_node *node,
 				char *name)
 {
@@ -1316,7 +1316,7 @@ void *dsi_parser_get(struct device *dev)
 
 	parser->dev = dev;
 
-	strlcpy(parser->file_name, "dsi_prop", sizeof(parser->file_name));
+	strscpy(parser->file_name, "dsi_prop", sizeof(parser->file_name));
 
 	return parser;
 end:

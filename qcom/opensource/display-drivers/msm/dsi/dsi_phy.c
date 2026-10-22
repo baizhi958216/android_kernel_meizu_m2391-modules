@@ -477,16 +477,14 @@ fail:
 	return rc;
 }
 
-static int dsi_phy_driver_remove(struct platform_device *pdev)
+static void dsi_phy_driver_remove(struct platform_device *pdev)
 {
 	int rc = 0;
 	struct msm_dsi_phy *phy = platform_get_drvdata(pdev);
 	struct list_head *pos, *tmp;
 
-	if (!pdev || !phy) {
-		DSI_PHY_ERR(phy, "Invalid device\n");
-		return -EINVAL;
-	}
+	if (!phy)
+		return;
 
 	mutex_lock(&dsi_phy_list_lock);
 	list_for_each_safe(pos, tmp, &dsi_phy_list) {
@@ -522,7 +520,6 @@ static int dsi_phy_driver_remove(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, NULL);
 
-	return 0;
 }
 
 static struct platform_driver dsi_phy_platform_driver = {
