@@ -1,0 +1,4 @@
+# M2391 AW8697 implementation; selected only after recovery review.
+obj-m += haptic_hv.o
+haptic_hv-y := haptic_core.o aw869x.o meizu_calibration.o
+ccflags-y += -I$(src) -I$(srctree)/drivers/base

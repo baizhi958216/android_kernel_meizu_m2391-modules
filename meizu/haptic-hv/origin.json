@@ -1,0 +1,32 @@
+{
+  "repository": "NothingOSS/android_kernel_msm-5.10_nothing_sm8475",
+  "commit": "c402fcdb3a1523d10b15ef1123bced45456f7592",
+  "path": "drivers/misc/haptic_hv",
+  "source_license": "Explicit AWINIC 2021 GPL-2.0-or-later in both C source headers; repository COPYING covers unmarked headers under GPL-2.0",
+  "driver_version": "v1.2.0",
+  "files": {
+    "haptic_hv.c": "4e69d06968cde2ed8543aa2b4e62494683da578fa482bc3874f7097728d6ed2c",
+    "haptic_hv.h": "fc06e86236f4e9a9f3f27942292a15742a23c5584a781d0099330a511b5117b9",
+    "haptic_hv_reg.h": "0fafde9e8568b8f99fdc696ff311ab2dd37f94726e230edb17b08de0d47c4529",
+    "aw869x.c": "f033368b5fbe0b03956519fd7d6741115db8c2ab4e7500e9479ed2977105e7c9"
+  },
+  "status": "Recovered, independently reviewed and selected source implementation; original stock SHA-backed up before removal",
+  "reference": {
+    "repository": "OnePlusOSS/android_kernel_oneplus_sm8150",
+    "commit": "1dd473abda05a72f6978c47b2a7d80828db6b426",
+    "path": "drivers/leds/aw8697.c",
+    "license": "Explicit AWINIC 2018 GPL-2.0-or-later"
+  },
+  "file_mapping": {
+    "haptic_hv.c": "haptic_core.c"
+  },
+  "recovered_oem_behavior": [
+    "54 exact RAM effect records and 86 exact RTP IDs/firmware names",
+    "motor and timed_output/vibrator sysfs links; I2C/LED/backend attribute topology",
+    "slot72/64-byte eight-integer manual/factory/user calibration protocol",
+    "TRG1 firmware-load and TRG2 GPIO/command setup",
+    "aw8697_haptic raw-register misc protocol",
+    "TikTap shared ring protocol with bounded traversal and retained mapping lifetime",
+    "boot-mode 2/3 registration skip"
+  ]
+}
