@@ -1,0 +1,3 @@
+obj-m += cs35l45_dlkm.o
+cs35l45_dlkm-y := cs35l45.o cs35l45-tables.o wm_adsp.o cs35l45-i2c.o
+ccflags-y += -I$(src)/include
