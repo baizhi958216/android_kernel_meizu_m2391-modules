@@ -997,7 +997,7 @@ void cam_sensor_shutdown(struct cam_sensor_ctrl_t *s_ctrl)
 
 int cam_sensor_match_id(struct cam_sensor_ctrl_t *s_ctrl)
 {
-	int rc = 0;
+	int rc = 0, i;
 	uint32_t chipid = 0;
 	struct cam_camera_slave_info *slave_info;
 
@@ -1012,22 +1012,35 @@ int cam_sensor_match_id(struct cam_sensor_ctrl_t *s_ctrl)
 	if (s_ctrl->hw_no_ops)
 		return rc;
 
-	rc = camera_io_dev_read(
-		&(s_ctrl->io_master_info),
-		slave_info->sensor_id_reg_addr,
-		&chipid, s_ctrl->sensor_probe_addr_type,
-		s_ctrl->sensor_probe_data_type, true);
+	/* The probe runs right after the power sequence and the sensor does not
+	 * always answer correctly on the first read: the main s5kgn5sp has been
+	 * seen returning 0x8e3 instead of 0x8e5. CamX drops a camera whose probe
+	 * fails, which also removes the logical SAT camera and with it the
+	 * telephoto lens, so retry the identification a few times.
+	 */
+	for (i = 0; i < 6; i++) {
+		chipid = 0;
+		rc = camera_io_dev_read(
+			&(s_ctrl->io_master_info),
+			slave_info->sensor_id_reg_addr,
+			&chipid, s_ctrl->sensor_probe_addr_type,
+			s_ctrl->sensor_probe_data_type, true);
 
-	CAM_DBG(CAM_SENSOR, "%s read id: 0x%x expected id 0x%x:",
-		s_ctrl->sensor_name, chipid, slave_info->sensor_id);
+		CAM_DBG(CAM_SENSOR, "%s read id: 0x%x expected id 0x%x:",
+			s_ctrl->sensor_name, chipid, slave_info->sensor_id);
 
-	if (cam_sensor_id_by_mask(s_ctrl, chipid) != slave_info->sensor_id) {
-		CAM_WARN(CAM_SENSOR, "%s read id: 0x%x expected id 0x%x:",
-				s_ctrl->sensor_name, chipid,
-				slave_info->sensor_id);
-		return -ENODEV;
+		if (!rc &&
+			(cam_sensor_id_by_mask(s_ctrl, chipid) ==
+				slave_info->sensor_id))
+			return 0;
+
+		usleep_range(5000, 7000);
 	}
-	return rc;
+
+	CAM_WARN(CAM_SENSOR, "%s read id: 0x%x expected id 0x%x:",
+			s_ctrl->sensor_name, chipid, slave_info->sensor_id);
+
+	return rc < 0 ? rc : -ENODEV;
 }
 
 int cam_sensor_stream_off(struct cam_sensor_ctrl_t *s_ctrl)
