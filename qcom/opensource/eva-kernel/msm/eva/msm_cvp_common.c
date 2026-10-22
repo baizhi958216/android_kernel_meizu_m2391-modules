@@ -11,6 +11,7 @@
 #include <linux/bitops.h>
 #include <asm/div64.h>
 #include "msm_cvp_common.h"
+#include "msm_cvp_lifetime.h"
 #include "cvp_hfi_api.h"
 #include "msm_cvp_debug.h"
 #include "msm_cvp_clocks.h"
@@ -1298,8 +1299,8 @@ int msm_cvp_trigger_ssr(struct msm_cvp_core *core,
 		dprintk(CVP_WARN, "%s: Invalid parameters\n", __func__);
 		return -EINVAL;
 	}
-	core->ssr_type = type;
-	schedule_work(&core->ssr_work);
+	if (!cvp_lifetime_schedule_ssr(core, type))
+		return -ENODEV;
 	return 0;
 }
 

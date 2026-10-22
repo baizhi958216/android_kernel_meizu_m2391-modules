@@ -40,14 +40,14 @@ void cvp_kmem_cache_free(struct cvp_kmem_cache *k, void *obj)
 	kmem_cache_free(k->cache, obj);
 }
 
-int msm_cvp_poll(void *instance, struct file *filp,
+int msm_cvp_core_poll(void *instance, struct file *filp,
 		struct poll_table_struct *wait)
 {
 	return 0;
 }
-EXPORT_SYMBOL(msm_cvp_poll);
 
-int msm_cvp_private(void *cvp_inst, unsigned int cmd,
+
+int msm_cvp_core_private(void *cvp_inst, unsigned int cmd,
 		struct eva_kmd_arg *arg)
 {
 	int rc = 0;
@@ -62,7 +62,7 @@ int msm_cvp_private(void *cvp_inst, unsigned int cmd,
 
 	return rc;
 }
-EXPORT_SYMBOL(msm_cvp_private);
+
 
 static bool msm_cvp_check_for_inst_overload(struct msm_cvp_core *core,
 		u32 *instance_count)
@@ -139,7 +139,7 @@ static void __deinit_session_queue(struct msm_cvp_inst *inst)
 	wake_up_all(&inst->session_queue.wq);
 }
 
-void *msm_cvp_open(int core_id, int session_type, struct task_struct *task)
+void *msm_cvp_core_open(int core_id, int session_type, struct task_struct *task)
 {
 	struct msm_cvp_inst *inst = NULL;
 	struct msm_cvp_core *core = NULL;
@@ -187,6 +187,8 @@ void *msm_cvp_open(int core_id, int session_type, struct task_struct *task)
 		CVP_DBG_TAG "%s opening cvp instance: %pK type %d cnt %d\n",
 		"sess", task->comm, inst, session_type, instance_count);
 	mutex_init(&inst->sync_lock);
+	mutex_init(&inst->debugfs_lock);
+	mutex_init(&inst->fence_thread_lock);
 	mutex_init(&inst->lock);
 	spin_lock_init(&inst->event_handler.lock);
 
@@ -220,6 +222,9 @@ void *msm_cvp_open(int core_id, int session_type, struct task_struct *task)
 
 	msm_cvp_session_init(inst);
 
+	__init_fence_queue(inst);
+	__init_session_queue(inst);
+
 	mutex_lock(&core->lock);
 	mutex_lock(&core->clk_lock);
 	list_add_tail(&inst->list, &core->instances);
@@ -227,11 +232,6 @@ void *msm_cvp_open(int core_id, int session_type, struct task_struct *task)
 	mutex_unlock(&core->clk_lock);
 	mutex_unlock(&core->lock);
 
-	__init_fence_queue(inst);
-
-	rc = __init_session_queue(inst);
-	if (rc)
-		goto fail_init;
 
 	rc = msm_cvp_comm_try_state(inst, MSM_CVP_CORE_INIT_DONE);
 	if (rc) {
@@ -252,6 +252,8 @@ fail_init:
 	list_del(&inst->list);
 	mutex_unlock(&core->lock);
 	mutex_destroy(&inst->sync_lock);
+	mutex_destroy(&inst->debugfs_lock);
+	mutex_destroy(&inst->fence_thread_lock);
 	mutex_destroy(&inst->lock);
 
 	DEINIT_MSM_CVP_LIST(&inst->persistbufs);
@@ -265,7 +267,7 @@ fail_init:
 err_invalid_core:
 	return inst;
 }
-EXPORT_SYMBOL(msm_cvp_open);
+
 
 static void msm_cvp_clean_sess_queue(struct msm_cvp_inst *inst,
 		struct cvp_session_queue *sq)
@@ -417,9 +419,9 @@ int msm_cvp_destroy(struct msm_cvp_inst *inst)
 	inst->cvpwnccbufs_table = NULL;
 
 	mutex_destroy(&inst->sync_lock);
+	mutex_destroy(&inst->debugfs_lock);
+	mutex_destroy(&inst->fence_thread_lock);
 	mutex_destroy(&inst->lock);
-
-	msm_cvp_debugfs_deinit_inst(inst);
 
 	__deinit_session_queue(inst);
 	__deinit_fence_queue(inst);
@@ -455,7 +457,7 @@ static void close_helper(struct kref *kref)
 	msm_cvp_destroy(inst);
 }
 
-int msm_cvp_close(void *instance)
+int msm_cvp_core_close(void *instance)
 {
 	struct msm_cvp_inst *inst = instance;
 	int rc = 0;
@@ -465,6 +467,8 @@ int msm_cvp_close(void *instance)
 		return -EINVAL;
 	}
 
+	/* Drain protected debugfs callbacks while the owner reference is held. */
+	msm_cvp_debugfs_deinit_inst(inst);
 	if (inst->session_type != MSM_CVP_BOOT) {
 		msm_cvp_cleanup_instance(inst);
 		msm_cvp_session_deinit(inst);
@@ -485,10 +489,41 @@ int msm_cvp_close(void *instance)
 	kref_put(&inst->kref, close_helper);
 	return 0;
 }
+
+
+int msm_cvp_core_suspend(int core_id)
+{
+	return msm_cvp_comm_suspend(core_id);
+}
+
+
+/* Preserve the original public prototypes and compiler type context. */
+void *msm_cvp_open(int core_id, int session_type, struct task_struct *task)
+{
+	return cvp_handle_open(core_id, session_type, task);
+}
+EXPORT_SYMBOL(msm_cvp_open);
+
+int msm_cvp_close(void *instance)
+{
+	return cvp_handle_close(instance);
+}
 EXPORT_SYMBOL(msm_cvp_close);
+
+int msm_cvp_private(void *cvp_inst, unsigned int cmd, struct eva_kmd_arg *arg)
+{
+	return cvp_handle_private(cvp_inst, cmd, arg);
+}
+EXPORT_SYMBOL(msm_cvp_private);
+
+int msm_cvp_poll(void *instance, struct file *filp, struct poll_table_struct *wait)
+{
+	return cvp_handle_poll(instance, filp, wait);
+}
+EXPORT_SYMBOL(msm_cvp_poll);
 
 int msm_cvp_suspend(int core_id)
 {
-	return msm_cvp_comm_suspend(core_id);
+	return cvp_handle_suspend(core_id);
 }
 EXPORT_SYMBOL(msm_cvp_suspend);

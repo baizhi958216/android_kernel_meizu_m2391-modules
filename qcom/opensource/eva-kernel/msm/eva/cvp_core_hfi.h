@@ -266,6 +266,8 @@ struct iris_hfi_device {
 	unsigned int skip_pc_count;
 	struct msm_cvp_capability *sys_init_capabilities;
 	struct iris_hfi_vpu_ops *vpu_ops;
+	spinlock_t async_lock;
+	bool stopping, irq_requested;
 };
 
 irqreturn_t cvp_hfi_isr(int irq, void *dev);

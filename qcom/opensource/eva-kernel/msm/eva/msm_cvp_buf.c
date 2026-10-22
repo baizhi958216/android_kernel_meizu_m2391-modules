@@ -1589,6 +1589,17 @@ void msm_cvp_unmap_frame(struct msm_cvp_inst *inst, u64 ktid)
 		dprintk(CVP_WARN, "%s frame %llu not found!\n", __func__, ktid);
 }
 
+/* Shipping UNMAP_PERSIST also emits this diagnostic. Keep it while retaining
+ * the licensed foundation's newer, bounded real unmap implementation below.
+ */
+int msm_cvp_mark_user_persist(struct msm_cvp_inst *inst,
+			struct eva_kmd_hfi_packet *in_pkt,
+			unsigned int offset, unsigned int buf_num)
+{
+	dprintk(CVP_ERR, "Unexpected user persistent buffer release\n");
+	return 0;
+}
+
 int msm_cvp_unmap_user_persist(struct msm_cvp_inst *inst,
 			struct eva_kmd_hfi_packet *in_pkt,
 			unsigned int offset, unsigned int buf_num)

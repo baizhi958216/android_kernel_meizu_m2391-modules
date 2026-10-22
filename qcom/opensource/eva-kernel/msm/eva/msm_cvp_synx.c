@@ -197,6 +197,8 @@ static int cvp_wait_synx(struct synx_session ssid, u32 *synx, u32 num_synx,
 	int h_synx;
 
 	while (i < num_synx) {
+		if (kthread_should_stop())
+			return -ESHUTDOWN;
 		h_synx = synx[i];
 		if (h_synx) {
 			rc = synx_wait(ssid, h_synx, timeout_ms);
@@ -229,6 +231,8 @@ static int cvp_signal_synx(struct synx_session ssid, u32 *synx, u32 num_synx,
 	int h_synx;
 
 	while (i < num_synx) {
+		if (kthread_should_stop())
+			return -ESHUTDOWN;
 		h_synx = synx[i];
 		if (h_synx) {
 			rc = synx_signal(ssid, h_synx, synx_state);

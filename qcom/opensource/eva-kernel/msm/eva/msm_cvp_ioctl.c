@@ -6,6 +6,7 @@
 
 #include <linux/compat.h>
 #include "cvp_private.h"
+#include "msm_cvp_lifetime.h"
 #include "cvp_hfi_api.h"
 
 static int _get_pkt_hdr_from_user(struct eva_kmd_arg __user *up,
@@ -600,7 +601,7 @@ static int convert_to_user(struct eva_kmd_arg *kp, unsigned long arg)
 	return rc;
 }
 
-static long cvp_ioctl(struct msm_cvp_inst *inst,
+long cvp_instance_ioctl(struct msm_cvp_inst *inst,
 	unsigned int cmd, unsigned long arg)
 {
 	int rc;
@@ -622,7 +623,7 @@ static long cvp_ioctl(struct msm_cvp_inst *inst,
 		return -EFAULT;
 	}
 
-	rc = msm_cvp_private((void *)inst, cmd, karg);
+	rc = msm_cvp_core_private((void *)inst, cmd, karg);
 	if (rc) {
 		dprintk(CVP_ERR, "%s: failed cmd type %x %d\n",
 			__func__, karg->type, rc);
@@ -644,27 +645,12 @@ static long cvp_ioctl(struct msm_cvp_inst *inst,
 long cvp_unblocked_ioctl(struct file *filp,
 		unsigned int cmd, unsigned long arg)
 {
-	struct msm_cvp_inst *inst;
-
-	if (!filp || !filp->private_data) {
-		dprintk(CVP_ERR, "%s: invalid params\n", __func__);
-		return -EINVAL;
-	}
-
-	inst = filp->private_data;
-	return cvp_ioctl(inst, cmd, arg);
+	return cvp_lifetime_ioctl(filp->private_data, cmd, arg);
 }
 
 long cvp_compat_ioctl(struct file *filp,
 		unsigned int cmd, unsigned long arg)
 {
-	struct msm_cvp_inst *inst;
-
-	if (!filp || !filp->private_data) {
-		dprintk(CVP_ERR, "%s: invalid params\n", __func__);
-		return -EINVAL;
-	}
-
-	inst = filp->private_data;
-	return cvp_ioctl(inst, cmd, (unsigned long)compat_ptr(arg));
+	return cvp_lifetime_ioctl(filp->private_data, cmd,
+		(unsigned long)compat_ptr(arg));
 }

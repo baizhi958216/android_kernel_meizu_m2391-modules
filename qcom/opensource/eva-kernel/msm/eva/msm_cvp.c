@@ -5,6 +5,7 @@
  */
 
 #include "msm_cvp.h"
+#include "msm_cvp_lifetime.h"
 #include "cvp_hfi.h"
 #include "cvp_core_hfi.h"
 #include "msm_cvp_buf.h"
@@ -97,7 +98,8 @@ static bool cvp_msg_pending(struct cvp_session_queue *sq,
 
 	mptr = NULL;
 	spin_lock(&sq->lock);
-	if (sq->state == QUEUE_INIT || sq->state == QUEUE_INVALID) {
+	if (cvp_lifetime_stopping() || sq->state == QUEUE_INIT ||
+	    sq->state == QUEUE_INVALID) {
 		/* The session is being deleted */
 		spin_unlock(&sq->lock);
 		*msg = NULL;
@@ -315,6 +317,7 @@ static int msm_cvp_session_process_hfi(
 		rc = msm_cvp_map_user_persist(inst, in_pkt, offset, buf_num, fd_arr);
 	}
 	else if (map_type == UNMAP_PERSIST) {
+		msm_cvp_mark_user_persist(inst, in_pkt, offset, buf_num);
 		rc = msm_cvp_unmap_user_persist(inst, in_pkt, offset, buf_num);
 	} else {
 		rc = msm_cvp_map_frame(inst, in_pkt, offset, buf_num);
@@ -739,7 +742,6 @@ wait:
 exit:
 	dprintk(CVP_SYNX, "%s exit\n", current->comm);
 	cvp_put_inst(inst);
-	do_exit(rc);
 	return rc;
 }
 
@@ -1220,95 +1222,86 @@ static int session_state_check_init(struct msm_cvp_inst *inst)
 	return msm_cvp_session_create(inst);
 }
 
+static void cvp_fence_threads_join(struct msm_cvp_inst *inst)
+{
+	unsigned int i;
+	struct cvp_fence_queue *q = &inst->fence_cmd_queue;
+	struct cvp_session_queue *sq = &inst->session_queue_fence;
+
+	mutex_lock(&q->lock);
+	q->state = QUEUE_STOP;
+	mutex_unlock(&q->lock);
+	spin_lock(&sq->lock);
+	sq->state = QUEUE_STOP;
+	spin_unlock(&sq->lock);
+	wake_up_all(&q->wq);
+	wake_up_all(&sq->wq);
+	for (i = 0; i < ARRAY_SIZE(inst->fence_threads); i++) {
+		if (!inst->fence_threads[i])
+			continue;
+		kthread_stop(inst->fence_threads[i]);
+		put_task_struct(inst->fence_threads[i]);
+		inst->fence_threads[i] = NULL;
+	}
+}
+
 static int cvp_fence_thread_start(struct msm_cvp_inst *inst)
 {
-	u32 tnum = 0;
-	u32 i = 0;
-	int rc = 0;
-	char tname[16];
+	struct msm_cvp_inst *held;
 	struct task_struct *thread;
-	struct cvp_fence_queue *q;
-	struct cvp_session_queue *sq;
-	struct msm_cvp_core *core = NULL;
+	unsigned int i;
+	int rc = 0;
 
-	if (!inst) {
-		dprintk(CVP_ERR, "%s: invalid inst param\n", __func__);
+	if (!inst || !inst->core)
 		return -EINVAL;
+	held = cvp_get_inst_validate(inst->core, inst);
+	if (!held)
+		return -ECONNRESET;
+	mutex_lock(&inst->fence_thread_lock);
+	if (inst->prop.fthread_nr > ARRAY_SIZE(inst->fence_threads)) {
+		rc = -EINVAL;
+		goto out;
 	}
-
-	core = list_first_entry(&cvp_driver->cores, struct msm_cvp_core, list);
-	if (!core) {
-		dprintk(CVP_ERR, "%s: core is NULL", __func__);
-		return -EINVAL;
+	if (inst->fence_threads[0]) {
+		rc = -EBUSY;
+		goto out;
 	}
-
-	inst = cvp_get_inst_validate(core, inst);
-	if (!inst)
-		return -EINVAL;
-
-	if (!inst->prop.fthread_nr) {
-		cvp_put_inst(inst);
-		return 0;
-	}
-
-	q = &inst->fence_cmd_queue;
-	mutex_lock(&q->lock);
-	q->state = QUEUE_START;
-	mutex_unlock(&q->lock);
-
-	for (i = 0; i < inst->prop.fthread_nr; ++i) {
-		if (!cvp_get_inst_validate(core, inst)) {
+	mutex_lock(&inst->fence_cmd_queue.lock);
+	inst->fence_cmd_queue.state = QUEUE_START;
+	mutex_unlock(&inst->fence_cmd_queue.lock);
+	for (i = 0; i < inst->prop.fthread_nr; i++) {
+		if (!cvp_get_inst_validate(inst->core, inst)) {
 			rc = -ECONNRESET;
-			goto exit;
+			goto fail;
 		}
-
-		snprintf(tname, sizeof(tname), "fthread_%d", tnum++);
-		thread = kthread_run(cvp_fence_thread, inst, tname);
-		if (!thread) {
-			dprintk(CVP_ERR, "%s create %s fail", __func__, tname);
-			rc = -ECHILD;
-			goto exit;
+		/* Pin the created task before it can run and drop its instance ref. */
+		thread = kthread_create(cvp_fence_thread, inst, "fthread_%u", i);
+		if (IS_ERR(thread)) {
+			rc = PTR_ERR(thread);
+			cvp_put_inst(inst);
+			goto fail;
 		}
+		get_task_struct(thread);
+		inst->fence_threads[i] = thread;
+		wake_up_process(thread);
 	}
-
-	sq = &inst->session_queue_fence;
-	spin_lock(&sq->lock);
-	sq->state = QUEUE_START;
-	spin_unlock(&sq->lock);
-
-exit:
-	if (rc) {
-		mutex_lock(&q->lock);
-		q->state = QUEUE_STOP;
-		mutex_unlock(&q->lock);
-		wake_up_all(&q->wq);
-	}
-	cvp_put_inst(inst);
+	spin_lock(&inst->session_queue_fence.lock);
+	inst->session_queue_fence.state = QUEUE_START;
+	spin_unlock(&inst->session_queue_fence.lock);
+	goto out;
+fail:
+	cvp_fence_threads_join(inst);
+out:
+	mutex_unlock(&inst->fence_thread_lock);
+	cvp_put_inst(held);
 	return rc;
 }
 
 static int cvp_fence_thread_stop(struct msm_cvp_inst *inst)
 {
-	struct cvp_fence_queue *q;
-	struct cvp_session_queue *sq;
-
-	if (!inst->prop.fthread_nr)
-		return 0;
-
-	q = &inst->fence_cmd_queue;
-
-	mutex_lock(&q->lock);
-	q->state = QUEUE_STOP;
-	mutex_unlock(&q->lock);
-
-	sq = &inst->session_queue_fence;
-	spin_lock(&sq->lock);
-	sq->state = QUEUE_STOP;
-	spin_unlock(&sq->lock);
-
-	wake_up_all(&q->wq);
-	wake_up_all(&sq->wq);
-
+	mutex_lock(&inst->fence_thread_lock);
+	cvp_fence_threads_join(inst);
+	mutex_unlock(&inst->fence_thread_lock);
 	return 0;
 }
 
@@ -1377,7 +1370,7 @@ int msm_cvp_session_queue_stop(struct msm_cvp_inst *inst)
 
 	if (sq->state == QUEUE_STOP) {
 		spin_unlock(&sq->lock);
-		return 0;
+		return cvp_fence_thread_stop(inst);
 	}
 
 	sq->state = QUEUE_STOP;

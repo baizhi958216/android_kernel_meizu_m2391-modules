@@ -131,6 +131,7 @@ static int msm_cvp_vm_init_reg_and_irq(struct iris_hfi_device *device,
 		dprintk(CVP_ERR,
 			"could not map reg addr %pa of size %d\n",
 			&res->register_base, res->register_size);
+		rc = -ENOMEM;
 		goto error_irq_fail;
 	}
 
@@ -146,13 +147,13 @@ static int msm_cvp_vm_init_reg_and_irq(struct iris_hfi_device *device,
 
 	device->cvp_hal_data = hal;
 	rc = request_threaded_irq(res->irq, cvp_hfi_isr, iris_hfi_core_work_handler,
-			IRQF_TRIGGER_HIGH, "msm_cvp", device);
+			IRQF_TRIGGER_HIGH | IRQF_NO_AUTOEN, "msm_cvp", device);
 	if (unlikely(rc)) {
 		dprintk(CVP_ERR, "() :request_irq failed\n");
 		goto error_irq_fail;
 	}
 
-	disable_irq_nosync(res->irq);
+	device->irq_requested = true;
 	dprintk(CVP_INFO,
 		"firmware_base = %pa, register_base = %pa, register_size = %d\n",
 		&res->firmware_base, &res->register_base,
@@ -160,6 +161,11 @@ static int msm_cvp_vm_init_reg_and_irq(struct iris_hfi_device *device,
 	return rc;
 
 error_irq_fail:
+	device->cvp_hal_data = NULL;
+	if (hal->gcc_reg_base)
+		devm_iounmap(&res->pdev->dev, hal->gcc_reg_base);
+	if (hal->register_base)
+		devm_iounmap(&res->pdev->dev, hal->register_base);
 	kfree(hal);
 err_core_init:
 	return rc;
