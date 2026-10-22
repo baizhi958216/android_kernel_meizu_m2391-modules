@@ -1,0 +1,35 @@
+M2391 ST21 NFC source recovery (source selected)
+
+The licensed ST foundation from Nothing's official GPL tree has31 exact stock
+function/data records,4 differences and2 missing secure helpers. Original OF
+st,st21nfc, /dev/st21nfc, three sysfs attributes and all original read/write/poll
+packet behavior remain. The extra Nothing scan_stats attribute was removed.
+
+Restored secure-state query: ClientEnv app0x108, op1, NFC uid0x506, u8 state;
+state1 means secure, open error12/operation error10 mean feature/peripheral
+absent and permit normal operation, all other errors retain secure state.
+Both Object handles are released. Original scalar ioctl0xea0b transitions to
+secure by reset-low and gates other ioctls with -1; initial secure probe defers
+requesting reset until first clear, which requests GPIOD_OUT_HIGH. A failed
+request now retains secure state and a valid descriptor rather than allowing
+an ERR/NULL GPIO into a later ioctl. State is per-device instead of a global
+first-clear flag. No guessed secure command or reset sequence was introduced.
+
+Corrected original lifetime: chip kref survives open descriptors, operation
+mutex wrappers drain read/write/ioctl/poll and gate hardware after removing.
+Removal/probe failure marks then drains misc/sysfs without waiting under that
+mutex; frees/drains both IRQ producers before destroying power-stats workqueue;
+clock disable/unprepare only releases this driver's acquired prepare vote,
+then clk_put drops its lookup reference. All primitives/workqueue initialize
+before IRQ publication. GPIO/IRQ EPROBE_DEFER and mapping errors are retained.
+Power stats has one sysfs group publication rather than duplicate file creation.
+
+Full actual 2-C composite stm_nfc_i2c.o Kbuild PASS. All11 final named static
+objects byte+relocation MATCH stock, including fops/three attrs/OF/I2C/PM tables.
+Original and actual source ELFs have zero exports; ST54 callback registration
+functions are private in both and no retained stock module imports them.
+Independent root full lifetime, secure protocol and ioctl review PASS.
+Vendor-only source selection matches original partition placement. Original
+SHA256 a17819101534f5ef53c87842b105b6359252113a48a0881f25a98317cbf43ec2 was
+verified in out/m2391-515-analysis/removed-stock-modules before packaged KO and
+its exact extraction entry were removed. No driver or hardware IO was executed.

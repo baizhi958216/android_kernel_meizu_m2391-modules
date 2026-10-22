@@ -1,0 +1,16 @@
+[
+  {
+    "repository": "NothingOSS/android_kernel_msm-5.4_nothing_sm7325",
+    "ref": "539538747842faa8e22145ac0b557b1c905f8979",
+    "path": "drivers/misc/st21nfc.c",
+    "sha256": "1ae5c9cfe8b582a76581e21fbc8d604393e7b120fdbf7f941d1c150177e07cc6",
+    "license": "GPL-2.0-only (retained original header)"
+  },
+  {
+    "repository": "NothingOSS/android_kernel_msm-5.4_nothing_sm7325",
+    "ref": "539538747842faa8e22145ac0b557b1c905f8979",
+    "path": "drivers/misc/st21nfc.h",
+    "sha256": "9df5d02bab09d4274d6ae20422e29ab8c69a13b39f0eefba11cda4fcc0ab47fd",
+    "license": "GPL-2.0-only (retained original header)"
+  }
+]

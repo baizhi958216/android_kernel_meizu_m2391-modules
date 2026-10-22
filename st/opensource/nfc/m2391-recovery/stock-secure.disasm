@@ -1,0 +1,223 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/stm_nfc_i2c.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000000524 <nfc_dynamic_protection_ioctl>:
+     524: 3f 23 03 d5  	hint	#25
+     528: 5e 86 00 f8  	str	x30, [x18], #8
+     52c: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+     530: f5 0b 00 f9  	str	x21, [sp, #16]
+     534: fd 03 00 91  	mov	x29, sp
+     538: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+     53c: f3 03 00 aa  	mov	x19, x0
+     540: 81 02 00 b4  	cbz	x1, 0x590 <nfc_dynamic_protection_ioctl+0x6c>
+     544: 3f 04 00 f1  	cmp	x1, #1
+     548: 81 04 00 54  	b.ne	0x5d8 <nfc_dynamic_protection_ioctl+0xb4>
+     54c: 60 e2 41 f9  	ldr	x0, [x19, #960]
+     550: 00 00 00 94  	bl	0x550 <nfc_dynamic_protection_ioctl+0x2c> // gpiod_get_value+0x0
+     554: e2 03 00 2a  	mov	w2, w0
+     558: 00 00 00 90  	adrp	x0, 0x0 <nfc_dynamic_protection_ioctl+0x34> // '\x017%s: value %d\n'
+     55c: 01 00 00 90  	adrp	x1, 0x0 <nfc_dynamic_protection_ioctl+0x38> // 'nfc_dynamic_protection_ioctl'
+     560: 00 00 00 91  	add	x0, x0, #0 // '\x017%s: value %d\n'
+     564: 21 00 00 91  	add	x1, x1, #0 // 'nfc_dynamic_protection_ioctl'
+     568: 00 00 00 94  	bl	0x568 <nfc_dynamic_protection_ioctl+0x44> // _printk+0x0
+     56c: 60 e2 41 f9  	ldr	x0, [x19, #960]
+     570: e1 03 1f 2a  	mov	w1, wzr
+     574: 00 00 00 94  	bl	0x574 <nfc_dynamic_protection_ioctl+0x50> // gpiod_set_value+0x0
+     578: 28 00 80 52  	mov	w8, #1
+     57c: 00 00 00 90  	adrp	x0, 0x0 <nfc_dynamic_protection_ioctl+0x58> // '\x016Driver Secure flag set successful\n'
+     580: f4 03 1f 2a  	mov	w20, wzr
+     584: 00 00 00 91  	add	x0, x0, #0 // '\x016Driver Secure flag set successful\n'
+     588: 68 72 0f 39  	strb	w8, [x19, #988]
+     58c: 27 00 00 14  	b	0x628 <nfc_dynamic_protection_ioctl+0x104>
+     590: 15 00 00 90  	adrp	x21, 0x0 <nfc_dynamic_protection_ioctl+0x6c> // +0x10
+     594: 68 56 40 f9  	ldr	x8, [x19, #168]
+     598: 7f 72 0f 39  	strb	wzr, [x19, #988]
+     59c: a9 02 40 39  	ldrb	w9, [x21] // +0x10
+     5a0: 3f 05 00 71  	cmp	w9, #1
+     5a4: 21 02 00 54  	b.ne	0x5e8 <nfc_dynamic_protection_ioctl+0xc4>
+     5a8: 01 00 00 90  	adrp	x1, 0x0 <nfc_dynamic_protection_ioctl+0x84> // 'reset'
+     5ac: 00 81 00 91  	add	x0, x8, #32
+     5b0: 21 00 00 91  	add	x1, x1, #0 // 'reset'
+     5b4: e2 00 80 52  	mov	w2, #7
+     5b8: 00 00 00 94  	bl	0x5b8 <nfc_dynamic_protection_ioctl+0x94> // devm_gpiod_get+0x0
+     5bc: 60 e2 01 f9  	str	x0, [x19, #960]
+     5c0: 40 02 00 b4  	cbz	x0, 0x608 <nfc_dynamic_protection_ioctl+0xe4>
+     5c4: 1f fc 3f b1  	cmn	x0, #4095
+     5c8: 02 02 00 54  	b.hs	0x608 <nfc_dynamic_protection_ioctl+0xe4>
+     5cc: f4 03 1f 2a  	mov	w20, wzr
+     5d0: bf 02 00 39  	strb	wzr, [x21] // +0x10
+     5d4: 13 00 00 14  	b	0x620 <nfc_dynamic_protection_ioctl+0xfc>
+     5d8: 00 00 00 90  	adrp	x0, 0x0 <nfc_dynamic_protection_ioctl+0xb4> // '\x016INVALID ARG\n'
+     5dc: 54 40 80 12  	mov	w20, #-515
+     5e0: 00 00 00 91  	add	x0, x0, #0 // '\x016INVALID ARG\n'
+     5e4: 11 00 00 14  	b	0x628 <nfc_dynamic_protection_ioctl+0x104>
+     5e8: 60 e2 41 f9  	ldr	x0, [x19, #960]
+     5ec: 00 00 00 94  	bl	0x5ec <nfc_dynamic_protection_ioctl+0xc8> // gpiod_get_value+0x0
+     5f0: 80 00 00 35  	cbnz	w0, 0x600 <nfc_dynamic_protection_ioctl+0xdc>
+     5f4: 60 e2 41 f9  	ldr	x0, [x19, #960]
+     5f8: 21 00 80 52  	mov	w1, #1
+     5fc: 00 00 00 94  	bl	0x5fc <nfc_dynamic_protection_ioctl+0xd8> // gpiod_set_value+0x0
+     600: f4 03 1f 2a  	mov	w20, wzr
+     604: 07 00 00 14  	b	0x620 <nfc_dynamic_protection_ioctl+0xfc>
+     608: 00 00 00 90  	adrp	x0, 0x0 <nfc_dynamic_protection_ioctl+0xe4> // '\x014%s : Unable to request reset-gpios\n'
+     60c: 01 00 00 90  	adrp	x1, 0x0 <nfc_dynamic_protection_ioctl+0xe8> // 'nfc_dynamic_protection_ioctl'
+     610: 00 00 00 91  	add	x0, x0, #0 // '\x014%s : Unable to request reset-gpios\n'
+     614: 21 00 00 91  	add	x1, x1, #0 // 'nfc_dynamic_protection_ioctl'
+     618: 00 00 00 94  	bl	0x618 <nfc_dynamic_protection_ioctl+0xf4> // _printk+0x0
+     61c: 54 02 80 12  	mov	w20, #-19
+     620: 00 00 00 90  	adrp	x0, 0x0 <nfc_dynamic_protection_ioctl+0xfc> // '\x016Driver Secure flag clear successful\n'
+     624: 00 00 00 91  	add	x0, x0, #0 // '\x016Driver Secure flag clear successful\n'
+     628: 00 00 00 94  	bl	0x628 <nfc_dynamic_protection_ioctl+0x104> // _printk+0x0
+     62c: e0 03 14 2a  	mov	w0, w20
+     630: f5 0b 40 f9  	ldr	x21, [sp, #16]
+     634: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+     638: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+     63c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     640: bf 23 03 d5  	hint	#29
+     644: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/stm_nfc_i2c.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000000648 <nfc_hw_secure_check>:
+     648: 3f 23 03 d5  	hint	#25
+     64c: ff 83 02 d1  	sub	sp, sp, #160
+     650: 5e 86 00 f8  	str	x30, [x18], #8
+     654: fd 7b 07 a9  	stp	x29, x30, [sp, #112]
+     658: fd c3 01 91  	add	x29, sp, #112
+     65c: f6 57 08 a9  	stp	x22, x21, [sp, #128]
+     660: f4 4f 09 a9  	stp	x20, x19, [sp, #144]
+     664: 08 41 38 d5  	mrs	x8, SP_EL0
+     668: c9 a0 80 52  	mov	w9, #1286
+     66c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     670: e0 43 00 91  	add	x0, sp, #16
+     674: a8 83 1f f8  	stur	x8, [x29, #-8]
+     678: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+     67c: e9 0f 00 b9  	str	w9, [sp, #12]
+     680: ff ff 03 a9  	stp	xzr, xzr, [sp, #56]
+     684: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+     688: ff 23 00 39  	strb	wzr, [sp, #8]
+     68c: 00 00 00 94  	bl	0x68c <nfc_hw_secure_check+0x44> // get_client_env_object+0x0
+     690: 00 07 00 35  	cbnz	w0, 0x770 <nfc_hw_secure_check+0x128>
+     694: f3 53 41 a9  	ldp	x19, x20, [sp, #16]
+     698: 80 5a 95 d2  	mov	x0, #43732
+     69c: 02 00 00 90  	adrp	x2, 0x0 <nfc_hw_secure_check+0x54> // +0x1c0
+     6a0: 80 f8 bc f2  	movk	x0, #59332, lsl #16
+     6a4: 08 21 80 52  	mov	w8, #264
+     6a8: a0 18 c5 f2  	movk	x0, #10437, lsl #32
+     6ac: e9 93 00 91  	add	x9, sp, #36
+     6b0: 8a 00 80 52  	mov	w10, #4
+     6b4: 42 00 00 91  	add	x2, x2, #0 // +0x1c0
+     6b8: c0 ca e4 f2  	movk	x0, #9814, lsl #48
+     6bc: e1 03 13 aa  	mov	x1, x19
+     6c0: bf ff 3e a9  	stp	xzr, xzr, [x29, #-24]
+     6c4: e8 27 00 b9  	str	w8, [sp, #36]
+     6c8: a9 ab 3d a9  	stp	x9, x10, [x29, #-40]
+     6cc: 00 00 00 94  	bl	0x6cc <nfc_hw_secure_check+0x84> // __cfi_slowpath_diag+0x0
+     6d0: a2 a3 00 d1  	sub	x2, x29, #40
+     6d4: e0 03 14 aa  	mov	x0, x20
+     6d8: e1 03 1f 2a  	mov	w1, wzr
+     6dc: 23 00 82 52  	mov	w3, #4097
+     6e0: 60 02 3f d6  	blr	x19
+     6e4: 20 05 00 35  	cbnz	w0, 0x788 <nfc_hw_secure_check+0x140>
+     6e8: b4 d7 7e a9  	ldp	x20, x21, [x29, #-24]
+     6ec: 80 5a 95 d2  	mov	x0, #43732
+     6f0: 02 00 00 90  	adrp	x2, 0x0 <nfc_hw_secure_check+0xa8> // +0x1c0
+     6f4: 80 f8 bc f2  	movk	x0, #59332, lsl #16
+     6f8: e8 33 00 91  	add	x8, sp, #12
+     6fc: a0 18 c5 f2  	movk	x0, #10437, lsl #32
+     700: 89 00 80 52  	mov	w9, #4
+     704: ea 23 00 91  	add	x10, sp, #8
+     708: 33 00 80 52  	mov	w19, #1
+     70c: 42 00 00 91  	add	x2, x2, #0 // +0x1c0
+     710: c0 ca e4 f2  	movk	x0, #9814, lsl #48
+     714: e1 03 14 aa  	mov	x1, x20
+     718: e8 a7 02 a9  	stp	x8, x9, [sp, #40]
+     71c: ea cf 03 a9  	stp	x10, x19, [sp, #56]
+     720: 00 00 00 94  	bl	0x720 <nfc_hw_secure_check+0xd8> // __cfi_slowpath_diag+0x0
+     724: e2 a3 00 91  	add	x2, sp, #40
+     728: e0 03 15 aa  	mov	x0, x21
+     72c: 21 00 80 52  	mov	w1, #1
+     730: 23 02 80 52  	mov	w3, #17
+     734: 80 02 3f d6  	blr	x20
+     738: f6 03 00 2a  	mov	w22, w0
+     73c: 00 00 00 90  	adrp	x0, 0x0 <nfc_hw_secure_check+0xf4> // '\x016SMC invoke ret: %d state: %d\n'
+     740: e2 23 40 39  	ldrb	w2, [sp, #8]
+     744: 00 00 00 91  	add	x0, x0, #0 // '\x016SMC invoke ret: %d state: %d\n'
+     748: e1 03 16 2a  	mov	w1, w22
+     74c: 00 00 00 94  	bl	0x74c <nfc_hw_secure_check+0x104> // _printk+0x0
+     750: f6 02 00 34  	cbz	w22, 0x7ac <nfc_hw_secure_check+0x164>
+     754: df 2a 00 71  	cmp	w22, #10
+     758: 01 03 00 54  	b.ne	0x7b8 <nfc_hw_secure_check+0x170>
+     75c: 00 00 00 90  	adrp	x0, 0x0 <nfc_hw_secure_check+0x114> // '\x017Secure HW mode is not updated. Peripheral not found\n'
+     760: 00 00 00 91  	add	x0, x0, #0 // '\x017Secure HW mode is not updated. Peripheral not found\n'
+     764: 00 00 00 94  	bl	0x764 <nfc_hw_secure_check+0x11c> // _printk+0x0
+     768: f3 03 1f 2a  	mov	w19, wzr
+     76c: 13 00 00 14  	b	0x7b8 <nfc_hw_secure_check+0x170>
+     770: e1 03 00 2a  	mov	w1, w0
+     774: 00 00 00 90  	adrp	x0, 0x0 <nfc_hw_secure_check+0x12c> // '\x013Failed to get client_env_object, ret: %d\n'
+     778: 00 00 00 91  	add	x0, x0, #0 // '\x013Failed to get client_env_object, ret: %d\n'
+     77c: 00 00 00 94  	bl	0x77c <nfc_hw_secure_check+0x134> // _printk+0x0
+     780: 33 00 80 52  	mov	w19, #1
+     784: 28 00 00 14  	b	0x824 <nfc_hw_secure_check+0x1dc>
+     788: f3 03 00 2a  	mov	w19, w0
+     78c: 00 00 00 90  	adrp	x0, 0x0 <nfc_hw_secure_check+0x144> // '\x017Failed to get app_object, ret: %d\n'
+     790: 00 00 00 91  	add	x0, x0, #0 // '\x017Failed to get app_object, ret: %d\n'
+     794: e1 03 13 2a  	mov	w1, w19
+     798: 00 00 00 94  	bl	0x798 <nfc_hw_secure_check+0x150> // _printk+0x0
+     79c: 7f 32 00 71  	cmp	w19, #12
+     7a0: c0 05 00 54  	b.eq	0x858 <nfc_hw_secure_check+0x210>
+     7a4: 33 00 80 52  	mov	w19, #1
+     7a8: 11 00 00 14  	b	0x7ec <nfc_hw_secure_check+0x1a4>
+     7ac: e8 23 40 39  	ldrb	w8, [sp, #8]
+     7b0: 1f 05 00 71  	cmp	w8, #1
+     7b4: f3 17 9f 1a  	cset	w19, eq
+     7b8: 80 5a 95 d2  	mov	x0, #43732
+     7bc: 02 00 00 90  	adrp	x2, 0x0 <nfc_hw_secure_check+0x174> // +0x1c0
+     7c0: 80 f8 bc f2  	movk	x0, #59332, lsl #16
+     7c4: 42 00 00 91  	add	x2, x2, #0 // +0x1c0
+     7c8: a0 18 c5 f2  	movk	x0, #10437, lsl #32
+     7cc: e1 03 14 aa  	mov	x1, x20
+     7d0: c0 ca e4 f2  	movk	x0, #9814, lsl #48
+     7d4: 00 00 00 94  	bl	0x7d4 <nfc_hw_secure_check+0x18c> // __cfi_slowpath_diag+0x0
+     7d8: e0 03 15 aa  	mov	x0, x21
+     7dc: e1 ff 9f 52  	mov	w1, #65535
+     7e0: e2 03 1f aa  	mov	x2, xzr
+     7e4: e3 03 1f 2a  	mov	w3, wzr
+     7e8: 80 02 3f d6  	blr	x20
+     7ec: f4 57 41 a9  	ldp	x20, x21, [sp, #16]
+     7f0: 80 5a 95 d2  	mov	x0, #43732
+     7f4: 02 00 00 90  	adrp	x2, 0x0 <nfc_hw_secure_check+0x1ac> // +0x1c0
+     7f8: 80 f8 bc f2  	movk	x0, #59332, lsl #16
+     7fc: 42 00 00 91  	add	x2, x2, #0 // +0x1c0
+     800: a0 18 c5 f2  	movk	x0, #10437, lsl #32
+     804: c0 ca e4 f2  	movk	x0, #9814, lsl #48
+     808: e1 03 14 aa  	mov	x1, x20
+     80c: 00 00 00 94  	bl	0x80c <nfc_hw_secure_check+0x1c4> // __cfi_slowpath_diag+0x0
+     810: e0 03 15 aa  	mov	x0, x21
+     814: e1 ff 9f 52  	mov	w1, #65535
+     818: e2 03 1f aa  	mov	x2, xzr
+     81c: e3 03 1f 2a  	mov	w3, wzr
+     820: 80 02 3f d6  	blr	x20
+     824: 08 41 38 d5  	mrs	x8, SP_EL0
+     828: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     82c: a9 83 5f f8  	ldur	x9, [x29, #-8]
+     830: 1f 01 09 eb  	cmp	x8, x9
+     834: c1 01 00 54  	b.ne	0x86c <nfc_hw_secure_check+0x224>
+     838: e0 03 13 2a  	mov	w0, w19
+     83c: f4 4f 49 a9  	ldp	x20, x19, [sp, #144]
+     840: f6 57 48 a9  	ldp	x22, x21, [sp, #128]
+     844: fd 7b 47 a9  	ldp	x29, x30, [sp, #112]
+     848: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     84c: ff 83 02 91  	add	sp, sp, #160
+     850: bf 23 03 d5  	hint	#29
+     854: c0 03 5f d6  	ret
+     858: 00 00 00 90  	adrp	x0, 0x0 <nfc_hw_secure_check+0x210> // '\x017Secure HW feature not supported\n'
+     85c: 00 00 00 91  	add	x0, x0, #0 // '\x017Secure HW feature not supported\n'
+     860: 00 00 00 94  	bl	0x860 <nfc_hw_secure_check+0x218> // _printk+0x0
+     864: f3 03 1f 2a  	mov	w19, wzr
+     868: e1 ff ff 17  	b	0x7ec <nfc_hw_secure_check+0x1a4>
+     86c: 00 00 00 94  	bl	0x86c <nfc_hw_secure_check+0x224> // __stack_chk_fail+0x0
