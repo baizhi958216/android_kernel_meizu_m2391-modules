@@ -19,6 +19,7 @@
 
 #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
 
+#include <drm/drm_gem_atomic_helper.h>
 #include <linux/debugfs.h>
 #include <linux/dma-buf.h>
 #include <drm/sde_drm.h>
@@ -1999,6 +2000,10 @@ static int sde_plane_prepare_fb(struct drm_plane *plane,
 
 	if (!fb)
 		return 0;
+
+	ret = drm_gem_plane_helper_prepare_fb(plane, new_state);
+	if (ret)
+		return ret;
 
 	SDE_DEBUG_PLANE(psde, "FB[%u]\n", fb->base.id);
 

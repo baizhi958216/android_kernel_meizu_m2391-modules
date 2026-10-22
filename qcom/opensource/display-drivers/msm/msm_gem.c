@@ -832,16 +832,15 @@ void msm_gem_vunmap(struct drm_gem_object *obj, enum msm_gem_lock subclass)
 
 int msm_gem_cpu_prep(struct drm_gem_object *obj, uint32_t op, ktime_t *timeout)
 {
-	struct msm_gem_object *msm_obj = to_msm_bo(obj);
 	bool write = !!(op & MSM_PREP_WRITE);
 	unsigned long remain =
 		op & MSM_PREP_NOSYNC ? 0 : timeout_to_jiffies(timeout);
 	long ret;
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-	ret = dma_resv_wait_timeout(msm_obj->resv, write, true, remain);
+	ret = dma_resv_wait_timeout(obj->resv, dma_resv_usage_rw(write), true, remain);
 #else
-	ret = dma_resv_wait_timeout_rcu(msm_obj->resv, write, true, remain);
+	ret = dma_resv_wait_timeout_rcu(obj->resv, write, true, remain);
 #endif
 	if (ret == 0)
 		return remain == 0 ? -EBUSY : -ETIMEDOUT;
@@ -905,9 +904,6 @@ void msm_gem_free_object(struct drm_gem_object *obj)
 		msm_gem_vunmap_locked(obj);
 		put_pages(obj);
 	}
-
-	if (msm_obj->resv == &msm_obj->_resv)
-		dma_resv_fini(msm_obj->resv);
 
 	drm_gem_object_release(obj);
 
@@ -994,12 +990,7 @@ static int msm_gem_new_impl(struct drm_device *dev,
 	msm_obj->flags = flags;
 	msm_obj->madv = MSM_MADV_WILLNEED;
 
-	if (resv) {
-		msm_obj->resv = resv;
-	} else {
-		msm_obj->resv = &msm_obj->_resv;
-		dma_resv_init(msm_obj->resv);
-	}
+	msm_obj->base.resv = resv;
 
 	INIT_LIST_HEAD(&msm_obj->submit_entry);
 	INIT_LIST_HEAD(&msm_obj->vmas);
