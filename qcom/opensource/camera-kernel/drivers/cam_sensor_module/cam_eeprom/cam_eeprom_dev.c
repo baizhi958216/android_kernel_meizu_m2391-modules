@@ -5,6 +5,7 @@
  */
 
 #include "cam_eeprom_dev.h"
+#include "cam_eeprom_meizu.h"
 #include "cam_req_mgr_dev.h"
 #include "cam_eeprom_soc.h"
 #include "cam_eeprom_core.h"
@@ -565,6 +566,8 @@ static int cam_eeprom_component_bind(struct device *dev,
 
 	g_i3c_eeprom_data[e_ctrl->soc_info.index].e_ctrl = e_ctrl;
 	init_completion(&g_i3c_eeprom_data[e_ctrl->soc_info.index].probe_complete);
+	if (cam_eeprom_meizu_sysfs_init(e_ctrl))
+		CAM_ERR(CAM_EEPROM, "Failed to create M2391 EEPROM diagnostics");
 
 	return rc;
 free_soc:
@@ -597,6 +600,7 @@ static void cam_eeprom_component_unbind(struct device *dev,
 	}
 
 	CAM_DBG(CAM_EEPROM, "Component unbind called for: %s", pdev->name);
+	cam_eeprom_meizu_sysfs_remove(e_ctrl);
 	soc_info = &e_ctrl->soc_info;
 
 	for (i = 0; i < soc_info->num_clk; i++)
