@@ -80,8 +80,8 @@ ifeq ($(call cc-option-yn, -Wmaybe-uninitialized),y)
 EXTRA_CFLAGS += -Wmaybe-uninitialized
 endif
 
-KBUILD_EXTRA_SYMBOLS +=$(OUT)/obj/sm8550-modules/qcom/opensource/display-drivers/hdcp/Module.symvers
-KBUILD_EXTRA_SYMBOLS +=$(OUT)/obj/sm8550-modules/qcom/opensource/display-drivers/msm/Module.symvers
+KBUILD_EXTRA_SYMBOLS +=$(OUT)/obj/m2391-modules/qcom/opensource/display-drivers/hdcp/Module.symvers
+KBUILD_EXTRA_SYMBOLS +=$(OUT)/obj/m2391-modules/qcom/opensource/display-drivers/msm/Module.symvers
 
 ifeq ($(call cc-option-yn, -Wheader-guard),y)
 EXTRA_CFLAGS += -Wheader-guard
@@ -234,6 +234,7 @@ msm_drm-$(CONFIG_DRM_MSM_DSI) += dsi/dsi_phy.o \
 				 dsi/dsi_drm.o \
 				 dsi/dsi_display.o \
 				 dsi/dsi_panel.o \
+					 dsi/dsi_meizu.o \
 				 dsi/dsi_clk_manager.o \
 				 dsi/dsi_display_test.o
 

@@ -121,6 +121,14 @@ struct cam_ois_ctrl_t {
 	uint8_t ois_fw_flag;
 	uint8_t is_ois_calib;
 	struct cam_ois_opcode opcode;
+	int meizu_enable_status;
+	int meizu_cali_result;
+	int meizu_sanity_criterion;
+	int meizu_sanity_count;
+	int meizu_sanity_level;
+	u32 meizu_read_address;
+	enum camera_sensor_i2c_type meizu_read_width;
+	bool meizu_sysfs_ready;
 };
 
 /**

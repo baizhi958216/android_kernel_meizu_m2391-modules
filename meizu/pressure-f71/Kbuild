@@ -1,0 +1,5 @@
+obj-m += cs_press_f71.o
+cs_press_f71-y := cs_f71_main.o cs_f71_transport.o cs_f71_firmware.o \
+	cs_f71_firmware_work.o cs_f71_commands.o cs_f71_samples.o \
+	cs_f71_calibration.o cs_f71_events.o cs_f71_power.o cs_f71_irq.o \
+	cs_f71_runtime.o cs_f71_proc.o cs_f71_proc_write.o cs_f71_misc.o

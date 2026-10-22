@@ -9,6 +9,7 @@
 #include <media/cam_sensor.h>
 
 #include "cam_eeprom_core.h"
+#include "cam_eeprom_meizu.h"
 #include "cam_eeprom_soc.h"
 #include "cam_debug_util.h"
 #include "cam_common_util.h"
@@ -54,6 +55,15 @@ static int cam_eeprom_read_memory(struct cam_eeprom_ctrl_t *e_ctrl,
 					rc);
 				return rc;
 			}
+		}
+
+		rc = cam_eeprom_meizu_read_map(e_ctrl, &emap[j], memptr);
+		if (rc < 0)
+			return rc;
+		if (rc > 0) {
+			memptr += emap[j].mem.valid_size;
+			rc = 0;
+			continue;
 		}
 
 		if (emap[j].page.valid_size) {
@@ -135,6 +145,7 @@ static int cam_eeprom_read_memory(struct cam_eeprom_ctrl_t *e_ctrl,
 			}
 		}
 	}
+	cam_eeprom_meizu_cache_otp(e_ctrl);
 	return rc;
 }
 
@@ -1566,6 +1577,10 @@ int32_t cam_eeprom_driver_cmd(struct cam_eeprom_ctrl_t *e_ctrl, void *arg)
 			goto release_mutex;
 		}
 		break;
+	case 0x202: /* Original M2391 calibration partition write ABI. */
+		rc = cam_eeprom_meizu_write_partition(e_ctrl, cmd->handle);
+		break;
+
 	default:
 		CAM_DBG(CAM_EEPROM, "invalid opcode");
 		break;

@@ -16,6 +16,7 @@
 #include <linux/string.h>
 #include "dsi_drm.h"
 #include "dsi_display.h"
+#include "dsi_meizu.h"
 #include "sde_crtc.h"
 #include "sde_rm.h"
 #include "sde_vm.h"
@@ -1199,6 +1200,9 @@ void sde_connector_destroy(struct drm_connector *connector)
 	}
 
 	c_conn = to_sde_connector(connector);
+
+	/* Block factory ESD rearm before cancelling work or freeing connector. */
+	dsi_meizu_connector_remove(connector);
 
 	/* cancel if any pending esd work */
 	sde_connector_schedule_status_work(connector, false);

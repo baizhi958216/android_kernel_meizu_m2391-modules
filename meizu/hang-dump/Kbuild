@@ -1,0 +1,1 @@
+obj-m += mz_hang_dump.o

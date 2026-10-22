@@ -1,5 +1,7 @@
 # We can build either as part of a standalone Kernel build or as
 # an external module.  Determine which mechanism is being used
+ccflags-$(CONFIG_M2391_AUDIO_MACHINE_RECOVERY) += -DCONFIG_M2391_AUDIO_MACHINE_RECOVERY
+
 ifeq ($(MODNAME),)
 	KERNEL_BUILD := 1
 else

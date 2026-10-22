@@ -1,0 +1,1 @@
+obj-m += xcharge_mbattery_logger.o

@@ -39,6 +39,8 @@
 #define MAX_FASTRPC_DRIVER_NUM		(MAX_DSP_SESSION_NUM)
 
 int cvp_dsp_device_init(void);
+void cvp_dsp_prepare_stop(void);
+void cvp_dsp_device_stop(void);
 void cvp_dsp_device_exit(void);
 void cvp_dsp_send_hfi_queue(void);
 void cvp_dsp_init_hfi_queue_hdr(struct iris_hfi_device *device);
@@ -183,6 +185,7 @@ struct cvp_dsp_fastrpc_driver_entry {
 	uint32_t session_cnt;
 	uint32_t driver_name_idx;
 	atomic_t refcount;
+	wait_queue_head_t ref_wait;
 	struct fastrpc_driver cvp_fastrpc_driver;
 	struct fastrpc_device *cvp_fastrpc_device;
 	struct completion fastrpc_probe_completion;

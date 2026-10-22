@@ -14,6 +14,15 @@
 
 static atomic_t nr_maps;
 struct cvp_dsp_apps gfa_cv;
+static bool cvp_dsp_initialized, cvp_dsp_registered, cvp_dsp_stopping;
+static DEFINE_SPINLOCK(cvp_frpc_work_lock);
+static DEFINE_MUTEX(cvp_frpc_cleanup_lock);
+static struct workqueue_struct *cvp_frpc_cleanup_wq;
+struct cvp_frpc_cleanup {
+	struct work_struct work;
+	u32 handle;
+	struct fastrpc_device *device;
+};
 static int hlosVM[HLOS_VM_NUM] = {VMID_HLOS};
 static int dspVM[DSP_VM_NUM] = {VMID_HLOS, VMID_CDSP_Q6};
 static int dspVMperm[DSP_VM_NUM] = { PERM_READ | PERM_WRITE | PERM_EXEC,
@@ -277,7 +286,7 @@ static int delete_dsp_session(struct msm_cvp_inst *inst,
 	hdev = inst->core->device;
 	call_hfi_op(hdev, pm_qos_update, hdev->hfi_device_data);
 
-	rc = msm_cvp_close(inst);
+	rc = msm_cvp_core_close(inst);
 	if (rc)
 		dprintk(CVP_ERR, "Warning: Failed to close cvp instance\n");
 
@@ -317,88 +326,42 @@ static void eva_fastrpc_driver_release_name(
 		DRIVER_NAME_AVAILABLE;
 }
 
-/* The function may not return for up to 50ms */
+/* Unpublish before draining: only bounded in-kernel users retain references. */
 static bool dequeue_frpc_node(struct cvp_dsp_fastrpc_driver_entry *node)
 {
 	struct cvp_dsp_apps *me = &gfa_cv;
-	struct cvp_dsp_fastrpc_driver_entry *frpc_node = NULL;
-	struct list_head *ptr = NULL, *next = NULL;
-	u32 refcount, max_count = 10;
-	bool rc = false;
+	struct cvp_dsp_fastrpc_driver_entry *entry;
+	bool found = false;
 
-	if (!node)
-		return rc;
-
-search_again:
-	ptr = &me->fastrpc_driver_list.list;
 	mutex_lock(&me->fastrpc_driver_list.lock);
-	list_for_each_safe(ptr, next, &me->fastrpc_driver_list.list) {
-		frpc_node = list_entry(ptr,
-			struct cvp_dsp_fastrpc_driver_entry, list);
-
-		if (frpc_node == node) {
-			refcount = atomic_read(&frpc_node->refcount);
-			if (refcount > 0) {
-				mutex_unlock(&me->fastrpc_driver_list.lock);
-				usleep_range(5000, 10000);
-				if (max_count-- == 0) {
-					dprintk(CVP_ERR, "%s timeout\n",
-							__func__);
-					goto exit;
-				}
-				goto search_again;
-			}
-			list_del(&frpc_node->list);
-			rc = true;
+	list_for_each_entry(entry, &me->fastrpc_driver_list.list, list) {
+		if (entry == node) {
+			list_del_init(&node->list);
+			found = true;
 			break;
 		}
 	}
 	mutex_unlock(&me->fastrpc_driver_list.lock);
-exit:
-	return rc;
+	if (found)
+		wait_event(node->ref_wait, !atomic_read(&node->refcount));
+	return found;
 }
 
-/* The function may not return for up to 50ms */
 static struct cvp_dsp_fastrpc_driver_entry *pop_frpc_node(void)
 {
 	struct cvp_dsp_apps *me = &gfa_cv;
-	struct cvp_dsp_fastrpc_driver_entry *frpc_node = NULL;
-	struct list_head *ptr = NULL, *next = NULL;
-	u32 refcount, max_count = 10;
-
-search_again:
-	ptr = &me->fastrpc_driver_list.list;
-	if (!ptr) {
-		frpc_node = NULL;
-		goto exit;
-	}
+	struct cvp_dsp_fastrpc_driver_entry *node = NULL;
 
 	mutex_lock(&me->fastrpc_driver_list.lock);
-	list_for_each_safe(ptr, next, &me->fastrpc_driver_list.list) {
-		frpc_node = list_entry(ptr,
+	if (!list_empty(&me->fastrpc_driver_list.list)) {
+		node = list_first_entry(&me->fastrpc_driver_list.list,
 			struct cvp_dsp_fastrpc_driver_entry, list);
-
-		if (frpc_node) {
-			refcount = atomic_read(&frpc_node->refcount);
-			if (refcount > 0) {
-				mutex_unlock(&me->fastrpc_driver_list.lock);
-				usleep_range(5000, 10000);
-				if (max_count-- == 0) {
-					dprintk(CVP_ERR, "%s timeout\n",
-							__func__);
-					frpc_node = NULL;
-					goto exit;
-				}
-				goto search_again;
-			}
-			list_del(&frpc_node->list);
-			break;
-		}
+		list_del_init(&node->list);
 	}
-
 	mutex_unlock(&me->fastrpc_driver_list.lock);
-exit:
-	return frpc_node;
+	if (node)
+		wait_event(node->ref_wait, !atomic_read(&node->refcount));
+	return node;
 }
 
 static void cvp_dsp_rpmsg_remove(struct rpmsg_device *rpdev)
@@ -444,6 +407,10 @@ static int cvp_dsp_rpmsg_callback(struct rpmsg_device *rpdev,
 	struct cvp_dsp_rsp_msg *rsp = (struct cvp_dsp_rsp_msg *)data;
 	struct cvp_dsp_apps *me = &gfa_cv;
 
+	if (READ_ONCE(cvp_dsp_stopping))
+		return -ESHUTDOWN;
+	if (len < sizeof(rsp->type))
+		return -EINVAL;
 	dprintk(CVP_DSP, "%s: type = 0x%x ret = 0x%x len = 0x%x\n",
 		__func__, rsp->type, rsp->ret, len);
 
@@ -561,7 +528,7 @@ int cvp_dsp_resume(uint32_t session_flag)
 	return rc;
 }
 
-static void cvp_remove_dsp_sessions(void)
+static void cvp_remove_dsp_sessions_owned(void)
 {
 	struct cvp_dsp_apps *me = &gfa_cv;
 	struct cvp_dsp_fastrpc_driver_entry *frpc_node = NULL;
@@ -578,11 +545,11 @@ static void cvp_remove_dsp_sessions(void)
 			inst = list_entry(s, struct msm_cvp_inst,
 					dsp_list);
 			if (inst) {
-				delete_dsp_session(inst, frpc_node);
 				mutex_lock(&frpc_node->dsp_sessions.lock);
-				list_del(&inst->dsp_list);
+				list_del_init(&inst->dsp_list);
 				frpc_node->session_cnt--;
 				mutex_unlock(&frpc_node->dsp_sessions.lock);
+				delete_dsp_session(inst, frpc_node);
 			}
 		}
 
@@ -599,11 +566,20 @@ static void cvp_remove_dsp_sessions(void)
 		mutex_lock(&me->driver_name_lock);
 		eva_fastrpc_driver_release_name(frpc_node);
 		mutex_unlock(&me->driver_name_lock);
+		if (frpc_node->cvp_fastrpc_device)
+			put_device(&frpc_node->cvp_fastrpc_device->dev);
 		kfree(frpc_node);
 		frpc_node = NULL;
 	}
 
 	dprintk(CVP_WARN, "%s: EVA SSR handled for CDSP\n", __func__);
+}
+
+static void cvp_remove_dsp_sessions(void)
+{
+	mutex_lock(&cvp_frpc_cleanup_lock);
+	cvp_remove_dsp_sessions_owned();
+	mutex_unlock(&cvp_frpc_cleanup_lock);
 }
 
 int cvp_dsp_shutdown(uint32_t session_flag)
@@ -616,7 +592,8 @@ int cvp_dsp_shutdown(uint32_t session_flag)
 	cmd.type = CPU2DSP_SHUTDOWN;
 
 	mutex_lock(&me->tx_lock);
-	if (me->state == DSP_INVALID)
+	if (READ_ONCE(cvp_dsp_stopping) || kthread_should_stop() ||
+	    me->state == DSP_INVALID)
 		goto exit;
 
 	me->state = DSP_INACTIVE;
@@ -945,8 +922,8 @@ static int cvp_reinit_dsp(void)
 
 static void cvp_put_fastrpc_node(struct cvp_dsp_fastrpc_driver_entry *node)
 {
-	if (node && (atomic_read(&node->refcount) > 0))
-		atomic_dec(&node->refcount);
+	if (node && atomic_dec_and_test(&node->refcount))
+		wake_up_all(&node->ref_wait);
 }
 
 static struct cvp_dsp_fastrpc_driver_entry *cvp_get_fastrpc_node_with_handle(
@@ -976,6 +953,7 @@ static struct cvp_dsp_fastrpc_driver_entry *cvp_get_fastrpc_node_with_handle(
 }
 
 static void eva_fastrpc_driver_unregister(uint32_t handle, bool force_exit);
+static void eva_fastrpc_driver_unregister_owned(uint32_t handle, bool force_exit);
 
 static int cvp_fastrpc_probe(struct fastrpc_device *rpc_dev)
 {
@@ -986,6 +964,9 @@ static int cvp_fastrpc_probe(struct fastrpc_device *rpc_dev)
 
 	frpc_node = cvp_get_fastrpc_node_with_handle(rpc_dev->handle);
 	if (frpc_node) {
+		get_device(&rpc_dev->dev);
+		if (frpc_node->cvp_fastrpc_device)
+			put_device(&frpc_node->cvp_fastrpc_device->dev);
 		frpc_node->cvp_fastrpc_device = rpc_dev;
 		// static structure with signal and pid
 		complete(&frpc_node->fastrpc_probe_completion);
@@ -995,18 +976,53 @@ static int cvp_fastrpc_probe(struct fastrpc_device *rpc_dev)
 	return 0;
 }
 
+static void cvp_frpc_cleanup_work(struct work_struct *work)
+{
+	struct cvp_frpc_cleanup *cleanup = container_of(work,
+		struct cvp_frpc_cleanup, work);
+
+	struct cvp_dsp_fastrpc_driver_entry *node;
+	bool matches;
+
+	mutex_lock(&gfa_cv.rx_lock);
+	mutex_lock(&cvp_frpc_cleanup_lock);
+	node = cvp_get_fastrpc_node_with_handle(cleanup->handle);
+	matches = node && node->cvp_fastrpc_device == cleanup->device;
+	if (node)
+		cvp_put_fastrpc_node(node);
+	if (matches)
+		eva_fastrpc_driver_unregister_owned(cleanup->handle, true);
+	mutex_unlock(&cvp_frpc_cleanup_lock);
+	mutex_unlock(&gfa_cv.rx_lock);
+	put_device(&cleanup->device->dev);
+	kfree(cleanup);
+}
+
 static int cvp_fastrpc_callback(struct fastrpc_device *rpc_dev,
 			enum fastrpc_driver_status fastrpc_proc_num)
 {
-	dprintk(CVP_DSP, "%s handle 0x%x, proc %d\n", __func__,
-			rpc_dev->handle, fastrpc_proc_num);
+	struct cvp_frpc_cleanup *cleanup;
+	unsigned long flags;
 
-	/* fastrpc drive down when process gone
-	 * any handling can happen here, such as
-	 * eva_fastrpc_driver_unregister(rpc_dev->handle, true);
+	/* The bus callback runs inside driver-core removal. Never recursively
+	 * unregister the same driver here, or retain its borrowed device pointer.
 	 */
-	eva_fastrpc_driver_unregister(rpc_dev->handle, true);
-
+	cleanup = kzalloc(sizeof(*cleanup), GFP_KERNEL);
+	if (!cleanup)
+		return -ENOMEM;
+	cleanup->handle = rpc_dev->handle;
+	get_device(&rpc_dev->dev);
+	cleanup->device = rpc_dev;
+	INIT_WORK(&cleanup->work, cvp_frpc_cleanup_work);
+	spin_lock_irqsave(&cvp_frpc_work_lock, flags);
+	if (!cvp_dsp_stopping && cvp_frpc_cleanup_wq) {
+		queue_work(cvp_frpc_cleanup_wq, &cleanup->work);
+		cleanup = NULL;
+	}
+	spin_unlock_irqrestore(&cvp_frpc_work_lock, flags);
+	if (cleanup)
+		put_device(&cleanup->device->dev);
+	kfree(cleanup);
 	return 0;
 }
 
@@ -1147,7 +1163,7 @@ int cvp_dsp_del_sess(uint32_t process_id, struct msm_cvp_inst *inst)
 	return 0;
 }
 
-static int eva_fastrpc_driver_register(uint32_t handle)
+static int eva_fastrpc_driver_register_owned(uint32_t handle)
 {
 	struct cvp_dsp_apps *me = &gfa_cv;
 	int rc = 0;
@@ -1185,6 +1201,7 @@ static int eva_fastrpc_driver_register(uint32_t handle)
 
 		/* Init completion */
 		init_completion(&frpc_node->fastrpc_probe_completion);
+		init_waitqueue_head(&frpc_node->ref_wait);
 
 		mutex_lock(&me->fastrpc_driver_list.lock);
 		list_add_tail(&frpc_node->list, &me->fastrpc_driver_list.list);
@@ -1227,11 +1244,23 @@ fail_fastrpc_driver_register:
 	eva_fastrpc_driver_release_name(frpc_node);
 	mutex_unlock(&me->driver_name_lock);
 fail_fastrpc_driver_get_name:
+	if (frpc_node->cvp_fastrpc_device)
+		put_device(&frpc_node->cvp_fastrpc_device->dev);
 	kfree(frpc_node);
 	return -EINVAL;
 }
 
-static void eva_fastrpc_driver_unregister(uint32_t handle, bool force_exit)
+static int eva_fastrpc_driver_register(uint32_t handle)
+{
+	int rc;
+
+	mutex_lock(&cvp_frpc_cleanup_lock);
+	rc = eva_fastrpc_driver_register_owned(handle);
+	mutex_unlock(&cvp_frpc_cleanup_lock);
+	return rc;
+}
+
+static void eva_fastrpc_driver_unregister_owned(uint32_t handle, bool force_exit)
 {
 	struct cvp_dsp_apps *me = &gfa_cv;
 	struct cvp_dsp_fastrpc_driver_entry *frpc_node = NULL;
@@ -1257,21 +1286,36 @@ static void eva_fastrpc_driver_unregister(uint32_t handle, bool force_exit)
 		dprintk(CVP_DSP, "%s session cnt %d, force %d\n",
 		__func__, frpc_node->session_cnt, (uint32_t)force_exit);
 
-		DEINIT_MSM_CVP_LIST(&frpc_node->dsp_sessions);
-
 		cvp_put_fastrpc_node(frpc_node);
 		if (!dequeue_frpc_node(frpc_node))
 			/* Don't find the node */
 			return;
 
+		while (!list_empty(&frpc_node->dsp_sessions.list)) {
+			struct msm_cvp_inst *inst = list_first_entry(
+				&frpc_node->dsp_sessions.list, struct msm_cvp_inst, dsp_list);
+			list_del_init(&inst->dsp_list);
+			frpc_node->session_cnt--;
+			delete_dsp_session(inst, frpc_node);
+		}
+		DEINIT_MSM_CVP_LIST(&frpc_node->dsp_sessions);
 		__fastrpc_driver_unregister(&frpc_node->cvp_fastrpc_driver);
 		mutex_lock(&me->driver_name_lock);
 		eva_fastrpc_driver_release_name(frpc_node);
 		mutex_unlock(&me->driver_name_lock);
+		if (frpc_node->cvp_fastrpc_device)
+			put_device(&frpc_node->cvp_fastrpc_device->dev);
 		kfree(frpc_node);
 	} else {
 		cvp_put_fastrpc_node(frpc_node);
 	}
+}
+
+static void eva_fastrpc_driver_unregister(uint32_t handle, bool force_exit)
+{
+	mutex_lock(&cvp_frpc_cleanup_lock);
+	eva_fastrpc_driver_unregister_owned(handle, force_exit);
+	mutex_unlock(&cvp_frpc_cleanup_lock);
 }
 
 void cvp_dsp_send_debug_mask(void)
@@ -1472,7 +1516,7 @@ static void __dsp_cvp_sess_create(struct cvp_dsp_cmd_msg *cmd)
 		return;
 	}
 
-	inst = msm_cvp_open(MSM_CORE_CVP, MSM_CVP_DSP, task);
+	inst = msm_cvp_core_open(MSM_CORE_CVP, MSM_CVP_DSP, task);
 	if (!inst) {
 		dprintk(CVP_ERR, "%s Failed create instance\n", __func__);
 		goto fail_msm_cvp_open;
@@ -1526,7 +1570,7 @@ static void __dsp_cvp_sess_create(struct cvp_dsp_cmd_msg *cmd)
 
 fail_get_session_info:
 fail_session_create:
-	msm_cvp_close(inst);
+	msm_cvp_core_close(inst);
 fail_msm_cvp_open:
 	/* unregister fastrpc driver */
 	eva_fastrpc_driver_unregister(dsp2cpu_cmd->pid, false);
@@ -1586,7 +1630,7 @@ static void __dsp_cvp_sess_delete(struct cvp_dsp_cmd_msg *cmd)
 	hdev = inst->core->device;
 	call_hfi_op(hdev, pm_qos_update, hdev->hfi_device_data);
 
-	rc = msm_cvp_close(inst);
+	rc = msm_cvp_core_close(inst);
 	if (rc) {
 		dprintk(CVP_ERR, "Warning: Failed to close cvp instance\n");
 		cmd->ret = -1;
@@ -1987,7 +2031,8 @@ wait_dsp:
 	rc = wait_for_completion_interruptible(
 			&me->completions[CPU2DSP_MAX_CMD]);
 
-	if (me->state == DSP_INVALID)
+	if (READ_ONCE(cvp_dsp_stopping) || kthread_should_stop() ||
+	    me->state == DSP_INVALID)
 		goto exit;
 
 	if (me->state == DSP_UNINIT)
@@ -2098,7 +2143,6 @@ wait_dsp:
 	goto wait_dsp;
 exit:
 	dprintk(CVP_DBG, "dsp thread exit\n");
-	do_exit(rc);
 	return rc;
 }
 
@@ -2108,6 +2152,7 @@ int cvp_dsp_device_init(void)
 	char tname[16];
 	int rc;
 	int i;
+	unsigned long flags;
 	char name[CVP_FASTRPC_DRIVER_NAME_SIZE] = "qcom,fastcv0\0";
 
 	add_va_node_to_list(CVP_DBG_DUMP, &gfa_cv, sizeof(struct cvp_dsp_apps),
@@ -2133,6 +2178,17 @@ int cvp_dsp_device_init(void)
 		name[11]++;
 	}
 
+	cvp_frpc_cleanup_wq = alloc_ordered_workqueue("cvp-frpc-cleanup", WQ_MEM_RECLAIM);
+	if (!cvp_frpc_cleanup_wq) {
+		rc = -ENOMEM;
+		cvp_dsp_initialized = true;
+		goto register_bail;
+	}
+	spin_lock_irqsave(&cvp_frpc_work_lock, flags);
+	WRITE_ONCE(cvp_dsp_stopping, false);
+	spin_unlock_irqrestore(&cvp_frpc_work_lock, flags);
+	me->state = DSP_UNINIT;
+	cvp_dsp_initialized = true;
 	rc = register_rpmsg_driver(&cvp_dsp_rpmsg_client);
 	if (rc) {
 		dprintk(CVP_ERR,
@@ -2140,37 +2196,75 @@ int cvp_dsp_device_init(void)
 			__func__, rc);
 		goto register_bail;
 	}
+	cvp_dsp_registered = true;
 	snprintf(tname, sizeof(tname), "cvp-dsp-thread");
-	me->state = DSP_UNINIT;
 	me->dsp_thread = kthread_run(cvp_dsp_thread, me, tname);
-	if (!me->dsp_thread) {
+	if (IS_ERR(me->dsp_thread)) {
 		dprintk(CVP_ERR, "%s create %s fail", __func__, tname);
-		rc = -ECHILD;
+		rc = PTR_ERR(me->dsp_thread);
+		me->dsp_thread = NULL;
 		me->state = DSP_INVALID;
 		goto register_bail;
 	}
 	return 0;
 
 register_bail:
+	cvp_dsp_device_exit();
 	return rc;
+}
+
+void cvp_dsp_prepare_stop(void)
+{
+	struct cvp_dsp_apps *me = &gfa_cv;
+	unsigned long flags;
+	int i;
+
+	if (!cvp_dsp_initialized)
+		return;
+	spin_lock_irqsave(&cvp_frpc_work_lock, flags);
+	WRITE_ONCE(cvp_dsp_stopping, true);
+	spin_unlock_irqrestore(&cvp_frpc_work_lock, flags);
+	for (i = 0; i <= CPU2DSP_MAX_CMD; i++)
+		complete_all(&me->completions[i]);
+}
+
+void cvp_dsp_device_stop(void)
+{
+	struct cvp_dsp_apps *me = &gfa_cv;
+
+	if (!cvp_dsp_initialized)
+		return;
+	cvp_dsp_prepare_stop();
+	mutex_lock(&me->tx_lock);
+	me->state = DSP_INVALID;
+	mutex_unlock(&me->tx_lock);
+	if (me->dsp_thread) {
+		kthread_stop(me->dsp_thread);
+		me->dsp_thread = NULL;
+	}
+	if (cvp_frpc_cleanup_wq)
+		flush_workqueue(cvp_frpc_cleanup_wq);
+	if (cvp_dsp_registered) {
+		unregister_rpmsg_driver(&cvp_dsp_rpmsg_client);
+		cvp_dsp_registered = false;
+	}
+	cvp_remove_dsp_sessions();
 }
 
 void cvp_dsp_device_exit(void)
 {
 	struct cvp_dsp_apps *me = &gfa_cv;
-	int i;
 
-	mutex_lock(&me->tx_lock);
-	me->state = DSP_INVALID;
-	mutex_unlock(&me->tx_lock);
-
+	if (!cvp_dsp_initialized)
+		return;
+	cvp_dsp_device_stop();
+	if (cvp_frpc_cleanup_wq) {
+		destroy_workqueue(cvp_frpc_cleanup_wq);
+		cvp_frpc_cleanup_wq = NULL;
+	}
 	DEINIT_MSM_CVP_LIST(&me->fastrpc_driver_list);
-
-	for (i = 0; i <= CPU2DSP_MAX_CMD; i++)
-		complete_all(&me->completions[i]);
-
 	mutex_destroy(&me->tx_lock);
 	mutex_destroy(&me->rx_lock);
 	mutex_destroy(&me->driver_name_lock);
-	unregister_rpmsg_driver(&cvp_dsp_rpmsg_client);
+	cvp_dsp_initialized = false;
 }

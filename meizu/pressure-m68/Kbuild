@@ -1,0 +1,5 @@
+obj-m += cs_press_m68.o
+cs_press_m68-y := cs_m68_main.o cs_m68_transport.o cs_m68_commands.o \
+	cs_m68_power.o cs_m68_update.o cs_m68_calibration.o cs_m68_events.o \
+	cs_m68_health.o cs_m68_misc.o cs_m68_runtime.o cs_m68_sysfs_controls.o \
+	cs_m68_sysfs_pressure.o cs_m68_sysfs_calibration.o cs_m68_sysfs_diagnostic.o

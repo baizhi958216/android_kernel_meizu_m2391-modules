@@ -403,6 +403,9 @@ struct goodix_pen_data {
  * @event_data: event data
  */
 struct goodix_ts_event {
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	bool meizu_fod_pressed;
+#endif
 	enum ts_event_type event_type;
 	u8 request_code; /* represent the request type */
 	u8 gesture_type;
@@ -482,7 +485,11 @@ struct goodix_ic_config {
 	u8 data[GOODIX_CFG_MAX_SIZE];
 };
 
+struct goodix_meizu;
 struct goodix_ts_core {
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	struct goodix_meizu *meizu;
+#endif
 	int init_stage;
 	struct platform_device *pdev;
 	struct goodix_fw_version fw_version;

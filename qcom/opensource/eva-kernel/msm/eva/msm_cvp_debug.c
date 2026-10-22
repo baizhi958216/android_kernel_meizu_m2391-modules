@@ -612,17 +612,20 @@ exit:
 
 void msm_cvp_debugfs_deinit_inst(struct msm_cvp_inst *inst)
 {
-	struct dentry *dentry = NULL;
+	struct dentry *dentry;
+	void *data;
 
-	if (!inst || !inst->debugfs_root)
+	if (!inst)
 		return;
-
+	mutex_lock(&inst->debugfs_lock);
 	dentry = inst->debugfs_root;
-	if (dentry->d_inode) {
-		dprintk(CVP_INFO, "Destroy %pK\n", dentry->d_inode->i_private);
-		kfree(dentry->d_inode->i_private);
-		dentry->d_inode->i_private = NULL;
-	}
-	debugfs_remove_recursive(dentry);
+	if (!dentry)
+		goto out;
 	inst->debugfs_root = NULL;
+	data = dentry->d_inode ? dentry->d_inode->i_private : NULL;
+	/* debugfs callbacks may still be using idata. Drain before freeing it. */
+	debugfs_remove_recursive(dentry);
+	kfree(data);
+out:
+	mutex_unlock(&inst->debugfs_lock);
 }

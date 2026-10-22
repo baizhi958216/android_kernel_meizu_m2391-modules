@@ -1,0 +1,3 @@
+obj-m += smartswap_zram.o
+smartswap_zram-y := zcomp.o zram_drv.o smartswap/smartmain.o smartswap/smartswapd.o smartswap/smartswap.o
+ccflags-y += -DCONFIG_SMARTSWAP=1 -DCONFIG_SMARTSWAP_CORE=1 -DCONFIG_SMARTSWAP_SWAPD=1

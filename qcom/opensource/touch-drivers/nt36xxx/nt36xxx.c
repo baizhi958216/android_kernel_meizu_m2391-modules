@@ -44,6 +44,8 @@
 #endif
 
 #include "nt36xxx.h"
+#include <linux/kthread.h>
+#include <linux/sched/task.h>
 #if NVT_TOUCH_ESD_PROTECT
 #include <linux/jiffies.h>
 #endif /* #if NVT_TOUCH_ESD_PROTECT */
@@ -112,9 +114,12 @@ const uint16_t gesture_key_array[] = {
 #endif
 
 static uint8_t bTouchIsAwake = 0;
+static DEFINE_MUTEX(nvt_lifecycle_lock);
+static DEFINE_MUTEX(nvt_bind_lock);
+static DEFINE_MUTEX(nvt_panel_lock);
 
 #if defined(CONFIG_DRM)
-static void nvt_i2c_register_for_panel_events(struct device_node *dp,
+static int nvt_i2c_register_for_panel_events(struct device_node *dp,
 		struct nvt_ts_data *ts)
 {
 	void *cookie = NULL;
@@ -122,11 +127,12 @@ static void nvt_i2c_register_for_panel_events(struct device_node *dp,
 	cookie = panel_event_notifier_register(PANEL_EVENT_NOTIFICATION_PRIMARY,
 			PANEL_EVENT_NOTIFIER_CLIENT_PRIMARY_TOUCH, active_panel,
 			&nvt_i2c_panel_notifier_callback, ts);
-	if (!cookie) {
+	if (IS_ERR_OR_NULL(cookie)) {
 		pr_err("Failed to register for panel events\n");
-		return;
+		return cookie ? PTR_ERR(cookie) : -ENODEV;
 	}
 	ts->notifier_cookie = cookie;
+	return 0;
 }
 #endif
 /*******************************************************
@@ -139,6 +145,8 @@ static void nvt_i2c_register_for_panel_events(struct device_node *dp,
 static void nvt_irq_enable(bool enable)
 {
 	struct irq_desc *desc;
+	if (!ts->irq_requested)
+		return;
 
 	if (enable) {
 		if (!ts->irq_enabled) {
@@ -153,7 +161,8 @@ static void nvt_irq_enable(bool enable)
 	}
 
 	desc = irq_to_desc(ts->client->irq);
-	NVT_LOG("enable=%d, desc->depth=%d\n", enable, desc->depth);
+	if (desc)
+		NVT_LOG("enable=%d, desc->depth=%d\n", enable, desc->depth);
 }
 
 /*******************************************************
@@ -169,6 +178,8 @@ int32_t CTP_I2C_READ(struct i2c_client *client, uint16_t address, uint8_t *buf,
 	struct i2c_msg msgs[2];
 	int32_t ret = -1;
 	int32_t retries = 0;
+	if (!buf || len < 2 || len - 1 > sizeof(ts->xbuf))
+		return -EINVAL;
 
 	mutex_lock(&ts->xbuf_lock);
 
@@ -213,6 +224,8 @@ int32_t CTP_I2C_WRITE(struct i2c_client *client, uint16_t address, uint8_t *buf,
 	struct i2c_msg msg;
 	int32_t ret = -1;
 	int32_t retries = 0;
+	if (!buf || !len || len > sizeof(ts->xbuf))
+		return -EINVAL;
 
 	mutex_lock(&ts->xbuf_lock);
 
@@ -533,6 +546,12 @@ static ssize_t nvt_flash_read(struct file *file, char __user *buff,
 		NVT_ERR("copy from user error\n");
 		return -EFAULT;
 	}
+	/* The length byte describes data starting at str[2], not the whole
+	 * userspace request. Reject truncated payloads before using it in I2C.
+	 */
+	if (count < 3 || !str[1] || str[1] > count - 2 ||
+	    ((str[0] & 0x80) && str[1] < 2))
+		return -EINVAL;
 
 #if NVT_TOUCH_ESD_PROTECT
 	/*
@@ -1300,7 +1319,7 @@ out:
  * return:
  *     Executive outcomes. 0---succeed. negative---failed
  *******************************************************/
-static int32_t nvt_ts_late_probe(struct i2c_client *client,
+static int32_t nvt_ts_do_late_probe(struct i2c_client *client,
 	const struct i2c_device_id *id)
 {
 	int32_t ret = 0;
@@ -1313,6 +1332,7 @@ static int32_t nvt_ts_late_probe(struct i2c_client *client,
 		NVT_ERR("gpio config error!\n");
 		goto err_gpio_config_failed;
 	}
+	ts->gpio_configured = true;
 
 	//---check chip version trim---
 	ret = nvt_ts_check_chip_ver_trim(CHIP_VER_TRIM_ADDR);
@@ -1396,7 +1416,7 @@ static int32_t nvt_ts_late_probe(struct i2c_client *client,
 
 	//---set int-pin & request irq---
 	client->irq = gpio_to_irq(ts->irq_gpio);
-	if (client->irq) {
+	if (client->irq > 0) {
 		NVT_LOG("int_trigger_type=%d\n", ts->int_trigger_type);
 		ts->irq_enabled = true;
 		ret = request_threaded_irq(client->irq, NULL, nvt_ts_work_func,
@@ -1405,9 +1425,13 @@ static int32_t nvt_ts_late_probe(struct i2c_client *client,
 			NVT_ERR("request irq failed. ret=%d\n", ret);
 			goto err_int_request_failed;
 		} else {
+			ts->irq_requested = true;
 			nvt_irq_enable(false);
 			NVT_LOG("request irq %d succeed\n", client->irq);
 		}
+	} else {
+		ret = client->irq ? client->irq : -EINVAL;
+		goto err_int_request_failed;
 	}
 
 #if WAKEUP_GESTURE
@@ -1472,16 +1496,16 @@ static int32_t nvt_ts_late_probe(struct i2c_client *client,
 	return 0;
 
 #if NVT_TOUCH_MP
-nvt_mp_proc_deinit();
 err_mp_proc_init_failed:
+nvt_mp_proc_deinit();
 #endif
 #if NVT_TOUCH_EXT_PROC
-nvt_extra_proc_deinit();
 err_extra_proc_init_failed:
+nvt_extra_proc_deinit();
 #endif
 #if NVT_TOUCH_PROC
-nvt_flash_proc_deinit();
 err_flash_proc_init_failed:
+nvt_flash_proc_deinit();
 #endif
 #if NVT_TOUCH_ESD_PROTECT
 	if (nvt_esd_check_wq) {
@@ -1502,7 +1526,10 @@ err_create_nvt_fwu_wq_failed:
 #if WAKEUP_GESTURE
 	device_init_wakeup(&ts->input_dev->dev, 0);
 #endif
-	free_irq(client->irq, ts);
+	if (ts->irq_requested) {
+		free_irq(client->irq, ts);
+		ts->irq_requested = false;
+	}
 err_int_request_failed:
 	input_unregister_device(ts->input_dev);
 	ts->input_dev = NULL;
@@ -1514,8 +1541,26 @@ err_input_register_device_failed:
 err_input_dev_alloc_failed:
 err_chipvertrim_failed:
 	nvt_gpio_deconfig(ts);
+	ts->gpio_configured = false;
 err_gpio_config_failed:
 	NVT_ERR("ret = %d\n", ret);
+	return ret;
+}
+
+static int32_t nvt_ts_late_probe(struct i2c_client *client,
+	const struct i2c_device_id *id)
+{
+	int ret = 0;
+
+	mutex_lock(&nvt_lifecycle_lock);
+	if (ts->removed)
+		ret = -ENODEV;
+	else if (!ts->late_initialized) {
+		ret = nvt_ts_do_late_probe(client, id);
+		if (!ret)
+			ts->late_initialized = true;
+	}
+	mutex_unlock(&nvt_lifecycle_lock);
 	return ret;
 }
 #ifdef CONFIG_TOUCHSCREEN_NT36XXX_LATE_EN
@@ -1529,7 +1574,9 @@ err_gpio_config_failed:
 static int nvt_ts_late_init_thread(void *data)
 {
         NVT_LOG("nvt_ts_late thread init\n");
+        mutex_lock(&nvt_panel_lock);
         nvt_ts_late_probe(ts->client, ts->id);
+        mutex_unlock(&nvt_panel_lock);
         NVT_LOG("nvt_ts_late thread exit\n");
 
 	return 0;
@@ -1545,12 +1592,15 @@ static int nvt_ts_late_init(void)
 {
         struct task_struct *init_thrd;
         /* create and run update thread */
-        init_thrd = kthread_run(nvt_ts_late_init_thread,
+        init_thrd = kthread_create(nvt_ts_late_init_thread,
                                 NULL, "nvt_ts_late_init_thread");
         if (IS_ERR_OR_NULL(init_thrd)) {
                 NVT_LOG("Failed to create late init thread\n");
                 return -EFAULT;
         }
+        get_task_struct(init_thrd);
+        ts->late_thread = init_thrd;
+        wake_up_process(init_thrd);
         return 0;
 }
 #endif
@@ -1561,7 +1611,7 @@ static int nvt_ts_late_init(void)
  * return:
  *     Executive outcomes. 0---succeed. negative---failed
  *******************************************************/
-static int32_t nvt_ts_probe(struct i2c_client *client,
+static int32_t nvt_ts_probe_impl(struct i2c_client *client,
 	const struct i2c_device_id *id)
 {
 	int32_t ret = 0;
@@ -1605,7 +1655,13 @@ static int32_t nvt_ts_probe(struct i2c_client *client,
 	ts->id = id;
 
 #if defined(CONFIG_DRM)
-	nvt_i2c_register_for_panel_events(client->dev.of_node, ts);
+	ret = nvt_i2c_register_for_panel_events(client->dev.of_node, ts);
+	if (ret) {
+		i2c_set_clientdata(client, NULL);
+		devm_kfree(&client->dev, ts);
+		ts = NULL;
+		return ret;
+	}
 #elif defined(_MSM_DRM_NOTIFY_H_)
 	ts->drm_notif.notifier_call = nvt_drm_notifier_callback;
 	ret = msm_drm_register_client(&ts->drm_notif);
@@ -1636,6 +1692,38 @@ err_register_fb_notif_failed:
 	return -ENODEV;
 }
 
+static int32_t nvt_ts_probe(struct i2c_client *client,
+	const struct i2c_device_id *id)
+{
+	int ret;
+
+	/* The legacy protocol and proc handlers use one global controller. */
+	mutex_lock(&nvt_bind_lock);
+	if (ts) {
+		ret = -EBUSY;
+		goto out;
+	}
+	bTouchIsAwake = 0;
+	ret = nvt_ts_probe_impl(client, id);
+	if (ret && ts) {
+		i2c_set_clientdata(client, NULL);
+		devm_kfree(&client->dev, ts);
+		ts = NULL;
+	}
+out:
+	mutex_unlock(&nvt_bind_lock);
+	return ret;
+}
+
+static void nvt_stop_late_thread(void)
+{
+	if (ts->late_thread) {
+		kthread_stop(ts->late_thread);
+		put_task_struct(ts->late_thread);
+		ts->late_thread = NULL;
+	}
+}
+
 /*******************************************************
  * Description:
  *     Novatek touchscreen driver release function.
@@ -1650,10 +1738,14 @@ static int32_t  nvt_ts_remove(struct i2c_client *client)
 #endif
 {
 	NVT_LOG("Removing driver...\n");
+	mutex_lock(&nvt_bind_lock);
+	WRITE_ONCE(ts->removed, true);
 
 #if defined(CONFIG_DRM)
-	if (active_panel && ts->notifier_cookie)
+	if (!IS_ERR_OR_NULL(ts->notifier_cookie)) {
 		panel_event_notifier_unregister(ts->notifier_cookie);
+		ts->notifier_cookie = NULL;
+	}
 #elif defined(_MSM_DRM_NOTIFY_H_)
 	if (msm_drm_unregister_client(&ts->drm_notif))
 		NVT_ERR("Error occurred while unregistering drm_notifier.\n");
@@ -1661,6 +1753,8 @@ static int32_t  nvt_ts_remove(struct i2c_client *client)
 	if (fb_unregister_client(&ts->fb_notif))
 		NVT_ERR("Error occurred while unregistering fb_notifier.\n");
 #endif
+	nvt_stop_late_thread();
+	mutex_lock(&nvt_lifecycle_lock);
 
 #if NVT_TOUCH_MP
 	nvt_mp_proc_deinit();
@@ -1695,24 +1789,32 @@ static int32_t  nvt_ts_remove(struct i2c_client *client)
 #endif
 
 	nvt_irq_enable(false);
-	free_irq(client->irq, ts);
+	if (ts->irq_requested) {
+		free_irq(client->irq, ts);
+		ts->irq_requested = false;
+	}
 
 	mutex_destroy(&ts->xbuf_lock);
 	mutex_destroy(&ts->lock);
 
-	nvt_gpio_deconfig(ts);
+	if (ts->gpio_configured) {
+		nvt_gpio_deconfig(ts);
+		ts->gpio_configured = false;
+	}
 
 	if (ts->input_dev) {
 		input_unregister_device(ts->input_dev);
 		ts->input_dev = NULL;
 	}
 
+	mutex_unlock(&nvt_lifecycle_lock);
 	i2c_set_clientdata(client, NULL);
 
 	if (ts) {
-		kfree(ts);
+		devm_kfree(&client->dev, ts);
 		ts = NULL;
 	}
+	mutex_unlock(&nvt_bind_lock);
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0))
 	return 0;
@@ -1722,12 +1824,14 @@ static int32_t  nvt_ts_remove(struct i2c_client *client)
 static void nvt_ts_shutdown(struct i2c_client *client)
 {
 	NVT_LOG("Shutdown driver...\n");
-
-	nvt_irq_enable(false);
+	mutex_lock(&nvt_bind_lock);
+	WRITE_ONCE(ts->removed, true);
 
 #if defined(CONFIG_DRM)
-	if (active_panel && ts->notifier_cookie)
+	if (!IS_ERR_OR_NULL(ts->notifier_cookie)) {
 		panel_event_notifier_unregister(ts->notifier_cookie);
+		ts->notifier_cookie = NULL;
+	}
 #elif defined(_MSM_DRM_NOTIFY_H_)
 	if (msm_drm_unregister_client(&ts->drm_notif))
 		NVT_ERR("Error occurred while unregistering drm_notifier.\n");
@@ -1735,6 +1839,9 @@ static void nvt_ts_shutdown(struct i2c_client *client)
 	if (fb_unregister_client(&ts->fb_notif))
 		NVT_ERR("Error occurred while unregistering fb_notifier.\n");
 #endif
+	nvt_stop_late_thread();
+	mutex_lock(&nvt_lifecycle_lock);
+	nvt_irq_enable(false);
 
 #if NVT_TOUCH_MP
 	nvt_mp_proc_deinit();
@@ -1767,6 +1874,8 @@ static void nvt_ts_shutdown(struct i2c_client *client)
 	if (ts->input_dev)
 		device_init_wakeup(&ts->input_dev->dev, 0);
 #endif
+	mutex_unlock(&nvt_lifecycle_lock);
+	mutex_unlock(&nvt_bind_lock);
 }
 
 /*******************************************************
@@ -1782,6 +1891,8 @@ static int32_t nvt_ts_suspend(struct device *dev)
 #if MT_PROTOCOL_B
 	uint32_t i = 0;
 #endif
+	if (!ts->late_initialized || READ_ONCE(ts->removed))
+		return 0;
 
 	if (!bTouchIsAwake) {
 		NVT_LOG("Touch is already suspend\n");
@@ -1856,11 +1967,15 @@ static int32_t nvt_ts_resume(struct device *dev)
 {
 	NVT_LOG("start\n");
 
-	if (bTouchIsAwake || ts->fw_ver == 0) {
+	if (READ_ONCE(ts->removed))
+		return -ENODEV;
+	if (!ts->late_initialized) {
 		nvt_ts_late_probe(ts->client, ts->id);
 		NVT_LOG("nvt_ts_late_probe\n");
 		return 0;
 	}
+	if (bTouchIsAwake)
+		return 0;
 
 	mutex_lock(&ts->lock);
 
@@ -1902,6 +2017,8 @@ static void nvt_i2c_panel_notifier_callback(enum panel_event_notifier_tag tag,
 		struct panel_event_notification *notification, void *client_data)
 {
 	struct nvt_ts_data *ts = client_data;
+	if (READ_ONCE(ts->removed))
+		return;
 
 	if (!notification) {
 		pr_err("Invalid notification\n");
@@ -1911,7 +2028,7 @@ static void nvt_i2c_panel_notifier_callback(enum panel_event_notifier_tag tag,
 	NVT_LOG("Notification type:%d, early_trigger:%d",
 		notification->notif_type,
 		notification->notif_data.early_trigger);
-
+	mutex_lock(&nvt_panel_lock);
 	switch (notification->notif_type) {
 	case DRM_PANEL_EVENT_UNBLANK:
 		if (notification->notif_data.early_trigger)
@@ -1941,6 +2058,7 @@ static void nvt_i2c_panel_notifier_callback(enum panel_event_notifier_tag tag,
 			notification->notif_type);
 		break;
 	}
+	mutex_unlock(&nvt_panel_lock);
 }
 
 #elif defined(_MSM_DRM_NOTIFY_H_)

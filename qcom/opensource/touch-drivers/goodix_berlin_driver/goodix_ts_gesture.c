@@ -27,6 +27,10 @@
 #include <linux/atomic.h>
 #include <linux/input/mt.h>
 #include "goodix_ts_core.h"
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+#include "goodix_meizu.h"
+#include "../mz_gesture/mz_gesture_ts.h"
+#endif
 
 
 #define GOODIX_GESTURE_DOUBLE_TAP		0xCC
@@ -239,7 +243,15 @@ static int gsx_gesture_ist(struct goodix_ts_core *cd,
 	int fodx, fody, overlay_area;
 	int ret;
 
-	if (atomic_read(&cd->suspended) == 0 || cd->gesture_type == 0)
+	if (atomic_read(&cd->suspended) == 0)
+		return EVT_CONTINUE;
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	if (goodix_meizu_is_ready(cd)) {
+		if (!(READ_ONCE(FOD_switch_enable) || READ_ONCE(Gesture_switch_enable)))
+			return EVT_CONTINUE;
+	} else
+#endif
+	if (cd->gesture_type == 0)
 		return EVT_CONTINUE;
 
 	ret = hw_ops->event_handler(cd, &gs_event);
@@ -253,6 +265,12 @@ static int gsx_gesture_ist(struct goodix_ts_core *cd,
 			cd->ts_event.event_type);
 		goto re_send_ges_cmd;
 	}
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	if (goodix_meizu_is_ready(cd)) {
+		goodix_meizu_lp_event(cd, &gs_event);
+		return EVT_CANCEL_IRQEVT;
+	}
+#endif
 
 	switch (gs_event.gesture_type) {
 	case GOODIX_GESTURE_SINGLE_TAP:
@@ -337,6 +355,15 @@ static int gsx_gesture_before_suspend(struct goodix_ts_core *cd,
 	int ret;
 	const struct goodix_ts_hw_ops *hw_ops = cd->hw_ops;
 
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	if (goodix_meizu_is_ready(cd)) {
+		ret = goodix_meizu_suspend(cd);
+		if (ret < 0)
+			ts_err("failed to enter Meizu gesture mode: %d", ret);
+		return ret > 0 ? EVT_CANCEL_SUSPEND : EVT_CONTINUE;
+	}
+#endif
+
 	if (cd->gesture_type == 0)
 		return EVT_CONTINUE;
 
@@ -356,6 +383,15 @@ static int gsx_gesture_before_resume(struct goodix_ts_core *cd,
 	struct goodix_ext_module *module)
 {
 	const struct goodix_ts_hw_ops *hw_ops = cd->hw_ops;
+
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	if (goodix_meizu_is_ready(cd)) {
+		if (!goodix_meizu_resume(cd))
+			return EVT_CONTINUE;
+		hw_ops->reset(cd, GOODIX_NORMAL_RESET_DELAY_MS);
+		return EVT_CANCEL_RESUME;
+	}
+#endif
 
 	if (cd->gesture_type == 0)
 		return EVT_CONTINUE;

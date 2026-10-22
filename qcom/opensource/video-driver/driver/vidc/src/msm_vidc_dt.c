@@ -876,6 +876,7 @@ static int msm_vidc_populate_context_bank(struct device *dev,
 
 	iommu_set_fault_handler(cb->domain,
 		msm_vidc_smmu_fault_handler, (void *)core);
+	dev_set_drvdata(dev, cb);
 
 	return 0;
 
@@ -904,6 +905,8 @@ int msm_vidc_read_context_bank_resources_from_dt(struct platform_device *pdev)
 		return -EINVAL;
 	}
 
+	if (READ_ONCE(core->stopping))
+		return -ENODEV;
 	rc = msm_vidc_populate_context_bank(&pdev->dev, core);
 	if (rc)
 		d_vpr_e("Failed to probe context bank\n");
@@ -911,6 +914,24 @@ int msm_vidc_read_context_bank_resources_from_dt(struct platform_device *pdev)
 		d_vpr_h("Successfully probed context bank\n");
 
 	return rc;
+}
+
+void msm_vidc_release_context_bank(struct platform_device *pdev)
+{
+	struct context_bank_info *cb = dev_get_drvdata(&pdev->dev);
+	struct msm_vidc_core *core = dev_get_drvdata(pdev->dev.parent);
+
+	if (!cb || !core)
+		return;
+	/* Clearing the entry does not drain an already fetched callback. Keep
+	 * its cookie valid until parent depopulation destroys this domain and
+	 * arm-smmu synchronizes its context IRQ, before core/module release.
+	 */
+	iommu_set_fault_handler(cb->domain, NULL, core);
+	core_lock(core, __func__);
+	list_del_init(&cb->list);
+	core_unlock(core, __func__);
+	dev_set_drvdata(&pdev->dev, NULL);
 }
 
 void msm_vidc_deinit_dt(struct platform_device *pdev)

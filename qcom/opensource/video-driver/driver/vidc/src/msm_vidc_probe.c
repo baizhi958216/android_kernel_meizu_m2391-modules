@@ -17,6 +17,7 @@
 #include "msm_vidc_dt.h"
 #include "msm_vidc_platform.h"
 #include "msm_vidc_core.h"
+#include "msm_vidc_lifetime.h"
 #include "msm_vidc_memory.h"
 #include "venus_hfi.h"
 
@@ -36,6 +37,15 @@ static int msm_vidc_deinit_irq(struct msm_vidc_core *core)
 	d_vpr_h("%s: reg_base = %pa, reg_size = %#x\n",
 		__func__, &dt->register_base, dt->register_size);
 
+	if (core->irq_requested) {
+		/* Serialize the threaded handler's final re-enable, then drain it
+		 * outside core->lock (the handler itself takes this mutex).
+		 */
+		mutex_lock(&core->lock);
+		core->irq_requested = false;
+		mutex_unlock(&core->lock);
+		devm_free_irq(&core->pdev->dev, dt->irq, core);
+	}
 	dt->irq = 0;
 
 	if (core->register_base_addr)
@@ -65,12 +75,12 @@ static int msm_vidc_init_irq(struct msm_vidc_core *core)
 	}
 
 	rc = devm_request_threaded_irq(&core->pdev->dev, dt->irq, venus_hfi_isr,
-			venus_hfi_isr_handler, IRQF_TRIGGER_HIGH, "msm-vidc", core);
+			venus_hfi_isr_handler, IRQF_TRIGGER_HIGH | IRQF_NO_AUTOEN, "msm-vidc", core);
 	if (rc) {
 		d_vpr_e("%s: Failed to allocate venus IRQ\n", __func__);
 		goto exit;
 	}
-	disable_irq_nosync(dt->irq);
+	core->irq_requested = true;
 
 	d_vpr_h("%s: reg_base = %pa, reg_size = %d\n",
 		__func__, &dt->register_base, dt->register_size);
@@ -125,7 +135,11 @@ MODULE_DEVICE_TABLE(of, msm_vidc_dt_match);
 
 static void msm_vidc_release_video_device(struct video_device *vdev)
 {
-	d_vpr_e("%s:\n", __func__);
+	struct msm_video_device *video = container_of(vdev, struct msm_video_device, vdev);
+	struct msm_vidc_core *core = container_of(video -
+		(video->type == MSM_VIDC_ENCODER), struct msm_vidc_core, vdev[0]);
+
+	vidc_core_put(core);
 }
 
 static void msm_vidc_unregister_video_device(struct msm_vidc_core *core,
@@ -152,6 +166,17 @@ static void msm_vidc_unregister_video_device(struct msm_vidc_core *core,
 	video_unregister_device(&core->vdev[index].vdev);
 	//memset vdev to 0
 }
+
+#ifdef CONFIG_MEDIA_CONTROLLER
+static void msm_vidc_release_media_node(struct media_devnode *node)
+{
+	struct msm_vidc_core *core = dev_get_drvdata(&node->dev);
+
+	if (core->media_node_release)
+		core->media_node_release(node);
+	vidc_core_put(core);
+}
+#endif
 
 static int msm_vidc_register_video_device(struct msm_vidc_core *core,
 		enum msm_vidc_domain_type type, int nr)
@@ -185,9 +210,11 @@ static int msm_vidc_register_video_device(struct msm_vidc_core *core,
 		V4L2_CAP_VIDEO_M2M_MPLANE |
 		V4L2_CAP_META_CAPTURE |
 		V4L2_CAP_STREAMING;
+	kref_get(&core->lifetime);
 	rc = video_register_device(&core->vdev[index].vdev,
 					VFL_TYPE_VIDEO, nr);
 	if (rc) {
+		vidc_core_put(core);
 		d_vpr_e("Failed to register the video device\n");
 		return rc;
 	}
@@ -257,7 +284,6 @@ static int msm_vidc_deinitialize_core(struct msm_vidc_core *core)
 	}
 	d_vpr_h("%s()\n", __func__);
 
-	mutex_destroy(&core->lock);
 	msm_vidc_change_core_state(core, MSM_VIDC_CORE_DEINIT, __func__);
 
 	msm_vidc_vmem_free((void **)&core->response_packet);
@@ -273,6 +299,7 @@ static int msm_vidc_deinitialize_core(struct msm_vidc_core *core)
 
 	core->batch_workq = NULL;
 	core->pm_workq = NULL;
+	mutex_destroy(&core->lock);
 
 	return rc;
 }
@@ -369,6 +396,8 @@ static int msm_vidc_component_bind(struct device *dev)
 
 	d_vpr_h("%s(): %s\n", __func__, dev_name(dev));
 
+	if (READ_ONCE(core->stopping))
+		return -ENODEV;
 	rc = component_bind_all(dev, core);
 	if (rc) {
 		d_vpr_e("%s: sub-device bind failed\n", __func__);
@@ -400,12 +429,74 @@ queues_deinit:
 	return 0;
 }
 
+static void msm_vidc_stop_sessions(struct msm_vidc_core *core)
+{
+	mutex_lock(&core->teardown_lock);
+	if (core->sessions_stopped)
+		goto out;
+	WRITE_ONCE(vidc_ready, false);
+	video_unregister_device(&core->vdev[0].vdev);
+	video_unregister_device(&core->vdev[1].vdev);
+	vidc_stop(core);
+#ifdef CONFIG_MEDIA_CONTROLLER
+	mutex_lock(&core->media_dev.req_queue_mutex);
+#endif
+	vidc_debugfs_drain(core);
+	sysfs_remove_group(&core->pdev->dev.kobj, &msm_vidc_core_attr_group);
+	cancel_work_sync(&core->ssr_work);
+	cancel_delayed_work_sync(&core->fw_unload_work);
+	cancel_delayed_work_sync(&core->pm_work);
+	/* Every detached instance was pinned before publishing its tombstone. */
+	for (;;) {
+		struct msm_vidc_inst *inst = NULL, *entry;
+		bool empty;
+
+		mutex_lock(&core->lock);
+		list_for_each_entry(entry, &core->instances, list) {
+			if (entry->removal_pin) { inst = entry; break; }
+		}
+		if (!inst)
+			list_for_each_entry(entry, &core->dangling_instances, list) {
+				if (entry->removal_pin) { inst = entry; break; }
+			}
+		empty = list_empty(&core->instances) && list_empty(&core->dangling_instances);
+		if (inst)
+			inst->removal_pin = false; /* claim the one successful stop pin */
+		mutex_unlock(&core->lock);
+		if (!inst) {
+			if (empty)
+				break;
+			/* Unpinned entries have refcount zero and their last-put
+			 * cleanup is already running. Never resurrect or put them.
+			 */
+			wait_event(core->lifetime_wait, vidc_cleanup_ready(core));
+			continue;
+		}
+		cancel_delayed_work_sync(&inst->decode_batch.work);
+		vidc_hw_close(inst);
+		if (core->irq_requested)
+			synchronize_irq(core->dt->irq);
+		vidc_inst_cleanup(inst);
+		put_inst(inst);
+	}
+	debugfs_remove_recursive(core->debugfs_parent);
+	core->debugfs_parent = NULL;
+
+#ifdef CONFIG_MEDIA_CONTROLLER
+	mutex_unlock(&core->media_dev.req_queue_mutex);
+#endif
+	core->sessions_stopped = true;
+out:
+	mutex_unlock(&core->teardown_lock);
+}
+
 static void msm_vidc_component_unbind(struct device *dev)
 {
 	struct msm_vidc_core *core = dev_get_drvdata(dev);
 
 	d_vpr_h("%s(): %s\n", __func__, dev_name(dev));
 
+	msm_vidc_stop_sessions(core);
 	msm_vidc_core_deinit(core, true);
 	venus_hfi_interface_queues_deinit(core);
 	component_unbind_all(dev, core);
@@ -439,6 +530,8 @@ static int msm_vidc_remove_video_device(struct platform_device *pdev)
 
 	d_vpr_h("%s()\n", __func__);
 
+	msm_vidc_stop_sessions(core);
+
 	/* destroy component master and deallocate match data */
 	component_master_del(&pdev->dev, &msm_vidc_component_ops);
 
@@ -460,23 +553,22 @@ static int msm_vidc_remove_video_device(struct platform_device *pdev)
 	//device_remove_file(&core->vdev[MSM_VIDC_DECODER].vdev.dev,
 		//&dev_attr_link_name);
 #ifdef CONFIG_MEDIA_CONTROLLER
-	media_device_cleanup(&core->media_dev);
+	/* Pure media state is released with the final video/media/request ref. */
 #endif
 	v4l2_device_unregister(&core->v4l2_dev);
-	sysfs_remove_group(&pdev->dev.kobj, &msm_vidc_core_attr_group);
 
+	msm_vidc_deinit_irq(core);
 	msm_vidc_deinit_instance_caps(core);
 	msm_vidc_deinit_core_caps(core);
 
-	msm_vidc_deinit_irq(core);
 	msm_vidc_deinit_platform(pdev);
 	msm_vidc_deinit_dt(pdev);
 	msm_vidc_deinitialize_core(core);
 
 	dev_set_drvdata(&pdev->dev, NULL);
 	debugfs_remove_recursive(core->debugfs_parent);
-	msm_vidc_vmem_free((void **)&core);
-	g_core = NULL;
+	cmpxchg(&g_core, core, NULL);
+	vidc_core_put(core);
 	d_vpr_h("%s(): succssful\n", __func__);
 
 	return 0;
@@ -488,6 +580,7 @@ static int msm_vidc_remove_context_bank(struct platform_device *pdev)
 		__func__, dev_name(&pdev->dev));
 
 	component_del(&pdev->dev, &msm_vidc_component_cb_ops);
+	msm_vidc_release_context_bank(pdev);
 
 	return 0;
 }
@@ -524,7 +617,16 @@ static int msm_vidc_probe_video_device(struct platform_device *pdev)
 	rc = msm_vidc_vmem_alloc(sizeof(*core), (void **)&core, __func__);
 	if (rc)
 		return rc;
-	g_core = core;
+	kref_init(&core->lifetime);
+	core->pdev = pdev;
+	get_device(&pdev->dev);
+	spin_lock_init(&core->async_lock);
+	mutex_init(&core->teardown_lock);
+	init_waitqueue_head(&core->lifetime_wait);
+	if (cmpxchg(&g_core, NULL, core)) {
+		vidc_core_put(core);
+		return -EBUSY;
+	}
 
 	core->debugfs_parent = msm_vidc_debugfs_init_drv();
 	if (!core->debugfs_parent)
@@ -585,8 +687,10 @@ static int msm_vidc_probe_video_device(struct platform_device *pdev)
 
 #ifdef CONFIG_MEDIA_CONTROLLER
 	core->media_dev.dev = &core->pdev->dev;
+	strscpy(core->media_dev.driver_name, "msm_vidc_v4l2", sizeof(core->media_dev.driver_name));
 	strscpy(core->media_dev.model, "msm_vidc_media", sizeof(core->media_dev.model));
 	media_device_init(&core->media_dev);
+	core->media_initialized = true;
 	core->media_dev.ops = core->media_device_ops;
 	core->v4l2_dev.mdev = &core->media_dev;
 #endif
@@ -610,6 +714,13 @@ static int msm_vidc_probe_video_device(struct platform_device *pdev)
 		d_vpr_e("%s: media_device_register failed with %d\n", __func__, rc);
 		goto media_reg_failed;
 	}
+	/* The registered node's owner reference prevents release while this
+	 * callback is installed. Open media fds keep the node/core state alive.
+	 */
+	dev_set_drvdata(&core->media_dev.devnode->dev, core);
+	core->media_node_release = core->media_dev.devnode->release;
+	kref_get(&core->lifetime);
+	core->media_dev.devnode->release = msm_vidc_release_media_node;
 #endif
 	rc = msm_vidc_check_mmrm_support(core);
 	if (rc) {
@@ -656,6 +767,7 @@ static int msm_vidc_probe_video_device(struct platform_device *pdev)
 		goto master_add_failed;
 	}
 
+	vidc_publish(core);
 	d_vpr_h("%s(): succssful\n", __func__);
 
 	return rc;
@@ -663,6 +775,11 @@ static int msm_vidc_probe_video_device(struct platform_device *pdev)
 master_add_failed:
 	of_platform_depopulate(&pdev->dev);
 sub_dev_failed:
+	vidc_stop(core);
+	vidc_debugfs_drain(core);
+	cancel_work_sync(&core->ssr_work);
+	cancel_delayed_work_sync(&core->fw_unload_work);
+	cancel_delayed_work_sync(&core->pm_work);
 #ifdef CONFIG_MEDIA_CONTROLLER
 	media_device_unregister(&core->media_dev);
 media_reg_failed:
@@ -675,8 +792,10 @@ dec_reg_failed:
 v4l2_reg_failed:
 	sysfs_remove_group(&pdev->dev.kobj, &msm_vidc_core_attr_group);
 init_group_failed:
+	msm_vidc_deinit_irq(core);
 	msm_vidc_deinit_instance_caps(core);
 init_inst_caps_fail:
+	msm_vidc_deinit_irq(core);
 	msm_vidc_deinit_core_caps(core);
 init_core_caps_fail:
 	msm_vidc_deinit_irq(core);
@@ -689,8 +808,8 @@ init_dt_failed:
 init_core_failed:
 	dev_set_drvdata(&pdev->dev, NULL);
 	debugfs_remove_recursive(core->debugfs_parent);
-	msm_vidc_vmem_free((void **)&core);
-	g_core = NULL;
+	cmpxchg(&g_core, core, NULL);
+	vidc_core_put(core);
 
 	return rc;
 }
@@ -705,7 +824,10 @@ static int msm_vidc_probe_context_bank(struct platform_device *pdev)
 	if (rc)
 		return rc;
 
-	return component_add(&pdev->dev, &msm_vidc_component_cb_ops);
+	rc = component_add(&pdev->dev, &msm_vidc_component_cb_ops);
+	if (rc)
+		msm_vidc_release_context_bank(pdev);
+	return rc;
 }
 
 static int msm_vidc_probe(struct platform_device *pdev)
@@ -729,7 +851,7 @@ static int msm_vidc_probe(struct platform_device *pdev)
 	return -EINVAL;
 }
 
-static int msm_vidc_pm_suspend(struct device *dev)
+static int msm_vidc_pm_suspend_live(struct device *dev)
 {
 	int rc = 0;
 	struct msm_vidc_core *core;
@@ -762,7 +884,7 @@ static int msm_vidc_pm_suspend(struct device *dev)
 	return rc;
 }
 
-static int msm_vidc_pm_resume(struct device *dev)
+static int msm_vidc_pm_resume_live(struct device *dev)
 {
 	struct msm_vidc_core *core;
 
@@ -785,6 +907,30 @@ static int msm_vidc_pm_resume(struct device *dev)
 	d_vpr_h("%s\n", __func__);
 	core->pm_suspended  = false;
 	return 0;
+}
+
+static int msm_vidc_pm_suspend(struct device *dev)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int rc = 0;
+	struct msm_vidc_core *core = dev_get_drvdata(dev);
+
+	if (smp_load_acquire(&vidc_ready) && core == READ_ONCE(g_core))
+		rc = msm_vidc_pm_suspend_live(dev);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
+}
+
+static int msm_vidc_pm_resume(struct device *dev)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int rc = 0;
+	struct msm_vidc_core *core = dev_get_drvdata(dev);
+
+	if (smp_load_acquire(&vidc_ready) && core == READ_ONCE(g_core))
+		rc = msm_vidc_pm_resume_live(dev);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
 }
 
 static const struct dev_pm_ops msm_vidc_pm_ops = {

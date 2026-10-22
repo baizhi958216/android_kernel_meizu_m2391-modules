@@ -5,6 +5,7 @@
  */
 
 #include "cam_ois_dev.h"
+#include "cam_ois_meizu.h"
 #include "cam_req_mgr_dev.h"
 #include "cam_ois_soc.h"
 #include "cam_ois_core.h"
@@ -393,6 +394,11 @@ static int cam_ois_component_bind(struct device *dev,
 	g_i3c_ois_data[o_ctrl->soc_info.index].o_ctrl = o_ctrl;
 	init_completion(&g_i3c_ois_data[o_ctrl->soc_info.index].probe_complete);
 
+	rc = cam_ois_meizu_sysfs_init(o_ctrl);
+	if (rc)
+		CAM_WARN(CAM_OIS, "Meizu OIS sysfs unavailable rc %d", rc);
+	rc = 0;
+
 	CAM_DBG(CAM_OIS, "Component bound successfully");
 	return rc;
 unreg_subdev:
@@ -427,6 +433,7 @@ static void cam_ois_component_unbind(struct device *dev,
 		return;
 	}
 
+	cam_ois_meizu_sysfs_remove(o_ctrl);
 	CAM_INFO(CAM_OIS, "platform driver remove invoked");
 	soc_info = &o_ctrl->soc_info;
 	for (i = 0; i < soc_info->num_clk; i++)

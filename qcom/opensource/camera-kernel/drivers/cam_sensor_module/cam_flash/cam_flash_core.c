@@ -4,6 +4,7 @@
  * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include "cam_flash_meizu.h"
 #include <linux/module.h>
 
 #include "cam_sensor_cmn_header.h"
@@ -378,6 +379,8 @@ static int cam_flash_ops(struct cam_flash_ctrl *flash_ctrl,
 		return -EINVAL;
 	}
 
+	if (cam_flash_meizu_matches(flash_ctrl))
+		return cam_flash_meizu_ops(flash_ctrl, flash_data, op);
 	soc_private = (struct cam_flash_private_soc *)
 		flash_ctrl->soc_info.soc_private;
 
@@ -461,6 +464,8 @@ int cam_flash_off(struct cam_flash_ctrl *flash_ctrl)
 		CAM_ERR(CAM_FLASH, "Flash control Null");
 		return -EINVAL;
 	}
+	if (cam_flash_meizu_matches(flash_ctrl))
+		return cam_flash_meizu_off(flash_ctrl);
 	CAM_DBG(CAM_FLASH, "Flash OFF Triggered");
 	if (flash_ctrl->switch_trigger)
 		cam_res_mgr_led_trigger_event(flash_ctrl->switch_trigger,
@@ -806,6 +811,12 @@ int cam_flash_pmic_apply_setting(struct cam_flash_ctrl *fctrl,
 					fctrl->flash_state);
 				}
 
+				if (cam_flash_meizu_matches(fctrl)) {
+					if (fctrl->flash_state == CAM_FLASH_STATE_START)
+						return -EINVAL;
+					rc = cam_flash_meizu_apply_power(fctrl, true);
+					if (rc) return rc;
+				}
 				rc = cam_flash_high(fctrl, flash_data);
 				if (rc)
 					CAM_ERR(CAM_FLASH,
@@ -820,6 +831,12 @@ int cam_flash_pmic_apply_setting(struct cam_flash_ctrl *fctrl,
 					fctrl->flash_state);
 				}
 
+				if (cam_flash_meizu_matches(fctrl)) {
+					if (fctrl->flash_state == CAM_FLASH_STATE_START)
+						return -EINVAL;
+					rc = cam_flash_meizu_apply_power(fctrl, true);
+					if (rc) return rc;
+				}
 				rc = cam_flash_low(fctrl, flash_data);
 				if (rc)
 					CAM_ERR(CAM_FLASH,
@@ -833,6 +850,12 @@ int cam_flash_pmic_apply_setting(struct cam_flash_ctrl *fctrl,
 					"LED OFF FAILED: %d",
 					rc);
 					return rc;
+				}
+				if (cam_flash_meizu_matches(fctrl) &&
+					fctrl->flash_state == CAM_FLASH_STATE_START &&
+					flash_data->cmn_attr.is_settings_valid) {
+					rc = cam_flash_meizu_apply_power(fctrl, false);
+					if (rc) return rc;
 				}
 			}
 		} else if (fctrl->nrt_info.cmn_attr.cmd_type ==

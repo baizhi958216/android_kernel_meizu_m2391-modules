@@ -3,6 +3,7 @@
  * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
  */
 #define CREATE_TRACE_POINTS
+#include "msm_vidc_lifetime.h"
 #include "msm_vidc_debug.h"
 #include "msm_vidc_driver.h"
 #include "msm_vidc_dt.h"
@@ -22,7 +23,7 @@ extern struct msm_vidc_core *g_core;
 
 unsigned int msm_vidc_debug = (DRV_LOG | FW_LOG);
 
-static int debug_level_set(const char *val,
+static int debug_level_set_live(const char *val,
 	const struct kernel_param *kp)
 {
 	struct msm_vidc_core *core = NULL;
@@ -44,10 +45,6 @@ static int debug_level_set(const char *val,
 	if (ret)
 		return ret;
 
-	#if !defined(CONFIG_MSM_VIDC_ANORAK)
-	if (dvalue & (FW_TRACE | FW_FTRACE))
-		dvalue &= ~(FW_TRACE | FW_FTRACE);
-	#endif
 
 	msm_vidc_debug = dvalue;
 
@@ -73,6 +70,17 @@ static int debug_level_set(const char *val,
 	return 0;
 }
 
+static int debug_level_set(const char *val, const struct kernel_param *kp)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int rc = -ENODEV;
+
+	if (smp_load_acquire(&vidc_ready))
+		rc = debug_level_set_live(val, kp);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
+}
+
 static int debug_level_get(char *buffer, const struct kernel_param *kp)
 {
 	return scnprintf(buffer, PAGE_SIZE, "%#x", msm_vidc_debug);
@@ -83,7 +91,7 @@ static const struct kernel_param_ops msm_vidc_debug_fops = {
 	.get = debug_level_get,
 };
 
-static int fw_dump_set(const char *val,
+static int fw_dump_set_live(const char *val,
 	const struct kernel_param *kp)
 {
 	struct msm_vidc_core *core = NULL;
@@ -110,6 +118,17 @@ static int fw_dump_set(const char *val,
 	d_vpr_h("fw dump %s\n", msm_vidc_fw_dump ? "Enabled" : "Disabled");
 
 	return 0;
+}
+
+static int fw_dump_set(const char *val, const struct kernel_param *kp)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int rc = -ENODEV;
+
+	if (smp_load_acquire(&vidc_ready))
+		rc = fw_dump_set_live(val, kp);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
 }
 
 static int fw_dump_get(char *buffer, const struct kernel_param *kp)
@@ -622,21 +641,18 @@ exit:
 
 void msm_vidc_debugfs_deinit_inst(void *instance)
 {
-	struct dentry *dentry = NULL;
-	struct msm_vidc_inst *inst = (struct msm_vidc_inst *) instance;
+	struct msm_vidc_inst *inst = instance;
+	struct dentry *root;
+	void *private = NULL;
 
 	if (!inst || !inst->debugfs_root)
 		return;
-
-	dentry = inst->debugfs_root;
-	if (dentry->d_inode) {
-		i_vpr_l(inst, "%s: Destroy %pK\n",
-			__func__, dentry->d_inode->i_private);
-		msm_vidc_vmem_free(&dentry->d_inode->i_private);
-		dentry->d_inode->i_private = NULL;
-	}
-	debugfs_remove_recursive(dentry);
+	root = inst->debugfs_root;
 	inst->debugfs_root = NULL;
+	if (root->d_inode)
+		private = root->d_inode->i_private;
+	debugfs_remove_recursive(root);
+	msm_vidc_vmem_free(&private);
 }
 
 void msm_vidc_debugfs_update(void *instance,

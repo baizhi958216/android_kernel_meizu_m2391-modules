@@ -28,6 +28,9 @@
 #endif
 
 #include "goodix_ts_core.h"
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+#include "goodix_meizu.h"
+#endif
 
 #define GOODIX_DEFAULT_CFG_NAME		"goodix_cfg_group.cfg"
 #define GOOIDX_INPUT_PHYS			"goodix_ts/input0"
@@ -1276,6 +1279,12 @@ static irqreturn_t goodix_ts_threadirq_func(int irq, void *data)
 	if (likely(!ret)) {
 		if (ts_event->event_type == EVENT_TOUCH) {
 			/* report touch */
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+			if (goodix_meizu_is_ready(core_data))
+				goodix_meizu_normal_event(core_data, ts_event,
+						core_data->board_data.invert_xy);
+			else
+#endif
 			goodix_ts_report_finger(core_data->input_dev,
 					&ts_event->touch_data,
 					core_data->board_data.invert_xy);
@@ -1501,6 +1510,8 @@ static int goodix_ts_input_dev_config(struct goodix_ts_core *core_data)
 			     0, ts_bdata->panel_max_y, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR,
 			     0, ts_bdata->panel_max_w, 0, 0);
+	input_set_abs_params(input_dev, ABS_MT_WIDTH_MAJOR,
+			     0, ts_bdata->panel_max_w, 0, 0);
 #ifdef INPUT_TYPE_B_PROTOCOL
 #if LINUX_VERSION_CODE > KERNEL_VERSION(3, 7, 0)
 	input_mt_init_slots(input_dev, GOODIX_MAX_TOUCH,
@@ -1513,6 +1524,10 @@ static int goodix_ts_input_dev_config(struct goodix_ts_core *core_data)
 	input_set_capability(input_dev, EV_KEY, KEY_POWER);
 	input_set_capability(input_dev, EV_KEY, KEY_WAKEUP);
 	input_set_capability(input_dev, EV_KEY, KEY_GOTO);
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	if (of_device_is_compatible(core_data->bus->dev->of_node, "goodix,brl-d"))
+		goodix_meizu_input_capabilities(input_dev);
+#endif
 
 	r = input_register_device(input_dev);
 	if (r < 0) {
@@ -1878,6 +1893,10 @@ out:
 	hw_ops->irq_enable(core_data, true);
 	/* open esd */
 	goodix_ts_blocking_notify(NOTIFY_RESUME, NULL);
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	if (goodix_meizu_is_ready(core_data))
+		goodix_meizu_resume_complete(core_data);
+#endif
 	ts_info("Resume end");
 	return 0;
 }
@@ -2066,6 +2085,11 @@ skip_goodix_ts_irq_setup:
 #endif
 	/* create sysfs files */
 	goodix_ts_sysfs_init(cd);
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	ret = goodix_meizu_init(cd);
+	if (ret)
+		ts_err("failed to create Meizu touch controls: %d", ret);
+#endif
 
 	if (!is_primary)
 		return 0;
@@ -2521,6 +2545,13 @@ static int goodix_ts_probe(struct platform_device *pdev)
 #if defined(CONFIG_DRM)
 		of_property_read_string(node, "qcom,touch-environment",
 				&core_data->touch_environment);
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+		/* M2391 MP fragment@86 supplies the Goodix-prefixed property. */
+		if (!core_data->touch_environment &&
+				of_device_is_compatible(node, "goodix,brl-d"))
+			of_property_read_string(node, "goodix,touch-environment",
+					&core_data->touch_environment);
+#endif
 #endif
 	} else {
 		ts_err("no valid device tree node found");
@@ -2612,6 +2643,16 @@ static int goodix_ts_remove(struct platform_device *pdev)
 	struct goodix_ts_hw_ops *hw_ops = core_data->hw_ops;
 	struct goodix_ts_esd *ts_esd = &core_data->ts_esd;
 
+	/* Drain panel suspend/resume callbacks before their resources disappear. */
+#if defined(CONFIG_DRM)
+	if (!IS_ERR_OR_NULL(core_data->notifier_cookie)) {
+		panel_event_notifier_unregister(core_data->notifier_cookie);
+		core_data->notifier_cookie = NULL;
+	}
+#elif IS_ENABLED(CONFIG_FB)
+	if (core_data->init_stage >= CORE_INIT_STAGE2)
+		fb_unregister_client(&core_data->fb_notifier);
+#endif
 	goodix_ts_unregister_notifier(&core_data->ts_notifier);
 	goodix_tools_exit();
 
@@ -2621,13 +2662,15 @@ static int goodix_ts_remove(struct platform_device *pdev)
 	#endif
 		inspect_module_exit();
 		hw_ops->irq_enable(core_data, false);
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+		/* irq_enable(false) uses disable_irq_nosync: drain event callbacks
+		 * before tearing down Meizu work and the input device below.
+		 */
+		if (core_data->irq > 0)
+			synchronize_irq(core_data->irq);
+		goodix_meizu_exit(core_data);
+#endif
 
-	#if defined(CONFIG_DRM)
-		if (core_data->notifier_cookie)
-			panel_event_notifier_unregister(core_data->notifier_cookie);
-	#elif IS_ENABLED(CONFIG_FB)
-		fb_unregister_client(&core_data->fb_notifier);
-	#endif
 		core_module_prob_sate = CORE_MODULE_REMOVED;
 		if (atomic_read(&core_data->ts_esd.esd_on))
 			goodix_ts_esd_off(core_data);

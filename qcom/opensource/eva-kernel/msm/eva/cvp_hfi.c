@@ -67,6 +67,20 @@ const int cvp_max_packets = 32;
 
 static void iris_hfi_pm_handler(struct work_struct *work);
 static DECLARE_DELAYED_WORK(iris_hfi_pm_work, iris_hfi_pm_handler);
+
+static bool cvp_queue_pm_work(struct iris_hfi_device *device, unsigned long delay)
+{
+	unsigned long flags;
+	bool queued = false;
+
+	spin_lock_irqsave(&device->async_lock, flags);
+	if (!device->stopping)
+		queued = queue_delayed_work(device->iris_pm_workq,
+					    &iris_hfi_pm_work, delay);
+	spin_unlock_irqrestore(&device->async_lock, flags);
+	return queued;
+}
+
 static inline int __resume(struct iris_hfi_device *device);
 static inline int __suspend(struct iris_hfi_device *device);
 static int __disable_regulator(struct iris_hfi_device *device,
@@ -1224,8 +1238,7 @@ static int __iface_cmdq_write_relaxed(struct iris_hfi_device *device,
 	if (!__write_queue(q_info, (u8 *)pkt, requires_interrupt)) {
 		if (device->res->sw_power_collapsible) {
 			cancel_delayed_work(&iris_hfi_pm_work);
-			if (!queue_delayed_work(device->iris_pm_workq,
-				&iris_hfi_pm_work,
+			if (!cvp_queue_pm_work(device,
 				msecs_to_jiffies(
 				device->res->msm_cvp_pwr_collapse_delay))) {
 				dprintk(CVP_PWR,
@@ -2618,16 +2631,14 @@ static void iris_hfi_pm_handler(struct work_struct *work)
 	case -EBUSY:
 		device->skip_pc_count = 0;
 		dprintk(CVP_PWR, "%s: retry PC as cvp is busy\n", __func__);
-		queue_delayed_work(device->iris_pm_workq,
-			&iris_hfi_pm_work, msecs_to_jiffies(
+		cvp_queue_pm_work(device, msecs_to_jiffies(
 			device->res->msm_cvp_pwr_collapse_delay));
 		break;
 	case -EAGAIN:
 		device->skip_pc_count++;
 		dprintk(CVP_WARN, "%s: retry power collapse (count %d)\n",
 			__func__, device->skip_pc_count);
-		queue_delayed_work(device->iris_pm_workq,
-			&iris_hfi_pm_work, msecs_to_jiffies(
+		cvp_queue_pm_work(device, msecs_to_jiffies(
 			device->res->msm_cvp_pwr_collapse_delay));
 		break;
 	default:
@@ -3057,8 +3068,7 @@ static int __response_handler(struct iris_hfi_device *device)
 
 	if (requeue_pm_work && device->res->sw_power_collapsible) {
 		cancel_delayed_work(&iris_hfi_pm_work);
-		if (!queue_delayed_work(device->iris_pm_workq,
-			&iris_hfi_pm_work,
+		if (!cvp_queue_pm_work(device,
 			msecs_to_jiffies(
 				device->res->msm_cvp_pwr_collapse_delay))) {
 			dprintk(CVP_ERR, "PM work already scheduled\n");
@@ -3072,20 +3082,14 @@ exit:
 
 irqreturn_t iris_hfi_core_work_handler(int irq, void *data)
 {
-	struct msm_cvp_core *core;
-	struct iris_hfi_device *device;
+	struct iris_hfi_device *device = data;
 	int num_responses = 0, i = 0;
 	u32 intr_status;
 	static bool warning_on = true;
 
-	core = list_first_entry(&cvp_driver->cores, struct msm_cvp_core, list);
-	if (core)
-		device = core->device->hfi_device_data;
-	else
-		return IRQ_HANDLED;
-
 	mutex_lock(&device->lock);
-
+	if (READ_ONCE(device->stopping))
+		goto err_no_work;
 
 	if (!__core_in_valid_state(device)) {
 		if (warning_on) {
@@ -3141,7 +3145,8 @@ err_no_work:
 	}
 
 	/* We need re-enable the irq which was disabled in ISR handler */
-	if (!(intr_status & CVP_WRAPPER_INTR_STATUS_A2HWD_BMSK))
+	if (!READ_ONCE(device->stopping) &&
+	    !(intr_status & CVP_WRAPPER_INTR_STATUS_A2HWD_BMSK))
 		enable_irq(device->cvp_hal_data->irq);
 
 	return IRQ_HANDLED;
@@ -4686,6 +4691,13 @@ static struct iris_hfi_device *__add_device(u32 device_id,
 		goto err_cleanup;
 	}
 
+	mutex_init(&hdevice->lock);
+	spin_lock_init(&hdevice->async_lock);
+	INIT_LIST_HEAD(&hdevice->sess_head);
+	hdevice->res = res;
+	hdevice->device_id = device_id;
+	hdevice->callback = callback;
+
 	rc = vm_manager.vm_ops->vm_init_reg_and_irq(hdevice, res);
 	if (rc)
 		goto err_cleanup;
@@ -4710,12 +4722,18 @@ static struct iris_hfi_device *__add_device(u32 device_id,
 		goto err_cleanup;
 	}
 
-	mutex_init(&hdevice->lock);
-	INIT_LIST_HEAD(&hdevice->sess_head);
-
 	return hdevice;
 
 err_cleanup:
+	if (hdevice->irq_requested)
+		free_irq(res->irq, hdevice);
+	if (hdevice->cvp_hal_data) {
+		if (hdevice->cvp_hal_data->gcc_reg_base)
+			devm_iounmap(&res->pdev->dev, hdevice->cvp_hal_data->gcc_reg_base);
+		if (hdevice->cvp_hal_data->register_base)
+			devm_iounmap(&res->pdev->dev, hdevice->cvp_hal_data->register_base);
+		kfree(hdevice->cvp_hal_data);
+	}
 	if (hdevice->iris_pm_workq)
 		destroy_workqueue(hdevice->iris_pm_workq);
 	if (hdevice->cvp_workq)
@@ -4741,26 +4759,30 @@ static struct iris_hfi_device *__get_device(u32 device_id,
 
 void cvp_iris_hfi_delete_device(void *device)
 {
-	struct msm_cvp_core *core;
-	struct iris_hfi_device *dev = NULL;
-
-	if (!device)
-		return;
-
-	core = list_first_entry(&cvp_driver->cores, struct msm_cvp_core, list);
-	if (core)
-		dev = core->device->hfi_device_data;
+	struct iris_hfi_device *dev = device;
+	unsigned long flags;
 
 	if (!dev)
 		return;
-
-	mutex_destroy(&dev->lock);
+	spin_lock_irqsave(&dev->async_lock, flags);
+	dev->stopping = true;
+	spin_unlock_irqrestore(&dev->async_lock, flags);
+	if (dev->state == IRIS_STATE_INIT)
+		iris_hfi_core_release(dev);
+	if (dev->irq_requested)
+		free_irq(dev->cvp_hal_data->irq, dev);
+	/* Neither a drained IRQ nor the PM work itself can rearm after stopping. */
+	cancel_delayed_work_sync(&iris_hfi_pm_work);
 	destroy_workqueue(dev->cvp_workq);
 	destroy_workqueue(dev->iris_pm_workq);
-	free_irq(dev->cvp_hal_data->irq, dev);
-	iounmap(dev->cvp_hal_data->register_base);
-	iounmap(dev->cvp_hal_data->gcc_reg_base);
-	kfree(dev->cvp_hal_data);
+	mutex_destroy(&dev->lock);
+	if (dev->cvp_hal_data) {
+		if (dev->cvp_hal_data->register_base)
+			devm_iounmap(&dev->res->pdev->dev, dev->cvp_hal_data->register_base);
+		if (dev->cvp_hal_data->gcc_reg_base)
+			devm_iounmap(&dev->res->pdev->dev, dev->cvp_hal_data->gcc_reg_base);
+		kfree(dev->cvp_hal_data);
+	}
 	kfree(dev->response_pkt);
 	kfree(dev->raw_packet);
 	kfree(dev);

@@ -21,6 +21,10 @@
 #include "msm_vidc_memory.h"
 #include "venus_hfi_response.h"
 #include "msm_vidc.h"
+#include "msm_vidc_lifetime.h"
+
+extern struct msm_vidc_core *g_core;
+static int vidc_close_live(void *instance, bool drop_owner);
 
 #define MSM_VIDC_DRV_NAME "msm_vidc_driver"
 #define MSM_VIDC_BUS_NAME "platform:msm_vidc_bus"
@@ -69,7 +73,7 @@ static int get_poll_flags(struct msm_vidc_inst *inst, u32 port)
 	return poll;
 }
 
-int msm_vidc_poll(void *instance, struct file *filp,
+int msm_vidc_poll_live(void *instance, struct file *filp,
 		struct poll_table_struct *wait)
 {
 	int poll = 0;
@@ -84,12 +88,8 @@ int msm_vidc_poll(void *instance, struct file *filp,
 		return POLLERR;
 	}
 
-	poll_wait(filp, &inst->event_handler.wait, wait);
-	poll_wait(filp, &inst->bufq[INPUT_META_PORT].vb2q->done_wq, wait);
-	poll_wait(filp, &inst->bufq[OUTPUT_META_PORT].vb2q->done_wq, wait);
-	poll_wait(filp, &inst->bufq[INPUT_PORT].vb2q->done_wq, wait);
-	poll_wait(filp, &inst->bufq[OUTPUT_PORT].vb2q->done_wq, wait);
 
+	poll_wait(filp, &inst->lifetime_wait, wait);
 	if (v4l2_event_pending(&inst->event_handler))
 		poll |= POLLPRI;
 
@@ -100,9 +100,9 @@ int msm_vidc_poll(void *instance, struct file *filp,
 
 	return poll;
 }
-EXPORT_SYMBOL(msm_vidc_poll);
 
-int msm_vidc_querycap(void *instance, struct v4l2_capability *cap)
+
+int msm_vidc_querycap_live(void *instance, struct v4l2_capability *cap)
 {
 	struct msm_vidc_inst *inst = instance;
 
@@ -126,9 +126,9 @@ int msm_vidc_querycap(void *instance, struct v4l2_capability *cap)
 
 	return 0;
 }
-EXPORT_SYMBOL(msm_vidc_querycap);
 
-int msm_vidc_enum_fmt(void *instance, struct v4l2_fmtdesc *f)
+
+int msm_vidc_enum_fmt_live(void *instance, struct v4l2_fmtdesc *f)
 {
 	struct msm_vidc_inst *inst = instance;
 
@@ -144,9 +144,9 @@ int msm_vidc_enum_fmt(void *instance, struct v4l2_fmtdesc *f)
 
 	return -EINVAL;
 }
-EXPORT_SYMBOL(msm_vidc_enum_fmt);
 
-int msm_vidc_query_ctrl(void *instance, struct v4l2_queryctrl *q_ctrl)
+
+int msm_vidc_query_ctrl_live(void *instance, struct v4l2_queryctrl *q_ctrl)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -175,9 +175,9 @@ int msm_vidc_query_ctrl(void *instance, struct v4l2_queryctrl *q_ctrl)
 		q_ctrl->default_value, q_ctrl->step, q_ctrl->flags);
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_query_ctrl);
 
-int msm_vidc_query_menu(void *instance, struct v4l2_querymenu *qmenu)
+
+int msm_vidc_query_menu_live(void *instance, struct v4l2_querymenu *qmenu)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -213,9 +213,9 @@ int msm_vidc_query_menu(void *instance, struct v4l2_querymenu *qmenu)
 		rc ? "not supported" : "supported");
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_query_menu);
 
-int msm_vidc_try_fmt(void *instance, struct v4l2_format *f)
+
+int msm_vidc_try_fmt_live(void *instance, struct v4l2_format *f)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -238,9 +238,9 @@ int msm_vidc_try_fmt(void *instance, struct v4l2_format *f)
 			__func__, f->type, rc);
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_try_fmt);
 
-int msm_vidc_s_fmt(void *instance, struct v4l2_format *f)
+
+int msm_vidc_s_fmt_live(void *instance, struct v4l2_format *f)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -263,9 +263,9 @@ int msm_vidc_s_fmt(void *instance, struct v4l2_format *f)
 			__func__, f->type, rc);
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_s_fmt);
 
-int msm_vidc_g_fmt(void *instance, struct v4l2_format *f)
+
+int msm_vidc_g_fmt_live(void *instance, struct v4l2_format *f)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -294,9 +294,9 @@ int msm_vidc_g_fmt(void *instance, struct v4l2_format *f)
 
 	return 0;
 }
-EXPORT_SYMBOL(msm_vidc_g_fmt);
 
-int msm_vidc_s_selection(void *instance, struct v4l2_selection *s)
+
+int msm_vidc_s_selection_live(void *instance, struct v4l2_selection *s)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -313,9 +313,9 @@ int msm_vidc_s_selection(void *instance, struct v4l2_selection *s)
 
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_s_selection);
 
-int msm_vidc_g_selection(void *instance, struct v4l2_selection *s)
+
+int msm_vidc_g_selection_live(void *instance, struct v4l2_selection *s)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -332,9 +332,9 @@ int msm_vidc_g_selection(void *instance, struct v4l2_selection *s)
 
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_g_selection);
 
-int msm_vidc_s_param(void *instance, struct v4l2_streamparm *param)
+
+int msm_vidc_s_param_live(void *instance, struct v4l2_streamparm *param)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -358,9 +358,9 @@ int msm_vidc_s_param(void *instance, struct v4l2_streamparm *param)
 
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_s_param);
 
-int msm_vidc_g_param(void *instance, struct v4l2_streamparm *param)
+
+int msm_vidc_g_param_live(void *instance, struct v4l2_streamparm *param)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -384,9 +384,9 @@ int msm_vidc_g_param(void *instance, struct v4l2_streamparm *param)
 
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_g_param);
 
-int msm_vidc_reqbufs(void *instance, struct v4l2_requestbuffers *b)
+
+int msm_vidc_reqbufs_live(void *instance, struct v4l2_requestbuffers *b)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -418,9 +418,9 @@ int msm_vidc_reqbufs(void *instance, struct v4l2_requestbuffers *b)
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_reqbufs);
 
-int msm_vidc_querybuf(void *instance, struct v4l2_buffer *b)
+
+int msm_vidc_querybuf_live(void *instance, struct v4l2_buffer *b)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -447,9 +447,9 @@ int msm_vidc_querybuf(void *instance, struct v4l2_buffer *b)
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_querybuf);
 
-int msm_vidc_create_bufs(void *instance, struct v4l2_create_buffers *b)
+
+int msm_vidc_create_bufs_live(void *instance, struct v4l2_create_buffers *b)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -478,9 +478,9 @@ int msm_vidc_create_bufs(void *instance, struct v4l2_create_buffers *b)
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_create_bufs);
 
-int msm_vidc_prepare_buf(void *instance, struct media_device *mdev,
+
+int msm_vidc_prepare_buf_live(void *instance, struct media_device *mdev,
 	struct v4l2_buffer *b)
 {
 	int rc = 0;
@@ -507,9 +507,9 @@ int msm_vidc_prepare_buf(void *instance, struct media_device *mdev,
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_prepare_buf);
 
-int msm_vidc_qbuf(void *instance, struct media_device *mdev,
+
+int msm_vidc_qbuf_live(void *instance, struct media_device *mdev,
 		struct v4l2_buffer *b)
 {
 	int rc = 0;
@@ -534,9 +534,9 @@ int msm_vidc_qbuf(void *instance, struct media_device *mdev,
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_qbuf);
 
-int msm_vidc_dqbuf(void *instance, struct v4l2_buffer *b)
+
+int msm_vidc_dqbuf_live(void *instance, struct v4l2_buffer *b)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -564,9 +564,9 @@ int msm_vidc_dqbuf(void *instance, struct v4l2_buffer *b)
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_dqbuf);
 
-int msm_vidc_streamon(void *instance, enum v4l2_buf_type type)
+
+int msm_vidc_streamon_live(void *instance, enum v4l2_buf_type type)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -593,9 +593,9 @@ int msm_vidc_streamon(void *instance, enum v4l2_buf_type type)
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_streamon);
 
-int msm_vidc_streamoff(void *instance, enum v4l2_buf_type type)
+
+int msm_vidc_streamoff_live(void *instance, enum v4l2_buf_type type)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -622,9 +622,9 @@ int msm_vidc_streamoff(void *instance, enum v4l2_buf_type type)
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_streamoff);
 
-int msm_vidc_try_cmd(void *instance, union msm_v4l2_cmd *cmd)
+
+int msm_vidc_try_cmd_live(void *instance, union msm_v4l2_cmd *cmd)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -653,9 +653,9 @@ int msm_vidc_try_cmd(void *instance, union msm_v4l2_cmd *cmd)
 
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_try_cmd);
 
-int msm_vidc_cmd(void *instance, union msm_v4l2_cmd *cmd)
+
+int msm_vidc_cmd_live(void *instance, union msm_v4l2_cmd *cmd)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -674,9 +674,9 @@ int msm_vidc_cmd(void *instance, union msm_v4l2_cmd *cmd)
 
 	return 0;
 }
-EXPORT_SYMBOL(msm_vidc_cmd);
 
-int msm_vidc_enum_framesizes(void *instance, struct v4l2_frmsizeenum *fsize)
+
+int msm_vidc_enum_framesizes_live(void *instance, struct v4l2_frmsizeenum *fsize)
 {
 	struct msm_vidc_inst *inst = instance;
 	struct msm_vidc_inst_capability *capability;
@@ -723,9 +723,9 @@ int msm_vidc_enum_framesizes(void *instance, struct v4l2_frmsizeenum *fsize)
 
 	return 0;
 }
-EXPORT_SYMBOL(msm_vidc_enum_framesizes);
 
-int msm_vidc_enum_frameintervals(void *instance, struct v4l2_frmivalenum *fival)
+
+int msm_vidc_enum_frameintervals_live(void *instance, struct v4l2_frmivalenum *fival)
 {
 	struct msm_vidc_inst *inst = instance;
 	struct msm_vidc_core *core;
@@ -791,9 +791,9 @@ int msm_vidc_enum_frameintervals(void *instance, struct v4l2_frmivalenum *fival)
 
 	return 0;
 }
-EXPORT_SYMBOL(msm_vidc_enum_frameintervals);
 
-int msm_vidc_subscribe_event(void *instance,
+
+int msm_vidc_subscribe_event_live(void *instance,
 		const struct v4l2_event_subscription *sub)
 {
 	int rc = 0;
@@ -813,9 +813,9 @@ int msm_vidc_subscribe_event(void *instance,
 
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_subscribe_event);
 
-int msm_vidc_unsubscribe_event(void *instance,
+
+int msm_vidc_unsubscribe_event_live(void *instance,
 		const struct v4l2_event_subscription *sub)
 {
 	int rc = 0;
@@ -832,9 +832,9 @@ int msm_vidc_unsubscribe_event(void *instance,
 			 __func__, sub->type, sub->id);
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_unsubscribe_event);
 
-int msm_vidc_dqevent(void *instance, struct v4l2_event *event)
+
+int msm_vidc_dqevent_live(void *instance, struct v4l2_event *event)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = (struct msm_vidc_inst *)instance;
@@ -843,14 +843,20 @@ int msm_vidc_dqevent(void *instance, struct v4l2_event *event)
 		d_vpr_e("%s: invalid params\n", __func__);
 		return -EINVAL;
 	}
-	rc = v4l2_event_dequeue(&inst->event_handler, event, false);
+	rc = wait_event_interruptible(inst->event_handler.wait,
+		READ_ONCE(inst->detached) || v4l2_event_pending(&inst->event_handler));
+	if (rc)
+		return rc;
+	if (READ_ONCE(inst->detached))
+		return -ENODEV;
+	rc = v4l2_event_dequeue(&inst->event_handler, event, true);
 	if (rc)
 		i_vpr_e(inst, "%s: fialed\n", __func__);
 	return rc;
 }
-EXPORT_SYMBOL(msm_vidc_dqevent);
 
-void *msm_vidc_open(void *vidc_core, u32 session_type)
+
+void *msm_vidc_open_live(void *vidc_core, u32 session_type)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = NULL;
@@ -898,6 +904,7 @@ void *msm_vidc_open(void *vidc_core, u32 session_type)
 	inst->auto_framerate = DEFAULT_FPS << 16;
 	inst->initial_time_us = ktime_get_ns() / 1000;
 	kref_init(&inst->kref);
+	init_waitqueue_head(&inst->lifetime_wait);
 	mutex_init(&inst->lock);
 	mutex_init(&inst->request_lock);
 	mutex_init(&inst->client_lock);
@@ -984,6 +991,7 @@ void *msm_vidc_open(void *vidc_core, u32 session_type)
 	if (rc)
 		goto error;
 
+	vidc_poll_attach(inst);
 	if (is_decode_session(inst))
 		rc = msm_vdec_inst_init(inst);
 	else if (is_encode_session(inst))
@@ -1016,12 +1024,12 @@ void *msm_vidc_open(void *vidc_core, u32 session_type)
 	return inst;
 
 error:
-	msm_vidc_close(inst);
+	vidc_close_live(inst, true);
 	return NULL;
 }
-EXPORT_SYMBOL(msm_vidc_open);
 
-int msm_vidc_close(void *instance)
+
+static int vidc_close_live(void *instance, bool drop_owner)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -1034,6 +1042,10 @@ int msm_vidc_close(void *instance)
 
 	core = inst->core;
 
+	if (inst->session_closed)
+		return 0;
+	inst->session_closed = true;
+	msm_vidc_debugfs_deinit_inst(inst);
 	i_vpr_h(inst, "%s()\n", __func__);
 	client_lock(inst, __func__);
 	inst_lock(inst, __func__);
@@ -1047,9 +1059,437 @@ int msm_vidc_close(void *instance)
 	cancel_stability_work_sync(inst);
 	cancel_stats_work_sync(inst);
 	msm_vidc_show_stats(inst);
-	put_inst(inst);
+	if (drop_owner)
+		put_inst(inst);
 	msm_vidc_schedule_core_deinit(core);
 
 	return rc;
 }
+
+
+int msm_vidc_poll(void *instance, struct file *filp,
+		struct poll_table_struct *wait)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = POLLERR | POLLHUP;
+	else
+		result = msm_vidc_poll_live(instance, filp, wait);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_poll);
+
+int msm_vidc_querycap(void *instance, struct v4l2_capability *cap)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_querycap_live(instance, cap);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_querycap);
+
+int msm_vidc_enum_fmt(void *instance, struct v4l2_fmtdesc *f)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_enum_fmt_live(instance, f);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_enum_fmt);
+
+int msm_vidc_query_ctrl(void *instance, struct v4l2_queryctrl *q_ctrl)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_query_ctrl_live(instance, q_ctrl);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_query_ctrl);
+
+int msm_vidc_query_menu(void *instance, struct v4l2_querymenu *qmenu)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_query_menu_live(instance, qmenu);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_query_menu);
+
+int msm_vidc_try_fmt(void *instance, struct v4l2_format *f)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_try_fmt_live(instance, f);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_try_fmt);
+
+int msm_vidc_s_fmt(void *instance, struct v4l2_format *f)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_s_fmt_live(instance, f);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_s_fmt);
+
+int msm_vidc_g_fmt(void *instance, struct v4l2_format *f)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_g_fmt_live(instance, f);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_g_fmt);
+
+int msm_vidc_s_selection(void *instance, struct v4l2_selection *s)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_s_selection_live(instance, s);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_s_selection);
+
+int msm_vidc_g_selection(void *instance, struct v4l2_selection *s)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_g_selection_live(instance, s);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_g_selection);
+
+int msm_vidc_s_param(void *instance, struct v4l2_streamparm *param)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_s_param_live(instance, param);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_s_param);
+
+int msm_vidc_g_param(void *instance, struct v4l2_streamparm *param)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_g_param_live(instance, param);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_g_param);
+
+int msm_vidc_reqbufs(void *instance, struct v4l2_requestbuffers *b)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_reqbufs_live(instance, b);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_reqbufs);
+
+int msm_vidc_querybuf(void *instance, struct v4l2_buffer *b)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_querybuf_live(instance, b);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_querybuf);
+
+int msm_vidc_create_bufs(void *instance, struct v4l2_create_buffers *b)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_create_bufs_live(instance, b);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_create_bufs);
+
+int msm_vidc_prepare_buf(void *instance, struct media_device *mdev,
+	struct v4l2_buffer *b)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_prepare_buf_live(instance, mdev, b);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_prepare_buf);
+
+int msm_vidc_qbuf(void *instance, struct media_device *mdev,
+		struct v4l2_buffer *b)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_qbuf_live(instance, mdev, b);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_qbuf);
+
+int msm_vidc_dqbuf(void *instance, struct v4l2_buffer *b)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_dqbuf_live(instance, b);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_dqbuf);
+
+int msm_vidc_streamon(void *instance, enum v4l2_buf_type type)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_streamon_live(instance, type);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_streamon);
+
+int msm_vidc_streamoff(void *instance, enum v4l2_buf_type type)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_streamoff_live(instance, type);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_streamoff);
+
+int msm_vidc_try_cmd(void *instance, union msm_v4l2_cmd *cmd)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_try_cmd_live(instance, cmd);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_try_cmd);
+
+int msm_vidc_cmd(void *instance, union msm_v4l2_cmd *cmd)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_cmd_live(instance, cmd);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_cmd);
+
+int msm_vidc_enum_framesizes(void *instance, struct v4l2_frmsizeenum *fsize)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_enum_framesizes_live(instance, fsize);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_enum_framesizes);
+
+int msm_vidc_enum_frameintervals(void *instance, struct v4l2_frmivalenum *fival)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_enum_frameintervals_live(instance, fival);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_enum_frameintervals);
+
+int msm_vidc_subscribe_event(void *instance,
+		const struct v4l2_event_subscription *sub)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_subscribe_event_live(instance, sub);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_subscribe_event);
+
+int msm_vidc_unsubscribe_event(void *instance,
+		const struct v4l2_event_subscription *sub)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_unsubscribe_event_live(instance, sub);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_unsubscribe_event);
+
+int msm_vidc_dqevent(void *instance, struct v4l2_event *event)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int result;
+
+	if (!smp_load_acquire(&vidc_ready) || (instance && READ_ONCE(((struct msm_vidc_inst *)instance)->detached)))
+		result = -ENODEV;
+	else
+		result = msm_vidc_dqevent_live(instance, event);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_dqevent);
+
+void * msm_vidc_open(void *vidc_core, u32 session_type)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	void * result;
+
+	if (!smp_load_acquire(&vidc_ready) || vidc_core != READ_ONCE(g_core))
+		result = NULL;
+	else
+		result = msm_vidc_open_live(vidc_core, session_type);
+	srcu_read_unlock(&vidc_operations, idx);
+	return result;
+}
+EXPORT_SYMBOL(msm_vidc_open);
+
+int msm_vidc_close(void *instance)
+{
+	struct msm_vidc_inst *inst = instance;
+	int idx, rc;
+
+	/* stop published detached only after acquiring its removal pin. Thus
+	 * release can drop the descriptor owner immediately, including while
+	 * V4L2 holds req_queue_mutex, without waiting for removal's cleanup.
+	 */
+	if (inst && smp_load_acquire(&inst->detached)) {
+		put_inst(inst);
+		return 0;
+	}
+	idx = srcu_read_lock(&vidc_operations);
+	if (inst && smp_load_acquire(&inst->detached)) {
+		srcu_read_unlock(&vidc_operations, idx);
+		put_inst(inst);
+		return 0;
+	}
+	rc = vidc_close_live(instance, true);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
+}
 EXPORT_SYMBOL(msm_vidc_close);
+
+int vidc_hw_close(void *instance)
+{
+	return vidc_close_live(instance, false);
+}

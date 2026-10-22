@@ -1,0 +1,1 @@
+obj-m += mz_freq_qos.o

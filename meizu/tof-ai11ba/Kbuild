@@ -1,0 +1,2 @@
+obj-m += ai11ba.o
+ai11ba-y := dtof_core.o dtof_i2c.o

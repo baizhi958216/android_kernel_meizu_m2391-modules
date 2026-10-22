@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-2.0-only
+obj-m += meizu_private.o
+meizu_private-y := meizu_storage.o meizu_rsa.o
