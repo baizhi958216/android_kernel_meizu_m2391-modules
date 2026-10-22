@@ -327,7 +327,16 @@ void goodix_meizu_lp_event(struct goodix_ts_core *cd,
 		mz_gesture_report(cd->input_dev, 0x271, 2);
 		break;
 	case 0xcc:
-		mz_gesture_report(cd->input_dev, 0x270, 2);
+		if (mz_gesture_report(cd->input_dev, 0x270, 2)) {
+			/* Flyme turned the panel on from its own 0x270 key, which
+			 * AOSP ignores. Wake the framework with KEY_WAKEUP, like
+			 * the generic Goodix double-tap path does.
+			 */
+			input_report_key(cd->input_dev, KEY_WAKEUP, 1);
+			input_sync(cd->input_dev);
+			input_report_key(cd->input_dev, KEY_WAKEUP, 0);
+			input_sync(cd->input_dev);
+		}
 		break;
 	/* Original jump tables .rodata+0x6c and +0xe4, and IRQ .text0x12cd4. */
 	case 0xaa:
