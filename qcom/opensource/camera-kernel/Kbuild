@@ -213,6 +213,7 @@ camera-$(CONFIG_SPECTRA_LRME) += \
 camera-$(CONFIG_SPECTRA_SENSOR) += \
 	drivers/cam_sensor_module/cam_actuator/cam_actuator_dev.o \
 	drivers/cam_sensor_module/cam_actuator/cam_actuator_core.o \
+	drivers/cam_sensor_module/cam_actuator/cam_actuator_meizu.o \
 	drivers/cam_sensor_module/cam_actuator/cam_actuator_soc.o \
 	drivers/cam_sensor_module/cam_cci/cam_cci_dev.o \
 	drivers/cam_sensor_module/cam_cci/cam_cci_core.o \
@@ -228,9 +229,12 @@ camera-$(CONFIG_SPECTRA_SENSOR) += \
 	drivers/cam_sensor_module/cam_csiphy/cam_csiphy_core.o \
 	drivers/cam_sensor_module/cam_eeprom/cam_eeprom_dev.o \
 	drivers/cam_sensor_module/cam_eeprom/cam_eeprom_core.o  \
+	drivers/cam_sensor_module/cam_eeprom/cam_eeprom_meizu.o \
+	drivers/cam_sensor_module/cam_eeprom/cam_eeprom_meizu_tables.o \
 	drivers/cam_sensor_module/cam_eeprom/cam_eeprom_soc.o \
 	drivers/cam_sensor_module/cam_ois/cam_ois_dev.o \
 	drivers/cam_sensor_module/cam_ois/cam_ois_core.o \
+	drivers/cam_sensor_module/cam_ois/cam_ois_meizu.o \
 	drivers/cam_sensor_module/cam_ois/cam_ois_soc.o \
 	drivers/cam_sensor_module/cam_sensor/cam_sensor_dev.o \
 	drivers/cam_sensor_module/cam_sensor/cam_sensor_core.o \
@@ -244,6 +248,9 @@ camera-$(CONFIG_SPECTRA_SENSOR) += \
 	drivers/cam_sensor_module/cam_res_mgr/cam_res_mgr.o \
 	drivers/cam_sensor_module/cam_flash/cam_flash_dev.o \
 	drivers/cam_sensor_module/cam_flash/cam_flash_core.o \
+	drivers/cam_sensor_module/cam_flash/cam_flash_meizu_sy7808.o \
+	drivers/cam_sensor_module/cam_flash/cam_flash_meizu_provider.o \
+	drivers/cam_sensor_module/cam_flash/cam_flash_meizu.o \
 	drivers/cam_sensor_module/cam_flash/cam_flash_soc.o
 
 camera-$(CONFIG_SPECTRA_CUSTOM) += \
