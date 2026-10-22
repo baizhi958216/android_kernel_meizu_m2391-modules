@@ -1,0 +1,2 @@
+obj-m += mz_compaction_opt.o
+ccflags-y += -I$(src)
