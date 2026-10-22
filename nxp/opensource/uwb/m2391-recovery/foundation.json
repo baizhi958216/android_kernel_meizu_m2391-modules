@@ -1,0 +1,10 @@
+{
+  "repository": "OnePlusOSS/android_kernel_oneplus_sm8475",
+  "ref": "7278ce9a3c8539b4630d6988cc80f90c31c07336",
+  "paths": [
+    "drivers/uwb/sr100/sr100.c",
+    "drivers/uwb/sr100/sr100.h"
+  ],
+  "license": "GPL-2.0-or-later",
+  "scope": "NXP SR100 UCI/HBCI SPI handshake foundation; M2391 board controls independently recovered from original nxp-sr100.ko"
+}

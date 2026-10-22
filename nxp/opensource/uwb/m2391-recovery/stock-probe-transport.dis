@@ -1,0 +1,2288 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/nxp-sr100.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000000354 <sr100_probe>:
+     354: 3f 23 03 d5  	hint	#25
+     358: ff 83 01 d1  	sub	sp, sp, #96
+     35c: 5e 86 00 f8  	str	x30, [x18], #8
+     360: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+     364: fd 43 00 91  	add	x29, sp, #16
+     368: f9 13 00 f9  	str	x25, [sp, #32]
+     36c: f8 5f 03 a9  	stp	x24, x23, [sp, #48]
+     370: f6 57 04 a9  	stp	x22, x21, [sp, #64]
+     374: f4 4f 05 a9  	stp	x20, x19, [sp, #80]
+     378: 08 41 38 d5  	mrs	x8, SP_EL0
+     37c: 19 00 00 90  	adrp	x25, 0x0 <sr100_probe+0x28> // +0x0
+     380: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     384: f4 03 00 aa  	mov	x20, x0
+     388: e8 07 00 f9  	str	x8, [sp, #8]
+     38c: 28 03 40 f9  	ldr	x8, [x25] // +0x0
+     390: 68 01 00 b4  	cbz	x8, 0x3bc <sr100_probe+0x68>
+     394: 89 ce 41 f9  	ldr	x9, [x20, #920]
+     398: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x44> // '%-6d: %s: chip_select=%d, bus_num=%d \n'
+     39c: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x48> // 'sr100_probe'
+     3a0: 84 92 4e 39  	ldrb	w4, [x20, #932]
+     3a4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s: chip_select=%d, bus_num=%d \n'
+     3a8: 63 00 00 91  	add	x3, x3, #0 // 'sr100_probe'
+     3ac: 25 41 c7 79  	ldrsh	w5, [x9, #928]
+     3b0: e0 03 08 aa  	mov	x0, x8
+     3b4: 22 b4 80 52  	mov	w2, #1441
+     3b8: 00 00 00 94  	bl	0x3b8 <sr100_probe+0x64> // ipc_log_string+0x0
+     3bc: e0 03 14 aa  	mov	x0, x20
+     3c0: 01 29 80 52  	mov	w1, #328
+     3c4: 02 b8 81 52  	mov	w2, #3520
+     3c8: 00 00 00 94  	bl	0x3c8 <sr100_probe+0x74> // devm_kmalloc+0x0
+     3cc: 60 01 00 b5  	cbnz	x0, 0x3f8 <sr100_probe+0xa4>
+     3d0: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     3d4: a0 00 00 b4  	cbz	x0, 0x3e8 <sr100_probe+0x94>
+     3d8: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x84> // '%-6d: failed to allocate srdev, NOMEM\n'
+     3dc: a2 b4 80 52  	mov	w2, #1445
+     3e0: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to allocate srdev, NOMEM\n'
+     3e4: 00 00 00 94  	bl	0x3e4 <sr100_probe+0x90> // ipc_log_string+0x0
+     3e8: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x94> // '\x013[NXP-SR100]:%d  failed to allocate srdev, NOMEM\n'
+     3ec: a1 b4 80 52  	mov	w1, #1445
+     3f0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to allocate srdev, NOMEM\n'
+     3f4: 8a 00 00 14  	b	0x61c <sr100_probe+0x2c8>
+     3f8: f3 03 00 aa  	mov	x19, x0
+     3fc: e0 03 14 aa  	mov	x0, x20
+     400: 01 0d 82 52  	mov	w1, #4200
+     404: 02 b8 81 52  	mov	w2, #3520
+     408: 00 00 00 94  	bl	0x408 <sr100_probe+0xb4> // devm_kmalloc+0x0
+     40c: 60 4a 00 f9  	str	x0, [x19, #144]
+     410: e0 03 14 aa  	mov	x0, x20
+     414: 01 0d 82 52  	mov	w1, #4200
+     418: 02 b8 81 52  	mov	w2, #3520
+     41c: 00 00 00 94  	bl	0x41c <sr100_probe+0xc8> // devm_kmalloc+0x0
+     420: 68 4a 40 f9  	ldr	x8, [x19, #144]
+     424: 60 4e 00 f9  	str	x0, [x19, #152]
+     428: 88 0e 00 b4  	cbz	x8, 0x5f8 <sr100_probe+0x2a4>
+     42c: 60 0e 00 b4  	cbz	x0, 0x5f8 <sr100_probe+0x2a4>
+     430: e8 1f 80 52  	mov	w8, #255
+     434: f5 03 13 aa  	mov	x21, x19
+     438: 09 00 00 90  	adrp	x9, 0x0 <sr100_probe+0xe4> // 'srxxx'
+     43c: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xe8> // '&sr100_dev->read_wq'
+     440: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0xec> // +0x10
+     444: 29 01 00 91  	add	x9, x9, #0 // 'srxxx'
+     448: a8 0e 02 b8  	str	w8, [x21, #32]!
+     44c: 08 00 00 90  	adrp	x8, 0x0 <sr100_probe+0xf8> // ''
+     450: 21 00 00 91  	add	x1, x1, #0 // '&sr100_dev->read_wq'
+     454: 08 01 00 91  	add	x8, x8, #0 // ''
+     458: 42 00 00 91  	add	x2, x2, #0 // +0x10
+     45c: e0 03 13 aa  	mov	x0, x19
+     460: 74 0e 00 f9  	str	x20, [x19, #24]
+     464: 74 26 00 f9  	str	x20, [x19, #72]
+     468: 69 a2 02 a9  	stp	x9, x8, [x19, #40]
+     46c: 00 00 00 94  	bl	0x46c <sr100_probe+0x118> // __init_waitqueue_head+0x0
+     470: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x11c> // '&sr100_dev->sr100_access_lock'
+     474: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x120> // +0x10
+     478: 60 a2 02 91  	add	x0, x19, #168
+     47c: 21 00 00 91  	add	x1, x1, #0 // '&sr100_dev->sr100_access_lock'
+     480: 42 00 00 91  	add	x2, x2, #0 // +0x10
+     484: 00 00 00 94  	bl	0x484 <sr100_probe+0x130> // __mutex_init+0x0
+     488: 77 0e 40 f9  	ldr	x23, [x19, #24]
+     48c: 7f 8a 00 b9  	str	wzr, [x19, #136]
+     490: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     494: ff 03 00 f9  	str	xzr, [sp]
+     498: f8 7a 41 f9  	ldr	x24, [x23, #752]
+     49c: e0 00 00 b4  	cbz	x0, 0x4b8 <sr100_probe+0x164>
+     4a0: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x14c> // '%-6d: %s entry \n'
+     4a4: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x150> // 'sr100_parse_dt'
+     4a8: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s entry \n'
+     4ac: 63 00 00 91  	add	x3, x3, #0 // 'sr100_parse_dt'
+     4b0: 82 87 80 52  	mov	w2, #1084
+     4b4: 00 00 00 94  	bl	0x4b4 <sr100_probe+0x160> // ipc_log_string+0x0
+     4b8: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x164> // 'nxp,sr100-irq'
+     4bc: e0 03 18 aa  	mov	x0, x24
+     4c0: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-irq'
+     4c4: e2 03 1f 2a  	mov	w2, wzr
+     4c8: e3 03 1f aa  	mov	x3, xzr
+     4cc: 00 00 00 94  	bl	0x4cc <sr100_probe+0x178> // of_get_named_gpio_flags+0x0
+     4d0: 1f 00 08 71  	cmp	w0, #512
+     4d4: 60 76 00 b9  	str	w0, [x19, #116]
+     4d8: 82 0a 00 54  	b.hs	0x628 <sr100_probe+0x2d4>
+     4dc: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x188> // 'nxp,sr100-ce'
+     4e0: e0 03 18 aa  	mov	x0, x24
+     4e4: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-ce'
+     4e8: e2 03 1f 2a  	mov	w2, wzr
+     4ec: e3 03 1f aa  	mov	x3, xzr
+     4f0: 00 00 00 94  	bl	0x4f0 <sr100_probe+0x19c> // of_get_named_gpio_flags+0x0
+     4f4: 1f 00 08 71  	cmp	w0, #512
+     4f8: 60 72 00 b9  	str	w0, [x19, #112]
+     4fc: 42 0b 00 54  	b.hs	0x664 <sr100_probe+0x310>
+     500: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x1ac> // 'nxp,sr100-ri'
+     504: e0 03 18 aa  	mov	x0, x24
+     508: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-ri'
+     50c: e2 03 1f 2a  	mov	w2, wzr
+     510: e3 03 1f aa  	mov	x3, xzr
+     514: 00 00 00 94  	bl	0x514 <sr100_probe+0x1c0> // of_get_named_gpio_flags+0x0
+     518: e5 03 00 2a  	mov	w5, w0
+     51c: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     520: bf 00 08 71  	cmp	w5, #512
+     524: 65 7a 00 b9  	str	w5, [x19, #120]
+     528: c2 0b 00 54  	b.hs	0x6a0 <sr100_probe+0x34c>
+     52c: e0 00 00 b4  	cbz	x0, 0x548 <sr100_probe+0x1f4>
+     530: 64 0e 4e 29  	ldp	w4, w3, [x19, #112]
+     534: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x1e0> // '%-6d: irq=%d, ce=%d, ri=%d\n'
+     538: c2 89 80 52  	mov	w2, #1102
+     53c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: irq=%d, ce=%d, ri=%d\n'
+     540: 00 00 00 94  	bl	0x540 <sr100_probe+0x1ec> // ipc_log_string+0x0
+     544: 65 7a 40 b9  	ldr	w5, [x19, #120]
+     548: 63 0a 4e 29  	ldp	w3, w2, [x19, #112]
+     54c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x1f8> // '\x016[NXP-SR100]:%d  irq=%d, ce=%d, ri=%d\n'
+     550: c1 89 80 52  	mov	w1, #1102
+     554: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  irq=%d, ce=%d, ri=%d\n'
+     558: e4 03 05 2a  	mov	w4, w5
+     55c: 00 00 00 94  	bl	0x55c <sr100_probe+0x208> // _printk+0x0
+     560: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x20c> // 'nxp,sr100-vdd-1p8-supply'
+     564: e0 7a 41 f9  	ldr	x0, [x23, #752]
+     568: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-vdd-1p8-supply'
+     56c: e2 03 1f aa  	mov	x2, xzr
+     570: 00 00 00 94  	bl	0x570 <sr100_probe+0x21c> // of_get_property+0x0
+     574: 20 0b 00 b5  	cbnz	x0, 0x6d8 <sr100_probe+0x384>
+     578: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     57c: a0 00 00 b4  	cbz	x0, 0x590 <sr100_probe+0x23c>
+     580: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x22c> // '%-6d: vdd_reg entry not present\n'
+     584: 02 91 80 52  	mov	w2, #1160
+     588: 21 00 00 91  	add	x1, x1, #0 // '%-6d: vdd_reg entry not present\n'
+     58c: 00 00 00 94  	bl	0x58c <sr100_probe+0x238> // ipc_log_string+0x0
+     590: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x23c> // 'nxp,sr100-rfvdd-1p8-supply'
+     594: e0 7a 41 f9  	ldr	x0, [x23, #752]
+     598: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-rfvdd-1p8-supply'
+     59c: e2 03 1f aa  	mov	x2, xzr
+     5a0: 00 00 00 94  	bl	0x5a0 <sr100_probe+0x24c> // of_get_property+0x0
+     5a4: 80 0c 00 b5  	cbnz	x0, 0x734 <sr100_probe+0x3e0>
+     5a8: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     5ac: a0 00 00 b4  	cbz	x0, 0x5c0 <sr100_probe+0x26c>
+     5b0: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x25c> // '%-6d: rfvdd reg entry not present\n'
+     5b4: 82 94 80 52  	mov	w2, #1188
+     5b8: 21 00 00 91  	add	x1, x1, #0 // '%-6d: rfvdd reg entry not present\n'
+     5bc: 00 00 00 94  	bl	0x5bc <sr100_probe+0x268> // ipc_log_string+0x0
+     5c0: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x26c> // 'nxp,sr100-rfclk-ctrl-mode'
+     5c4: e0 7a 41 f9  	ldr	x0, [x23, #752]
+     5c8: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-rfclk-ctrl-mode'
+     5cc: e2 03 00 91  	mov	x2, sp
+     5d0: 00 00 00 94  	bl	0x5d0 <sr100_probe+0x27c> // of_property_read_string+0x0
+     5d4: 20 11 00 35  	cbnz	w0, 0x7f8 <sr100_probe+0x4a4>
+     5d8: f6 03 40 f9  	ldr	x22, [sp]
+     5dc: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x288> // 'auto'
+     5e0: 21 00 00 91  	add	x1, x1, #0 // 'auto'
+     5e4: e0 03 16 aa  	mov	x0, x22
+     5e8: 00 00 00 94  	bl	0x5e8 <sr100_probe+0x294> // strcmp+0x0
+     5ec: 80 27 00 35  	cbnz	w0, 0xadc <sr100_probe+0x788>
+     5f0: 7f 42 01 b9  	str	wzr, [x19, #320]
+     5f4: 8b 00 00 14  	b	0x820 <sr100_probe+0x4cc>
+     5f8: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     5fc: a0 00 00 b4  	cbz	x0, 0x610 <sr100_probe+0x2bc>
+     600: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x2ac> // '%-6d: failed to allocate tx/rx buffer, NOMEM\n'
+     604: a2 b5 80 52  	mov	w2, #1453
+     608: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to allocate tx/rx buffer, NOMEM\n'
+     60c: 00 00 00 94  	bl	0x60c <sr100_probe+0x2b8> // ipc_log_string+0x0
+     610: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x2bc> // '\x013[NXP-SR100]:%d  failed to allocate tx/rx buffer, NOMEM\n'
+     614: a1 b5 80 52  	mov	w1, #1453
+     618: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to allocate tx/rx buffer, NOMEM\n'
+     61c: 00 00 00 94  	bl	0x61c <sr100_probe+0x2c8> // _printk+0x0
+     620: 76 01 80 12  	mov	w22, #-12
+     624: 5e 01 00 14  	b	0xb9c <sr100_probe+0x848>
+     628: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     62c: e0 00 00 b4  	cbz	x0, 0x648 <sr100_probe+0x2f4>
+     630: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x2dc> // '%-6d: failed to get irq_gpio%s:\n'
+     634: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x2e0> // 'sr100_parse_dt'
+     638: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get irq_gpio%s:\n'
+     63c: 63 00 00 91  	add	x3, x3, #0 // 'sr100_parse_dt'
+     640: e2 87 80 52  	mov	w2, #1087
+     644: 00 00 00 94  	bl	0x644 <sr100_probe+0x2f0> // ipc_log_string+0x0
+     648: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x2f4> // '\x013[NXP-SR100]:%d  failed to get irq_gpio%s:\n'
+     64c: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x2f8> // 'sr100_parse_dt'
+     650: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get irq_gpio%s:\n'
+     654: 42 00 00 91  	add	x2, x2, #0 // 'sr100_parse_dt'
+     658: e1 87 80 52  	mov	w1, #1087
+     65c: 00 00 00 94  	bl	0x65c <sr100_probe+0x308> // _printk+0x0
+     660: 34 01 00 14  	b	0xb30 <sr100_probe+0x7dc>
+     664: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     668: e0 00 00 b4  	cbz	x0, 0x684 <sr100_probe+0x330>
+     66c: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x318> // '%-6d: %s: failed to get ce_gpio\n'
+     670: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x31c> // 'sr100_parse_dt'
+     674: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s: failed to get ce_gpio\n'
+     678: 63 00 00 91  	add	x3, x3, #0 // 'sr100_parse_dt'
+     67c: 82 88 80 52  	mov	w2, #1092
+     680: 00 00 00 94  	bl	0x680 <sr100_probe+0x32c> // ipc_log_string+0x0
+     684: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x330> // '\x013[NXP-SR100]:%d  %s: failed to get ce_gpio\n'
+     688: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x334> // 'sr100_parse_dt'
+     68c: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  %s: failed to get ce_gpio\n'
+     690: 42 00 00 91  	add	x2, x2, #0 // 'sr100_parse_dt'
+     694: 81 88 80 52  	mov	w1, #1092
+     698: 00 00 00 94  	bl	0x698 <sr100_probe+0x344> // _printk+0x0
+     69c: 25 01 00 14  	b	0xb30 <sr100_probe+0x7dc>
+     6a0: e0 00 00 b4  	cbz	x0, 0x6bc <sr100_probe+0x368>
+     6a4: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x350> // '%-6d: %s: failed to get ri_gpio\n'
+     6a8: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x354> // 'sr100_parse_dt'
+     6ac: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s: failed to get ri_gpio\n'
+     6b0: 63 00 00 91  	add	x3, x3, #0 // 'sr100_parse_dt'
+     6b4: 22 89 80 52  	mov	w2, #1097
+     6b8: 00 00 00 94  	bl	0x6b8 <sr100_probe+0x364> // ipc_log_string+0x0
+     6bc: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x368> // '\x013[NXP-SR100]:%d  %s: failed to get ri_gpio\n'
+     6c0: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x36c> // 'sr100_parse_dt'
+     6c4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  %s: failed to get ri_gpio\n'
+     6c8: 42 00 00 91  	add	x2, x2, #0 // 'sr100_parse_dt'
+     6cc: 21 89 80 52  	mov	w1, #1097
+     6d0: 00 00 00 94  	bl	0x6d0 <sr100_probe+0x37c> // _printk+0x0
+     6d4: 17 01 00 14  	b	0xb30 <sr100_probe+0x7dc>
+     6d8: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x384> // 'nxp,sr100-vdd-1p8'
+     6dc: e0 03 17 aa  	mov	x0, x23
+     6e0: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-vdd-1p8'
+     6e4: 00 00 00 94  	bl	0x6e4 <sr100_probe+0x390> // devm_regulator_get+0x0
+     6e8: 1f fc 3f b1  	cmn	x0, #4095
+     6ec: 60 7e 00 f9  	str	x0, [x19, #248]
+     6f0: c3 04 00 54  	b.lo	0x788 <sr100_probe+0x434>
+     6f4: f6 03 00 aa  	mov	x22, x0
+     6f8: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     6fc: 7f 7e 00 f9  	str	xzr, [x19, #248]
+     700: c0 00 00 b4  	cbz	x0, 0x718 <sr100_probe+0x3c4>
+     704: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x3b0> // '%-6d: failed to get vdd_reg, %d\n'
+     708: a2 8e 80 52  	mov	w2, #1141
+     70c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get vdd_reg, %d\n'
+     710: e3 03 16 2a  	mov	w3, w22
+     714: 00 00 00 94  	bl	0x714 <sr100_probe+0x3c0> // ipc_log_string+0x0
+     718: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x3c4> // '\x013[NXP-SR100]:%d  failed to get vdd_reg, %d\n'
+     71c: a1 8e 80 52  	mov	w1, #1141
+     720: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get vdd_reg, %d\n'
+     724: e2 03 16 2a  	mov	w2, w22
+     728: 00 00 00 94  	bl	0x728 <sr100_probe+0x3d4> // _printk+0x0
+     72c: 56 20 00 35  	cbnz	w22, 0xb34 <sr100_probe+0x7e0>
+     730: 8e 00 00 14  	b	0x968 <sr100_probe+0x614>
+     734: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x3e0> // 'nxp,sr100-rfvdd-1p8'
+     738: e0 03 17 aa  	mov	x0, x23
+     73c: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-rfvdd-1p8'
+     740: 00 00 00 94  	bl	0x740 <sr100_probe+0x3ec> // devm_regulator_get+0x0
+     744: 1f fc 3f b1  	cmn	x0, #4095
+     748: 60 82 00 f9  	str	x0, [x19, #256]
+     74c: 83 15 00 54  	b.lo	0x9fc <sr100_probe+0x6a8>
+     750: f6 03 00 aa  	mov	x22, x0
+     754: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     758: 7f 82 00 f9  	str	xzr, [x19, #256]
+     75c: c0 00 00 b4  	cbz	x0, 0x774 <sr100_probe+0x420>
+     760: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x40c> // '%-6d: failed to get rfvdd reg, %d\n'
+     764: 22 92 80 52  	mov	w2, #1169
+     768: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get rfvdd reg, %d\n'
+     76c: e3 03 16 2a  	mov	w3, w22
+     770: 00 00 00 94  	bl	0x770 <sr100_probe+0x41c> // ipc_log_string+0x0
+     774: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x420> // '\x013[NXP-SR100]:%d  failed to get rfvdd reg, %d\n'
+     778: 21 92 80 52  	mov	w1, #1169
+     77c: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get rfvdd reg, %d\n'
+     780: e2 03 16 2a  	mov	w2, w22
+     784: ea 00 00 14  	b	0xb2c <sr100_probe+0x7d8>
+     788: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x434> // 'nxp,sr100-vdd-1p8-voltage'
+     78c: e0 7a 41 f9  	ldr	x0, [x23, #752]
+     790: 62 62 04 91  	add	x2, x19, #280
+     794: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-vdd-1p8-voltage'
+     798: 43 00 80 52  	mov	w3, #2
+     79c: e4 03 1f aa  	mov	x4, xzr
+     7a0: 00 00 00 94  	bl	0x7a0 <sr100_probe+0x44c> // of_property_read_variable_u32_array+0x0
+     7a4: 40 16 f8 37  	tbnz	w0, #31, 0xa6c <sr100_probe+0x718>
+     7a8: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x454> // 'nxp,sr100-vdd-1p8-current'
+     7ac: e0 7a 41 f9  	ldr	x0, [x23, #752]
+     7b0: 62 82 04 91  	add	x2, x19, #288
+     7b4: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-vdd-1p8-current'
+     7b8: 23 00 80 52  	mov	w3, #1
+     7bc: e4 03 1f aa  	mov	x4, xzr
+     7c0: 00 00 00 94  	bl	0x7c0 <sr100_probe+0x46c> // of_property_read_variable_u32_array+0x0
+     7c4: 60 ee ff 36  	tbz	w0, #31, 0x590 <sr100_probe+0x23c>
+     7c8: f6 03 00 2a  	mov	w22, w0
+     7cc: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     7d0: c0 00 00 b4  	cbz	x0, 0x7e8 <sr100_probe+0x494>
+     7d4: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x480> // '%-6d: failed to get vdd_max_load, %d\n'
+     7d8: 82 90 80 52  	mov	w2, #1156
+     7dc: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get vdd_max_load, %d\n'
+     7e0: e3 03 16 2a  	mov	w3, w22
+     7e4: 00 00 00 94  	bl	0x7e4 <sr100_probe+0x490> // ipc_log_string+0x0
+     7e8: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x494> // '\x013[NXP-SR100]:%d  failed to get vdd_max_load, %d\n'
+     7ec: 81 90 80 52  	mov	w1, #1156
+     7f0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get vdd_max_load, %d\n'
+     7f4: cd 00 00 14  	b	0xb28 <sr100_probe+0x7d4>
+     7f8: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     7fc: a0 00 00 b4  	cbz	x0, 0x810 <sr100_probe+0x4bc>
+     800: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x4ac> // '%-6d: no ctrl_mode specified\n'
+     804: 42 95 80 52  	mov	w2, #1194
+     808: 21 00 00 91  	add	x1, x1, #0 // '%-6d: no ctrl_mode specified\n'
+     80c: 00 00 00 94  	bl	0x80c <sr100_probe+0x4b8> // ipc_log_string+0x0
+     810: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x4bc> // '\x016[NXP-SR100]:%d  no ctrl_mode specified\n'
+     814: 41 95 80 52  	mov	w1, #1194
+     818: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  no ctrl_mode specified\n'
+     81c: 00 00 00 94  	bl	0x81c <sr100_probe+0x4c8> // _printk+0x0
+     820: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     824: c0 00 00 b4  	cbz	x0, 0x83c <sr100_probe+0x4e8>
+     828: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x4d4> // '%-6d: rfclk_ctrl_mode: %d\n'
+     82c: 63 42 41 b9  	ldr	w3, [x19, #320]
+     830: 21 00 00 91  	add	x1, x1, #0 // '%-6d: rfclk_ctrl_mode: %d\n'
+     834: 22 97 80 52  	mov	w2, #1209
+     838: 00 00 00 94  	bl	0x838 <sr100_probe+0x4e4> // ipc_log_string+0x0
+     83c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x4e8> // '\x016[NXP-SR100]:%d  rfclk_ctrl_mode: %d\n'
+     840: 62 42 41 b9  	ldr	w2, [x19, #320]
+     844: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  rfclk_ctrl_mode: %d\n'
+     848: 21 97 80 52  	mov	w1, #1209
+     84c: 00 00 00 94  	bl	0x84c <sr100_probe+0x4f8> // _printk+0x0
+     850: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x4fc> // 'uwb_refclk'
+     854: e0 03 17 aa  	mov	x0, x23
+     858: 21 00 00 91  	add	x1, x1, #0 // 'uwb_refclk'
+     85c: 00 00 00 94  	bl	0x85c <sr100_probe+0x508> // devm_clk_get+0x0
+     860: 1f fc 3f b1  	cmn	x0, #4095
+     864: 60 86 00 f9  	str	x0, [x19, #264]
+     868: 23 02 00 54  	b.lo	0x8ac <sr100_probe+0x558>
+     86c: 68 42 41 b9  	ldr	w8, [x19, #320]
+     870: 7f 86 00 f9  	str	xzr, [x19, #264]
+     874: 1f 0d 00 71  	cmp	w8, #3
+     878: 40 00 00 54  	b.eq	0x880 <sr100_probe+0x52c>
+     87c: 88 01 00 35  	cbnz	w8, 0x8ac <sr100_probe+0x558>
+     880: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     884: c0 00 00 b4  	cbz	x0, 0x89c <sr100_probe+0x548>
+     888: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x534> // '%-6d: failed to get refclk, %d\n'
+     88c: 62 98 80 52  	mov	w2, #1219
+     890: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get refclk, %d\n'
+     894: e3 03 1f 2a  	mov	w3, wzr
+     898: 00 00 00 94  	bl	0x898 <sr100_probe+0x544> // ipc_log_string+0x0
+     89c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x548> // '\x013[NXP-SR100]:%d  failed to get refclk, %d\n'
+     8a0: 61 98 80 52  	mov	w1, #1219
+     8a4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get refclk, %d\n'
+     8a8: 2e 00 00 14  	b	0x960 <sr100_probe+0x60c>
+     8ac: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x558> // 'nxp,sr100-rfclk-req'
+     8b0: e0 03 18 aa  	mov	x0, x24
+     8b4: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-rfclk-req'
+     8b8: e2 03 1f 2a  	mov	w2, wzr
+     8bc: e3 03 1f aa  	mov	x3, xzr
+     8c0: 00 00 00 94  	bl	0x8c0 <sr100_probe+0x56c> // of_get_named_gpio_flags+0x0
+     8c4: 1f 00 08 71  	cmp	w0, #512
+     8c8: 60 46 01 b9  	str	w0, [x19, #324]
+     8cc: 63 02 00 54  	b.lo	0x918 <sr100_probe+0x5c4>
+     8d0: 68 42 41 b9  	ldr	w8, [x19, #320]
+     8d4: 1f 0d 00 71  	cmp	w8, #3
+     8d8: 01 02 00 54  	b.ne	0x918 <sr100_probe+0x5c4>
+     8dc: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     8e0: e0 00 00 b4  	cbz	x0, 0x8fc <sr100_probe+0x5a8>
+     8e4: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x590> // '%-6d: %s:get rfclk_req_gpio fail!\n'
+     8e8: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x594> // 'sr100_parse_dt'
+     8ec: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s:get rfclk_req_gpio fail!\n'
+     8f0: 63 00 00 91  	add	x3, x3, #0 // 'sr100_parse_dt'
+     8f4: a2 99 80 52  	mov	w2, #1229
+     8f8: 00 00 00 94  	bl	0x8f8 <sr100_probe+0x5a4> // ipc_log_string+0x0
+     8fc: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x5a8> // '\x013[NXP-SR100]:%d  %s:get rfclk_req_gpio fail!\n'
+     900: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x5ac> // 'sr100_parse_dt'
+     904: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  %s:get rfclk_req_gpio fail!\n'
+     908: 42 00 00 91  	add	x2, x2, #0 // 'sr100_parse_dt'
+     90c: a1 99 80 52  	mov	w1, #1229
+     910: 00 00 00 94  	bl	0x910 <sr100_probe+0x5bc> // _printk+0x0
+     914: 87 00 00 14  	b	0xb30 <sr100_probe+0x7dc>
+     918: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x5c4> // 'sleep_clk'
+     91c: e0 03 17 aa  	mov	x0, x23
+     920: 21 00 00 91  	add	x1, x1, #0 // 'sleep_clk'
+     924: 00 00 00 94  	bl	0x924 <sr100_probe+0x5d0> // devm_clk_get+0x0
+     928: 1f 04 40 b1  	cmn	x0, #1, lsl #12         // =4096
+     92c: 60 8a 00 f9  	str	x0, [x19, #272]
+     930: c9 01 00 54  	b.ls	0x968 <sr100_probe+0x614>
+     934: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     938: 7f 8a 00 f9  	str	xzr, [x19, #272]
+     93c: c0 00 00 b4  	cbz	x0, 0x954 <sr100_probe+0x600>
+     940: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x5ec> // '%-6d: failed to get slpclk, %d\n'
+     944: a2 9a 80 52  	mov	w2, #1237
+     948: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get slpclk, %d\n'
+     94c: e3 03 1f 2a  	mov	w3, wzr
+     950: 00 00 00 94  	bl	0x950 <sr100_probe+0x5fc> // ipc_log_string+0x0
+     954: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x600> // '\x013[NXP-SR100]:%d  failed to get slpclk, %d\n'
+     958: a1 9a 80 52  	mov	w1, #1237
+     95c: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get slpclk, %d\n'
+     960: e2 03 1f 2a  	mov	w2, wzr
+     964: 72 00 00 14  	b	0xb2c <sr100_probe+0x7d8>
+     968: 76 0e 40 f9  	ldr	x22, [x19, #24]
+     96c: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     970: f7 03 16 aa  	mov	x23, x22
+     974: 00 02 00 b4  	cbz	x0, 0x9b4 <sr100_probe+0x660>
+     978: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x624> // '%-6d: %s entry\n'
+     97c: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x628> // 'sr100_hw_setup'
+     980: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s entry\n'
+     984: 63 00 00 91  	add	x3, x3, #0 // 'sr100_hw_setup'
+     988: 62 7b 80 52  	mov	w2, #987
+     98c: 00 00 00 94  	bl	0x98c <sr100_probe+0x638> // ipc_log_string+0x0
+     990: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     994: 77 0e 40 f9  	ldr	x23, [x19, #24]
+     998: e0 00 00 b4  	cbz	x0, 0x9b4 <sr100_probe+0x660>
+     99c: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x648> // '%-6d: %s entry\n'
+     9a0: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x64c> // 'sr100_gpio_setup'
+     9a4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s entry\n'
+     9a8: 63 00 00 91  	add	x3, x3, #0 // 'sr100_gpio_setup'
+     9ac: 62 6c 80 52  	mov	w2, #867
+     9b0: 00 00 00 94  	bl	0x9b0 <sr100_probe+0x65c> // ipc_log_string+0x0
+     9b4: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x660> // 'sr100_irq'
+     9b8: 61 76 40 b9  	ldr	w1, [x19, #116]
+     9bc: 42 00 00 91  	add	x2, x2, #0 // 'sr100_irq'
+     9c0: e0 03 17 aa  	mov	x0, x23
+     9c4: 00 00 00 94  	bl	0x9c4 <sr100_probe+0x670> // devm_gpio_request+0x0
+     9c8: a0 06 f8 36  	tbz	w0, #31, 0xa9c <sr100_probe+0x748>
+     9cc: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     9d0: c0 00 00 b4  	cbz	x0, 0x9e8 <sr100_probe+0x694>
+     9d4: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x680> // '%-6d: failed to request irq_gpio %d\n'
+     9d8: 63 76 40 b9  	ldr	w3, [x19, #116]
+     9dc: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to request irq_gpio %d\n'
+     9e0: c2 6c 80 52  	mov	w2, #870
+     9e4: 00 00 00 94  	bl	0x9e4 <sr100_probe+0x690> // ipc_log_string+0x0
+     9e8: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x694> // '\x013[NXP-SR100]:%d  failed to request irq_gpio %d\n'
+     9ec: 62 76 40 b9  	ldr	w2, [x19, #116]
+     9f0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to request irq_gpio %d\n'
+     9f4: c1 6c 80 52  	mov	w1, #870
+     9f8: 0f 01 00 14  	b	0xe34 <sr100_probe+0xae0>
+     9fc: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x6a8> // 'nxp,sr100-vdd-1p8-voltage'
+     a00: e0 7a 41 f9  	ldr	x0, [x23, #752]
+     a04: 62 92 04 91  	add	x2, x19, #292
+     a08: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-vdd-1p8-voltage'
+     a0c: 43 00 80 52  	mov	w3, #2
+     a10: e4 03 1f aa  	mov	x4, xzr
+     a14: 00 00 00 94  	bl	0xa14 <sr100_probe+0x6c0> // of_property_read_variable_u32_array+0x0
+     a18: 20 07 f8 37  	tbnz	w0, #31, 0xafc <sr100_probe+0x7a8>
+     a1c: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x6c8> // 'nxp,sr100-vdd-1p8-current'
+     a20: e0 7a 41 f9  	ldr	x0, [x23, #752]
+     a24: 62 b2 04 91  	add	x2, x19, #300
+     a28: 21 00 00 91  	add	x1, x1, #0 // 'nxp,sr100-vdd-1p8-current'
+     a2c: 23 00 80 52  	mov	w3, #1
+     a30: e4 03 1f aa  	mov	x4, xzr
+     a34: 00 00 00 94  	bl	0xa34 <sr100_probe+0x6e0> // of_property_read_variable_u32_array+0x0
+     a38: 40 dc ff 36  	tbz	w0, #31, 0x5c0 <sr100_probe+0x26c>
+     a3c: f6 03 00 2a  	mov	w22, w0
+     a40: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     a44: c0 00 00 b4  	cbz	x0, 0xa5c <sr100_probe+0x708>
+     a48: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x6f4> // '%-6d: failed to get rfvdd max_load, %d\n'
+     a4c: 02 94 80 52  	mov	w2, #1184
+     a50: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get rfvdd max_load, %d\n'
+     a54: e3 03 16 2a  	mov	w3, w22
+     a58: 00 00 00 94  	bl	0xa58 <sr100_probe+0x704> // ipc_log_string+0x0
+     a5c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x708> // '\x013[NXP-SR100]:%d  failed to get rfvdd max_load, %d\n'
+     a60: 01 94 80 52  	mov	w1, #1184
+     a64: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get rfvdd max_load, %d\n'
+     a68: 30 00 00 14  	b	0xb28 <sr100_probe+0x7d4>
+     a6c: f6 03 00 2a  	mov	w22, w0
+     a70: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     a74: c0 00 00 b4  	cbz	x0, 0xa8c <sr100_probe+0x738>
+     a78: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x724> // '%-6d: failed to get vdd_levels, %d\n'
+     a7c: a2 8f 80 52  	mov	w2, #1149
+     a80: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get vdd_levels, %d\n'
+     a84: e3 03 16 2a  	mov	w3, w22
+     a88: 00 00 00 94  	bl	0xa88 <sr100_probe+0x734> // ipc_log_string+0x0
+     a8c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x738> // '\x013[NXP-SR100]:%d  failed to get vdd_levels, %d\n'
+     a90: a1 8f 80 52  	mov	w1, #1149
+     a94: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get vdd_levels, %d\n'
+     a98: 24 00 00 14  	b	0xb28 <sr100_probe+0x7d4>
+     a9c: 60 76 40 b9  	ldr	w0, [x19, #116]
+     aa0: 00 00 00 94  	bl	0xaa0 <sr100_probe+0x74c> // gpio_to_desc+0x0
+     aa4: 00 00 00 94  	bl	0xaa4 <sr100_probe+0x750> // gpiod_direction_input+0x0
+     aa8: 80 09 f8 36  	tbz	w0, #31, 0xbd8 <sr100_probe+0x884>
+     aac: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     ab0: c0 00 00 b4  	cbz	x0, 0xac8 <sr100_probe+0x774>
+     ab4: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x760> // '%-6d: failed to set irq_gpio %d\n'
+     ab8: 63 76 40 b9  	ldr	w3, [x19, #116]
+     abc: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to set irq_gpio %d\n'
+     ac0: 62 6d 80 52  	mov	w2, #875
+     ac4: 00 00 00 94  	bl	0xac4 <sr100_probe+0x770> // ipc_log_string+0x0
+     ac8: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x774> // '\x013[NXP-SR100]:%d  failed to set irq_gpio %d\n'
+     acc: 62 76 40 b9  	ldr	w2, [x19, #116]
+     ad0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to set irq_gpio %d\n'
+     ad4: 61 6d 80 52  	mov	w1, #875
+     ad8: d7 00 00 14  	b	0xe34 <sr100_probe+0xae0>
+     adc: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x788> // 'none'
+     ae0: e0 03 16 aa  	mov	x0, x22
+     ae4: 21 00 00 91  	add	x1, x1, #0 // 'none'
+     ae8: 00 00 00 94  	bl	0xae8 <sr100_probe+0x794> // strcmp+0x0
+     aec: a0 09 00 35  	cbnz	w0, 0xc20 <sr100_probe+0x8cc>
+     af0: 28 00 80 52  	mov	w8, #1
+     af4: 68 42 01 b9  	str	w8, [x19, #320]
+     af8: 4a ff ff 17  	b	0x820 <sr100_probe+0x4cc>
+     afc: f6 03 00 2a  	mov	w22, w0
+     b00: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     b04: c0 00 00 b4  	cbz	x0, 0xb1c <sr100_probe+0x7c8>
+     b08: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x7b4> // '%-6d: failed to get rfvdd levels, %d\n'
+     b0c: 22 93 80 52  	mov	w2, #1177
+     b10: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to get rfvdd levels, %d\n'
+     b14: e3 03 16 2a  	mov	w3, w22
+     b18: 00 00 00 94  	bl	0xb18 <sr100_probe+0x7c4> // ipc_log_string+0x0
+     b1c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x7c8> // '\x013[NXP-SR100]:%d  failed to get rfvdd levels, %d\n'
+     b20: 21 93 80 52  	mov	w1, #1177
+     b24: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to get rfvdd levels, %d\n'
+     b28: e2 03 16 2a  	mov	w2, w22
+     b2c: 00 00 00 94  	bl	0xb2c <sr100_probe+0x7d8> // _printk+0x0
+     b30: b6 02 80 12  	mov	w22, #-22
+     b34: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     b38: a0 00 00 b4  	cbz	x0, 0xb4c <sr100_probe+0x7f8>
+     b3c: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x7e8> // '%-6d: failed to parse DT\n'
+     b40: e2 b7 80 52  	mov	w2, #1471
+     b44: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to parse DT\n'
+     b48: 00 00 00 94  	bl	0xb48 <sr100_probe+0x7f4> // ipc_log_string+0x0
+     b4c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x7f8> // '\x013[NXP-SR100]:%d  failed to parse DT\n'
+     b50: e1 b7 80 52  	mov	w1, #1471
+     b54: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to parse DT\n'
+     b58: 00 00 00 94  	bl	0xb58 <sr100_probe+0x804> // _printk+0x0
+     b5c: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     b60: 00 01 00 b4  	cbz	x0, 0xb80 <sr100_probe+0x82c>
+     b64: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x810> // '%-6d: %s: sr100 spi probe failure(%d)!\n'
+     b68: 03 00 00 90  	adrp	x3, 0x0 <sr100_probe+0x814> // 'sr100_probe'
+     b6c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s: sr100 spi probe failure(%d)!\n'
+     b70: 63 00 00 91  	add	x3, x3, #0 // 'sr100_probe'
+     b74: 82 bb 80 52  	mov	w2, #1500
+     b78: e4 03 16 2a  	mov	w4, w22
+     b7c: 00 00 00 94  	bl	0xb7c <sr100_probe+0x828> // ipc_log_string+0x0
+     b80: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x82c> // '\x013[NXP-SR100]:%d  %s: sr100 spi probe failure(%d)!\n'
+     b84: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x830> // 'sr100_probe'
+     b88: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  %s: sr100 spi probe failure(%d)!\n'
+     b8c: 42 00 00 91  	add	x2, x2, #0 // 'sr100_probe'
+     b90: 81 bb 80 52  	mov	w1, #1500
+     b94: e3 03 16 2a  	mov	w3, w22
+     b98: 00 00 00 94  	bl	0xb98 <sr100_probe+0x844> // _printk+0x0
+     b9c: 08 41 38 d5  	mrs	x8, SP_EL0
+     ba0: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     ba4: e9 07 40 f9  	ldr	x9, [sp, #8]
+     ba8: 1f 01 09 eb  	cmp	x8, x9
+     bac: 01 26 00 54  	b.ne	0x106c <sr100_probe+0xd18>
+     bb0: e0 03 16 2a  	mov	w0, w22
+     bb4: f9 13 40 f9  	ldr	x25, [sp, #32]
+     bb8: f4 4f 45 a9  	ldp	x20, x19, [sp, #80]
+     bbc: f6 57 44 a9  	ldp	x22, x21, [sp, #64]
+     bc0: f8 5f 43 a9  	ldp	x24, x23, [sp, #48]
+     bc4: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+     bc8: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     bcc: ff 83 01 91  	add	sp, sp, #96
+     bd0: bf 23 03 d5  	hint	#29
+     bd4: c0 03 5f d6  	ret
+     bd8: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x884> // 'sr100_ce'
+     bdc: 61 72 40 b9  	ldr	w1, [x19, #112]
+     be0: 42 00 00 91  	add	x2, x2, #0 // 'sr100_ce'
+     be4: e0 03 17 aa  	mov	x0, x23
+     be8: 00 00 00 94  	bl	0xbe8 <sr100_probe+0x894> // devm_gpio_request+0x0
+     bec: a0 02 f8 36  	tbz	w0, #31, 0xc40 <sr100_probe+0x8ec>
+     bf0: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     bf4: c0 00 00 b4  	cbz	x0, 0xc0c <sr100_probe+0x8b8>
+     bf8: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x8a4> // '%-6d: failed to request ce_gpio %d\n'
+     bfc: 63 72 40 b9  	ldr	w3, [x19, #112]
+     c00: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to request ce_gpio %d\n'
+     c04: 22 6e 80 52  	mov	w2, #881
+     c08: 00 00 00 94  	bl	0xc08 <sr100_probe+0x8b4> // ipc_log_string+0x0
+     c0c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x8b8> // '\x013[NXP-SR100]:%d  failed to request ce_gpio %d\n'
+     c10: 62 72 40 b9  	ldr	w2, [x19, #112]
+     c14: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to request ce_gpio %d\n'
+     c18: 21 6e 80 52  	mov	w1, #881
+     c1c: 86 00 00 14  	b	0xe34 <sr100_probe+0xae0>
+     c20: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x8cc> // 'hw'
+     c24: e0 03 16 aa  	mov	x0, x22
+     c28: 21 00 00 91  	add	x1, x1, #0 // 'hw'
+     c2c: 00 00 00 94  	bl	0xc2c <sr100_probe+0x8d8> // strcmp+0x0
+     c30: c0 01 00 35  	cbnz	w0, 0xc68 <sr100_probe+0x914>
+     c34: 48 00 80 52  	mov	w8, #2
+     c38: 68 42 01 b9  	str	w8, [x19, #320]
+     c3c: f9 fe ff 17  	b	0x820 <sr100_probe+0x4cc>
+     c40: 60 72 40 b9  	ldr	w0, [x19, #112]
+     c44: 00 00 00 94  	bl	0xc44 <sr100_probe+0x8f0> // gpio_to_desc+0x0
+     c48: e1 03 1f 2a  	mov	w1, wzr
+     c4c: 00 00 00 94  	bl	0xc4c <sr100_probe+0x8f8> // gpiod_direction_output_raw+0x0
+     c50: c0 01 f8 36  	tbz	w0, #31, 0xc88 <sr100_probe+0x934>
+     c54: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x900> // '\x016failed to set ce_gpio %d\n'
+     c58: 61 72 40 b9  	ldr	w1, [x19, #112]
+     c5c: 00 00 00 91  	add	x0, x0, #0 // '\x016failed to set ce_gpio %d\n'
+     c60: 00 00 00 94  	bl	0xc60 <sr100_probe+0x90c> // _printk+0x0
+     c64: 75 00 00 14  	b	0xe38 <sr100_probe+0xae4>
+     c68: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x914> // 'irq'
+     c6c: e0 03 16 aa  	mov	x0, x22
+     c70: 21 00 00 91  	add	x1, x1, #0 // 'irq'
+     c74: 00 00 00 94  	bl	0xc74 <sr100_probe+0x920> // strcmp+0x0
+     c78: c0 02 00 35  	cbnz	w0, 0xcd0 <sr100_probe+0x97c>
+     c7c: 68 00 80 52  	mov	w8, #3
+     c80: 68 42 01 b9  	str	w8, [x19, #320]
+     c84: e7 fe ff 17  	b	0x820 <sr100_probe+0x4cc>
+     c88: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0x934> // 'sr100_ri'
+     c8c: 61 7a 40 b9  	ldr	w1, [x19, #120]
+     c90: 42 00 00 91  	add	x2, x2, #0 // 'sr100_ri'
+     c94: e0 03 17 aa  	mov	x0, x23
+     c98: 00 00 00 94  	bl	0xc98 <sr100_probe+0x944> // devm_gpio_request+0x0
+     c9c: 60 03 f8 36  	tbz	w0, #31, 0xd08 <sr100_probe+0x9b4>
+     ca0: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     ca4: c0 00 00 b4  	cbz	x0, 0xcbc <sr100_probe+0x968>
+     ca8: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x954> // '%-6d: failed to request ri_gpio %d\n'
+     cac: 63 7a 40 b9  	ldr	w3, [x19, #120]
+     cb0: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to request ri_gpio %d\n'
+     cb4: 82 6f 80 52  	mov	w2, #892
+     cb8: 00 00 00 94  	bl	0xcb8 <sr100_probe+0x964> // ipc_log_string+0x0
+     cbc: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x968> // '\x013[NXP-SR100]:%d  failed to request ri_gpio %d\n'
+     cc0: 62 7a 40 b9  	ldr	w2, [x19, #120]
+     cc4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to request ri_gpio %d\n'
+     cc8: 81 6f 80 52  	mov	w1, #892
+     ccc: 5a 00 00 14  	b	0xe34 <sr100_probe+0xae0>
+     cd0: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     cd4: e0 00 00 b4  	cbz	x0, 0xcf0 <sr100_probe+0x99c>
+     cd8: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x984> // '%-6d: invalid rfclk ctrl_mode(%s) parsed from dts\n'
+     cdc: a2 96 80 52  	mov	w2, #1205
+     ce0: 21 00 00 91  	add	x1, x1, #0 // '%-6d: invalid rfclk ctrl_mode(%s) parsed from dts\n'
+     ce4: e3 03 16 aa  	mov	x3, x22
+     ce8: 00 00 00 94  	bl	0xce8 <sr100_probe+0x994> // ipc_log_string+0x0
+     cec: f6 03 40 f9  	ldr	x22, [sp]
+     cf0: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x99c> // '\x013[NXP-SR100]:%d  invalid rfclk ctrl_mode(%s) parsed from dts\n'
+     cf4: a1 96 80 52  	mov	w1, #1205
+     cf8: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  invalid rfclk ctrl_mode(%s) parsed from dts\n'
+     cfc: e2 03 16 aa  	mov	x2, x22
+     d00: 00 00 00 94  	bl	0xd00 <sr100_probe+0x9ac> // _printk+0x0
+     d04: 8b ff ff 17  	b	0xb30 <sr100_probe+0x7dc>
+     d08: 60 7a 40 b9  	ldr	w0, [x19, #120]
+     d0c: 00 00 00 94  	bl	0xd0c <sr100_probe+0x9b8> // gpio_to_desc+0x0
+     d10: e1 03 1f 2a  	mov	w1, wzr
+     d14: 00 00 00 94  	bl	0xd14 <sr100_probe+0x9c0> // gpiod_direction_output_raw+0x0
+     d18: a0 01 f8 36  	tbz	w0, #31, 0xd4c <sr100_probe+0x9f8>
+     d1c: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     d20: c0 00 00 b4  	cbz	x0, 0xd38 <sr100_probe+0x9e4>
+     d24: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0x9d0> // '%-6d: failed to set ri_gpio %d\n'
+     d28: 63 7a 40 b9  	ldr	w3, [x19, #120]
+     d2c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to set ri_gpio %d\n'
+     d30: 22 70 80 52  	mov	w2, #897
+     d34: 00 00 00 94  	bl	0xd34 <sr100_probe+0x9e0> // ipc_log_string+0x0
+     d38: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0x9e4> // '\x013[NXP-SR100]:%d  failed to set ri_gpio %d\n'
+     d3c: 62 7a 40 b9  	ldr	w2, [x19, #120]
+     d40: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to set ri_gpio %d\n'
+     d44: 21 70 80 52  	mov	w1, #897
+     d48: 3b 00 00 14  	b	0xe34 <sr100_probe+0xae0>
+     d4c: 61 46 41 b9  	ldr	w1, [x19, #324]
+     d50: 3f fc 07 71  	cmp	w1, #511
+     d54: c8 02 00 54  	b.hi	0xdac <sr100_probe+0xa58>
+     d58: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0xa04> // 'sr100_rfclk_req'
+     d5c: e0 03 17 aa  	mov	x0, x23
+     d60: 42 00 00 91  	add	x2, x2, #0 // 'sr100_rfclk_req'
+     d64: 00 00 00 94  	bl	0xd64 <sr100_probe+0xa10> // devm_gpio_request+0x0
+     d68: 00 05 00 35  	cbnz	w0, 0xe08 <sr100_probe+0xab4>
+     d6c: 60 46 41 b9  	ldr	w0, [x19, #324]
+     d70: 00 00 00 94  	bl	0xd70 <sr100_probe+0xa1c> // gpio_to_desc+0x0
+     d74: 00 00 00 94  	bl	0xd74 <sr100_probe+0xa20> // gpiod_direction_input+0x0
+     d78: a0 01 f8 36  	tbz	w0, #31, 0xdac <sr100_probe+0xa58>
+     d7c: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     d80: c0 00 00 b4  	cbz	x0, 0xd98 <sr100_probe+0xa44>
+     d84: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xa30> // '%-6d: failed to set vbat gpio %d\n'
+     d88: 63 46 41 b9  	ldr	w3, [x19, #324]
+     d8c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to set vbat gpio %d\n'
+     d90: 42 78 80 52  	mov	w2, #962
+     d94: 00 00 00 94  	bl	0xd94 <sr100_probe+0xa40> // ipc_log_string+0x0
+     d98: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xa44> // '\x013[NXP-SR100]:%d  failed to set vbat gpio %d\n'
+     d9c: 62 46 41 b9  	ldr	w2, [x19, #324]
+     da0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to set vbat gpio %d\n'
+     da4: 41 78 80 52  	mov	w1, #962
+     da8: 23 00 00 14  	b	0xe34 <sr100_probe+0xae0>
+     dac: 60 04 00 35  	cbnz	w0, 0xe38 <sr100_probe+0xae4>
+     db0: 60 76 40 b9  	ldr	w0, [x19, #116]
+     db4: 00 00 00 94  	bl	0xdb4 <sr100_probe+0xa60> // gpio_to_desc+0x0
+     db8: 00 00 00 94  	bl	0xdb8 <sr100_probe+0xa64> // gpiod_to_irq+0x0
+     dbc: 68 0e 40 f9  	ldr	x8, [x19, #24]
+     dc0: 00 ad 03 b9  	str	w0, [x8, #940]
+     dc4: 68 0e 40 f9  	ldr	x8, [x19, #24]
+     dc8: 00 ad 43 b9  	ldr	w0, [x8, #940]
+     dcc: e0 04 f8 36  	tbz	w0, #31, 0xe68 <sr100_probe+0xb14>
+     dd0: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     dd4: c0 00 00 b4  	cbz	x0, 0xdec <sr100_probe+0xa98>
+     dd8: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xa84> // '%-6d: failed get irq_num from gpio:0x%x\n'
+     ddc: 63 76 40 b9  	ldr	w3, [x19, #116]
+     de0: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed get irq_num from gpio:0x%x\n'
+     de4: a2 7c 80 52  	mov	w2, #997
+     de8: 00 00 00 94  	bl	0xde8 <sr100_probe+0xa94> // ipc_log_string+0x0
+     dec: 62 76 40 b9  	ldr	w2, [x19, #116]
+     df0: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xa9c> // '\x013[NXP-SR100]:%d  failed get irq_num from gpio:0x%x\n'
+     df4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed get irq_num from gpio:0x%x\n'
+     df8: a1 7c 80 52  	mov	w1, #997
+     dfc: 00 00 00 94  	bl	0xdfc <sr100_probe+0xaa8> // _printk+0x0
+     e00: b6 02 80 12  	mov	w22, #-22
+     e04: 56 ff ff 17  	b	0xb5c <sr100_probe+0x808>
+     e08: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     e0c: c0 00 00 b4  	cbz	x0, 0xe24 <sr100_probe+0xad0>
+     e10: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xabc> // '%-6d: failed to request rfclk_req_gpio %d\n'
+     e14: 63 46 41 b9  	ldr	w3, [x19, #324]
+     e18: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to request rfclk_req_gpio %d\n'
+     e1c: 82 77 80 52  	mov	w2, #956
+     e20: 00 00 00 94  	bl	0xe20 <sr100_probe+0xacc> // ipc_log_string+0x0
+     e24: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xad0> // '\x013[NXP-SR100]:%d  failed to request rfclk_req_gpio %d\n'
+     e28: 62 46 41 b9  	ldr	w2, [x19, #324]
+     e2c: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to request rfclk_req_gpio %d\n'
+     e30: 81 77 80 52  	mov	w1, #956
+     e34: 00 00 00 94  	bl	0xe34 <sr100_probe+0xae0> // _printk+0x0
+     e38: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     e3c: a0 00 00 b4  	cbz	x0, 0xe50 <sr100_probe+0xafc>
+     e40: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xaec> // '%-6d: failed to setup_gpio\n'
+     e44: c2 7b 80 52  	mov	w2, #990
+     e48: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to setup_gpio\n'
+     e4c: 00 00 00 94  	bl	0xe4c <sr100_probe+0xaf8> // ipc_log_string+0x0
+     e50: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xafc> // '\x013[NXP-SR100]:%d  failed to setup_gpio\n'
+     e54: c1 7b 80 52  	mov	w1, #990
+     e58: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to setup_gpio\n'
+     e5c: 00 00 00 94  	bl	0xe5c <sr100_probe+0xb08> // _printk+0x0
+     e60: b6 02 80 12  	mov	w22, #-22
+     e64: 3e ff ff 17  	b	0xb5c <sr100_probe+0x808>
+     e68: e1 03 1f aa  	mov	x1, xzr
+     e6c: 02 00 82 52  	mov	w2, #4096
+     e70: 00 00 00 94  	bl	0xe70 <sr100_probe+0xb1c> // irq_modify_status+0x0
+     e74: 68 0e 40 f9  	ldr	x8, [x19, #24]
+     e78: 02 00 00 90  	adrp	x2, 0x0 <sr100_probe+0xb24> // +0x3240
+     e7c: 65 16 40 f9  	ldr	x5, [x19, #40]
+     e80: 42 00 00 91  	add	x2, x2, #0 // +0x3240
+     e84: e0 03 16 aa  	mov	x0, x22
+     e88: e3 03 1f aa  	mov	x3, xzr
+     e8c: 01 ad 43 b9  	ldr	w1, [x8, #940]
+     e90: 84 00 80 52  	mov	w4, #4
+     e94: e6 03 13 aa  	mov	x6, x19
+     e98: 00 00 00 94  	bl	0xe98 <sr100_probe+0xb44> // devm_request_threaded_irq+0x0
+     e9c: 40 03 00 35  	cbnz	w0, 0xf04 <sr100_probe+0xbb0>
+     ea0: 68 0e 40 f9  	ldr	x8, [x19, #24]
+     ea4: 09 01 80 52  	mov	w9, #8
+     ea8: 09 95 0e 39  	strb	w9, [x8, #933]
+     eac: 09 80 84 52  	mov	w9, #9216
+     eb0: 68 0e 40 f9  	ldr	x8, [x19, #24]
+     eb4: 89 1e a0 72  	movk	w9, #244, lsl #16
+     eb8: 1f a9 03 b9  	str	wzr, [x8, #936]
+     ebc: 68 0e 40 f9  	ldr	x8, [x19, #24]
+     ec0: 09 a1 03 b9  	str	w9, [x8, #928]
+     ec4: 60 0e 40 f9  	ldr	x0, [x19, #24]
+     ec8: 00 00 00 94  	bl	0xec8 <sr100_probe+0xb74> // spi_setup+0x0
+     ecc: f6 03 00 2a  	mov	w22, w0
+     ed0: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     ed4: d6 02 f8 36  	tbz	w22, #31, 0xf2c <sr100_probe+0xbd8>
+     ed8: c0 00 00 b4  	cbz	x0, 0xef0 <sr100_probe+0xb9c>
+     edc: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xb88> // '%-6d: do spi_setup() err, %d\n'
+     ee0: 82 7f 80 52  	mov	w2, #1020
+     ee4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: do spi_setup() err, %d\n'
+     ee8: e3 03 16 2a  	mov	w3, w22
+     eec: 00 00 00 94  	bl	0xeec <sr100_probe+0xb98> // ipc_log_string+0x0
+     ef0: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xb9c> // '\x013[NXP-SR100]:%d  do spi_setup() err, %d\n'
+     ef4: 81 7f 80 52  	mov	w1, #1020
+     ef8: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  do spi_setup() err, %d\n'
+     efc: e2 03 16 2a  	mov	w2, w22
+     f00: bf ff ff 17  	b	0xdfc <sr100_probe+0xaa8>
+     f04: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     f08: a0 00 00 b4  	cbz	x0, 0xf1c <sr100_probe+0xbc8>
+     f0c: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xbb8> // '%-6d: failed to request irq\n'
+     f10: 42 7e 80 52  	mov	w2, #1010
+     f14: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to request irq\n'
+     f18: 00 00 00 94  	bl	0xf18 <sr100_probe+0xbc4> // ipc_log_string+0x0
+     f1c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xbc8> // '\x013[NXP-SR100]:%d  failed to request irq\n'
+     f20: 41 7e 80 52  	mov	w1, #1010
+     f24: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to request irq\n'
+     f28: cd ff ff 17  	b	0xe5c <sr100_probe+0xb08>
+     f2c: a0 00 00 b4  	cbz	x0, 0xf40 <sr100_probe+0xbec>
+     f30: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xbdc> // '%-6d: hw setup done\n'
+     f34: 02 80 80 52  	mov	w2, #1024
+     f38: 21 00 00 91  	add	x1, x1, #0 // '%-6d: hw setup done\n'
+     f3c: 00 00 00 94  	bl	0xf3c <sr100_probe+0xbe8> // ipc_log_string+0x0
+     f40: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xbec> // '\x016[NXP-SR100]:%d  hw setup done\n'
+     f44: 01 80 80 52  	mov	w1, #1024
+     f48: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  hw setup done\n'
+     f4c: 00 00 00 94  	bl	0xf4c <sr100_probe+0xbf8> // _printk+0x0
+     f50: e0 03 15 aa  	mov	x0, x21
+     f54: 00 00 00 94  	bl	0xf54 <sr100_probe+0xc00> // misc_register+0x0
+     f58: f6 03 00 2a  	mov	w22, w0
+     f5c: c0 01 f8 36  	tbz	w0, #31, 0xf94 <sr100_probe+0xc40>
+     f60: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     f64: c0 00 00 b4  	cbz	x0, 0xf7c <sr100_probe+0xc28>
+     f68: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xc14> // '%-6d: misc_register failed! %d\n'
+     f6c: 82 b9 80 52  	mov	w2, #1484
+     f70: 21 00 00 91  	add	x1, x1, #0 // '%-6d: misc_register failed! %d\n'
+     f74: e3 03 16 2a  	mov	w3, w22
+     f78: 00 00 00 94  	bl	0xf78 <sr100_probe+0xc24> // ipc_log_string+0x0
+     f7c: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xc28> // '\x013[NXP-SR100]:%d  misc_register failed! %d\n'
+     f80: 81 b9 80 52  	mov	w1, #1484
+     f84: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  misc_register failed! %d\n'
+     f88: e2 03 16 2a  	mov	w2, w22
+     f8c: 00 00 00 94  	bl	0xf8c <sr100_probe+0xc38> // _printk+0x0
+     f90: f3 fe ff 17  	b	0xb5c <sr100_probe+0x808>
+     f94: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     f98: 93 4e 00 f9  	str	x19, [x20, #152]
+     f9c: a0 00 00 b4  	cbz	x0, 0xfb0 <sr100_probe+0xc5c>
+     fa0: 01 00 00 90  	adrp	x1, 0x0 <sr100_probe+0xc4c> // '%-6d: driver probe successful!\n'
+     fa4: 22 ba 80 52  	mov	w2, #1489
+     fa8: 21 00 00 91  	add	x1, x1, #0 // '%-6d: driver probe successful!\n'
+     fac: 00 00 00 94  	bl	0xfac <sr100_probe+0xc58> // ipc_log_string+0x0
+     fb0: 00 00 00 90  	adrp	x0, 0x0 <sr100_probe+0xc5c> // '\x016[NXP-SR100]:%d  driver probe successful!\n'
+     fb4: 21 ba 80 52  	mov	w1, #1489
+     fb8: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  driver probe successful!\n'
+     fbc: 00 00 00 94  	bl	0xfbc <sr100_probe+0xc68> // _printk+0x0
+     fc0: 60 7e 40 f9  	ldr	x0, [x19, #248]
+     fc4: 80 02 00 b4  	cbz	x0, 0x1014 <sr100_probe+0xcc0>
+     fc8: 61 1a 41 b9  	ldr	w1, [x19, #280]
+     fcc: 62 1e 41 b9  	ldr	w2, [x19, #284]
+     fd0: 00 00 00 94  	bl	0xfd0 <sr100_probe+0xc7c> // regulator_set_voltage+0x0
+     fd4: e0 04 f8 37  	tbnz	w0, #31, 0x1070 <sr100_probe+0xd1c>
+     fd8: 60 7e 40 f9  	ldr	x0, [x19, #248]
+     fdc: 61 22 41 b9  	ldr	w1, [x19, #288]
+     fe0: 00 00 00 94  	bl	0xfe0 <sr100_probe+0xc8c> // regulator_set_load+0x0
+     fe4: e0 05 f8 37  	tbnz	w0, #31, 0x10a0 <sr100_probe+0xd4c>
+     fe8: 60 7e 40 f9  	ldr	x0, [x19, #248]
+     fec: 00 00 00 94  	bl	0xfec <sr100_probe+0xc98> // regulator_enable+0x0
+     ff0: 80 08 f8 37  	tbnz	w0, #31, 0x1100 <sr100_probe+0xdac>
+     ff4: 28 00 80 52  	mov	w8, #1
+     ff8: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+     ffc: 68 32 01 b9  	str	w8, [x19, #304]
+    1000: a0 00 00 b4  	cbz	x0, 0x1014 <sr100_probe+0xcc0>
+    1004: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xcb0> // '%-6d: vdd power on\n'
+    1008: e2 9f 80 52  	mov	w2, #1279
+    100c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: vdd power on\n'
+    1010: 00 00 00 94  	bl	0x1010 <sr100_probe+0xcbc> // ipc_log_string+0x0
+    1014: 60 82 40 f9  	ldr	x0, [x19, #256]
+    1018: 20 dc ff b4  	cbz	x0, 0xb9c <sr100_probe+0x848>
+    101c: 61 26 41 b9  	ldr	w1, [x19, #292]
+    1020: 62 2a 41 b9  	ldr	w2, [x19, #296]
+    1024: 00 00 00 94  	bl	0x1024 <sr100_probe+0xcd0> // regulator_set_voltage+0x0
+    1028: 40 05 f8 37  	tbnz	w0, #31, 0x10d0 <sr100_probe+0xd7c>
+    102c: 60 82 40 f9  	ldr	x0, [x19, #256]
+    1030: 61 2e 41 b9  	ldr	w1, [x19, #300]
+    1034: 00 00 00 94  	bl	0x1034 <sr100_probe+0xce0> // regulator_set_load+0x0
+    1038: c0 07 f8 37  	tbnz	w0, #31, 0x1130 <sr100_probe+0xddc>
+    103c: 60 82 40 f9  	ldr	x0, [x19, #256]
+    1040: 00 00 00 94  	bl	0x1040 <sr100_probe+0xcec> // regulator_enable+0x0
+    1044: e0 08 f8 37  	tbnz	w0, #31, 0x1160 <sr100_probe+0xe0c>
+    1048: 28 00 80 52  	mov	w8, #1
+    104c: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    1050: 68 36 01 b9  	str	w8, [x19, #308]
+    1054: 40 da ff b4  	cbz	x0, 0xb9c <sr100_probe+0x848>
+    1058: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xd04> // '%-6d: rfvdd power on\n'
+    105c: 02 a3 80 52  	mov	w2, #1304
+    1060: 21 00 00 91  	add	x1, x1, #0 // '%-6d: rfvdd power on\n'
+    1064: 00 00 00 94  	bl	0x1064 <sr100_probe+0xd10> // ipc_log_string+0x0
+    1068: cd fe ff 17  	b	0xb9c <sr100_probe+0x848>
+    106c: 00 00 00 94  	bl	0x106c <sr100_probe+0xd18> // __stack_chk_fail+0x0
+    1070: f4 03 00 2a  	mov	w20, w0
+    1074: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    1078: c0 00 00 b4  	cbz	x0, 0x1090 <sr100_probe+0xd3c>
+    107c: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xd28> // '%-6d: failed to set vdd_voltage, %d\n'
+    1080: c2 9d 80 52  	mov	w2, #1262
+    1084: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to set vdd_voltage, %d\n'
+    1088: e3 03 14 2a  	mov	w3, w20
+    108c: 00 00 00 94  	bl	0x108c <sr100_probe+0xd38> // ipc_log_string+0x0
+    1090: 00 00 00 90  	adrp	x0, 0x1000 <sr100_probe+0xd3c> // '\x013[NXP-SR100]:%d  failed to set vdd_voltage, %d\n'
+    1094: c1 9d 80 52  	mov	w1, #1262
+    1098: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to set vdd_voltage, %d\n'
+    109c: 3c 00 00 14  	b	0x118c <sr100_probe+0xe38>
+    10a0: f4 03 00 2a  	mov	w20, w0
+    10a4: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    10a8: c0 00 00 b4  	cbz	x0, 0x10c0 <sr100_probe+0xd6c>
+    10ac: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xd58> // '%-6d: failed to set vdd_max_load, %d\n'
+    10b0: 82 9e 80 52  	mov	w2, #1268
+    10b4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to set vdd_max_load, %d\n'
+    10b8: e3 03 14 2a  	mov	w3, w20
+    10bc: 00 00 00 94  	bl	0x10bc <sr100_probe+0xd68> // ipc_log_string+0x0
+    10c0: 00 00 00 90  	adrp	x0, 0x1000 <sr100_probe+0xd6c> // '\x013[NXP-SR100]:%d  failed to set vdd_max_load, %d\n'
+    10c4: 81 9e 80 52  	mov	w1, #1268
+    10c8: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to set vdd_max_load, %d\n'
+    10cc: 30 00 00 14  	b	0x118c <sr100_probe+0xe38>
+    10d0: f4 03 00 2a  	mov	w20, w0
+    10d4: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    10d8: c0 00 00 b4  	cbz	x0, 0x10f0 <sr100_probe+0xd9c>
+    10dc: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xd88> // '%-6d: failed to set rfvdd_voltage, %d\n'
+    10e0: e2 a0 80 52  	mov	w2, #1287
+    10e4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to set rfvdd_voltage, %d\n'
+    10e8: e3 03 14 2a  	mov	w3, w20
+    10ec: 00 00 00 94  	bl	0x10ec <sr100_probe+0xd98> // ipc_log_string+0x0
+    10f0: 00 00 00 90  	adrp	x0, 0x1000 <sr100_probe+0xd9c> // '\x013[NXP-SR100]:%d  failed to set rfvdd_voltage, %d\n'
+    10f4: e1 a0 80 52  	mov	w1, #1287
+    10f8: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to set rfvdd_voltage, %d\n'
+    10fc: 24 00 00 14  	b	0x118c <sr100_probe+0xe38>
+    1100: f4 03 00 2a  	mov	w20, w0
+    1104: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    1108: c0 00 00 b4  	cbz	x0, 0x1120 <sr100_probe+0xdcc>
+    110c: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xdb8> // '%-6d: failed to power vdd, %d\n'
+    1110: 42 9f 80 52  	mov	w2, #1274
+    1114: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to power vdd, %d\n'
+    1118: e3 03 14 2a  	mov	w3, w20
+    111c: 00 00 00 94  	bl	0x111c <sr100_probe+0xdc8> // ipc_log_string+0x0
+    1120: 00 00 00 90  	adrp	x0, 0x1000 <sr100_probe+0xdcc> // '\x013[NXP-SR100]:%d  failed to power vdd, %d\n'
+    1124: 41 9f 80 52  	mov	w1, #1274
+    1128: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to power vdd, %d\n'
+    112c: 18 00 00 14  	b	0x118c <sr100_probe+0xe38>
+    1130: f4 03 00 2a  	mov	w20, w0
+    1134: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    1138: c0 00 00 b4  	cbz	x0, 0x1150 <sr100_probe+0xdfc>
+    113c: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xde8> // '%-6d: failed to set rfvdd_max_load, %d\n'
+    1140: a2 a1 80 52  	mov	w2, #1293
+    1144: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to set rfvdd_max_load, %d\n'
+    1148: e3 03 14 2a  	mov	w3, w20
+    114c: 00 00 00 94  	bl	0x114c <sr100_probe+0xdf8> // ipc_log_string+0x0
+    1150: 00 00 00 90  	adrp	x0, 0x1000 <sr100_probe+0xdfc> // '\x013[NXP-SR100]:%d  failed to set rfvdd_max_load, %d\n'
+    1154: a1 a1 80 52  	mov	w1, #1293
+    1158: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to set rfvdd_max_load, %d\n'
+    115c: 0c 00 00 14  	b	0x118c <sr100_probe+0xe38>
+    1160: f4 03 00 2a  	mov	w20, w0
+    1164: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    1168: c0 00 00 b4  	cbz	x0, 0x1180 <sr100_probe+0xe2c>
+    116c: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xe18> // '%-6d: failed to power rfvdd, %d\n'
+    1170: 62 a2 80 52  	mov	w2, #1299
+    1174: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to power rfvdd, %d\n'
+    1178: e3 03 14 2a  	mov	w3, w20
+    117c: 00 00 00 94  	bl	0x117c <sr100_probe+0xe28> // ipc_log_string+0x0
+    1180: 00 00 00 90  	adrp	x0, 0x1000 <sr100_probe+0xe2c> // '\x013[NXP-SR100]:%d  failed to power rfvdd, %d\n'
+    1184: 61 a2 80 52  	mov	w1, #1299
+    1188: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to power rfvdd, %d\n'
+    118c: e2 03 14 2a  	mov	w2, w20
+    1190: 00 00 00 94  	bl	0x1190 <sr100_probe+0xe3c> // _printk+0x0
+    1194: 68 36 41 b9  	ldr	w8, [x19, #308]
+    1198: c8 01 00 35  	cbnz	w8, 0x11d0 <sr100_probe+0xe7c>
+    119c: 68 32 41 b9  	ldr	w8, [x19, #304]
+    11a0: 28 02 00 35  	cbnz	w8, 0x11e4 <sr100_probe+0xe90>
+    11a4: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    11a8: a0 00 00 b4  	cbz	x0, 0x11bc <sr100_probe+0xe68>
+    11ac: 01 00 00 90  	adrp	x1, 0x1000 <sr100_probe+0xe58> // '%-6d: failed to power on!!!\n'
+    11b0: 82 ba 80 52  	mov	w2, #1492
+    11b4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to power on!!!\n'
+    11b8: 00 00 00 94  	bl	0x11b8 <sr100_probe+0xe64> // ipc_log_string+0x0
+    11bc: 00 00 00 90  	adrp	x0, 0x1000 <sr100_probe+0xe68> // '\x013[NXP-SR100]:%d  failed to power on!!!\n'
+    11c0: 81 ba 80 52  	mov	w1, #1492
+    11c4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to power on!!!\n'
+    11c8: 00 00 00 94  	bl	0x11c8 <sr100_probe+0xe74> // _printk+0x0
+    11cc: 74 fe ff 17  	b	0xb9c <sr100_probe+0x848>
+    11d0: 60 82 40 f9  	ldr	x0, [x19, #256]
+    11d4: 00 00 00 94  	bl	0x11d4 <sr100_probe+0xe80> // regulator_disable+0x0
+    11d8: 7f 36 01 b9  	str	wzr, [x19, #308]
+    11dc: 68 32 41 b9  	ldr	w8, [x19, #304]
+    11e0: 28 fe ff 34  	cbz	w8, 0x11a4 <sr100_probe+0xe50>
+    11e4: 60 7e 40 f9  	ldr	x0, [x19, #248]
+    11e8: 00 00 00 94  	bl	0x11e8 <sr100_probe+0xe94> // regulator_disable+0x0
+    11ec: 7f 32 01 b9  	str	wzr, [x19, #304]
+    11f0: 20 03 40 f9  	ldr	x0, [x25] // +0x0
+    11f4: c0 fd ff b5  	cbnz	x0, 0x11ac <sr100_probe+0xe58>
+    11f8: f1 ff ff 17  	b	0x11bc <sr100_probe+0xe68>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/nxp-sr100.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000024e4 <sr100_dev_transceive>:
+    24e4: 3f 23 03 d5  	hint	#25
+    24e8: ff c3 06 d1  	sub	sp, sp, #432
+    24ec: 5e 86 00 f8  	str	x30, [x18], #8
+    24f0: fd 7b 15 a9  	stp	x29, x30, [sp, #336]
+    24f4: fd 43 05 91  	add	x29, sp, #336
+    24f8: fc 6f 16 a9  	stp	x28, x27, [sp, #352]
+    24fc: fa 67 17 a9  	stp	x26, x25, [sp, #368]
+    2500: f8 5f 18 a9  	stp	x24, x23, [sp, #384]
+    2504: f6 57 19 a9  	stp	x22, x21, [sp, #400]
+    2508: f4 4f 1a a9  	stp	x20, x19, [sp, #416]
+    250c: 08 41 38 d5  	mrs	x8, SP_EL0
+    2510: 18 a0 02 91  	add	x24, x0, #168
+    2514: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2518: f4 03 00 aa  	mov	x20, x0
+    251c: e0 03 18 aa  	mov	x0, x24
+    2520: f5 03 02 2a  	mov	w21, w2
+    2524: f6 03 01 2a  	mov	w22, w1
+    2528: a8 03 1f f8  	stur	x8, [x29, #-16]
+    252c: 00 00 00 94  	bl	0x252c <sr100_dev_transceive+0x48> // mutex_lock+0x0
+    2530: f9 03 14 aa  	mov	x25, x20
+    2534: df 06 00 71  	cmp	w22, #1
+    2538: 3f 8f 0d f8  	str	xzr, [x25, #216]!
+    253c: 36 13 00 b9  	str	w22, [x25, #16]
+    2540: 3f 07 00 f9  	str	xzr, [x25, #8]
+    2544: e0 1d 00 54  	b.eq	0x2900 <sr100_dev_transceive+0x41c>
+    2548: f6 4a 00 35  	cbnz	w22, 0x2ea4 <sr100_dev_transceive+0x9c0>
+    254c: 89 00 80 52  	mov	w9, #4
+    2550: 88 4a 40 f9  	ldr	x8, [x20, #144]
+    2554: ff 7f 0b a9  	stp	xzr, xzr, [sp, #176]
+    2558: f3 e3 00 91  	add	x19, sp, #56
+    255c: e1 e3 00 91  	add	x1, sp, #56
+    2560: e2 e3 00 91  	add	x2, sp, #56
+    2564: e9 bb 00 b9  	str	w9, [sp, #184]
+    2568: e9 a3 02 91  	add	x9, sp, #168
+    256c: 37 e1 01 91  	add	x23, x9, #120
+    2570: ff 23 0a a9  	stp	xzr, x8, [sp, #160]
+    2574: 68 62 01 91  	add	x8, x19, #88
+    2578: e0 03 17 aa  	mov	x0, x23
+    257c: 96 0e 40 f9  	ldr	x22, [x20, #24]
+    2580: f5 13 00 b9  	str	w21, [sp, #16]
+    2584: 9f a2 00 b9  	str	wzr, [x20, #160]
+    2588: ff 7f 13 a9  	stp	xzr, xzr, [sp, #304]
+    258c: ff 7f 12 a9  	stp	xzr, xzr, [sp, #288]
+    2590: ff 7f 11 a9  	stp	xzr, xzr, [sp, #272]
+    2594: ff 7f 10 a9  	stp	xzr, xzr, [sp, #256]
+    2598: ff 7f 0f a9  	stp	xzr, xzr, [sp, #240]
+    259c: ff 7f 0e a9  	stp	xzr, xzr, [sp, #224]
+    25a0: ff 7f 0d a9  	stp	xzr, xzr, [sp, #208]
+    25a4: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    25a8: ff 7f 09 a9  	stp	xzr, xzr, [sp, #144]
+    25ac: ff 7f 08 a9  	stp	xzr, xzr, [sp, #128]
+    25b0: ff 7f 07 a9  	stp	xzr, xzr, [sp, #112]
+    25b4: ff 7f 06 a9  	stp	xzr, xzr, [sp, #96]
+    25b8: ff 7f 05 a9  	stp	xzr, xzr, [sp, #80]
+    25bc: ff 27 00 f9  	str	xzr, [sp, #72]
+    25c0: f3 1f 00 f9  	str	x19, [sp, #56]
+    25c4: f3 23 00 f9  	str	x19, [sp, #64]
+    25c8: e8 4b 00 f9  	str	x8, [sp, #144]
+    25cc: e8 4f 00 f9  	str	x8, [sp, #152]
+    25d0: 00 00 00 94  	bl	0x25d0 <sr100_dev_transceive+0xec> // __list_add_valid+0x0
+    25d4: 80 00 00 36  	tbz	w0, #0, 0x25e4 <sr100_dev_transceive+0x100>
+    25d8: f7 23 00 f9  	str	x23, [sp, #64]
+    25dc: f3 4f 12 a9  	stp	x19, x19, [sp, #288]
+    25e0: f7 1f 00 f9  	str	x23, [sp, #56]
+    25e4: e1 e3 00 91  	add	x1, sp, #56
+    25e8: e0 03 16 aa  	mov	x0, x22
+    25ec: 00 00 00 94  	bl	0x25ec <sr100_dev_transceive+0x108> // spi_sync+0x0
+    25f0: 19 00 00 90  	adrp	x25, 0x2000 <sr100_dev_transceive+0x10c> // +0x8
+    25f4: f4 e3 01 a9  	stp	x20, x24, [sp, #24]
+    25f8: 37 03 40 f9  	ldr	x23, [x25] // +0x8
+    25fc: d7 09 00 b4  	cbz	x23, 0x2734 <sr100_dev_transceive+0x250>
+    2600: 18 00 00 90  	adrp	x24, 0x2000 <sr100_dev_transceive+0x11c> // '%02x '
+    2604: 1a 00 00 90  	adrp	x26, 0x2000 <sr100_dev_transceive+0x120> // 'UCIX'
+    2608: 1b 00 00 90  	adrp	x27, 0x2000 <sr100_dev_transceive+0x124> // 'HDR'
+    260c: f6 03 1f aa  	mov	x22, xzr
+    2610: 18 03 00 91  	add	x24, x24, #0 // '%02x '
+    2614: 93 4a 40 f9  	ldr	x19, [x20, #144]
+    2618: f5 a3 02 91  	add	x21, sp, #168
+    261c: 5a 03 00 91  	add	x26, x26, #0 // 'UCIX'
+    2620: 7b 03 00 91  	add	x27, x27, #0 // 'HDR'
+    2624: e0 33 00 b9  	str	w0, [sp, #48]
+    2628: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    262c: ff 7f 0b a9  	stp	xzr, xzr, [sp, #176]
+    2630: ff 57 00 f9  	str	xzr, [sp, #168]
+    2634: d9 7e 40 92  	and	x25, x22, #0xffffffff
+    2638: e0 a3 02 91  	add	x0, sp, #168
+    263c: 01 05 80 52  	mov	w1, #40
+    2640: e2 03 18 aa  	mov	x2, x24
+    2644: 63 6a 79 38  	ldrb	w3, [x19, x25]
+    2648: 00 00 00 94  	bl	0x2648 <sr100_dev_transceive+0x164> // scnprintf+0x0
+    264c: fc 03 00 2a  	mov	w28, w0
+    2650: 36 07 00 91  	add	x22, x25, #1
+    2654: 23 00 80 52  	mov	w3, #1
+    2658: 3f 0b 00 f1  	cmp	x25, #2
+    265c: e8 04 00 54  	b.hi	0x26f8 <sr100_dev_transceive+0x214>
+    2660: 9f 9f 00 71  	cmp	w28, #39
+    2664: a2 04 00 54  	b.hs	0x26f8 <sr100_dev_transceive+0x214>
+    2668: e8 03 1c 2a  	mov	w8, w28
+    266c: 63 6a 76 38  	ldrb	w3, [x19, x22]
+    2670: 09 05 80 52  	mov	w9, #40
+    2674: a0 02 08 8b  	add	x0, x21, x8
+    2678: 21 01 08 cb  	sub	x1, x9, x8
+    267c: e2 03 18 aa  	mov	x2, x24
+    2680: 00 00 00 94  	bl	0x2680 <sr100_dev_transceive+0x19c> // scnprintf+0x0
+    2684: 36 0b 00 91  	add	x22, x25, #2
+    2688: 1c 00 1c 0b  	add	w28, w0, w28
+    268c: 43 00 80 52  	mov	w3, #2
+    2690: 3f 07 00 f1  	cmp	x25, #1
+    2694: 28 03 00 54  	b.hi	0x26f8 <sr100_dev_transceive+0x214>
+    2698: 9f 9b 00 71  	cmp	w28, #38
+    269c: e8 02 00 54  	b.hi	0x26f8 <sr100_dev_transceive+0x214>
+    26a0: 63 6a 76 38  	ldrb	w3, [x19, x22]
+    26a4: 08 05 80 52  	mov	w8, #40
+    26a8: a0 02 1c 8b  	add	x0, x21, x28
+    26ac: 01 01 1c cb  	sub	x1, x8, x28
+    26b0: e2 03 18 aa  	mov	x2, x24
+    26b4: 00 00 00 94  	bl	0x26b4 <sr100_dev_transceive+0x1d0> // scnprintf+0x0
+    26b8: 36 0f 00 91  	add	x22, x25, #3
+    26bc: 1c 00 1c 0b  	add	w28, w0, w28
+    26c0: 63 00 80 52  	mov	w3, #3
+    26c4: b9 01 00 b5  	cbnz	x25, 0x26f8 <sr100_dev_transceive+0x214>
+    26c8: 9f 9b 00 71  	cmp	w28, #38
+    26cc: 68 01 00 54  	b.hi	0x26f8 <sr100_dev_transceive+0x214>
+    26d0: 63 6a 76 38  	ldrb	w3, [x19, x22]
+    26d4: 08 05 80 52  	mov	w8, #40
+    26d8: a0 02 1c 8b  	add	x0, x21, x28
+    26dc: 01 01 1c cb  	sub	x1, x8, x28
+    26e0: e2 03 18 aa  	mov	x2, x24
+    26e4: 00 00 00 94  	bl	0x26e4 <sr100_dev_transceive+0x200> // scnprintf+0x0
+    26e8: 83 00 80 52  	mov	w3, #4
+    26ec: 1c 00 1c 0b  	add	w28, w0, w28
+    26f0: 96 00 80 52  	mov	w22, #4
+    26f4: 01 00 00 14  	b	0x26f8 <sr100_dev_transceive+0x214>
+    26f8: 9f 9f 00 71  	cmp	w28, #39
+    26fc: 88 4d 00 54  	b.hi	0x30ac <sr100_dev_transceive+0xbc8>
+    2700: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_transceive+0x21c> // '%s %02x %s: %s\n'
+    2704: e5 a3 02 91  	add	x5, sp, #168
+    2708: e0 03 17 aa  	mov	x0, x23
+    270c: 21 00 00 91  	add	x1, x1, #0 // '%s %02x %s: %s\n'
+    2710: e2 03 1a aa  	mov	x2, x26
+    2714: e4 03 1b aa  	mov	x4, x27
+    2718: bf 4a 3c 38  	strb	wzr, [x21, w28, uxtw]
+    271c: 00 00 00 94  	bl	0x271c <sr100_dev_transceive+0x238> // ipc_log_string+0x0
+    2720: df 76 7e f2  	tst	x22, #0xfffffffc
+    2724: 80 f8 ff 54  	b.eq	0x2634 <sr100_dev_transceive+0x150>
+    2728: f4 e3 41 a9  	ldp	x20, x24, [sp, #24]
+    272c: 19 00 00 90  	adrp	x25, 0x2000 <sr100_dev_transceive+0x248> // +0x8
+    2730: e0 33 40 b9  	ldr	w0, [sp, #48]
+    2734: 80 3e f8 37  	tbnz	w0, #31, 0x2f04 <sr100_dev_transceive+0xa20>
+    2738: f5 13 40 b9  	ldr	w21, [sp, #16]
+    273c: bc 12 00 51  	sub	w28, w21, #4
+    2740: 9f 07 00 71  	cmp	w28, #1
+    2744: eb 15 00 54  	b.lt	0x2a00 <sr100_dev_transceive+0x51c>
+    2748: c0 03 80 52  	mov	w0, #30
+    274c: 41 06 80 52  	mov	w1, #50
+    2750: 42 00 80 52  	mov	w2, #2
+    2754: 00 00 00 94  	bl	0x2754 <sr100_dev_transceive+0x270> // usleep_range_state+0x0
+    2758: 88 4a 40 f9  	ldr	x8, [x20, #144]
+    275c: e9 a3 02 91  	add	x9, sp, #168
+    2760: f3 e3 00 91  	add	x19, sp, #56
+    2764: 37 e1 01 91  	add	x23, x9, #120
+    2768: e1 e3 00 91  	add	x1, sp, #56
+    276c: e2 e3 00 91  	add	x2, sp, #56
+    2770: 08 11 00 91  	add	x8, x8, #4
+    2774: e0 03 17 aa  	mov	x0, x23
+    2778: 96 0e 40 f9  	ldr	x22, [x20, #24]
+    277c: ff 7f 13 a9  	stp	xzr, xzr, [sp, #304]
+    2780: ff 7f 12 a9  	stp	xzr, xzr, [sp, #288]
+    2784: ff 23 0a a9  	stp	xzr, x8, [sp, #160]
+    2788: 68 62 01 91  	add	x8, x19, #88
+    278c: ff 7f 11 a9  	stp	xzr, xzr, [sp, #272]
+    2790: ff 7f 10 a9  	stp	xzr, xzr, [sp, #256]
+    2794: ff 7f 0f a9  	stp	xzr, xzr, [sp, #240]
+    2798: ff 7f 0e a9  	stp	xzr, xzr, [sp, #224]
+    279c: ff 7f 0d a9  	stp	xzr, xzr, [sp, #208]
+    27a0: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    27a4: ff 7f 0b a9  	stp	xzr, xzr, [sp, #176]
+    27a8: fc bb 00 b9  	str	w28, [sp, #184]
+    27ac: ff 7f 09 a9  	stp	xzr, xzr, [sp, #144]
+    27b0: ff 7f 08 a9  	stp	xzr, xzr, [sp, #128]
+    27b4: ff 7f 07 a9  	stp	xzr, xzr, [sp, #112]
+    27b8: ff 7f 06 a9  	stp	xzr, xzr, [sp, #96]
+    27bc: ff 7f 05 a9  	stp	xzr, xzr, [sp, #80]
+    27c0: ff 27 00 f9  	str	xzr, [sp, #72]
+    27c4: f3 1f 00 f9  	str	x19, [sp, #56]
+    27c8: f3 23 00 f9  	str	x19, [sp, #64]
+    27cc: e8 4b 00 f9  	str	x8, [sp, #144]
+    27d0: e8 4f 00 f9  	str	x8, [sp, #152]
+    27d4: 00 00 00 94  	bl	0x27d4 <sr100_dev_transceive+0x2f0> // __list_add_valid+0x0
+    27d8: 80 00 00 36  	tbz	w0, #0, 0x27e8 <sr100_dev_transceive+0x304>
+    27dc: f7 23 00 f9  	str	x23, [sp, #64]
+    27e0: f3 4f 12 a9  	stp	x19, x19, [sp, #288]
+    27e4: f7 1f 00 f9  	str	x23, [sp, #56]
+    27e8: e1 e3 00 91  	add	x1, sp, #56
+    27ec: e0 03 16 aa  	mov	x0, x22
+    27f0: 00 00 00 94  	bl	0x27f0 <sr100_dev_transceive+0x30c> // spi_sync+0x0
+    27f4: 37 03 40 f9  	ldr	x23, [x25] // +0x8
+    27f8: 37 10 00 b4  	cbz	x23, 0x29fc <sr100_dev_transceive+0x518>
+    27fc: 88 4a 40 f9  	ldr	x8, [x20, #144]
+    2800: 18 00 00 90  	adrp	x24, 0x2000 <sr100_dev_transceive+0x31c> // '%02x '
+    2804: 1a 00 00 90  	adrp	x26, 0x2000 <sr100_dev_transceive+0x320> // '%s %02x %s: %s\n'
+    2808: 14 00 00 90  	adrp	x20, 0x2000 <sr100_dev_transceive+0x324> // 'UCIX'
+    280c: 1b 00 00 90  	adrp	x27, 0x2000 <sr100_dev_transceive+0x328> // 'PYD'
+    2810: f9 03 1f 2a  	mov	w25, wzr
+    2814: f3 a3 02 91  	add	x19, sp, #168
+    2818: 08 11 00 91  	add	x8, x8, #4
+    281c: 16 05 80 52  	mov	w22, #40
+    2820: 18 03 00 91  	add	x24, x24, #0 // '%02x '
+    2824: 5a 03 00 91  	add	x26, x26, #0 // '%s %02x %s: %s\n'
+    2828: 94 02 00 91  	add	x20, x20, #0 // 'UCIX'
+    282c: 7b 03 00 91  	add	x27, x27, #0 // 'PYD'
+    2830: e0 0f 00 b9  	str	w0, [sp, #12]
+    2834: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    2838: ff 7f 0b a9  	stp	xzr, xzr, [sp, #176]
+    283c: f7 a3 02 a9  	stp	x23, x8, [sp, #40]
+    2840: ff 57 00 f9  	str	xzr, [sp, #168]
+    2844: 0c 00 00 14  	b	0x2874 <sr100_dev_transceive+0x390>
+    2848: e3 03 1f 2a  	mov	w3, wzr
+    284c: f5 03 1f 2a  	mov	w21, wzr
+    2850: e5 a3 02 91  	add	x5, sp, #168
+    2854: e0 03 17 aa  	mov	x0, x23
+    2858: e1 03 1a aa  	mov	x1, x26
+    285c: e2 03 14 aa  	mov	x2, x20
+    2860: e4 03 1b aa  	mov	x4, x27
+    2864: 7f 4a 35 38  	strb	wzr, [x19, w21, uxtw]
+    2868: 00 00 00 94  	bl	0x2868 <sr100_dev_transceive+0x384> // ipc_log_string+0x0
+    286c: 3f 03 1c 6b  	cmp	w25, w28
+    2870: 22 0c 00 54  	b.hs	0x29f4 <sr100_dev_transceive+0x510>
+    2874: 3f 03 1c 6b  	cmp	w25, w28
+    2878: 82 fe ff 54  	b.hs	0x2848 <sr100_dev_transceive+0x364>
+    287c: e9 1b 40 f9  	ldr	x9, [sp, #48]
+    2880: f9 03 19 2a  	mov	w25, w25
+    2884: f7 03 14 aa  	mov	x23, x20
+    2888: f4 03 1a aa  	mov	x20, x26
+    288c: fa 03 1f aa  	mov	x26, xzr
+    2890: e8 03 1f aa  	mov	x8, xzr
+    2894: f5 03 1f 2a  	mov	w21, wzr
+    2898: 3b 01 19 8b  	add	x27, x9, x25
+    289c: 63 6b 7a 38  	ldrb	w3, [x27, x26]
+    28a0: 60 02 08 8b  	add	x0, x19, x8
+    28a4: c1 02 08 cb  	sub	x1, x22, x8
+    28a8: e2 03 18 aa  	mov	x2, x24
+    28ac: 00 00 00 94  	bl	0x28ac <sr100_dev_transceive+0x3c8> // scnprintf+0x0
+    28b0: 28 03 1a 8b  	add	x8, x25, x26
+    28b4: 15 00 15 0b  	add	w21, w0, w21
+    28b8: 43 07 00 91  	add	x3, x26, #1
+    28bc: 08 05 00 91  	add	x8, x8, #1
+    28c0: 1f 01 1c eb  	cmp	x8, x28
+    28c4: c2 00 00 54  	b.hs	0x28dc <sr100_dev_transceive+0x3f8>
+    28c8: bf 9a 00 71  	cmp	w21, #38
+    28cc: e8 03 15 aa  	mov	x8, x21
+    28d0: 42 9b 4f 7a  	ccmp	w26, #15, #2, ls
+    28d4: fa 03 03 aa  	mov	x26, x3
+    28d8: 23 fe ff 54  	b.lo	0x289c <sr100_dev_transceive+0x3b8>
+    28dc: 1b 00 00 90  	adrp	x27, 0x2000 <sr100_dev_transceive+0x3f8> // 'PYD'
+    28e0: bf 9e 00 71  	cmp	w21, #39
+    28e4: 7b 03 00 91  	add	x27, x27, #0 // 'PYD'
+    28e8: 28 3e 00 54  	b.hi	0x30ac <sr100_dev_transceive+0xbc8>
+    28ec: fa 03 14 aa  	mov	x26, x20
+    28f0: 39 03 03 8b  	add	x25, x25, x3
+    28f4: f4 03 17 aa  	mov	x20, x23
+    28f8: f7 17 40 f9  	ldr	x23, [sp, #40]
+    28fc: d5 ff ff 17  	b	0x2850 <sr100_dev_transceive+0x36c>
+    2900: 80 76 40 b9  	ldr	w0, [x20, #116]
+    2904: 00 00 00 94  	bl	0x2904 <sr100_dev_transceive+0x420> // gpio_to_desc+0x0
+    2908: 00 00 00 94  	bl	0x2908 <sr100_dev_transceive+0x424> // gpiod_get_raw_value+0x0
+    290c: 20 2e 00 34  	cbz	w0, 0x2ed0 <sr100_dev_transceive+0x9ec>
+    2910: 80 7a 40 b9  	ldr	w0, [x20, #120]
+    2914: 00 00 00 94  	bl	0x2914 <sr100_dev_transceive+0x430> // gpio_to_desc+0x0
+    2918: 21 00 80 52  	mov	w1, #1
+    291c: 00 00 00 94  	bl	0x291c <sr100_dev_transceive+0x438> // gpiod_set_raw_value+0x0
+    2920: 93 0c 80 52  	mov	w19, #100
+    2924: 80 76 40 b9  	ldr	w0, [x20, #116]
+    2928: 00 00 00 94  	bl	0x2928 <sr100_dev_transceive+0x444> // gpio_to_desc+0x0
+    292c: 00 00 00 94  	bl	0x292c <sr100_dev_transceive+0x448> // gpiod_get_raw_value+0x0
+    2930: c0 00 00 34  	cbz	w0, 0x2948 <sr100_dev_transceive+0x464>
+    2934: b3 00 00 34  	cbz	w19, 0x2948 <sr100_dev_transceive+0x464>
+    2938: c0 f8 94 52  	mov	w0, #42950
+    293c: 00 00 00 94  	bl	0x293c <sr100_dev_transceive+0x458> // __const_udelay+0x0
+    2940: 73 06 00 51  	sub	w19, w19, #1
+    2944: f8 ff ff 17  	b	0x2924 <sr100_dev_transceive+0x440>
+    2948: 96 22 02 91  	add	x22, x20, #136
+    294c: e0 03 16 aa  	mov	x0, x22
+    2950: 00 00 00 94  	bl	0x2950 <sr100_dev_transceive+0x46c> // _raw_spin_lock_irqsave+0x0
+    2954: 88 82 40 b9  	ldr	w8, [x20, #128]
+    2958: f7 03 00 aa  	mov	x23, x0
+    295c: c8 00 00 35  	cbnz	w8, 0x2974 <sr100_dev_transceive+0x490>
+    2960: 88 0e 40 f9  	ldr	x8, [x20, #24]
+    2964: 00 ad 43 b9  	ldr	w0, [x8, #940]
+    2968: 00 00 00 94  	bl	0x2968 <sr100_dev_transceive+0x484> // enable_irq+0x0
+    296c: 28 00 80 52  	mov	w8, #1
+    2970: 88 42 00 f9  	str	x8, [x20, #128]
+    2974: e0 03 16 aa  	mov	x0, x22
+    2978: e1 03 17 aa  	mov	x1, x23
+    297c: 00 00 00 94  	bl	0x297c <sr100_dev_transceive+0x498> // _raw_spin_unlock_irqrestore+0x0
+    2980: 96 7a 40 f9  	ldr	x22, [x20, #240]
+    2984: 9f a6 00 b9  	str	wzr, [x20, #164]
+    2988: 88 86 40 b9  	ldr	w8, [x20, #132]
+    298c: df 02 00 f1  	cmp	x22, #0
+    2990: 04 09 40 7a  	ccmp	w8, #0, #4, eq
+    2994: c0 06 9f 9a  	csinc	x0, x22, xzr, eq
+    2998: 28 04 00 35  	cbnz	w8, 0x2a1c <sr100_dev_transceive+0x538>
+    299c: 00 04 00 b4  	cbz	x0, 0x2a1c <sr100_dev_transceive+0x538>
+    29a0: e0 a3 02 91  	add	x0, sp, #168
+    29a4: e1 03 1f 2a  	mov	w1, wzr
+    29a8: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    29ac: ff 7f 0b a9  	stp	xzr, xzr, [sp, #176]
+    29b0: ff 57 00 f9  	str	xzr, [sp, #168]
+    29b4: 00 00 00 94  	bl	0x29b4 <sr100_dev_transceive+0x4d0> // init_wait_entry+0x0
+    29b8: e1 a3 02 91  	add	x1, sp, #168
+    29bc: e0 03 14 aa  	mov	x0, x20
+    29c0: 22 00 80 52  	mov	w2, #1
+    29c4: 00 00 00 94  	bl	0x29c4 <sr100_dev_transceive+0x4e0> // prepare_to_wait_event+0x0
+    29c8: 88 86 40 b9  	ldr	w8, [x20, #132]
+    29cc: df 02 00 f1  	cmp	x22, #0
+    29d0: 04 09 40 7a  	ccmp	w8, #0, #4, eq
+    29d4: d6 06 9f 9a  	csinc	x22, x22, xzr, eq
+    29d8: a8 01 00 35  	cbnz	w8, 0x2a0c <sr100_dev_transceive+0x528>
+    29dc: 96 01 00 b4  	cbz	x22, 0x2a0c <sr100_dev_transceive+0x528>
+    29e0: e0 01 00 b5  	cbnz	x0, 0x2a1c <sr100_dev_transceive+0x538>
+    29e4: e0 03 16 aa  	mov	x0, x22
+    29e8: 00 00 00 94  	bl	0x29e8 <sr100_dev_transceive+0x504> // schedule_timeout+0x0
+    29ec: f6 03 00 aa  	mov	x22, x0
+    29f0: f2 ff ff 17  	b	0x29b8 <sr100_dev_transceive+0x4d4>
+    29f4: f4 e3 41 a9  	ldp	x20, x24, [sp, #24]
+    29f8: e0 d7 41 29  	ldp	w0, w21, [sp, #12]
+    29fc: 00 32 f8 37  	tbnz	w0, #31, 0x303c <sr100_dev_transceive+0xb58>
+    2a00: f6 03 1f 2a  	mov	w22, wzr
+    2a04: 95 a2 00 b9  	str	w21, [x20, #160]
+    2a08: 0e 01 00 14  	b	0x2e40 <sr100_dev_transceive+0x95c>
+    2a0c: e1 a3 02 91  	add	x1, sp, #168
+    2a10: e0 03 14 aa  	mov	x0, x20
+    2a14: 00 00 00 94  	bl	0x2a14 <sr100_dev_transceive+0x530> // finish_wait+0x0
+    2a18: e0 03 16 aa  	mov	x0, x22
+    2a1c: a0 28 00 34  	cbz	w0, 0x2f30 <sr100_dev_transceive+0xa4c>
+    2a20: 80 76 40 b9  	ldr	w0, [x20, #116]
+    2a24: 00 00 00 94  	bl	0x2a24 <sr100_dev_transceive+0x540> // gpio_to_desc+0x0
+    2a28: 00 00 00 94  	bl	0x2a28 <sr100_dev_transceive+0x544> // gpiod_get_raw_value+0x0
+    2a2c: c0 29 00 34  	cbz	w0, 0x2f64 <sr100_dev_transceive+0xa80>
+    2a30: 88 4e 40 f9  	ldr	x8, [x20, #152]
+    2a34: 89 00 80 52  	mov	w9, #4
+    2a38: ff ff 0a a9  	stp	xzr, xzr, [sp, #168]
+    2a3c: f3 e3 00 91  	add	x19, sp, #56
+    2a40: e1 e3 00 91  	add	x1, sp, #56
+    2a44: e2 e3 00 91  	add	x2, sp, #56
+    2a48: e8 7f 0b a9  	stp	x8, xzr, [sp, #176]
+    2a4c: 68 62 01 91  	add	x8, x19, #88
+    2a50: e9 bb 00 b9  	str	w9, [sp, #184]
+    2a54: e9 a3 02 91  	add	x9, sp, #168
+    2a58: 37 e1 01 91  	add	x23, x9, #120
+    2a5c: 96 0e 40 f9  	ldr	x22, [x20, #24]
+    2a60: e0 03 17 aa  	mov	x0, x23
+    2a64: ff 7f 13 a9  	stp	xzr, xzr, [sp, #304]
+    2a68: ff 7f 12 a9  	stp	xzr, xzr, [sp, #288]
+    2a6c: ff 7f 11 a9  	stp	xzr, xzr, [sp, #272]
+    2a70: ff 7f 10 a9  	stp	xzr, xzr, [sp, #256]
+    2a74: ff 7f 0f a9  	stp	xzr, xzr, [sp, #240]
+    2a78: ff 7f 0e a9  	stp	xzr, xzr, [sp, #224]
+    2a7c: ff 7f 0d a9  	stp	xzr, xzr, [sp, #208]
+    2a80: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    2a84: ff ff 09 a9  	stp	xzr, xzr, [sp, #152]
+    2a88: ff ff 08 a9  	stp	xzr, xzr, [sp, #136]
+    2a8c: ff ff 07 a9  	stp	xzr, xzr, [sp, #120]
+    2a90: ff ff 06 a9  	stp	xzr, xzr, [sp, #104]
+    2a94: ff ff 05 a9  	stp	xzr, xzr, [sp, #88]
+    2a98: ff ff 04 a9  	stp	xzr, xzr, [sp, #72]
+    2a9c: f3 1f 00 f9  	str	x19, [sp, #56]
+    2aa0: f3 23 00 f9  	str	x19, [sp, #64]
+    2aa4: e8 4b 00 f9  	str	x8, [sp, #144]
+    2aa8: e8 4f 00 f9  	str	x8, [sp, #152]
+    2aac: 00 00 00 94  	bl	0x2aac <sr100_dev_transceive+0x5c8> // __list_add_valid+0x0
+    2ab0: 80 00 00 36  	tbz	w0, #0, 0x2ac0 <sr100_dev_transceive+0x5dc>
+    2ab4: f7 23 00 f9  	str	x23, [sp, #64]
+    2ab8: f3 4f 12 a9  	stp	x19, x19, [sp, #288]
+    2abc: f7 1f 00 f9  	str	x23, [sp, #56]
+    2ac0: e1 e3 00 91  	add	x1, sp, #56
+    2ac4: e0 03 16 aa  	mov	x0, x22
+    2ac8: 00 00 00 94  	bl	0x2ac8 <sr100_dev_transceive+0x5e4> // spi_sync+0x0
+    2acc: 40 26 f8 37  	tbnz	w0, #31, 0x2f94 <sr100_dev_transceive+0xab0>
+    2ad0: 17 00 00 90  	adrp	x23, 0x2000 <sr100_dev_transceive+0x5ec> // +0x8
+    2ad4: f4 e3 01 a9  	stp	x20, x24, [sp, #24]
+    2ad8: f6 02 40 f9  	ldr	x22, [x23] // +0x8
+    2adc: d6 08 00 b4  	cbz	x22, 0x2bf4 <sr100_dev_transceive+0x710>
+    2ae0: 88 4a 40 f9  	ldr	x8, [x20, #144]
+    2ae4: f9 0b 00 f9  	str	x25, [sp, #16]
+    2ae8: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    2aec: ff 7f 0b a9  	stp	xzr, xzr, [sp, #176]
+    2af0: ff 57 00 f9  	str	xzr, [sp, #168]
+    2af4: b5 07 00 34  	cbz	w21, 0x2be8 <sr100_dev_transceive+0x704>
+    2af8: 17 00 00 90  	adrp	x23, 0x2000 <sr100_dev_transceive+0x614> // '%02x '
+    2afc: 19 00 00 90  	adrp	x25, 0x2000 <sr100_dev_transceive+0x618> // '%s %02x %s: %s\n'
+    2b00: 1a 00 00 90  	adrp	x26, 0x2000 <sr100_dev_transceive+0x61c> // 'UCIR'
+    2b04: f8 03 1f 2a  	mov	w24, wzr
+    2b08: 08 11 00 91  	add	x8, x8, #4
+    2b0c: fc 03 15 2a  	mov	w28, w21
+    2b10: f3 a3 02 91  	add	x19, sp, #168
+    2b14: 1b 05 80 52  	mov	w27, #40
+    2b18: f7 02 00 91  	add	x23, x23, #0 // '%02x '
+    2b1c: 39 03 00 91  	add	x25, x25, #0 // '%s %02x %s: %s\n'
+    2b20: 5a 03 00 91  	add	x26, x26, #0 // 'UCIR'
+    2b24: f6 a3 02 a9  	stp	x22, x8, [sp, #40]
+    2b28: 0e 00 00 14  	b	0x2b60 <sr100_dev_transceive+0x67c>
+    2b2c: e3 03 1f 2a  	mov	w3, wzr
+    2b30: f5 03 1f 2a  	mov	w21, wzr
+    2b34: 04 00 00 90  	adrp	x4, 0x2000 <sr100_dev_transceive+0x650> // 'HDR'
+    2b38: e5 a3 02 91  	add	x5, sp, #168
+    2b3c: e0 03 16 aa  	mov	x0, x22
+    2b40: e1 03 19 aa  	mov	x1, x25
+    2b44: e2 03 1a aa  	mov	x2, x26
+    2b48: 84 00 00 91  	add	x4, x4, #0 // 'HDR'
+    2b4c: 7f 4a 35 38  	strb	wzr, [x19, w21, uxtw]
+    2b50: 00 00 00 94  	bl	0x2b50 <sr100_dev_transceive+0x66c> // ipc_log_string+0x0
+    2b54: f5 03 14 2a  	mov	w21, w20
+    2b58: 1f 03 14 6b  	cmp	w24, w20
+    2b5c: 62 04 00 54  	b.hs	0x2be8 <sr100_dev_transceive+0x704>
+    2b60: f4 03 15 2a  	mov	w20, w21
+    2b64: 1f 03 15 6b  	cmp	w24, w21
+    2b68: 22 fe ff 54  	b.hs	0x2b2c <sr100_dev_transceive+0x648>
+    2b6c: e9 1b 40 f9  	ldr	x9, [sp, #48]
+    2b70: f8 03 18 2a  	mov	w24, w24
+    2b74: f6 03 19 aa  	mov	x22, x25
+    2b78: f9 03 1f aa  	mov	x25, xzr
+    2b7c: e8 03 1f aa  	mov	x8, xzr
+    2b80: f5 03 1f 2a  	mov	w21, wzr
+    2b84: 3a 01 18 8b  	add	x26, x9, x24
+    2b88: 43 6b 79 38  	ldrb	w3, [x26, x25]
+    2b8c: 60 02 08 8b  	add	x0, x19, x8
+    2b90: 61 03 08 cb  	sub	x1, x27, x8
+    2b94: e2 03 17 aa  	mov	x2, x23
+    2b98: 00 00 00 94  	bl	0x2b98 <sr100_dev_transceive+0x6b4> // scnprintf+0x0
+    2b9c: 08 03 19 8b  	add	x8, x24, x25
+    2ba0: 15 00 15 0b  	add	w21, w0, w21
+    2ba4: 23 07 00 91  	add	x3, x25, #1
+    2ba8: 08 05 00 91  	add	x8, x8, #1
+    2bac: 1f 01 1c eb  	cmp	x8, x28
+    2bb0: c2 00 00 54  	b.hs	0x2bc8 <sr100_dev_transceive+0x6e4>
+    2bb4: bf 9a 00 71  	cmp	w21, #38
+    2bb8: e8 03 15 aa  	mov	x8, x21
+    2bbc: 22 9b 4f 7a  	ccmp	w25, #15, #2, ls
+    2bc0: f9 03 03 aa  	mov	x25, x3
+    2bc4: 23 fe ff 54  	b.lo	0x2b88 <sr100_dev_transceive+0x6a4>
+    2bc8: 1a 00 00 90  	adrp	x26, 0x2000 <sr100_dev_transceive+0x6e4> // 'UCIR'
+    2bcc: bf 9e 00 71  	cmp	w21, #39
+    2bd0: 5a 03 00 91  	add	x26, x26, #0 // 'UCIR'
+    2bd4: c8 26 00 54  	b.hi	0x30ac <sr100_dev_transceive+0xbc8>
+    2bd8: f9 03 16 aa  	mov	x25, x22
+    2bdc: 18 03 03 8b  	add	x24, x24, x3
+    2be0: f6 17 40 f9  	ldr	x22, [sp, #40]
+    2be4: d4 ff ff 17  	b	0x2b34 <sr100_dev_transceive+0x650>
+    2be8: f4 e3 41 a9  	ldp	x20, x24, [sp, #24]
+    2bec: 17 00 00 90  	adrp	x23, 0x2000 <sr100_dev_transceive+0x708> // +0x8
+    2bf0: f9 0b 40 f9  	ldr	x25, [sp, #16]
+    2bf4: 88 4e 40 f9  	ldr	x8, [x20, #152]
+    2bf8: 09 01 40 39  	ldrb	w9, [x8]
+    2bfc: 3f 7d 00 71  	cmp	w9, #31
+    2c00: 88 00 00 54  	b.hi	0x2c10 <sr100_dev_transceive+0x72c>
+    2c04: 09 0d 40 39  	ldrb	w9, [x8, #3]
+    2c08: 29 03 00 f9  	str	x9, [x25]
+    2c0c: 08 00 00 14  	b	0x2c2c <sr100_dev_transceive+0x748>
+    2c10: 0a 05 40 39  	ldrb	w10, [x8, #1]
+    2c14: 49 01 19 12  	and	w9, w10, #0x80
+    2c18: 89 72 00 f9  	str	x9, [x20, #224]
+    2c1c: 09 0d 40 39  	ldrb	w9, [x8, #3]
+    2c20: e3 03 09 aa  	mov	x3, x9
+    2c24: 89 6e 00 f9  	str	x9, [x20, #216]
+    2c28: ea 00 38 36  	tbz	w10, #7, 0x2c44 <sr100_dev_transceive+0x760>
+    2c2c: 03 09 40 39  	ldrb	w3, [x8, #2]
+    2c30: 23 1d 78 b3  	bfi	x3, x9, #8, #8
+    2c34: a9 0c 82 52  	mov	w9, #4197
+    2c38: 7f 00 09 eb  	cmp	x3, x9
+    2c3c: 23 03 00 f9  	str	x3, [x25]
+    2c40: c2 1d 00 54  	b.hs	0x2ff8 <sr100_dev_transceive+0xb14>
+    2c44: 83 0d 00 b4  	cbz	x3, 0x2df4 <sr100_dev_transceive+0x910>
+    2c48: 08 11 00 91  	add	x8, x8, #4
+    2c4c: e9 a3 02 91  	add	x9, sp, #168
+    2c50: f3 e3 00 91  	add	x19, sp, #56
+    2c54: 36 e1 01 91  	add	x22, x9, #120
+    2c58: ff ff 0a a9  	stp	xzr, xzr, [sp, #168]
+    2c5c: e1 e3 00 91  	add	x1, sp, #56
+    2c60: e8 7f 0b a9  	stp	x8, xzr, [sp, #176]
+    2c64: 68 62 01 91  	add	x8, x19, #88
+    2c68: e2 e3 00 91  	add	x2, sp, #56
+    2c6c: e0 03 16 aa  	mov	x0, x22
+    2c70: 95 0e 40 f9  	ldr	x21, [x20, #24]
+    2c74: ff 7f 13 a9  	stp	xzr, xzr, [sp, #304]
+    2c78: ff 7f 12 a9  	stp	xzr, xzr, [sp, #288]
+    2c7c: ff 7f 11 a9  	stp	xzr, xzr, [sp, #272]
+    2c80: ff 7f 10 a9  	stp	xzr, xzr, [sp, #256]
+    2c84: ff 7f 0f a9  	stp	xzr, xzr, [sp, #240]
+    2c88: ff 7f 0e a9  	stp	xzr, xzr, [sp, #224]
+    2c8c: ff 7f 0d a9  	stp	xzr, xzr, [sp, #208]
+    2c90: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    2c94: e3 bb 00 b9  	str	w3, [sp, #184]
+    2c98: ff ff 09 a9  	stp	xzr, xzr, [sp, #152]
+    2c9c: ff ff 08 a9  	stp	xzr, xzr, [sp, #136]
+    2ca0: ff ff 07 a9  	stp	xzr, xzr, [sp, #120]
+    2ca4: ff ff 06 a9  	stp	xzr, xzr, [sp, #104]
+    2ca8: ff ff 05 a9  	stp	xzr, xzr, [sp, #88]
+    2cac: ff ff 04 a9  	stp	xzr, xzr, [sp, #72]
+    2cb0: f3 1f 00 f9  	str	x19, [sp, #56]
+    2cb4: f3 23 00 f9  	str	x19, [sp, #64]
+    2cb8: e8 4b 00 f9  	str	x8, [sp, #144]
+    2cbc: e8 4f 00 f9  	str	x8, [sp, #152]
+    2cc0: 00 00 00 94  	bl	0x2cc0 <sr100_dev_transceive+0x7dc> // __list_add_valid+0x0
+    2cc4: 80 00 00 36  	tbz	w0, #0, 0x2cd4 <sr100_dev_transceive+0x7f0>
+    2cc8: f6 23 00 f9  	str	x22, [sp, #64]
+    2ccc: f3 4f 12 a9  	stp	x19, x19, [sp, #288]
+    2cd0: f6 1f 00 f9  	str	x22, [sp, #56]
+    2cd4: e1 e3 00 91  	add	x1, sp, #56
+    2cd8: e0 03 15 aa  	mov	x0, x21
+    2cdc: 00 00 00 94  	bl	0x2cdc <sr100_dev_transceive+0x7f8> // spi_sync+0x0
+    2ce0: 80 1c f8 37  	tbnz	w0, #31, 0x3070 <sr100_dev_transceive+0xb8c>
+    2ce4: f5 02 40 f9  	ldr	x21, [x23] // +0x8
+    2ce8: 75 08 00 b4  	cbz	x21, 0x2df4 <sr100_dev_transceive+0x910>
+    2cec: 93 6e 40 f9  	ldr	x19, [x20, #216]
+    2cf0: ff 7f 0c a9  	stp	xzr, xzr, [sp, #192]
+    2cf4: 88 4e 40 f9  	ldr	x8, [x20, #152]
+    2cf8: ff 7f 0b a9  	stp	xzr, xzr, [sp, #176]
+    2cfc: ff 57 00 f9  	str	xzr, [sp, #168]
+    2d00: 93 07 00 34  	cbz	w19, 0x2df0 <sr100_dev_transceive+0x90c>
+    2d04: 16 00 00 90  	adrp	x22, 0x2000 <sr100_dev_transceive+0x820> // '%02x '
+    2d08: 19 00 00 90  	adrp	x25, 0x2000 <sr100_dev_transceive+0x824> // '%s %02x %s: %s\n'
+    2d0c: 14 00 00 90  	adrp	x20, 0x2000 <sr100_dev_transceive+0x828> // 'UCIR'
+    2d10: f8 03 1f 2a  	mov	w24, wzr
+    2d14: 08 11 00 91  	add	x8, x8, #4
+    2d18: 7b 7e 40 92  	and	x27, x19, #0xffffffff
+    2d1c: fc a3 02 91  	add	x28, sp, #168
+    2d20: 1a 05 80 52  	mov	w26, #40
+    2d24: d6 02 00 91  	add	x22, x22, #0 // '%02x '
+    2d28: 39 03 00 91  	add	x25, x25, #0 // '%s %02x %s: %s\n'
+    2d2c: 94 02 00 91  	add	x20, x20, #0 // 'UCIR'
+    2d30: e8 1b 00 f9  	str	x8, [sp, #48]
+    2d34: 0d 00 00 14  	b	0x2d68 <sr100_dev_transceive+0x884>
+    2d38: e3 03 1f 2a  	mov	w3, wzr
+    2d3c: f7 03 1f 2a  	mov	w23, wzr
+    2d40: 04 00 00 90  	adrp	x4, 0x2000 <sr100_dev_transceive+0x85c> // 'PYD'
+    2d44: e5 a3 02 91  	add	x5, sp, #168
+    2d48: e0 03 15 aa  	mov	x0, x21
+    2d4c: e1 03 19 aa  	mov	x1, x25
+    2d50: e2 03 14 aa  	mov	x2, x20
+    2d54: 84 00 00 91  	add	x4, x4, #0 // 'PYD'
+    2d58: 9f 4b 37 38  	strb	wzr, [x28, w23, uxtw]
+    2d5c: 00 00 00 94  	bl	0x2d5c <sr100_dev_transceive+0x878> // ipc_log_string+0x0
+    2d60: 1f 03 13 6b  	cmp	w24, w19
+    2d64: 62 04 00 54  	b.hs	0x2df0 <sr100_dev_transceive+0x90c>
+    2d68: 1f 03 13 6b  	cmp	w24, w19
+    2d6c: 62 fe ff 54  	b.hs	0x2d38 <sr100_dev_transceive+0x854>
+    2d70: e9 1b 40 f9  	ldr	x9, [sp, #48]
+    2d74: f8 03 18 2a  	mov	w24, w24
+    2d78: f4 03 15 aa  	mov	x20, x21
+    2d7c: f9 03 1f aa  	mov	x25, xzr
+    2d80: e8 03 1f aa  	mov	x8, xzr
+    2d84: f7 03 1f 2a  	mov	w23, wzr
+    2d88: 35 01 18 8b  	add	x21, x9, x24
+    2d8c: a3 6a 79 38  	ldrb	w3, [x21, x25]
+    2d90: 80 03 08 8b  	add	x0, x28, x8
+    2d94: 41 03 08 cb  	sub	x1, x26, x8
+    2d98: e2 03 16 aa  	mov	x2, x22
+    2d9c: 00 00 00 94  	bl	0x2d9c <sr100_dev_transceive+0x8b8> // scnprintf+0x0
+    2da0: 08 03 19 8b  	add	x8, x24, x25
+    2da4: 17 00 17 0b  	add	w23, w0, w23
+    2da8: 23 07 00 91  	add	x3, x25, #1
+    2dac: 08 05 00 91  	add	x8, x8, #1
+    2db0: 1f 01 1b eb  	cmp	x8, x27
+    2db4: c2 00 00 54  	b.hs	0x2dcc <sr100_dev_transceive+0x8e8>
+    2db8: ff 9a 00 71  	cmp	w23, #38
+    2dbc: e8 03 17 aa  	mov	x8, x23
+    2dc0: 22 9b 4f 7a  	ccmp	w25, #15, #2, ls
+    2dc4: f9 03 03 aa  	mov	x25, x3
+    2dc8: 23 fe ff 54  	b.lo	0x2d8c <sr100_dev_transceive+0x8a8>
+    2dcc: 19 00 00 90  	adrp	x25, 0x2000 <sr100_dev_transceive+0x8e8> // '%s %02x %s: %s\n'
+    2dd0: ff 9e 00 71  	cmp	w23, #39
+    2dd4: 39 03 00 91  	add	x25, x25, #0 // '%s %02x %s: %s\n'
+    2dd8: a8 16 00 54  	b.hi	0x30ac <sr100_dev_transceive+0xbc8>
+    2ddc: f5 03 14 aa  	mov	x21, x20
+    2de0: 14 00 00 90  	adrp	x20, 0x2000 <sr100_dev_transceive+0x8fc> // 'UCIR'
+    2de4: 18 03 03 8b  	add	x24, x24, x3
+    2de8: 94 02 00 91  	add	x20, x20, #0 // 'UCIR'
+    2dec: d5 ff ff 17  	b	0x2d40 <sr100_dev_transceive+0x85c>
+    2df0: f4 e3 41 a9  	ldp	x20, x24, [sp, #24]
+    2df4: 88 da 40 b9  	ldr	w8, [x20, #216]
+    2df8: 13 7d 80 52  	mov	w19, #1000
+    2dfc: 08 11 00 11  	add	w8, w8, #4
+    2e00: 88 a6 00 b9  	str	w8, [x20, #164]
+    2e04: 40 01 80 52  	mov	w0, #10
+    2e08: e1 01 80 52  	mov	w1, #15
+    2e0c: 42 00 80 52  	mov	w2, #2
+    2e10: 00 00 00 94  	bl	0x2e10 <sr100_dev_transceive+0x92c> // usleep_range_state+0x0
+    2e14: 73 06 00 71  	subs	w19, w19, #1
+    2e18: 80 0d 00 54  	b.eq	0x2fc8 <sr100_dev_transceive+0xae4>
+    2e1c: 80 76 40 b9  	ldr	w0, [x20, #116]
+    2e20: 00 00 00 94  	bl	0x2e20 <sr100_dev_transceive+0x93c> // gpio_to_desc+0x0
+    2e24: 00 00 00 94  	bl	0x2e24 <sr100_dev_transceive+0x940> // gpiod_get_raw_value+0x0
+    2e28: e0 fe ff 35  	cbnz	w0, 0x2e04 <sr100_dev_transceive+0x920>
+    2e2c: 80 7a 40 b9  	ldr	w0, [x20, #120]
+    2e30: 00 00 00 94  	bl	0x2e30 <sr100_dev_transceive+0x94c> // gpio_to_desc+0x0
+    2e34: e1 03 1f 2a  	mov	w1, wzr
+    2e38: 00 00 00 94  	bl	0x2e38 <sr100_dev_transceive+0x954> // gpiod_set_raw_value+0x0
+    2e3c: f6 03 1f 2a  	mov	w22, wzr
+    2e40: 88 ea 40 b9  	ldr	w8, [x20, #232]
+    2e44: 1f 05 00 71  	cmp	w8, #1
+    2e48: a1 00 00 54  	b.ne	0x2e5c <sr100_dev_transceive+0x978>
+    2e4c: 80 7a 40 b9  	ldr	w0, [x20, #120]
+    2e50: 00 00 00 94  	bl	0x2e50 <sr100_dev_transceive+0x96c> // gpio_to_desc+0x0
+    2e54: e1 03 1f 2a  	mov	w1, wzr
+    2e58: 00 00 00 94  	bl	0x2e58 <sr100_dev_transceive+0x974> // gpiod_set_raw_value+0x0
+    2e5c: e0 03 18 aa  	mov	x0, x24
+    2e60: 00 00 00 94  	bl	0x2e60 <sr100_dev_transceive+0x97c> // mutex_unlock+0x0
+    2e64: 08 41 38 d5  	mrs	x8, SP_EL0
+    2e68: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2e6c: a9 03 5f f8  	ldur	x9, [x29, #-16]
+    2e70: 1f 01 09 eb  	cmp	x8, x9
+    2e74: e1 11 00 54  	b.ne	0x30b0 <sr100_dev_transceive+0xbcc>
+    2e78: e0 03 16 2a  	mov	w0, w22
+    2e7c: f4 4f 5a a9  	ldp	x20, x19, [sp, #416]
+    2e80: f6 57 59 a9  	ldp	x22, x21, [sp, #400]
+    2e84: f8 5f 58 a9  	ldp	x24, x23, [sp, #384]
+    2e88: fa 67 57 a9  	ldp	x26, x25, [sp, #368]
+    2e8c: fc 6f 56 a9  	ldp	x28, x27, [sp, #352]
+    2e90: fd 7b 55 a9  	ldp	x29, x30, [sp, #336]
+    2e94: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    2e98: ff c3 06 91  	add	sp, sp, #432
+    2e9c: bf 23 03 d5  	hint	#29
+    2ea0: c0 03 5f d6  	ret
+    2ea4: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_transceive+0x9c0> // +0x0
+    2ea8: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    2eac: a0 00 00 b4  	cbz	x0, 0x2ec0 <sr100_dev_transceive+0x9dc>
+    2eb0: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_transceive+0x9cc> // '%-6d: invalid operation\n'
+    2eb4: a2 50 80 52  	mov	w2, #645
+    2eb8: 21 00 00 91  	add	x1, x1, #0 // '%-6d: invalid operation\n'
+    2ebc: 00 00 00 94  	bl	0x2ebc <sr100_dev_transceive+0x9d8> // ipc_log_string+0x0
+    2ec0: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_transceive+0x9dc> // '\x013[NXP-SR100]:%d  invalid operation\n'
+    2ec4: a1 50 80 52  	mov	w1, #645
+    2ec8: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  invalid operation\n'
+    2ecc: 30 00 00 14  	b	0x2f8c <sr100_dev_transceive+0xaa8>
+    2ed0: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_transceive+0x9ec> // +0x0
+    2ed4: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    2ed8: a0 00 00 b4  	cbz	x0, 0x2eec <sr100_dev_transceive+0xa08>
+    2edc: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_transceive+0x9f8> // '%-6d: IRQ might have gone low due to write\n'
+    2ee0: a2 44 80 52  	mov	w2, #549
+    2ee4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: IRQ might have gone low due to write\n'
+    2ee8: 00 00 00 94  	bl	0x2ee8 <sr100_dev_transceive+0xa04> // ipc_log_string+0x0
+    2eec: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_transceive+0xa08> // '\x016[NXP-SR100]:%d  IRQ might have gone low due to write\n'
+    2ef0: a1 44 80 52  	mov	w1, #549
+    2ef4: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  IRQ might have gone low due to write\n'
+    2ef8: 00 00 00 94  	bl	0x2ef8 <sr100_dev_transceive+0xa14> // _printk+0x0
+    2efc: 56 00 80 52  	mov	w22, #2
+    2f00: d0 ff ff 17  	b	0x2e40 <sr100_dev_transceive+0x95c>
+    2f04: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_transceive+0xa20> // +0x0
+    2f08: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    2f0c: a0 00 00 b4  	cbz	x0, 0x2f20 <sr100_dev_transceive+0xa3c>
+    2f10: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_transceive+0xa2c> // '%-6d: spi_write header : Failed.\n'
+    2f14: c2 41 80 52  	mov	w2, #526
+    2f18: 21 00 00 91  	add	x1, x1, #0 // '%-6d: spi_write header : Failed.\n'
+    2f1c: 00 00 00 94  	bl	0x2f1c <sr100_dev_transceive+0xa38> // ipc_log_string+0x0
+    2f20: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_transceive+0xa3c> // '\x013[NXP-SR100]:%d  spi_write header : Failed.\n'
+    2f24: c1 41 80 52  	mov	w1, #526
+    2f28: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  spi_write header : Failed.\n'
+    2f2c: 4e 00 00 14  	b	0x3064 <sr100_dev_transceive+0xb80>
+    2f30: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_transceive+0xa4c> // +0x0
+    2f34: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    2f38: a0 00 00 b4  	cbz	x0, 0x2f4c <sr100_dev_transceive+0xa68>
+    2f3c: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_transceive+0xa58> // '%-6d: wait_event_interruptible timeout() : Failed.\n'
+    2f40: 02 47 80 52  	mov	w2, #568
+    2f44: 21 00 00 91  	add	x1, x1, #0 // '%-6d: wait_event_interruptible timeout() : Failed.\n'
+    2f48: 00 00 00 94  	bl	0x2f48 <sr100_dev_transceive+0xa64> // ipc_log_string+0x0
+    2f4c: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_transceive+0xa68> // '\x013[NXP-SR100]:%d  wait_event_interruptible timeout() : Failed.\n'
+    2f50: 01 47 80 52  	mov	w1, #568
+    2f54: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  wait_event_interruptible timeout() : Failed.\n'
+    2f58: 00 00 00 94  	bl	0x2f58 <sr100_dev_transceive+0xa74> // _printk+0x0
+    2f5c: 76 00 80 52  	mov	w22, #3
+    2f60: b8 ff ff 17  	b	0x2e40 <sr100_dev_transceive+0x95c>
+    2f64: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_transceive+0xa80> // +0x0
+    2f68: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    2f6c: a0 00 00 b4  	cbz	x0, 0x2f80 <sr100_dev_transceive+0xa9c>
+    2f70: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_transceive+0xa8c> // '%-6d: Second IRQ is Low\n'
+    2f74: 82 49 80 52  	mov	w2, #588
+    2f78: 21 00 00 91  	add	x1, x1, #0 // '%-6d: Second IRQ is Low\n'
+    2f7c: 00 00 00 94  	bl	0x2f7c <sr100_dev_transceive+0xa98> // ipc_log_string+0x0
+    2f80: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_transceive+0xa9c> // '\x013[NXP-SR100]:%d  Second IRQ is Low\n'
+    2f84: 81 49 80 52  	mov	w1, #588
+    2f88: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  Second IRQ is Low\n'
+    2f8c: 00 00 00 94  	bl	0x2f8c <sr100_dev_transceive+0xaa8> // _printk+0x0
+    2f90: 29 00 00 14  	b	0x3034 <sr100_dev_transceive+0xb50>
+    2f94: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_transceive+0xab0> // +0x0
+    2f98: f6 03 00 2a  	mov	w22, w0
+    2f9c: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    2fa0: c0 00 00 b4  	cbz	x0, 0x2fb8 <sr100_dev_transceive+0xad4>
+    2fa4: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_transceive+0xac0> // '%-6d: sr100_dev_read: spi read error %d\n '
+    2fa8: 42 4a 80 52  	mov	w2, #594
+    2fac: 21 00 00 91  	add	x1, x1, #0 // '%-6d: sr100_dev_read: spi read error %d\n '
+    2fb0: e3 03 16 2a  	mov	w3, w22
+    2fb4: 00 00 00 94  	bl	0x2fb4 <sr100_dev_transceive+0xad0> // ipc_log_string+0x0
+    2fb8: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_transceive+0xad4> // '\x013[NXP-SR100]:%d  sr100_dev_read: spi read error %d\n '
+    2fbc: 41 4a 80 52  	mov	w1, #594
+    2fc0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  sr100_dev_read: spi read error %d\n '
+    2fc4: 37 00 00 14  	b	0x30a0 <sr100_dev_transceive+0xbbc>
+    2fc8: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_transceive+0xae4> // +0x0
+    2fcc: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    2fd0: a0 00 00 b4  	cbz	x0, 0x2fe4 <sr100_dev_transceive+0xb00>
+    2fd4: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_transceive+0xaf0> // '%-6d: Slave not released the IRQ even after 10ms\n'
+    2fd8: 82 4f 80 52  	mov	w2, #636
+    2fdc: 21 00 00 91  	add	x1, x1, #0 // '%-6d: Slave not released the IRQ even after 10ms\n'
+    2fe0: 00 00 00 94  	bl	0x2fe0 <sr100_dev_transceive+0xafc> // ipc_log_string+0x0
+    2fe4: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_transceive+0xb00> // '\x013[NXP-SR100]:%d  Slave not released the IRQ even after 10ms\n'
+    2fe8: 81 4f 80 52  	mov	w1, #636
+    2fec: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  Slave not released the IRQ even after 10ms\n'
+    2ff0: 00 00 00 94  	bl	0x2ff0 <sr100_dev_transceive+0xb0c> // _printk+0x0
+    2ff4: 8e ff ff 17  	b	0x2e2c <sr100_dev_transceive+0x948>
+    2ff8: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_transceive+0xb14> // +0x0
+    2ffc: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    3000: e0 00 00 b4  	cbz	x0, 0x301c <sr100_dev_transceive+0xb38>
+    3004: 01 00 00 90  	adrp	x1, 0x3000 <sr100_dev_transceive+0xb20> // '%-6d: Length %d  exceeds the max limit %d....\n'
+    3008: 22 4d 80 52  	mov	w2, #617
+    300c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: Length %d  exceeds the max limit %d....\n'
+    3010: 04 0d 82 52  	mov	w4, #4200
+    3014: 00 00 00 94  	bl	0x3014 <sr100_dev_transceive+0xb30> // ipc_log_string+0x0
+    3018: 23 03 40 f9  	ldr	x3, [x25]
+    301c: 00 00 00 90  	adrp	x0, 0x3000 <sr100_dev_transceive+0xb38> // '\x013[NXP-SR100]:%d  Length %d  exceeds the max limit %d....\n'
+    3020: 21 4d 80 52  	mov	w1, #617
+    3024: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  Length %d  exceeds the max limit %d....\n'
+    3028: e2 03 03 2a  	mov	w2, w3
+    302c: 03 0d 82 52  	mov	w3, #4200
+    3030: 00 00 00 94  	bl	0x3030 <sr100_dev_transceive+0xb4c> // _printk+0x0
+    3034: 16 00 80 12  	mov	w22, #-1
+    3038: 82 ff ff 17  	b	0x2e40 <sr100_dev_transceive+0x95c>
+    303c: 08 00 00 90  	adrp	x8, 0x3000 <sr100_dev_transceive+0xb58> // +0x0
+    3040: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    3044: a0 00 00 b4  	cbz	x0, 0x3058 <sr100_dev_transceive+0xb74>
+    3048: 01 00 00 90  	adrp	x1, 0x3000 <sr100_dev_transceive+0xb64> // '%-6d: spi_write payload : Failed.\n'
+    304c: 42 43 80 52  	mov	w2, #538
+    3050: 21 00 00 91  	add	x1, x1, #0 // '%-6d: spi_write payload : Failed.\n'
+    3054: 00 00 00 94  	bl	0x3054 <sr100_dev_transceive+0xb70> // ipc_log_string+0x0
+    3058: 00 00 00 90  	adrp	x0, 0x3000 <sr100_dev_transceive+0xb74> // '\x013[NXP-SR100]:%d  spi_write payload : Failed.\n'
+    305c: 41 43 80 52  	mov	w1, #538
+    3060: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  spi_write payload : Failed.\n'
+    3064: 00 00 00 94  	bl	0x3064 <sr100_dev_transceive+0xb80> // _printk+0x0
+    3068: 96 00 80 12  	mov	w22, #-5
+    306c: 75 ff ff 17  	b	0x2e40 <sr100_dev_transceive+0x95c>
+    3070: 08 00 00 90  	adrp	x8, 0x3000 <sr100_dev_transceive+0xb8c> // +0x0
+    3074: f6 03 00 2a  	mov	w22, w0
+    3078: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    307c: c0 00 00 b4  	cbz	x0, 0x3094 <sr100_dev_transceive+0xbb0>
+    3080: 01 00 00 90  	adrp	x1, 0x3000 <sr100_dev_transceive+0xb9c> // '%-6d: sr100_dev_read: spi read error.. %d\n '
+    3084: 02 4e 80 52  	mov	w2, #624
+    3088: 21 00 00 91  	add	x1, x1, #0 // '%-6d: sr100_dev_read: spi read error.. %d\n '
+    308c: e3 03 16 2a  	mov	w3, w22
+    3090: 00 00 00 94  	bl	0x3090 <sr100_dev_transceive+0xbac> // ipc_log_string+0x0
+    3094: 00 00 00 90  	adrp	x0, 0x3000 <sr100_dev_transceive+0xbb0> // '\x013[NXP-SR100]:%d  sr100_dev_read: spi read error.. %d\n '
+    3098: 01 4e 80 52  	mov	w1, #624
+    309c: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  sr100_dev_read: spi read error.. %d\n '
+    30a0: e2 03 16 2a  	mov	w2, w22
+    30a4: 00 00 00 94  	bl	0x30a4 <sr100_dev_transceive+0xbc0> // _printk+0x0
+    30a8: 66 ff ff 17  	b	0x2e40 <sr100_dev_transceive+0x95c>
+    30ac: 40 a2 2a d4  	brk	#0x5512
+    30b0: 00 00 00 94  	bl	0x30b0 <sr100_dev_transceive+0xbcc> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/nxp-sr100.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000016b8 <sr100_dev_read>:
+    16b8: 3f 23 03 d5  	hint	#25
+    16bc: ff 03 06 d1  	sub	sp, sp, #384
+    16c0: 5e 86 00 f8  	str	x30, [x18], #8
+    16c4: fd 7b 12 a9  	stp	x29, x30, [sp, #288]
+    16c8: fd 83 04 91  	add	x29, sp, #288
+    16cc: fc 6f 13 a9  	stp	x28, x27, [sp, #304]
+    16d0: fa 67 14 a9  	stp	x26, x25, [sp, #320]
+    16d4: f8 5f 15 a9  	stp	x24, x23, [sp, #336]
+    16d8: f6 57 16 a9  	stp	x22, x21, [sp, #352]
+    16dc: f4 4f 17 a9  	stp	x20, x19, [sp, #368]
+    16e0: 08 41 38 d5  	mrs	x8, SP_EL0
+    16e4: f3 03 02 aa  	mov	x19, x2
+    16e8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    16ec: f4 03 01 aa  	mov	x20, x1
+    16f0: f6 03 00 aa  	mov	x22, x0
+    16f4: e1 03 1f 2a  	mov	w1, wzr
+    16f8: 02 0d 82 52  	mov	w2, #4200
+    16fc: a8 03 1f f8  	stur	x8, [x29, #-16]
+    1700: a8 0f 80 52  	mov	w8, #125
+    1704: 15 6c 40 f9  	ldr	x21, [x0, #216]
+    1708: a0 4e 40 f9  	ldr	x0, [x21, #152]
+    170c: a8 7a 00 f9  	str	x8, [x21, #240]
+    1710: 00 00 00 94  	bl	0x1710 <sr100_dev_read+0x58> // memset+0x0
+    1714: a0 76 40 b9  	ldr	w0, [x21, #116]
+    1718: 00 00 00 94  	bl	0x1718 <sr100_dev_read+0x60> // gpio_to_desc+0x0
+    171c: 00 00 00 94  	bl	0x171c <sr100_dev_read+0x64> // gpiod_get_raw_value+0x0
+    1720: 60 00 00 35  	cbnz	w0, 0x172c <sr100_dev_read+0x74>
+    1724: c8 06 41 39  	ldrb	w8, [x22, #65]
+    1728: a8 0e 18 37  	tbnz	w8, #3, 0x18fc <sr100_dev_read+0x244>
+    172c: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_read+0x74> // +0x10
+    1730: 08 01 40 39  	ldrb	w8, [x8] // +0x10
+    1734: 28 04 00 36  	tbz	w8, #0, 0x17b8 <sr100_dev_read+0x100>
+    1738: 28 0d 82 52  	mov	w8, #4201
+    173c: 7f 02 08 eb  	cmp	x19, x8
+    1740: 62 19 00 54  	b.hs	0x1a6c <sr100_dev_read+0x3b4>
+    1744: b7 7a 40 f9  	ldr	x23, [x21, #240]
+    1748: a8 86 40 b9  	ldr	w8, [x21, #132]
+    174c: ff 02 00 f1  	cmp	x23, #0
+    1750: 04 09 40 7a  	ccmp	w8, #0, #4, eq
+    1754: f6 06 9f 9a  	csinc	x22, x23, xzr, eq
+    1758: 08 0e 00 35  	cbnz	w8, 0x1918 <sr100_dev_read+0x260>
+    175c: f6 0d 00 b4  	cbz	x22, 0x1918 <sr100_dev_read+0x260>
+    1760: e0 23 00 91  	add	x0, sp, #8
+    1764: e1 03 1f 2a  	mov	w1, wzr
+    1768: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+    176c: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+    1770: ff 07 00 f9  	str	xzr, [sp, #8]
+    1774: 00 00 00 94  	bl	0x1774 <sr100_dev_read+0xbc> // init_wait_entry+0x0
+    1778: e1 23 00 91  	add	x1, sp, #8
+    177c: e0 03 15 aa  	mov	x0, x21
+    1780: 22 00 80 52  	mov	w2, #1
+    1784: 00 00 00 94  	bl	0x1784 <sr100_dev_read+0xcc> // prepare_to_wait_event+0x0
+    1788: a8 86 40 b9  	ldr	w8, [x21, #132]
+    178c: ff 02 00 f1  	cmp	x23, #0
+    1790: 04 09 40 7a  	ccmp	w8, #0, #4, eq
+    1794: f7 06 9f 9a  	csinc	x23, x23, xzr, eq
+    1798: 88 0b 00 35  	cbnz	w8, 0x1908 <sr100_dev_read+0x250>
+    179c: 77 0b 00 b4  	cbz	x23, 0x1908 <sr100_dev_read+0x250>
+    17a0: f6 03 00 aa  	mov	x22, x0
+    17a4: a0 0b 00 b5  	cbnz	x0, 0x1918 <sr100_dev_read+0x260>
+    17a8: e0 03 17 aa  	mov	x0, x23
+    17ac: 00 00 00 94  	bl	0x17ac <sr100_dev_read+0xf4> // schedule_timeout+0x0
+    17b0: f7 03 00 aa  	mov	x23, x0
+    17b4: f1 ff ff 17  	b	0x1778 <sr100_dev_read+0xc0>
+    17b8: 17 00 00 90  	adrp	x23, 0x1000 <sr100_dev_read+0x100> // '\x016[NXP-SR100]:%d   irg is low due to write hence irq is requested again...\n'
+    17bc: b6 22 02 91  	add	x22, x21, #136
+    17c0: 99 00 80 92  	mov	x25, #-5
+    17c4: 38 00 80 52  	mov	w24, #1
+    17c8: 1c 00 00 90  	adrp	x28, 0x1000 <sr100_dev_read+0x110> // +0x14
+    17cc: 1b 00 00 90  	adrp	x27, 0x1000 <sr100_dev_read+0x114> // +0x0
+    17d0: f7 02 00 91  	add	x23, x23, #0 // '\x016[NXP-SR100]:%d   irg is low due to write hence irq is requested again...\n'
+    17d4: 05 00 00 14  	b	0x17e8 <sr100_dev_read+0x130>
+    17d8: e0 03 17 aa  	mov	x0, x23
+    17dc: c1 69 80 52  	mov	w1, #846
+    17e0: 00 00 00 94  	bl	0x17e0 <sr100_dev_read+0x128> // _printk+0x0
+    17e4: 59 00 80 52  	mov	w25, #2
+    17e8: e0 03 16 aa  	mov	x0, x22
+    17ec: 00 00 00 94  	bl	0x17ec <sr100_dev_read+0x134> // _raw_spin_lock_irqsave+0x0
+    17f0: a8 82 40 b9  	ldr	w8, [x21, #128]
+    17f4: fa 03 00 aa  	mov	x26, x0
+    17f8: a8 00 00 35  	cbnz	w8, 0x180c <sr100_dev_read+0x154>
+    17fc: a8 0e 40 f9  	ldr	x8, [x21, #24]
+    1800: 00 ad 43 b9  	ldr	w0, [x8, #940]
+    1804: 00 00 00 94  	bl	0x1804 <sr100_dev_read+0x14c> // enable_irq+0x0
+    1808: b8 42 00 f9  	str	x24, [x21, #128]
+    180c: e0 03 16 aa  	mov	x0, x22
+    1810: e1 03 1a aa  	mov	x1, x26
+    1814: 00 00 00 94  	bl	0x1814 <sr100_dev_read+0x15c> // _raw_spin_unlock_irqrestore+0x0
+    1818: 88 03 40 39  	ldrb	w8, [x28] // +0x14
+    181c: c8 20 00 37  	tbnz	w8, #0, 0x1c34 <sr100_dev_read+0x57c>
+    1820: a8 86 40 b9  	ldr	w8, [x21, #132]
+    1824: 28 03 00 35  	cbnz	w8, 0x1888 <sr100_dev_read+0x1d0>
+    1828: e0 23 00 91  	add	x0, sp, #8
+    182c: e1 03 1f 2a  	mov	w1, wzr
+    1830: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+    1834: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+    1838: ff 07 00 f9  	str	xzr, [sp, #8]
+    183c: 00 00 00 94  	bl	0x183c <sr100_dev_read+0x184> // init_wait_entry+0x0
+    1840: e1 23 00 91  	add	x1, sp, #8
+    1844: e0 03 15 aa  	mov	x0, x21
+    1848: 22 00 80 52  	mov	w2, #1
+    184c: 00 00 00 94  	bl	0x184c <sr100_dev_read+0x194> // prepare_to_wait_event+0x0
+    1850: a8 86 40 b9  	ldr	w8, [x21, #132]
+    1854: a8 00 00 35  	cbnz	w8, 0x1868 <sr100_dev_read+0x1b0>
+    1858: f9 03 00 aa  	mov	x25, x0
+    185c: e0 00 00 b5  	cbnz	x0, 0x1878 <sr100_dev_read+0x1c0>
+    1860: 00 00 00 94  	bl	0x1860 <sr100_dev_read+0x1a8> // schedule+0x0
+    1864: f7 ff ff 17  	b	0x1840 <sr100_dev_read+0x188>
+    1868: e1 23 00 91  	add	x1, sp, #8
+    186c: e0 03 15 aa  	mov	x0, x21
+    1870: 00 00 00 94  	bl	0x1870 <sr100_dev_read+0x1b8> // finish_wait+0x0
+    1874: 02 00 00 14  	b	0x187c <sr100_dev_read+0x1c4>
+    1878: 79 1f 00 35  	cbnz	w25, 0x1c64 <sr100_dev_read+0x5ac>
+    187c: 88 03 40 39  	ldrb	w8, [x28] // +0x14
+    1880: 1f 05 00 71  	cmp	w8, #1
+    1884: 60 1d 00 54  	b.eq	0x1c30 <sr100_dev_read+0x578>
+    1888: e0 03 15 aa  	mov	x0, x21
+    188c: 21 00 80 52  	mov	w1, #1
+    1890: e2 03 13 2a  	mov	w2, w19
+    1894: 00 00 00 94  	bl	0x1894 <sr100_dev_read+0x1dc> // +0x24e4
+    1898: 1f 08 00 71  	cmp	w0, #2
+    189c: 01 01 00 54  	b.ne	0x18bc <sr100_dev_read+0x204>
+    18a0: 60 03 40 f9  	ldr	x0, [x27] // +0x0
+    18a4: a0 f9 ff b4  	cbz	x0, 0x17d8 <sr100_dev_read+0x120>
+    18a8: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x1f0> // '%-6d:  irg is low due to write hence irq is requested again...\n'
+    18ac: c2 69 80 52  	mov	w2, #846
+    18b0: 21 00 00 91  	add	x1, x1, #0 // '%-6d:  irg is low due to write hence irq is requested again...\n'
+    18b4: 00 00 00 94  	bl	0x18b4 <sr100_dev_read+0x1fc> // ipc_log_string+0x0
+    18b8: c8 ff ff 17  	b	0x17d8 <sr100_dev_read+0x120>
+    18bc: f9 03 00 2a  	mov	w25, w0
+    18c0: c0 0b 00 35  	cbnz	w0, 0x1a38 <sr100_dev_read+0x380>
+    18c4: b3 a6 40 b9  	ldr	w19, [x21, #164]
+    18c8: 53 1e f8 37  	tbnz	w19, #31, 0x1c90 <$x.13>
+    18cc: b6 4e 40 f9  	ldr	x22, [x21, #152]
+    18d0: e1 03 13 aa  	mov	x1, x19
+    18d4: 22 00 80 52  	mov	w2, #1
+    18d8: e0 03 16 aa  	mov	x0, x22
+    18dc: 00 00 00 94  	bl	0x18dc <sr100_dev_read+0x224> // __check_object_size+0x0
+    18e0: e0 03 14 aa  	mov	x0, x20
+    18e4: e1 03 16 aa  	mov	x1, x22
+    18e8: e2 03 13 aa  	mov	x2, x19
+    18ec: 00 00 00 94  	bl	0x18ec <sr100_dev_read+0x234> // +0x30b4
+    18f0: 20 1d 00 b5  	cbnz	x0, 0x1c94 <$x.13+0x4>
+    18f4: b9 a6 40 b9  	ldr	w25, [x21, #164]
+    18f8: 02 00 00 14  	b	0x1900 <sr100_dev_read+0x248>
+    18fc: 59 01 80 12  	mov	w25, #-11
+    1900: 39 7f 40 93  	sxtw	x25, w25
+    1904: bb 00 00 14  	b	0x1bf0 <sr100_dev_read+0x538>
+    1908: e1 23 00 91  	add	x1, sp, #8
+    190c: e0 03 15 aa  	mov	x0, x21
+    1910: 00 00 00 94  	bl	0x1910 <sr100_dev_read+0x258> // finish_wait+0x0
+    1914: f6 03 17 aa  	mov	x22, x23
+    1918: d6 0c 00 34  	cbz	w22, 0x1ab0 <sr100_dev_read+0x3f8>
+    191c: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_read+0x264> // +0x14
+    1920: 09 01 40 39  	ldrb	w9, [x8] // +0x14
+    1924: 3f 05 00 71  	cmp	w9, #1
+    1928: a0 0f 00 54  	b.eq	0x1b1c <sr100_dev_read+0x464>
+    192c: a0 76 40 b9  	ldr	w0, [x21, #116]
+    1930: 00 00 00 94  	bl	0x1930 <sr100_dev_read+0x278> // gpio_to_desc+0x0
+    1934: 00 00 00 94  	bl	0x1934 <sr100_dev_read+0x27c> // gpiod_get_raw_value+0x0
+    1938: c0 10 00 34  	cbz	w0, 0x1b50 <sr100_dev_read+0x498>
+    193c: a8 4e 40 f9  	ldr	x8, [x21, #152]
+    1940: e9 23 00 91  	add	x9, sp, #8
+    1944: b8 03 02 d1  	sub	x24, x29, #128
+    1948: 37 e1 01 91  	add	x23, x9, #120
+    194c: ff ff 00 a9  	stp	xzr, xzr, [sp, #8]
+    1950: a1 03 02 d1  	sub	x1, x29, #128
+    1954: e8 7f 01 a9  	stp	x8, xzr, [sp, #16]
+    1958: 08 63 01 91  	add	x8, x24, #88
+    195c: a2 03 02 d1  	sub	x2, x29, #128
+    1960: e0 03 17 aa  	mov	x0, x23
+    1964: b6 0e 40 f9  	ldr	x22, [x21, #24]
+    1968: ff 7f 09 a9  	stp	xzr, xzr, [sp, #144]
+    196c: ff 7f 08 a9  	stp	xzr, xzr, [sp, #128]
+    1970: ff 7f 07 a9  	stp	xzr, xzr, [sp, #112]
+    1974: ff 7f 06 a9  	stp	xzr, xzr, [sp, #96]
+    1978: ff 7f 05 a9  	stp	xzr, xzr, [sp, #80]
+    197c: ff 7f 04 a9  	stp	xzr, xzr, [sp, #64]
+    1980: ff 7f 03 a9  	stp	xzr, xzr, [sp, #48]
+    1984: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+    1988: f3 1b 00 b9  	str	w19, [sp, #24]
+    198c: bf 7f 3e a9  	stp	xzr, xzr, [x29, #-32]
+    1990: bf 7f 3d a9  	stp	xzr, xzr, [x29, #-48]
+    1994: bf 7f 3c a9  	stp	xzr, xzr, [x29, #-64]
+    1998: bf 7f 3b a9  	stp	xzr, xzr, [x29, #-80]
+    199c: bf 7f 3a a9  	stp	xzr, xzr, [x29, #-96]
+    19a0: bf 7f 39 a9  	stp	xzr, xzr, [x29, #-112]
+    19a4: b8 03 18 f8  	stur	x24, [x29, #-128]
+    19a8: b8 83 18 f8  	stur	x24, [x29, #-120]
+    19ac: a8 83 1d f8  	stur	x8, [x29, #-40]
+    19b0: a8 03 1e f8  	stur	x8, [x29, #-32]
+    19b4: 00 00 00 94  	bl	0x19b4 <sr100_dev_read+0x2fc> // __list_add_valid+0x0
+    19b8: 80 00 00 36  	tbz	w0, #0, 0x19c8 <sr100_dev_read+0x310>
+    19bc: b7 83 18 f8  	stur	x23, [x29, #-120]
+    19c0: f8 63 08 a9  	stp	x24, x24, [sp, #128]
+    19c4: b7 03 18 f8  	stur	x23, [x29, #-128]
+    19c8: a1 03 02 d1  	sub	x1, x29, #128
+    19cc: e0 03 16 aa  	mov	x0, x22
+    19d0: 00 00 00 94  	bl	0x19d0 <sr100_dev_read+0x318> // spi_sync+0x0
+    19d4: 60 0d f8 37  	tbnz	w0, #31, 0x1b80 <sr100_dev_read+0x4c8>
+    19d8: b5 4e 40 f9  	ldr	x21, [x21, #152]
+    19dc: e1 03 13 aa  	mov	x1, x19
+    19e0: 22 00 80 52  	mov	w2, #1
+    19e4: e0 03 15 aa  	mov	x0, x21
+    19e8: 00 00 00 94  	bl	0x19e8 <sr100_dev_read+0x330> // __check_object_size+0x0
+    19ec: e0 03 14 aa  	mov	x0, x20
+    19f0: e1 03 15 aa  	mov	x1, x21
+    19f4: e2 03 13 aa  	mov	x2, x19
+    19f8: 00 00 00 94  	bl	0x19f8 <sr100_dev_read+0x340> // +0x30b4
+    19fc: f6 03 13 2a  	mov	w22, w19
+    1a00: 60 0f 00 b4  	cbz	x0, 0x1bec <sr100_dev_read+0x534>
+    1a04: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_read+0x34c> // +0x0
+    1a08: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1a0c: a0 00 00 b4  	cbz	x0, 0x1a20 <sr100_dev_read+0x368>
+    1a10: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x358> // '%-6d: sr100_dev_read: copy to user failed\n'
+    1a14: e2 61 80 52  	mov	w2, #783
+    1a18: 21 00 00 91  	add	x1, x1, #0 // '%-6d: sr100_dev_read: copy to user failed\n'
+    1a1c: 00 00 00 94  	bl	0x1a1c <sr100_dev_read+0x364> // ipc_log_string+0x0
+    1a20: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x368> // '\x013[NXP-SR100]:%d  sr100_dev_read: copy to user failed\n'
+    1a24: e1 61 80 52  	mov	w1, #783
+    1a28: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  sr100_dev_read: copy to user failed\n'
+    1a2c: 00 00 00 94  	bl	0x1a2c <sr100_dev_read+0x374> // _printk+0x0
+    1a30: b6 01 80 12  	mov	w22, #-14
+    1a34: 6e 00 00 14  	b	0x1bec <sr100_dev_read+0x534>
+    1a38: 3f 0f 00 71  	cmp	w25, #3
+    1a3c: 41 05 00 54  	b.ne	0x1ae4 <sr100_dev_read+0x42c>
+    1a40: 60 03 40 f9  	ldr	x0, [x27] // +0x0
+    1a44: a0 00 00 b4  	cbz	x0, 0x1a58 <sr100_dev_read+0x3a0>
+    1a48: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x390> // '%-6d: second irq is not received..Time out...\n'
+    1a4c: 22 6a 80 52  	mov	w2, #849
+    1a50: 21 00 00 91  	add	x1, x1, #0 // '%-6d: second irq is not received..Time out...\n'
+    1a54: 00 00 00 94  	bl	0x1a54 <sr100_dev_read+0x39c> // ipc_log_string+0x0
+    1a58: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x3a0> // '\x016[NXP-SR100]:%d  second irq is not received..Time out...\n'
+    1a5c: 21 6a 80 52  	mov	w1, #849
+    1a60: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  second irq is not received..Time out...\n'
+    1a64: 00 00 00 94  	bl	0x1a64 <sr100_dev_read+0x3ac> // _printk+0x0
+    1a68: 2b 00 00 14  	b	0x1b14 <sr100_dev_read+0x45c>
+    1a6c: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_read+0x3b4> // +0x0
+    1a70: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1a74: e0 00 00 b4  	cbz	x0, 0x1a90 <sr100_dev_read+0x3d8>
+    1a78: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x3c0> // '%-6d: count(%d) out of range(0-%d)\n'
+    1a7c: 62 5d 80 52  	mov	w2, #747
+    1a80: 21 00 00 91  	add	x1, x1, #0 // '%-6d: count(%d) out of range(0-%d)\n'
+    1a84: e3 03 13 aa  	mov	x3, x19
+    1a88: 04 0d 82 52  	mov	w4, #4200
+    1a8c: 00 00 00 94  	bl	0x1a8c <sr100_dev_read+0x3d4> // ipc_log_string+0x0
+    1a90: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x3d8> // '\x013[NXP-SR100]:%d  count(%d) out of range(0-%d)\n'
+    1a94: 61 5d 80 52  	mov	w1, #747
+    1a98: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  count(%d) out of range(0-%d)\n'
+    1a9c: e2 03 13 aa  	mov	x2, x19
+    1aa0: 03 0d 82 52  	mov	w3, #4200
+    1aa4: 00 00 00 94  	bl	0x1aa4 <sr100_dev_read+0x3ec> // _printk+0x0
+    1aa8: b6 02 80 12  	mov	w22, #-22
+    1aac: 43 00 00 14  	b	0x1bb8 <sr100_dev_read+0x500>
+    1ab0: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_read+0x3f8> // +0x0
+    1ab4: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1ab8: a0 00 00 b4  	cbz	x0, 0x1acc <sr100_dev_read+0x414>
+    1abc: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x404> // '%-6d: hbci wait_event_interruptible timeout() : Failed.\n'
+    1ac0: 42 5e 80 52  	mov	w2, #754
+    1ac4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: hbci wait_event_interruptible timeout() : Failed.\n'
+    1ac8: 00 00 00 94  	bl	0x1ac8 <sr100_dev_read+0x410> // ipc_log_string+0x0
+    1acc: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x414> // '\x013[NXP-SR100]:%d  hbci wait_event_interruptible timeout() : Failed.\n'
+    1ad0: 41 5e 80 52  	mov	w1, #754
+    1ad4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  hbci wait_event_interruptible timeout() : Failed.\n'
+    1ad8: 00 00 00 94  	bl	0x1ad8 <sr100_dev_read+0x420> // _printk+0x0
+    1adc: 16 00 80 12  	mov	w22, #-1
+    1ae0: 36 00 00 14  	b	0x1bb8 <sr100_dev_read+0x500>
+    1ae4: 60 03 40 f9  	ldr	x0, [x27] // +0x0
+    1ae8: c0 00 00 b4  	cbz	x0, 0x1b00 <sr100_dev_read+0x448>
+    1aec: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x434> // '%-6d: spi read failed...%d\n'
+    1af0: 82 6a 80 52  	mov	w2, #852
+    1af4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: spi read failed...%d\n'
+    1af8: e3 03 19 2a  	mov	w3, w25
+    1afc: 00 00 00 94  	bl	0x1afc <sr100_dev_read+0x444> // ipc_log_string+0x0
+    1b00: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x448> // '\x013[NXP-SR100]:%d  spi read failed...%d\n'
+    1b04: 81 6a 80 52  	mov	w1, #852
+    1b08: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  spi read failed...%d\n'
+    1b0c: e2 03 19 2a  	mov	w2, w25
+    1b10: 00 00 00 94  	bl	0x1b10 <sr100_dev_read+0x458> // _printk+0x0
+    1b14: 19 00 80 12  	mov	w25, #-1
+    1b18: 7a ff ff 17  	b	0x1900 <sr100_dev_read+0x248>
+    1b1c: 09 00 00 90  	adrp	x9, 0x1000 <sr100_dev_read+0x464> // +0x0
+    1b20: 1f 01 00 39  	strb	wzr, [x8] // +0x14
+    1b24: 20 01 40 f9  	ldr	x0, [x9] // +0x0
+    1b28: a0 00 00 b4  	cbz	x0, 0x1b3c <sr100_dev_read+0x484>
+    1b2c: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x474> // '%-6d: HBCI Abort Read pending......'
+    1b30: 22 5f 80 52  	mov	w2, #761
+    1b34: 21 00 00 91  	add	x1, x1, #0 // '%-6d: HBCI Abort Read pending......'
+    1b38: 00 00 00 94  	bl	0x1b38 <sr100_dev_read+0x480> // ipc_log_string+0x0
+    1b3c: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x484> // '\x013[NXP-SR100]:%d  HBCI Abort Read pending......'
+    1b40: 21 5f 80 52  	mov	w1, #761
+    1b44: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  HBCI Abort Read pending......'
+    1b48: 00 00 00 94  	bl	0x1b48 <sr100_dev_read+0x490> // _printk+0x0
+    1b4c: 28 00 00 14  	b	0x1bec <sr100_dev_read+0x534>
+    1b50: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_read+0x498> // +0x0
+    1b54: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1b58: a0 00 00 b4  	cbz	x0, 0x1b6c <sr100_dev_read+0x4b4>
+    1b5c: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x4a4> // '%-6d: IRQ is low during firmware download'
+    1b60: c2 5f 80 52  	mov	w2, #766
+    1b64: 21 00 00 91  	add	x1, x1, #0 // '%-6d: IRQ is low during firmware download'
+    1b68: 00 00 00 94  	bl	0x1b68 <sr100_dev_read+0x4b0> // ipc_log_string+0x0
+    1b6c: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x4b4> // '\x013[NXP-SR100]:%d  IRQ is low during firmware download'
+    1b70: c1 5f 80 52  	mov	w1, #766
+    1b74: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  IRQ is low during firmware download'
+    1b78: 00 00 00 94  	bl	0x1b78 <sr100_dev_read+0x4c0> // _printk+0x0
+    1b7c: 0f 00 00 14  	b	0x1bb8 <sr100_dev_read+0x500>
+    1b80: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_read+0x4c8> // +0x0
+    1b84: f6 03 00 2a  	mov	w22, w0
+    1b88: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1b8c: c0 00 00 b4  	cbz	x0, 0x1ba4 <sr100_dev_read+0x4ec>
+    1b90: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x4d8> // '%-6d: sr100_dev_read: spi read error %d\n '
+    1b94: e2 60 80 52  	mov	w2, #775
+    1b98: 21 00 00 91  	add	x1, x1, #0 // '%-6d: sr100_dev_read: spi read error %d\n '
+    1b9c: e3 03 16 2a  	mov	w3, w22
+    1ba0: 00 00 00 94  	bl	0x1ba0 <sr100_dev_read+0x4e8> // ipc_log_string+0x0
+    1ba4: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x4ec> // '\x013[NXP-SR100]:%d  sr100_dev_read: spi read error %d\n '
+    1ba8: e1 60 80 52  	mov	w1, #775
+    1bac: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  sr100_dev_read: spi read error %d\n '
+    1bb0: e2 03 16 2a  	mov	w2, w22
+    1bb4: 00 00 00 94  	bl	0x1bb4 <sr100_dev_read+0x4fc> // _printk+0x0
+    1bb8: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_read+0x500> // +0x0
+    1bbc: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1bc0: c0 00 00 b4  	cbz	x0, 0x1bd8 <sr100_dev_read+0x520>
+    1bc4: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x50c> // '%-6d: Error sr100_fw_download ret %d Exit\n'
+    1bc8: 82 62 80 52  	mov	w2, #788
+    1bcc: 21 00 00 91  	add	x1, x1, #0 // '%-6d: Error sr100_fw_download ret %d Exit\n'
+    1bd0: e3 03 16 2a  	mov	w3, w22
+    1bd4: 00 00 00 94  	bl	0x1bd4 <sr100_dev_read+0x51c> // ipc_log_string+0x0
+    1bd8: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x520> // '\x013[NXP-SR100]:%d  Error sr100_fw_download ret %d Exit\n'
+    1bdc: 81 62 80 52  	mov	w1, #788
+    1be0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  Error sr100_fw_download ret %d Exit\n'
+    1be4: e2 03 16 2a  	mov	w2, w22
+    1be8: 00 00 00 94  	bl	0x1be8 <sr100_dev_read+0x530> // _printk+0x0
+    1bec: d9 7e 40 93  	sxtw	x25, w22
+    1bf0: 08 41 38 d5  	mrs	x8, SP_EL0
+    1bf4: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    1bf8: a9 03 5f f8  	ldur	x9, [x29, #-16]
+    1bfc: 1f 01 09 eb  	cmp	x8, x9
+    1c00: 21 06 00 54  	b.ne	0x1cc4 <$x.13+0x34>
+    1c04: e0 03 19 aa  	mov	x0, x25
+    1c08: f4 4f 57 a9  	ldp	x20, x19, [sp, #368]
+    1c0c: f6 57 56 a9  	ldp	x22, x21, [sp, #352]
+    1c10: f8 5f 55 a9  	ldp	x24, x23, [sp, #336]
+    1c14: fa 67 54 a9  	ldp	x26, x25, [sp, #320]
+    1c18: fc 6f 53 a9  	ldp	x28, x27, [sp, #304]
+    1c1c: fd 7b 52 a9  	ldp	x29, x30, [sp, #288]
+    1c20: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    1c24: ff 03 06 91  	add	sp, sp, #384
+    1c28: bf 23 03 d5  	hint	#29
+    1c2c: c0 03 5f d6  	ret
+    1c30: f9 03 1f aa  	mov	x25, xzr
+    1c34: 60 03 40 f9  	ldr	x0, [x27] // +0x0
+    1c38: 9f 03 00 39  	strb	wzr, [x28] // +0x14
+    1c3c: a0 00 00 b4  	cbz	x0, 0x1c50 <sr100_dev_read+0x598>
+    1c40: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x588> // '%-6d: Abort Read pending......\n'
+    1c44: 42 68 80 52  	mov	w2, #834
+    1c48: 21 00 00 91  	add	x1, x1, #0 // '%-6d: Abort Read pending......\n'
+    1c4c: 00 00 00 94  	bl	0x1c4c <sr100_dev_read+0x594> // ipc_log_string+0x0
+    1c50: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x598> // '\x016[NXP-SR100]:%d  Abort Read pending......\n'
+    1c54: 41 68 80 52  	mov	w1, #834
+    1c58: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  Abort Read pending......\n'
+    1c5c: 00 00 00 94  	bl	0x1c5c <sr100_dev_read+0x5a4> // _printk+0x0
+    1c60: e4 ff ff 17  	b	0x1bf0 <sr100_dev_read+0x538>
+    1c64: 60 03 40 f9  	ldr	x0, [x27] // +0x0
+    1c68: a0 00 00 b4  	cbz	x0, 0x1c7c <sr100_dev_read+0x5c4>
+    1c6c: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_read+0x5b4> // '%-6d: wait_event_interruptible() : Failed.\n'
+    1c70: 82 67 80 52  	mov	w2, #828
+    1c74: 21 00 00 91  	add	x1, x1, #0 // '%-6d: wait_event_interruptible() : Failed.\n'
+    1c78: 00 00 00 94  	bl	0x1c78 <sr100_dev_read+0x5c0> // ipc_log_string+0x0
+    1c7c: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_read+0x5c4> // '\x013[NXP-SR100]:%d  wait_event_interruptible() : Failed.\n'
+    1c80: 81 67 80 52  	mov	w1, #828
+    1c84: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  wait_event_interruptible() : Failed.\n'
+    1c88: 00 00 00 94  	bl	0x1c88 <sr100_dev_read+0x5d0> // _printk+0x0
+    1c8c: 1d ff ff 17  	b	0x1900 <sr100_dev_read+0x248>
+
+0000000000001c90 <$x.13>:
+    1c90: 00 00 21 d4  	brk	#0x800
+    1c94: 60 03 40 f9  	ldr	x0, [x27] // +0x0
+    1c98: a0 00 00 b4  	cbz	x0, 0x1cac <$x.13+0x1c>
+    1c9c: 01 00 00 90  	adrp	x1, 0x1000 <$x.13+0xc> // '%-6d: sr100_dev_read: copy to user failed\n'
+    1ca0: 02 69 80 52  	mov	w2, #840
+    1ca4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: sr100_dev_read: copy to user failed\n'
+    1ca8: 00 00 00 94  	bl	0x1ca8 <$x.13+0x18> // ipc_log_string+0x0
+    1cac: 00 00 00 90  	adrp	x0, 0x1000 <$x.13+0x1c> // '\x013[NXP-SR100]:%d  sr100_dev_read: copy to user failed\n'
+    1cb0: 01 69 80 52  	mov	w1, #840
+    1cb4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  sr100_dev_read: copy to user failed\n'
+    1cb8: 00 00 00 94  	bl	0x1cb8 <$x.13+0x28> // _printk+0x0
+    1cbc: b9 01 80 12  	mov	w25, #-14
+    1cc0: 10 ff ff 17  	b	0x1900 <sr100_dev_read+0x248>
+    1cc4: 00 00 00 94  	bl	0x1cc4 <$x.13+0x34> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/nxp-sr100.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000001cc8 <sr100_dev_write>:
+    1cc8: 3f 23 03 d5  	hint	#25
+    1ccc: ff 43 05 d1  	sub	sp, sp, #336
+    1cd0: 5e 86 00 f8  	str	x30, [x18], #8
+    1cd4: fd 7b 11 a9  	stp	x29, x30, [sp, #272]
+    1cd8: fd 43 04 91  	add	x29, sp, #272
+    1cdc: fc 5f 12 a9  	stp	x28, x23, [sp, #288]
+    1ce0: f6 57 13 a9  	stp	x22, x21, [sp, #304]
+    1ce4: f4 4f 14 a9  	stp	x20, x19, [sp, #320]
+    1ce8: 08 41 38 d5  	mrs	x8, SP_EL0
+    1cec: 29 0d 82 52  	mov	w9, #4201
+    1cf0: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    1cf4: 5f 00 09 eb  	cmp	x2, x9
+    1cf8: a8 83 1f f8  	stur	x8, [x29, #-8]
+    1cfc: c2 0b 00 54  	b.hs	0x1e74 <sr100_dev_write+0x1ac>
+    1d00: 13 6c 40 f9  	ldr	x19, [x0, #216]
+    1d04: f4 03 02 aa  	mov	x20, x2
+    1d08: f5 03 01 aa  	mov	x21, x1
+    1d0c: e1 03 02 aa  	mov	x1, x2
+    1d10: e2 03 1f 2a  	mov	w2, wzr
+    1d14: 76 4a 40 f9  	ldr	x22, [x19, #144]
+    1d18: e0 03 16 aa  	mov	x0, x22
+    1d1c: 00 00 00 94  	bl	0x1d1c <sr100_dev_write+0x54> // __check_object_size+0x0
+    1d20: e0 03 16 aa  	mov	x0, x22
+    1d24: e1 03 15 aa  	mov	x1, x21
+    1d28: e2 03 14 aa  	mov	x2, x20
+    1d2c: 00 00 00 94  	bl	0x1d2c <sr100_dev_write+0x64> // +0x2330
+    1d30: 40 0c 00 b5  	cbnz	x0, 0x1eb8 <sr100_dev_write+0x1f0>
+    1d34: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_write+0x6c> // +0x10
+    1d38: 08 01 40 39  	ldrb	w8, [x8] // +0x10
+    1d3c: 1f 05 00 71  	cmp	w8, #1
+    1d40: 21 07 00 54  	b.ne	0x1e24 <sr100_dev_write+0x15c>
+    1d44: 68 4a 40 f9  	ldr	x8, [x19, #144]
+    1d48: e9 03 00 91  	mov	x9, sp
+    1d4c: b7 e3 01 d1  	sub	x23, x29, #120
+    1d50: 36 e1 01 91  	add	x22, x9, #120
+    1d54: a1 e3 01 d1  	sub	x1, x29, #120
+    1d58: a2 e3 01 d1  	sub	x2, x29, #120
+    1d5c: e8 03 00 f9  	str	x8, [sp]
+    1d60: e8 62 01 91  	add	x8, x23, #88
+    1d64: e0 03 16 aa  	mov	x0, x22
+    1d68: 75 0e 40 f9  	ldr	x21, [x19, #24]
+    1d6c: 7f a2 00 b9  	str	wzr, [x19, #160]
+    1d70: ff ff 08 a9  	stp	xzr, xzr, [sp, #136]
+    1d74: ff ff 07 a9  	stp	xzr, xzr, [sp, #120]
+    1d78: ff ff 06 a9  	stp	xzr, xzr, [sp, #104]
+    1d7c: ff ff 05 a9  	stp	xzr, xzr, [sp, #88]
+    1d80: ff ff 04 a9  	stp	xzr, xzr, [sp, #72]
+    1d84: ff ff 03 a9  	stp	xzr, xzr, [sp, #56]
+    1d88: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+    1d8c: ff ff 01 a9  	stp	xzr, xzr, [sp, #24]
+    1d90: ff ff 00 a9  	stp	xzr, xzr, [sp, #8]
+    1d94: f4 13 00 b9  	str	w20, [sp, #16]
+    1d98: bf ff 3e a9  	stp	xzr, xzr, [x29, #-24]
+    1d9c: bf ff 3d a9  	stp	xzr, xzr, [x29, #-40]
+    1da0: bf ff 3c a9  	stp	xzr, xzr, [x29, #-56]
+    1da4: bf ff 3b a9  	stp	xzr, xzr, [x29, #-72]
+    1da8: bf ff 3a a9  	stp	xzr, xzr, [x29, #-88]
+    1dac: bf ff 39 a9  	stp	xzr, xzr, [x29, #-104]
+    1db0: b7 83 18 f8  	stur	x23, [x29, #-120]
+    1db4: b7 03 19 f8  	stur	x23, [x29, #-112]
+    1db8: a8 03 1e f8  	stur	x8, [x29, #-32]
+    1dbc: a8 83 1e f8  	stur	x8, [x29, #-24]
+    1dc0: 00 00 00 94  	bl	0x1dc0 <sr100_dev_write+0xf8> // __list_add_valid+0x0
+    1dc4: 80 00 00 36  	tbz	w0, #0, 0x1dd4 <sr100_dev_write+0x10c>
+    1dc8: b6 03 19 f8  	stur	x22, [x29, #-112]
+    1dcc: f7 df 07 a9  	stp	x23, x23, [sp, #120]
+    1dd0: b6 83 18 f8  	stur	x22, [x29, #-120]
+    1dd4: a1 e3 01 d1  	sub	x1, x29, #120
+    1dd8: e0 03 15 aa  	mov	x0, x21
+    1ddc: 00 00 00 94  	bl	0x1ddc <sr100_dev_write+0x114> // spi_sync+0x0
+    1de0: e0 08 f8 37  	tbnz	w0, #31, 0x1efc <sr100_dev_write+0x234>
+    1de4: 75 22 02 91  	add	x21, x19, #136
+    1de8: 74 a2 00 b9  	str	w20, [x19, #160]
+    1dec: e0 03 15 aa  	mov	x0, x21
+    1df0: 00 00 00 94  	bl	0x1df0 <sr100_dev_write+0x128> // _raw_spin_lock_irqsave+0x0
+    1df4: 68 82 40 b9  	ldr	w8, [x19, #128]
+    1df8: f4 03 00 aa  	mov	x20, x0
+    1dfc: c8 00 00 35  	cbnz	w8, 0x1e14 <sr100_dev_write+0x14c>
+    1e00: 68 0e 40 f9  	ldr	x8, [x19, #24]
+    1e04: 00 ad 43 b9  	ldr	w0, [x8, #940]
+    1e08: 00 00 00 94  	bl	0x1e08 <sr100_dev_write+0x140> // enable_irq+0x0
+    1e0c: 28 00 80 52  	mov	w8, #1
+    1e10: 68 42 00 f9  	str	x8, [x19, #128]
+    1e14: e0 03 15 aa  	mov	x0, x21
+    1e18: e1 03 14 aa  	mov	x1, x20
+    1e1c: 00 00 00 94  	bl	0x1e1c <sr100_dev_write+0x154> // _raw_spin_unlock_irqrestore+0x0
+    1e20: 06 00 00 14  	b	0x1e38 <sr100_dev_write+0x170>
+    1e24: e0 03 13 aa  	mov	x0, x19
+    1e28: e1 03 1f 2a  	mov	w1, wzr
+    1e2c: e2 03 14 2a  	mov	w2, w20
+    1e30: 00 00 00 94  	bl	0x1e30 <sr100_dev_write+0x168> // +0x24e4
+    1e34: 60 09 00 35  	cbnz	w0, 0x1f60 <sr100_dev_write+0x298>
+    1e38: 74 a2 40 b9  	ldr	w20, [x19, #160]
+    1e3c: 80 7e 40 93  	sxtw	x0, w20
+    1e40: 08 41 38 d5  	mrs	x8, SP_EL0
+    1e44: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    1e48: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    1e4c: 1f 01 09 eb  	cmp	x8, x9
+    1e50: 21 0a 00 54  	b.ne	0x1f94 <sr100_dev_write+0x2cc>
+    1e54: f4 4f 54 a9  	ldp	x20, x19, [sp, #320]
+    1e58: f6 57 53 a9  	ldp	x22, x21, [sp, #304]
+    1e5c: fc 5f 52 a9  	ldp	x28, x23, [sp, #288]
+    1e60: fd 7b 51 a9  	ldp	x29, x30, [sp, #272]
+    1e64: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    1e68: ff 43 05 91  	add	sp, sp, #336
+    1e6c: bf 23 03 d5  	hint	#29
+    1e70: c0 03 5f d6  	ret
+    1e74: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_write+0x1ac> // +0x0
+    1e78: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1e7c: e0 00 00 b4  	cbz	x0, 0x1e98 <sr100_dev_write+0x1d0>
+    1e80: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_write+0x1b8> // '%-6d: %s : Write Size Exceeds\n'
+    1e84: 03 00 00 90  	adrp	x3, 0x1000 <sr100_dev_write+0x1bc> // 'sr100_dev_write'
+    1e88: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s : Write Size Exceeds\n'
+    1e8c: 63 00 00 91  	add	x3, x3, #0 // 'sr100_dev_write'
+    1e90: 02 58 80 52  	mov	w2, #704
+    1e94: 00 00 00 94  	bl	0x1e94 <sr100_dev_write+0x1cc> // ipc_log_string+0x0
+    1e98: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_write+0x1d0> // '\x013[NXP-SR100]:%d  %s : Write Size Exceeds\n'
+    1e9c: 02 00 00 90  	adrp	x2, 0x1000 <sr100_dev_write+0x1d4> // 'sr100_dev_write'
+    1ea0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  %s : Write Size Exceeds\n'
+    1ea4: 42 00 00 91  	add	x2, x2, #0 // 'sr100_dev_write'
+    1ea8: 01 58 80 52  	mov	w1, #704
+    1eac: 00 00 00 94  	bl	0x1eac <sr100_dev_write+0x1e4> // _printk+0x0
+    1eb0: 14 0d 80 12  	mov	w20, #-105
+    1eb4: e2 ff ff 17  	b	0x1e3c <sr100_dev_write+0x174>
+    1eb8: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_write+0x1f0> // +0x0
+    1ebc: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1ec0: e0 00 00 b4  	cbz	x0, 0x1edc <sr100_dev_write+0x214>
+    1ec4: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_write+0x1fc> // '%-6d: %s : failed to copy from user space \n'
+    1ec8: 03 00 00 90  	adrp	x3, 0x1000 <sr100_dev_write+0x200> // 'sr100_dev_write'
+    1ecc: 21 00 00 91  	add	x1, x1, #0 // '%-6d: %s : failed to copy from user space \n'
+    1ed0: 63 00 00 91  	add	x3, x3, #0 // 'sr100_dev_write'
+    1ed4: a2 58 80 52  	mov	w2, #709
+    1ed8: 00 00 00 94  	bl	0x1ed8 <sr100_dev_write+0x210> // ipc_log_string+0x0
+    1edc: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_write+0x214> // '\x013[NXP-SR100]:%d  %s : failed to copy from user space \n'
+    1ee0: 02 00 00 90  	adrp	x2, 0x1000 <sr100_dev_write+0x218> // 'sr100_dev_write'
+    1ee4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  %s : failed to copy from user space \n'
+    1ee8: 42 00 00 91  	add	x2, x2, #0 // 'sr100_dev_write'
+    1eec: a1 58 80 52  	mov	w1, #709
+    1ef0: 00 00 00 94  	bl	0x1ef0 <sr100_dev_write+0x228> // _printk+0x0
+    1ef4: a0 01 80 92  	mov	x0, #-14
+    1ef8: d2 ff ff 17  	b	0x1e40 <sr100_dev_write+0x178>
+    1efc: 13 00 00 90  	adrp	x19, 0x1000 <sr100_dev_write+0x234> // +0x0
+    1f00: 60 02 40 f9  	ldr	x0, [x19] // +0x0
+    1f04: a0 00 00 b4  	cbz	x0, 0x1f18 <sr100_dev_write+0x250>
+    1f08: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_write+0x240> // '%-6d: spi_write fw download : Failed.\n'
+    1f0c: 22 54 80 52  	mov	w2, #673
+    1f10: 21 00 00 91  	add	x1, x1, #0 // '%-6d: spi_write fw download : Failed.\n'
+    1f14: 00 00 00 94  	bl	0x1f14 <sr100_dev_write+0x24c> // ipc_log_string+0x0
+    1f18: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_write+0x250> // '\x013[NXP-SR100]:%d  spi_write fw download : Failed.\n'
+    1f1c: 21 54 80 52  	mov	w1, #673
+    1f20: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  spi_write fw download : Failed.\n'
+    1f24: 00 00 00 94  	bl	0x1f24 <sr100_dev_write+0x25c> // _printk+0x0
+    1f28: 60 02 40 f9  	ldr	x0, [x19] // +0x0
+    1f2c: c0 00 00 b4  	cbz	x0, 0x1f44 <sr100_dev_write+0x27c>
+    1f30: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_write+0x268> // '%-6d: sr100_hbci_write failed...%d\n'
+    1f34: 22 55 80 52  	mov	w2, #681
+    1f38: 21 00 00 91  	add	x1, x1, #0 // '%-6d: sr100_hbci_write failed...%d\n'
+    1f3c: 83 00 80 12  	mov	w3, #-5
+    1f40: 00 00 00 94  	bl	0x1f40 <sr100_dev_write+0x278> // ipc_log_string+0x0
+    1f44: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_write+0x27c> // '\x013[NXP-SR100]:%d  sr100_hbci_write failed...%d\n'
+    1f48: 21 55 80 52  	mov	w1, #681
+    1f4c: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  sr100_hbci_write failed...%d\n'
+    1f50: 82 00 80 12  	mov	w2, #-5
+    1f54: 94 00 80 12  	mov	w20, #-5
+    1f58: 00 00 00 94  	bl	0x1f58 <sr100_dev_write+0x290> // _printk+0x0
+    1f5c: 02 00 00 14  	b	0x1f64 <sr100_dev_write+0x29c>
+    1f60: f4 03 00 2a  	mov	w20, w0
+    1f64: 08 00 00 90  	adrp	x8, 0x1000 <sr100_dev_write+0x29c> // +0x0
+    1f68: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1f6c: a0 00 00 b4  	cbz	x0, 0x1f80 <sr100_dev_write+0x2b8>
+    1f70: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_write+0x2a8> // '%-6d: write failed.\n'
+    1f74: 62 5a 80 52  	mov	w2, #723
+    1f78: 21 00 00 91  	add	x1, x1, #0 // '%-6d: write failed.\n'
+    1f7c: 00 00 00 94  	bl	0x1f7c <sr100_dev_write+0x2b4> // ipc_log_string+0x0
+    1f80: 00 00 00 90  	adrp	x0, 0x1000 <sr100_dev_write+0x2b8> // '\x013[NXP-SR100]:%d  write failed.\n'
+    1f84: 61 5a 80 52  	mov	w1, #723
+    1f88: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  write failed.\n'
+    1f8c: 00 00 00 94  	bl	0x1f8c <sr100_dev_write+0x2c4> // _printk+0x0
+    1f90: ab ff ff 17  	b	0x1e3c <sr100_dev_write+0x174>
+    1f94: 00 00 00 94  	bl	0x1f94 <sr100_dev_write+0x2cc> // __stack_chk_fail+0x0

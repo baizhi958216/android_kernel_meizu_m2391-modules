@@ -1,0 +1,43 @@
+M2391 SR100 UWB source recovery
+
+Foundation: NXP GPL-2.0-or-later SR100 transport from official OnePlusOSS,
+immutable revision and paths in foundation.json. This is SR100, not another
+UWB chip. The UCI header/payload SPI splitting, RI two-interrupt handshake,
+10us / 100 retries / 500ms / 1000 final IRQ polling and HBCI raw transfers
+come from that licensed foundation and were checked against the original ELF.
+
+Original OEM behavior independently recovered from nxp-sr100.ko:
+- OF nxp,sr100 and misc srxxx; SPI mode0, 8 bits, 16MHz.
+- Scalar u32-encoded 0x4004ea01 power 0/1/abort2, 0x4004ea02 firmware0/1,
+  0x4004ea04 recognized no-op. Unknown original commands return0.
+- Optional nxp,sr100-vdd-1p8 and nxp,sr100-rfvdd-1p8 regulators, voltage/load
+  then enable at probe. The RF regulator intentionally reads the same VDD
+  voltage/current property names as the binary (probe 0x9fc/0xa1c).
+- rfclk modes auto0/none1/hw2/irq3; only none bypasses software refclk control
+  (set_refclk 0x1344..0x137c). Optional RF request GPIO remains input, without
+  adding a nonexistent second interrupt handler. uwb_refclk and sleep_clk.
+- Power-on sleepclk then refclk then CE high/10ms; off IRQ disable, CE low,
+  sleepclk then refclk off/10ms; teardown RF/VDD supply then clocks off.
+- UCI DATA (MT0, byte0<=0x1f) uses 16-bit little-endian length regardless of
+  extension bit; other messages use extension bit or single-byte length.
+  Original4196-byte payload limit retained (4200-byte allocated buffer).
+- Both 10-page IPC contexts nq-uwb / nq-uwb_uci and UCIX/UCIR HDR/PYD packets,
+  with original trailing-space hex lines and original zero index field.
+
+Deliberate safety fixes: device context/buffers live to last fd kref; misc
+publication follows complete resources; removal marks/wakes before misc open
+barrier and operation writer drain, then IRQ/power teardown. A sleeping read
+or old fd cannot access released SPI/devm resources. Per-read/per-write buffer
+serialization prevents cross-fd corruption. Short UCI writes, insufficient
+read buffers, interrupted waits and malformed lengths cannot overrun/copy
+uninitialized data. Probe errors preserve -EPROBE_DEFER. No hardware executes
+as part of analysis/build; no OF matching expansion.
+
+Validation: real prepared 5.15 M2391 Kbuild composite nxp-sr100.o and linked
+ELF passed, log out/m2391-camera-display-target/sr100-m2391.log. Original
+216-byte driver and400-byte OF table exactly match source including normalized
+relocations. The288-byte fileops differs only by the necessary release callback.
+Both original and actual source ELF export no symbols: no CRC snapshot is
+invented and no retained stock consumer can import an absent exported ABI.
+Root independently reviewed complete probe/remove/open/ioctl/transport/read/write
+and approved source selection after target completion. Not hardware-tested.

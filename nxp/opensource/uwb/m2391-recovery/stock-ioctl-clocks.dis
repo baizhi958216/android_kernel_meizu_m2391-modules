@@ -1,0 +1,390 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/nxp-sr100.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000001f98 <sr100_dev_ioctl>:
+    1f98: 3f 23 03 d5  	hint	#25
+    1f9c: 5e 86 00 f8  	str	x30, [x18], #8
+    1fa0: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+    1fa4: f6 57 01 a9  	stp	x22, x21, [sp, #16]
+    1fa8: fd 03 00 91  	mov	x29, sp
+    1fac: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+    1fb0: 16 00 00 90  	adrp	x22, 0x1000 <sr100_dev_ioctl+0x18> // +0x0
+    1fb4: f4 03 02 aa  	mov	x20, x2
+    1fb8: f5 03 01 2a  	mov	w21, w1
+    1fbc: f3 03 00 aa  	mov	x19, x0
+    1fc0: c8 02 40 f9  	ldr	x8, [x22] // +0x0
+    1fc4: 08 01 00 b4  	cbz	x8, 0x1fe4 <sr100_dev_ioctl+0x4c>
+    1fc8: 01 00 00 90  	adrp	x1, 0x1000 <sr100_dev_ioctl+0x30> // '%-6d: entry %s\n'
+    1fcc: 03 00 00 90  	adrp	x3, 0x1000 <sr100_dev_ioctl+0x34> // 'sr100_dev_ioctl'
+    1fd0: 21 00 00 91  	add	x1, x1, #0 // '%-6d: entry %s\n'
+    1fd4: 63 00 00 91  	add	x3, x3, #0 // 'sr100_dev_ioctl'
+    1fd8: e0 03 08 aa  	mov	x0, x8
+    1fdc: e2 32 80 52  	mov	w2, #407
+    1fe0: 00 00 00 94  	bl	0x1fe0 <sr100_dev_ioctl+0x48> // ipc_log_string+0x0
+    1fe4: 88 40 9d 52  	mov	w8, #59908
+    1fe8: 88 00 a8 72  	movk	w8, #16388, lsl #16
+    1fec: bf 02 08 6b  	cmp	w21, w8
+    1ff0: 20 05 00 54  	b.eq	0x2094 <sr100_dev_ioctl+0xfc>
+    1ff4: 48 40 9d 52  	mov	w8, #59906
+    1ff8: 88 00 a8 72  	movk	w8, #16388, lsl #16
+    1ffc: bf 02 08 6b  	cmp	w21, w8
+    2000: 40 04 00 54  	b.eq	0x2088 <sr100_dev_ioctl+0xf0>
+    2004: 28 40 9d 52  	mov	w8, #59905
+    2008: 88 00 a8 72  	movk	w8, #16388, lsl #16
+    200c: bf 02 08 6b  	cmp	w21, w8
+    2010: 01 05 00 54  	b.ne	0x20b0 <sr100_dev_ioctl+0x118>
+    2014: 73 6e 40 f9  	ldr	x19, [x19, #216]
+    2018: d4 09 00 b4  	cbz	x20, 0x2150 <sr100_dev_ioctl+0x1b8>
+    201c: 9f 0a 00 f1  	cmp	x20, #2
+    2020: a0 0c 00 54  	b.eq	0x21b4 <sr100_dev_ioctl+0x21c>
+    2024: 9f 06 00 f1  	cmp	x20, #1
+    2028: 61 03 00 54  	b.ne	0x2094 <sr100_dev_ioctl+0xfc>
+    202c: c0 02 40 f9  	ldr	x0, [x22] // +0x0
+    2030: a0 00 00 b4  	cbz	x0, 0x2044 <sr100_dev_ioctl+0xac>
+    2034: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_ioctl+0x9c> // '%-6d: enable power request...\n'
+    2038: 82 33 80 52  	mov	w2, #412
+    203c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: enable power request...\n'
+    2040: 00 00 00 94  	bl	0x2040 <sr100_dev_ioctl+0xa8> // ipc_log_string+0x0
+    2044: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_ioctl+0xac> // '\x016[NXP-SR100]:%d  enable power request...\n'
+    2048: 81 33 80 52  	mov	w1, #412
+    204c: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  enable power request...\n'
+    2050: 00 00 00 94  	bl	0x2050 <sr100_dev_ioctl+0xb8> // _printk+0x0
+    2054: e0 03 13 aa  	mov	x0, x19
+    2058: 21 00 80 52  	mov	w1, #1
+    205c: 00 00 00 94  	bl	0x205c <sr100_dev_ioctl+0xc4> // +0x14c8
+    2060: 40 0d 00 35  	cbnz	w0, 0x2208 <sr100_dev_ioctl+0x270>
+    2064: e0 03 13 aa  	mov	x0, x19
+    2068: 21 00 80 52  	mov	w1, #1
+    206c: 00 00 00 94  	bl	0x206c <sr100_dev_ioctl+0xd4> // +0x132c
+    2070: 20 0e 00 35  	cbnz	w0, 0x2234 <sr100_dev_ioctl+0x29c>
+    2074: 60 72 40 b9  	ldr	w0, [x19, #112]
+    2078: 00 00 00 94  	bl	0x2078 <sr100_dev_ioctl+0xe0> // gpio_to_desc+0x0
+    207c: 21 00 80 52  	mov	w1, #1
+    2080: 00 00 00 94  	bl	0x2080 <sr100_dev_ioctl+0xe8> // gpiod_set_raw_value+0x0
+    2084: 49 00 00 14  	b	0x21a8 <sr100_dev_ioctl+0x210>
+    2088: d4 02 00 b4  	cbz	x20, 0x20e0 <sr100_dev_ioctl+0x148>
+    208c: 9f 06 00 f1  	cmp	x20, #1
+    2090: 00 04 00 54  	b.eq	0x2110 <sr100_dev_ioctl+0x178>
+    2094: e0 03 1f aa  	mov	x0, xzr
+    2098: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+    209c: f6 57 41 a9  	ldp	x22, x21, [sp, #16]
+    20a0: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+    20a4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    20a8: bf 23 03 d5  	hint	#29
+    20ac: c0 03 5f d6  	ret
+    20b0: c0 02 40 f9  	ldr	x0, [x22] // +0x0
+    20b4: a0 00 00 b4  	cbz	x0, 0x20c8 <sr100_dev_ioctl+0x130>
+    20b8: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_ioctl+0x120> // '%-6d:  Error case\n'
+    20bc: 22 3d 80 52  	mov	w2, #489
+    20c0: 21 00 00 91  	add	x1, x1, #0 // '%-6d:  Error case\n'
+    20c4: 00 00 00 94  	bl	0x20c4 <sr100_dev_ioctl+0x12c> // ipc_log_string+0x0
+    20c8: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_ioctl+0x130> // '\x013[NXP-SR100]:%d   Error case\n'
+    20cc: 21 3d 80 52  	mov	w1, #489
+    20d0: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d   Error case\n'
+    20d4: 00 00 00 94  	bl	0x20d4 <sr100_dev_ioctl+0x13c> // _printk+0x0
+    20d8: a0 02 80 92  	mov	x0, #-22
+    20dc: ef ff ff 17  	b	0x2098 <sr100_dev_ioctl+0x100>
+    20e0: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_ioctl+0x148> // +0x10
+    20e4: c0 02 40 f9  	ldr	x0, [x22] // +0x0
+    20e8: 1f 01 00 39  	strb	wzr, [x8] // +0x10
+    20ec: a0 00 00 b4  	cbz	x0, 0x2100 <sr100_dev_ioctl+0x168>
+    20f0: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_ioctl+0x158> // '%-6d: FW download disabled.\n'
+    20f4: 62 39 80 52  	mov	w2, #459
+    20f8: 21 00 00 91  	add	x1, x1, #0 // '%-6d: FW download disabled.\n'
+    20fc: 00 00 00 94  	bl	0x20fc <sr100_dev_ioctl+0x164> // ipc_log_string+0x0
+    2100: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_ioctl+0x168> // '\x016[NXP-SR100]:%d  FW download disabled.\n'
+    2104: 61 39 80 52  	mov	w1, #459
+    2108: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  FW download disabled.\n'
+    210c: 0f 00 00 14  	b	0x2148 <sr100_dev_ioctl+0x1b0>
+    2110: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_ioctl+0x178> // +0x10
+    2114: 29 00 80 52  	mov	w9, #1
+    2118: 0a 00 00 90  	adrp	x10, 0x2000 <sr100_dev_ioctl+0x180> // +0x14
+    211c: c0 02 40 f9  	ldr	x0, [x22] // +0x0
+    2120: 09 01 00 39  	strb	w9, [x8] // +0x10
+    2124: 5f 01 00 39  	strb	wzr, [x10] // +0x14
+    2128: a0 00 00 b4  	cbz	x0, 0x213c <sr100_dev_ioctl+0x1a4>
+    212c: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_ioctl+0x194> // '%-6d: FW download enabled.\n'
+    2130: 02 39 80 52  	mov	w2, #456
+    2134: 21 00 00 91  	add	x1, x1, #0 // '%-6d: FW download enabled.\n'
+    2138: 00 00 00 94  	bl	0x2138 <sr100_dev_ioctl+0x1a0> // ipc_log_string+0x0
+    213c: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_ioctl+0x1a4> // '\x016[NXP-SR100]:%d  FW download enabled.\n'
+    2140: 01 39 80 52  	mov	w1, #456
+    2144: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  FW download enabled.\n'
+    2148: 00 00 00 94  	bl	0x2148 <sr100_dev_ioctl+0x1b0> // _printk+0x0
+    214c: d2 ff ff 17  	b	0x2094 <sr100_dev_ioctl+0xfc>
+    2150: c0 02 40 f9  	ldr	x0, [x22] // +0x0
+    2154: a0 00 00 b4  	cbz	x0, 0x2168 <sr100_dev_ioctl+0x1d0>
+    2158: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_ioctl+0x1c0> // '%-6d: disable power request...\n'
+    215c: 02 36 80 52  	mov	w2, #432
+    2160: 21 00 00 91  	add	x1, x1, #0 // '%-6d: disable power request...\n'
+    2164: 00 00 00 94  	bl	0x2164 <sr100_dev_ioctl+0x1cc> // ipc_log_string+0x0
+    2168: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_ioctl+0x1d0> // '\x016[NXP-SR100]:%d  disable power request...\n'
+    216c: 01 36 80 52  	mov	w1, #432
+    2170: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  disable power request...\n'
+    2174: 00 00 00 94  	bl	0x2174 <sr100_dev_ioctl+0x1dc> // _printk+0x0
+    2178: e0 03 13 aa  	mov	x0, x19
+    217c: 00 00 00 94  	bl	0x217c <sr100_dev_ioctl+0x1e4> // +0x22c4
+    2180: 60 72 40 b9  	ldr	w0, [x19, #112]
+    2184: 00 00 00 94  	bl	0x2184 <sr100_dev_ioctl+0x1ec> // gpio_to_desc+0x0
+    2188: e1 03 1f 2a  	mov	w1, wzr
+    218c: 00 00 00 94  	bl	0x218c <sr100_dev_ioctl+0x1f4> // gpiod_set_raw_value+0x0
+    2190: e0 03 13 aa  	mov	x0, x19
+    2194: e1 03 1f 2a  	mov	w1, wzr
+    2198: 00 00 00 94  	bl	0x2198 <sr100_dev_ioctl+0x200> // +0x14c8
+    219c: e0 03 13 aa  	mov	x0, x19
+    21a0: e1 03 1f 2a  	mov	w1, wzr
+    21a4: 00 00 00 94  	bl	0x21a4 <sr100_dev_ioctl+0x20c> // +0x132c
+    21a8: 40 01 80 52  	mov	w0, #10
+    21ac: 00 00 00 94  	bl	0x21ac <sr100_dev_ioctl+0x214> // msleep+0x0
+    21b0: b9 ff ff 17  	b	0x2094 <sr100_dev_ioctl+0xfc>
+    21b4: c0 02 40 f9  	ldr	x0, [x22] // +0x0
+    21b8: a0 00 00 b4  	cbz	x0, 0x21cc <sr100_dev_ioctl+0x234>
+    21bc: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_ioctl+0x224> // '%-6d: Abort Read Pending in ioctl...\n'
+    21c0: a2 37 80 52  	mov	w2, #445
+    21c4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: Abort Read Pending in ioctl...\n'
+    21c8: 00 00 00 94  	bl	0x21c8 <sr100_dev_ioctl+0x230> // ipc_log_string+0x0
+    21cc: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_ioctl+0x234> // '\x016[NXP-SR100]:%d  Abort Read Pending in ioctl...\n'
+    21d0: a1 37 80 52  	mov	w1, #445
+    21d4: 00 00 00 91  	add	x0, x0, #0 // '\x016[NXP-SR100]:%d  Abort Read Pending in ioctl...\n'
+    21d8: 00 00 00 94  	bl	0x21d8 <sr100_dev_ioctl+0x240> // _printk+0x0
+    21dc: 08 00 00 90  	adrp	x8, 0x2000 <sr100_dev_ioctl+0x244> // +0x14
+    21e0: 29 00 80 52  	mov	w9, #1
+    21e4: e0 03 13 aa  	mov	x0, x19
+    21e8: 09 01 00 39  	strb	w9, [x8] // +0x14
+    21ec: 00 00 00 94  	bl	0x21ec <sr100_dev_ioctl+0x254> // +0x22c4
+    21f0: e0 03 13 aa  	mov	x0, x19
+    21f4: 61 00 80 52  	mov	w1, #3
+    21f8: 22 00 80 52  	mov	w2, #1
+    21fc: e3 03 1f aa  	mov	x3, xzr
+    2200: 00 00 00 94  	bl	0x2200 <sr100_dev_ioctl+0x268> // __wake_up+0x0
+    2204: a4 ff ff 17  	b	0x2094 <sr100_dev_ioctl+0xfc>
+    2208: c0 02 40 f9  	ldr	x0, [x22] // +0x0
+    220c: a0 00 00 b4  	cbz	x0, 0x2220 <sr100_dev_ioctl+0x288>
+    2210: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_ioctl+0x278> // '%-6d: failed to enable sleep clk!!!\n'
+    2214: c2 34 80 52  	mov	w2, #422
+    2218: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to enable sleep clk!!!\n'
+    221c: 00 00 00 94  	bl	0x221c <sr100_dev_ioctl+0x284> // ipc_log_string+0x0
+    2220: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_ioctl+0x288> // '\x013[NXP-SR100]:%d  failed to enable sleep clk!!!\n'
+    2224: c1 34 80 52  	mov	w1, #422
+    2228: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to enable sleep clk!!!\n'
+    222c: 00 00 00 94  	bl	0x222c <sr100_dev_ioctl+0x294> // _printk+0x0
+    2230: 8d ff ff 17  	b	0x2064 <sr100_dev_ioctl+0xcc>
+    2234: c0 02 40 f9  	ldr	x0, [x22] // +0x0
+    2238: a0 00 00 b4  	cbz	x0, 0x224c <sr100_dev_ioctl+0x2b4>
+    223c: 01 00 00 90  	adrp	x1, 0x2000 <sr100_dev_ioctl+0x2a4> // '%-6d: failed to enable refclk!!!\n'
+    2240: 42 35 80 52  	mov	w2, #426
+    2244: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to enable refclk!!!\n'
+    2248: 00 00 00 94  	bl	0x2248 <sr100_dev_ioctl+0x2b0> // ipc_log_string+0x0
+    224c: 00 00 00 90  	adrp	x0, 0x2000 <sr100_dev_ioctl+0x2b4> // '\x013[NXP-SR100]:%d  failed to enable refclk!!!\n'
+    2250: 41 35 80 52  	mov	w1, #426
+    2254: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to enable refclk!!!\n'
+    2258: 00 00 00 94  	bl	0x2258 <sr100_dev_ioctl+0x2c0> // _printk+0x0
+    225c: 86 ff ff 17  	b	0x2074 <sr100_dev_ioctl+0xdc>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/nxp-sr100.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000000132c <sr100_set_refclk>:
+    132c: 3f 23 03 d5  	hint	#25
+    1330: 5e 86 00 f8  	str	x30, [x18], #8
+    1334: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+    1338: f5 0b 00 f9  	str	x21, [sp, #16]
+    133c: fd 03 00 91  	mov	x29, sp
+    1340: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+    1344: 08 40 41 b9  	ldr	w8, [x0, #320]
+    1348: e3 03 01 2a  	mov	w3, w1
+    134c: 1f 05 00 71  	cmp	w8, #1
+    1350: 21 01 00 54  	b.ne	0x1374 <sr100_set_refclk+0x48>
+    1354: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_refclk+0x28> // +0x0
+    1358: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    135c: 00 05 00 b4  	cbz	x0, 0x13fc <sr100_set_refclk+0xd0>
+    1360: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_refclk+0x34> // '%-6d: ignored refclk control: %d\n'
+    1364: 62 a8 80 52  	mov	w2, #1347
+    1368: 21 00 00 91  	add	x1, x1, #0 // '%-6d: ignored refclk control: %d\n'
+    136c: 00 00 00 94  	bl	0x136c <sr100_set_refclk+0x40> // ipc_log_string+0x0
+    1370: 23 00 00 14  	b	0x13fc <sr100_set_refclk+0xd0>
+    1374: f4 03 00 aa  	mov	x20, x0
+    1378: 15 84 40 f9  	ldr	x21, [x0, #264]
+    137c: 15 04 00 b4  	cbz	x21, 0x13fc <sr100_set_refclk+0xd0>
+    1380: 88 3a 41 b9  	ldr	w8, [x20, #312]
+    1384: 23 02 00 34  	cbz	w3, 0x13c8 <sr100_set_refclk+0x9c>
+    1388: a8 04 00 35  	cbnz	w8, 0x141c <sr100_set_refclk+0xf0>
+    138c: e0 03 15 aa  	mov	x0, x21
+    1390: 00 00 00 94  	bl	0x1390 <sr100_set_refclk+0x64> // clk_prepare+0x0
+    1394: c0 05 00 35  	cbnz	w0, 0x144c <sr100_set_refclk+0x120>
+    1398: e0 03 15 aa  	mov	x0, x21
+    139c: 00 00 00 94  	bl	0x139c <sr100_set_refclk+0x70> // clk_enable+0x0
+    13a0: a0 05 00 35  	cbnz	w0, 0x1454 <sr100_set_refclk+0x128>
+    13a4: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_refclk+0x78> // +0x0
+    13a8: 29 00 80 52  	mov	w9, #1
+    13ac: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    13b0: 89 3a 01 b9  	str	w9, [x20, #312]
+    13b4: 40 02 00 b4  	cbz	x0, 0x13fc <sr100_set_refclk+0xd0>
+    13b8: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_refclk+0x8c> // '%-6d: refclk enabled\n'
+    13bc: e2 ab 80 52  	mov	w2, #1375
+    13c0: 21 00 00 91  	add	x1, x1, #0 // '%-6d: refclk enabled\n'
+    13c4: 0d 00 00 14  	b	0x13f8 <sr100_set_refclk+0xcc>
+    13c8: 88 06 00 34  	cbz	w8, 0x1498 <sr100_set_refclk+0x16c>
+    13cc: e0 03 15 aa  	mov	x0, x21
+    13d0: 00 00 00 94  	bl	0x13d0 <sr100_set_refclk+0xa4> // clk_disable+0x0
+    13d4: e0 03 15 aa  	mov	x0, x21
+    13d8: 00 00 00 94  	bl	0x13d8 <sr100_set_refclk+0xac> // clk_unprepare+0x0
+    13dc: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_refclk+0xb0> // +0x0
+    13e0: 9f 3a 01 b9  	str	wzr, [x20, #312]
+    13e4: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    13e8: a0 00 00 b4  	cbz	x0, 0x13fc <sr100_set_refclk+0xd0>
+    13ec: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_refclk+0xc0> // '%-6d: refclk disabled\n'
+    13f0: 82 ac 80 52  	mov	w2, #1380
+    13f4: 21 00 00 91  	add	x1, x1, #0 // '%-6d: refclk disabled\n'
+    13f8: 00 00 00 94  	bl	0x13f8 <sr100_set_refclk+0xcc> // ipc_log_string+0x0
+    13fc: f3 03 1f 2a  	mov	w19, wzr
+    1400: e0 03 13 2a  	mov	w0, w19
+    1404: f5 0b 40 f9  	ldr	x21, [sp, #16]
+    1408: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+    140c: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+    1410: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    1414: bf 23 03 d5  	hint	#29
+    1418: c0 03 5f d6  	ret
+    141c: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_refclk+0xf0> // +0x0
+    1420: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1424: a0 00 00 b4  	cbz	x0, 0x1438 <sr100_set_refclk+0x10c>
+    1428: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_refclk+0xfc> // '%-6d: refclk already enabled\n'
+    142c: a2 a9 80 52  	mov	w2, #1357
+    1430: 21 00 00 91  	add	x1, x1, #0 // '%-6d: refclk already enabled\n'
+    1434: 00 00 00 94  	bl	0x1434 <sr100_set_refclk+0x108> // ipc_log_string+0x0
+    1438: 00 00 00 90  	adrp	x0, 0x1000 <sr100_set_refclk+0x10c> // '\x013[NXP-SR100]:%d  refclk already enabled\n'
+    143c: a1 a9 80 52  	mov	w1, #1357
+    1440: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  refclk already enabled\n'
+    1444: 00 00 00 94  	bl	0x1444 <sr100_set_refclk+0x118> // _printk+0x0
+    1448: ed ff ff 17  	b	0x13fc <sr100_set_refclk+0xd0>
+    144c: f3 03 00 2a  	mov	w19, w0
+    1450: 04 00 00 14  	b	0x1460 <sr100_set_refclk+0x134>
+    1454: f3 03 00 2a  	mov	w19, w0
+    1458: e0 03 15 aa  	mov	x0, x21
+    145c: 00 00 00 94  	bl	0x145c <sr100_set_refclk+0x130> // clk_unprepare+0x0
+    1460: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_refclk+0x134> // +0x0
+    1464: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1468: c0 00 00 b4  	cbz	x0, 0x1480 <sr100_set_refclk+0x154>
+    146c: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_refclk+0x140> // '%-6d: failed to enable refclk, %d\n'
+    1470: 42 ab 80 52  	mov	w2, #1370
+    1474: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to enable refclk, %d\n'
+    1478: e3 03 13 2a  	mov	w3, w19
+    147c: 00 00 00 94  	bl	0x147c <sr100_set_refclk+0x150> // ipc_log_string+0x0
+    1480: 00 00 00 90  	adrp	x0, 0x1000 <sr100_set_refclk+0x154> // '\x013[NXP-SR100]:%d  failed to enable refclk, %d\n'
+    1484: 41 ab 80 52  	mov	w1, #1370
+    1488: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to enable refclk, %d\n'
+    148c: e2 03 13 2a  	mov	w2, w19
+    1490: 00 00 00 94  	bl	0x1490 <sr100_set_refclk+0x164> // _printk+0x0
+    1494: db ff ff 17  	b	0x1400 <sr100_set_refclk+0xd4>
+    1498: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_refclk+0x16c> // +0x0
+    149c: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    14a0: a0 00 00 b4  	cbz	x0, 0x14b4 <sr100_set_refclk+0x188>
+    14a4: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_refclk+0x178> // '%-6d: refclk already disabled\n'
+    14a8: 42 aa 80 52  	mov	w2, #1362
+    14ac: 21 00 00 91  	add	x1, x1, #0 // '%-6d: refclk already disabled\n'
+    14b0: 00 00 00 94  	bl	0x14b0 <sr100_set_refclk+0x184> // ipc_log_string+0x0
+    14b4: 00 00 00 90  	adrp	x0, 0x1000 <sr100_set_refclk+0x188> // '\x013[NXP-SR100]:%d  refclk already disabled\n'
+    14b8: 41 aa 80 52  	mov	w1, #1362
+    14bc: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  refclk already disabled\n'
+    14c0: 00 00 00 94  	bl	0x14c0 <sr100_set_refclk+0x194> // _printk+0x0
+    14c4: ce ff ff 17  	b	0x13fc <sr100_set_refclk+0xd0>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/nxp-sr100.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000014c8 <sr100_set_slpclk>:
+    14c8: 3f 23 03 d5  	hint	#25
+    14cc: 5e 86 00 f8  	str	x30, [x18], #8
+    14d0: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+    14d4: f5 0b 00 f9  	str	x21, [sp, #16]
+    14d8: fd 03 00 91  	mov	x29, sp
+    14dc: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+    14e0: 15 88 40 f9  	ldr	x21, [x0, #272]
+    14e4: 35 04 00 b4  	cbz	x21, 0x1568 <sr100_set_slpclk+0xa0>
+    14e8: f4 03 00 aa  	mov	x20, x0
+    14ec: 08 3c 41 b9  	ldr	w8, [x0, #316]
+    14f0: 21 02 00 34  	cbz	w1, 0x1534 <sr100_set_slpclk+0x6c>
+    14f4: a8 04 00 35  	cbnz	w8, 0x1588 <sr100_set_slpclk+0xc0>
+    14f8: e0 03 15 aa  	mov	x0, x21
+    14fc: 00 00 00 94  	bl	0x14fc <sr100_set_slpclk+0x34> // clk_prepare+0x0
+    1500: c0 05 00 35  	cbnz	w0, 0x15b8 <sr100_set_slpclk+0xf0>
+    1504: e0 03 15 aa  	mov	x0, x21
+    1508: 00 00 00 94  	bl	0x1508 <sr100_set_slpclk+0x40> // clk_enable+0x0
+    150c: a0 05 00 35  	cbnz	w0, 0x15c0 <sr100_set_slpclk+0xf8>
+    1510: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_slpclk+0x48> // +0x0
+    1514: 29 00 80 52  	mov	w9, #1
+    1518: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    151c: 89 3e 01 b9  	str	w9, [x20, #316]
+    1520: 40 02 00 b4  	cbz	x0, 0x1568 <sr100_set_slpclk+0xa0>
+    1524: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_slpclk+0x5c> // '%-6d: slpclk enabled\n'
+    1528: a2 b0 80 52  	mov	w2, #1413
+    152c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: slpclk enabled\n'
+    1530: 0d 00 00 14  	b	0x1564 <sr100_set_slpclk+0x9c>
+    1534: 88 06 00 34  	cbz	w8, 0x1604 <sr100_set_slpclk+0x13c>
+    1538: e0 03 15 aa  	mov	x0, x21
+    153c: 00 00 00 94  	bl	0x153c <sr100_set_slpclk+0x74> // clk_disable+0x0
+    1540: e0 03 15 aa  	mov	x0, x21
+    1544: 00 00 00 94  	bl	0x1544 <sr100_set_slpclk+0x7c> // clk_unprepare+0x0
+    1548: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_slpclk+0x80> // +0x0
+    154c: 9f 3e 01 b9  	str	wzr, [x20, #316]
+    1550: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1554: a0 00 00 b4  	cbz	x0, 0x1568 <sr100_set_slpclk+0xa0>
+    1558: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_slpclk+0x90> // '%-6d: slpclk disabled\n'
+    155c: 42 b1 80 52  	mov	w2, #1418
+    1560: 21 00 00 91  	add	x1, x1, #0 // '%-6d: slpclk disabled\n'
+    1564: 00 00 00 94  	bl	0x1564 <sr100_set_slpclk+0x9c> // ipc_log_string+0x0
+    1568: f3 03 1f 2a  	mov	w19, wzr
+    156c: e0 03 13 2a  	mov	w0, w19
+    1570: f5 0b 40 f9  	ldr	x21, [sp, #16]
+    1574: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+    1578: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+    157c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    1580: bf 23 03 d5  	hint	#29
+    1584: c0 03 5f d6  	ret
+    1588: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_slpclk+0xc0> // +0x0
+    158c: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    1590: a0 00 00 b4  	cbz	x0, 0x15a4 <sr100_set_slpclk+0xdc>
+    1594: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_slpclk+0xcc> // '%-6d: slpclk already enabled\n'
+    1598: 62 ae 80 52  	mov	w2, #1395
+    159c: 21 00 00 91  	add	x1, x1, #0 // '%-6d: slpclk already enabled\n'
+    15a0: 00 00 00 94  	bl	0x15a0 <sr100_set_slpclk+0xd8> // ipc_log_string+0x0
+    15a4: 00 00 00 90  	adrp	x0, 0x1000 <sr100_set_slpclk+0xdc> // '\x013[NXP-SR100]:%d  slpclk already enabled\n'
+    15a8: 61 ae 80 52  	mov	w1, #1395
+    15ac: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  slpclk already enabled\n'
+    15b0: 00 00 00 94  	bl	0x15b0 <sr100_set_slpclk+0xe8> // _printk+0x0
+    15b4: ed ff ff 17  	b	0x1568 <sr100_set_slpclk+0xa0>
+    15b8: f3 03 00 2a  	mov	w19, w0
+    15bc: 04 00 00 14  	b	0x15cc <sr100_set_slpclk+0x104>
+    15c0: f3 03 00 2a  	mov	w19, w0
+    15c4: e0 03 15 aa  	mov	x0, x21
+    15c8: 00 00 00 94  	bl	0x15c8 <sr100_set_slpclk+0x100> // clk_unprepare+0x0
+    15cc: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_slpclk+0x104> // +0x0
+    15d0: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    15d4: c0 00 00 b4  	cbz	x0, 0x15ec <sr100_set_slpclk+0x124>
+    15d8: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_slpclk+0x110> // '%-6d: failed to enable slpclk, %d\n'
+    15dc: 02 b0 80 52  	mov	w2, #1408
+    15e0: 21 00 00 91  	add	x1, x1, #0 // '%-6d: failed to enable slpclk, %d\n'
+    15e4: e3 03 13 2a  	mov	w3, w19
+    15e8: 00 00 00 94  	bl	0x15e8 <sr100_set_slpclk+0x120> // ipc_log_string+0x0
+    15ec: 00 00 00 90  	adrp	x0, 0x1000 <sr100_set_slpclk+0x124> // '\x013[NXP-SR100]:%d  failed to enable slpclk, %d\n'
+    15f0: 01 b0 80 52  	mov	w1, #1408
+    15f4: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  failed to enable slpclk, %d\n'
+    15f8: e2 03 13 2a  	mov	w2, w19
+    15fc: 00 00 00 94  	bl	0x15fc <sr100_set_slpclk+0x134> // _printk+0x0
+    1600: db ff ff 17  	b	0x156c <sr100_set_slpclk+0xa4>
+    1604: 08 00 00 90  	adrp	x8, 0x1000 <sr100_set_slpclk+0x13c> // +0x0
+    1608: 00 01 40 f9  	ldr	x0, [x8] // +0x0
+    160c: a0 00 00 b4  	cbz	x0, 0x1620 <sr100_set_slpclk+0x158>
+    1610: 01 00 00 90  	adrp	x1, 0x1000 <sr100_set_slpclk+0x148> // '%-6d: slpclk already disabled\n'
+    1614: 02 af 80 52  	mov	w2, #1400
+    1618: 21 00 00 91  	add	x1, x1, #0 // '%-6d: slpclk already disabled\n'
+    161c: 00 00 00 94  	bl	0x161c <sr100_set_slpclk+0x154> // ipc_log_string+0x0
+    1620: 00 00 00 90  	adrp	x0, 0x1000 <sr100_set_slpclk+0x158> // '\x013[NXP-SR100]:%d  slpclk already disabled\n'
+    1624: 01 af 80 52  	mov	w1, #1400
+    1628: 00 00 00 91  	add	x0, x0, #0 // '\x013[NXP-SR100]:%d  slpclk already disabled\n'
+    162c: 00 00 00 94  	bl	0x162c <sr100_set_slpclk+0x164> // _printk+0x0
+    1630: ce ff ff 17  	b	0x1568 <sr100_set_slpclk+0xa0>

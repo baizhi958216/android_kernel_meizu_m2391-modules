@@ -1,0 +1,197 @@
+{
+  "data": [
+    {
+      "object": "sr100_driver",
+      "status": "MATCH",
+      "stock_size": 216,
+      "source_size": 216,
+      "stock_relocations": [
+        [
+          8,
+          [
+            "sr100_probe",
+            0
+          ]
+        ],
+        [
+          16,
+          [
+            "sr100_remove",
+            0
+          ]
+        ],
+        [
+          32,
+          [
+            "literal",
+            "7372313030"
+          ]
+        ],
+        [
+          40,
+          [
+            "spi_bus_type",
+            0
+          ]
+        ],
+        [
+          48,
+          [
+            "__this_module",
+            0
+          ]
+        ],
+        [
+          72,
+          [
+            "sr100_dt_match",
+            0
+          ]
+        ]
+      ],
+      "source_relocations": [
+        [
+          8,
+          [
+            "sr100_probe",
+            0
+          ]
+        ],
+        [
+          16,
+          [
+            "sr100_remove",
+            0
+          ]
+        ],
+        [
+          32,
+          [
+            "literal",
+            "7372313030"
+          ]
+        ],
+        [
+          40,
+          [
+            "spi_bus_type",
+            0
+          ]
+        ],
+        [
+          48,
+          [
+            "__this_module",
+            0
+          ]
+        ],
+        [
+          72,
+          [
+            "sr100_dt_match",
+            0
+          ]
+        ]
+      ]
+    },
+    {
+      "object": "sr100_dev_fops",
+      "status": "EXPECTED_LIFETIME_CHANGE",
+      "stock_size": 288,
+      "source_size": 288,
+      "stock_relocations": [
+        [
+          0,
+          [
+            "__this_module",
+            0
+          ]
+        ],
+        [
+          16,
+          [
+            "sr100_dev_read",
+            0
+          ]
+        ],
+        [
+          24,
+          [
+            "sr100_dev_write",
+            0
+          ]
+        ],
+        [
+          80,
+          [
+            "sr100_dev_ioctl",
+            0
+          ]
+        ],
+        [
+          112,
+          [
+            "sr100_dev_open",
+            0
+          ]
+        ]
+      ],
+      "source_relocations": [
+        [
+          0,
+          [
+            "__this_module",
+            0
+          ]
+        ],
+        [
+          16,
+          [
+            "sr100_dev_read",
+            0
+          ]
+        ],
+        [
+          24,
+          [
+            "sr100_dev_write",
+            0
+          ]
+        ],
+        [
+          80,
+          [
+            "sr100_dev_ioctl",
+            0
+          ]
+        ],
+        [
+          112,
+          [
+            "sr100_dev_open",
+            0
+          ]
+        ],
+        [
+          128,
+          [
+            "sr100_dev_release",
+            0
+          ]
+        ]
+      ]
+    },
+    {
+      "object": "sr100_dt_match",
+      "status": "MATCH",
+      "stock_size": 400,
+      "source_size": 400,
+      "stock_relocations": [],
+      "source_relocations": []
+    }
+  ],
+  "exports": {
+    "stock": [],
+    "source": []
+  }
+}
