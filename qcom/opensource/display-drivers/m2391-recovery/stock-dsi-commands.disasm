@@ -1,0 +1,866 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000675c4 <display_panel_pps_cmd>:
+   675c4: 3f 23 03 d5  	hint	#25
+   675c8: 5e 86 00 f8  	str	x30, [x18], #8
+   675cc: fd 7b bb a9  	stp	x29, x30, [sp, #-80]!
+   675d0: f9 0b 00 f9  	str	x25, [sp, #16]
+   675d4: fd 03 00 91  	mov	x29, sp
+   675d8: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+   675dc: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+   675e0: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+   675e4: 14 00 00 90  	adrp	x20, 0x67000 <display_panel_pps_cmd+0x20> // PPS_Buf+0x0
+   675e8: f3 03 00 aa  	mov	x19, x0
+   675ec: 94 02 00 91  	add	x20, x20, #0 // PPS_Buf+0x0
+   675f0: 16 08 40 f9  	ldr	x22, [x0, #16]
+   675f4: e0 03 14 aa  	mov	x0, x20
+   675f8: e1 03 1f 2a  	mov	w1, wzr
+   675fc: 02 40 80 52  	mov	w2, #512
+   67600: 00 00 00 94  	bl	0x67600 <display_panel_pps_cmd+0x3c> // memset+0x0
+   67604: 02 00 00 90  	adrp	x2, 0x67000 <display_panel_pps_cmd+0x40> // '%02X '
+   67608: 63 06 40 39  	ldrb	w3, [x19, #1]
+   6760c: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   67610: e0 03 14 aa  	mov	x0, x20
+   67614: 01 40 80 52  	mov	w1, #512
+   67618: 00 00 00 94  	bl	0x67618 <display_panel_pps_cmd+0x54> // snprintf+0x0
+   6761c: 1f 04 08 71  	cmp	w0, #513
+   67620: 02 0b 00 54  	b.hs	0x67780 <display_panel_pps_cmd+0x1bc>
+   67624: 15 7c 40 93  	sxtw	x21, w0
+   67628: 08 40 80 52  	mov	w8, #512
+   6762c: 02 00 00 90  	adrp	x2, 0x67000 <display_panel_pps_cmd+0x68> // '%02X '
+   67630: 80 02 15 8b  	add	x0, x20, x21
+   67634: 01 01 15 cb  	sub	x1, x8, x21
+   67638: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   6763c: e3 03 1f 2a  	mov	w3, wzr
+   67640: 00 00 00 94  	bl	0x67640 <display_panel_pps_cmd+0x7c> // snprintf+0x0
+   67644: 08 00 15 0b  	add	w8, w0, w21
+   67648: 1f 01 08 71  	cmp	w8, #512
+   6764c: a8 09 00 54  	b.hi	0x67780 <display_panel_pps_cmd+0x1bc>
+   67650: 15 7d 40 93  	sxtw	x21, w8
+   67654: 08 40 80 52  	mov	w8, #512
+   67658: 02 00 00 90  	adrp	x2, 0x67000 <display_panel_pps_cmd+0x94> // '%02X '
+   6765c: 80 02 15 8b  	add	x0, x20, x21
+   67660: 01 01 15 cb  	sub	x1, x8, x21
+   67664: 63 02 40 39  	ldrb	w3, [x19]
+   67668: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   6766c: 00 00 00 94  	bl	0x6766c <display_panel_pps_cmd+0xa8> // snprintf+0x0
+   67670: 08 00 15 0b  	add	w8, w0, w21
+   67674: 1f 01 08 71  	cmp	w8, #512
+   67678: 48 08 00 54  	b.hi	0x67780 <display_panel_pps_cmd+0x1bc>
+   6767c: 69 a2 40 39  	ldrb	w9, [x19, #40]
+   67680: 15 7d 40 93  	sxtw	x21, w8
+   67684: 08 40 80 52  	mov	w8, #512
+   67688: 02 00 00 90  	adrp	x2, 0x67000 <display_panel_pps_cmd+0xc4> // '%02X '
+   6768c: 80 02 15 8b  	add	x0, x20, x21
+   67690: 01 01 15 cb  	sub	x1, x8, x21
+   67694: 3f 01 00 71  	cmp	w9, #0
+   67698: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   6769c: e9 17 9f 1a  	cset	w9, eq
+   676a0: 23 e5 7a d3  	lsl	x3, x9, #6
+   676a4: 00 00 00 94  	bl	0x676a4 <display_panel_pps_cmd+0xe0> // snprintf+0x0
+   676a8: 08 00 15 0b  	add	w8, w0, w21
+   676ac: 1f 01 08 71  	cmp	w8, #512
+   676b0: 88 06 00 54  	b.hi	0x67780 <display_panel_pps_cmd+0x1bc>
+   676b4: 15 7d 40 93  	sxtw	x21, w8
+   676b8: 08 40 80 52  	mov	w8, #512
+   676bc: 02 00 00 90  	adrp	x2, 0x67000 <display_panel_pps_cmd+0xf8> // '%02X '
+   676c0: 80 02 15 8b  	add	x0, x20, x21
+   676c4: 01 01 15 cb  	sub	x1, x8, x21
+   676c8: 63 2e 40 b9  	ldr	w3, [x19, #44]
+   676cc: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   676d0: 00 00 00 94  	bl	0x676d0 <display_panel_pps_cmd+0x10c> // snprintf+0x0
+   676d4: 08 00 15 0b  	add	w8, w0, w21
+   676d8: 1f 01 08 71  	cmp	w8, #512
+   676dc: 28 05 00 54  	b.hi	0x67780 <display_panel_pps_cmd+0x1bc>
+   676e0: 69 06 40 f9  	ldr	x9, [x19, #8]
+   676e4: 15 7d 40 93  	sxtw	x21, w8
+   676e8: 08 40 80 52  	mov	w8, #512
+   676ec: 02 00 00 90  	adrp	x2, 0x67000 <display_panel_pps_cmd+0x128> // '%02X %02X '
+   676f0: 80 02 15 8b  	add	x0, x20, x21
+   676f4: 01 01 15 cb  	sub	x1, x8, x21
+   676f8: 23 fd 48 d3  	lsr	x3, x9, #8
+   676fc: 24 1d 40 92  	and	x4, x9, #0xff
+   67700: 42 00 00 91  	add	x2, x2, #0 // '%02X %02X '
+   67704: 00 00 00 94  	bl	0x67704 <display_panel_pps_cmd+0x140> // snprintf+0x0
+   67708: 68 06 40 f9  	ldr	x8, [x19, #8]
+   6770c: a8 02 00 b4  	cbz	x8, 0x67760 <display_panel_pps_cmd+0x19c>
+   67710: 08 00 15 0b  	add	w8, w0, w21
+   67714: 15 00 00 90  	adrp	x21, 0x67000 <display_panel_pps_cmd+0x150> // '%02X '
+   67718: f7 03 1f aa  	mov	x23, xzr
+   6771c: 18 40 80 52  	mov	w24, #512
+   67720: b5 02 00 91  	add	x21, x21, #0 // '%02X '
+   67724: 1f 01 08 71  	cmp	w8, #512
+   67728: c8 02 00 54  	b.hi	0x67780 <display_panel_pps_cmd+0x1bc>
+   6772c: 19 7d 40 93  	sxtw	x25, w8
+   67730: c3 6a 77 38  	ldrb	w3, [x22, x23]
+   67734: 80 02 19 8b  	add	x0, x20, x25
+   67738: 01 03 19 cb  	sub	x1, x24, x25
+   6773c: e2 03 15 aa  	mov	x2, x21
+   67740: 00 00 00 94  	bl	0x67740 <display_panel_pps_cmd+0x17c> // snprintf+0x0
+   67744: ff ee 03 f1  	cmp	x23, #251
+   67748: c0 00 00 54  	b.eq	0x67760 <display_panel_pps_cmd+0x19c>
+   6774c: 69 06 40 f9  	ldr	x9, [x19, #8]
+   67750: 08 00 19 0b  	add	w8, w0, w25
+   67754: f7 06 00 91  	add	x23, x23, #1
+   67758: ff 02 09 eb  	cmp	x23, x9
+   6775c: 43 fe ff 54  	b.lo	0x67724 <display_panel_pps_cmd+0x160>
+   67760: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+   67764: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+   67768: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+   6776c: f9 0b 40 f9  	ldr	x25, [sp, #16]
+   67770: fd 7b c5 a8  	ldp	x29, x30, [sp], #80
+   67774: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   67778: bf 23 03 d5  	hint	#29
+   6777c: c0 03 5f d6  	ret
+   67780: 40 a2 2a d4  	brk	#0x5512
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000677a0 <display_parse_vendor_config>:
+   677a0: 3f 23 03 d5  	hint	#25
+   677a4: ff 43 01 d1  	sub	sp, sp, #80
+   677a8: 5e 86 00 f8  	str	x30, [x18], #8
+   677ac: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+   677b0: fd 43 00 91  	add	x29, sp, #16
+   677b4: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+   677b8: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+   677bc: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+   677c0: 08 41 38 d5  	mrs	x8, SP_EL0
+   677c4: f3 03 00 aa  	mov	x19, x0
+   677c8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   677cc: e8 07 00 f9  	str	x8, [sp, #8]
+   677d0: 08 00 00 90  	adrp	x8, 0x67000 <display_parse_vendor_config+0x30> // +0x18cd08
+   677d4: 14 6c 43 f9  	ldr	x20, [x0, #1752]
+   677d8: 08 01 00 91  	add	x8, x8, #0 // +0x18cd08
+   677dc: ff 07 00 b9  	str	wzr, [sp, #4]
+   677e0: 88 02 08 cb  	sub	x8, x20, x8
+   677e4: 08 0d c8 93  	ror	x8, x8, #3
+   677e8: 1f 09 00 f1  	cmp	x8, #2
+   677ec: a2 0c 00 54  	b.hs	0x67980 <display_parse_vendor_config+0x1e0>
+   677f0: 01 00 00 90  	adrp	x1, 0x67000 <display_parse_vendor_config+0x50> // 'vendor,panel-id-reg'
+   677f4: 60 3e 43 f9  	ldr	x0, [x19, #1656]
+   677f8: 21 00 00 91  	add	x1, x1, #0 // 'vendor,panel-id-reg'
+   677fc: e2 13 00 91  	add	x2, sp, #4
+   67800: 80 02 3f d6  	blr	x20
+   67804: a0 07 00 b4  	cbz	x0, 0x678f8 <display_parse_vendor_config+0x158>
+   67808: 1f 04 40 b1  	cmn	x0, #1, lsl #12         // =4096
+   6780c: 68 07 00 54  	b.hi	0x678f8 <display_parse_vendor_config+0x158>
+   67810: e8 07 40 b9  	ldr	w8, [sp, #4]
+   67814: 28 07 00 34  	cbz	w8, 0x678f8 <display_parse_vendor_config+0x158>
+   67818: 00 7d 40 93  	sxtw	x0, w8
+   6781c: 01 b8 81 52  	mov	w1, #3520
+   67820: 00 00 00 94  	bl	0x67820 <display_parse_vendor_config+0x80> // __kmalloc+0x0
+   67824: e8 07 80 b9  	ldrsw	x8, [sp, #4]
+   67828: 60 2a 04 f9  	str	x0, [x19, #2128]
+   6782c: 01 b8 81 52  	mov	w1, #3520
+   67830: 08 fd 42 d3  	lsr	x8, x8, #2
+   67834: e0 03 08 aa  	mov	x0, x8
+   67838: 00 00 00 94  	bl	0x67838 <display_parse_vendor_config+0x98> // __kmalloc+0x0
+   6783c: 62 2a 44 f9  	ldr	x2, [x19, #2128]
+   67840: 60 2e 04 f9  	str	x0, [x19, #2136]
+   67844: 62 06 00 b4  	cbz	x2, 0x67910 <display_parse_vendor_config+0x170>
+   67848: 40 06 00 b4  	cbz	x0, 0x67910 <display_parse_vendor_config+0x170>
+   6784c: 74 5a 43 f9  	ldr	x20, [x19, #1712]
+   67850: 08 00 00 90  	adrp	x8, 0x67000 <display_parse_vendor_config+0xb0> // +0x18cd78
+   67854: 08 01 00 91  	add	x8, x8, #0 // +0x18cd78
+   67858: e9 07 40 b9  	ldr	w9, [sp, #4]
+   6785c: 88 02 08 cb  	sub	x8, x20, x8
+   67860: 0a 0d c8 93  	ror	x10, x8, #3
+   67864: 28 7d 02 13  	asr	w8, w9, #2
+   67868: 5f 0d 00 f1  	cmp	x10, #3
+   6786c: 68 62 08 b9  	str	w8, [x19, #2144]
+   67870: c2 09 00 54  	b.hs	0x679a8 <display_parse_vendor_config+0x208>
+   67874: 01 00 00 90  	adrp	x1, 0x67000 <display_parse_vendor_config+0xd4> // 'vendor,panel-id-reg'
+   67878: 60 3e 43 f9  	ldr	x0, [x19, #1656]
+   6787c: 03 7d 40 93  	sxtw	x3, w8
+   67880: 21 00 00 91  	add	x1, x1, #0 // 'vendor,panel-id-reg'
+   67884: 80 02 3f d6  	blr	x20
+   67888: f4 03 00 2a  	mov	w20, w0
+   6788c: c0 06 00 35  	cbnz	w0, 0x67964 <display_parse_vendor_config+0x1c4>
+   67890: 68 62 48 b9  	ldr	w8, [x19, #2144]
+   67894: 7f 92 21 39  	strb	wzr, [x19, #2148]
+   67898: 1f 05 00 71  	cmp	w8, #1
+   6789c: 8b 04 00 54  	b.lt	0x6792c <display_parse_vendor_config+0x18c>
+   678a0: 18 00 00 90  	adrp	x24, 0x67000 <display_parse_vendor_config+0x100> // xjmz_lcd_log_level+0x0
+   678a4: 15 00 00 90  	adrp	x21, 0x67000 <display_parse_vendor_config+0x104> // '\x016[LCD][INFO][%s:%d] 0x%02x\n'
+   678a8: 16 00 00 90  	adrp	x22, 0x67000 <display_parse_vendor_config+0x108> // 'display_parse_vendor_config'
+   678ac: f7 03 1f aa  	mov	x23, xzr
+   678b0: b5 02 00 91  	add	x21, x21, #0 // '\x016[LCD][INFO][%s:%d] 0x%02x\n'
+   678b4: d6 02 00 91  	add	x22, x22, #0 // 'display_parse_vendor_config'
+   678b8: 09 03 40 b9  	ldr	w9, [x24] // xjmz_lcd_log_level+0x0
+   678bc: 04 00 00 14  	b	0x678cc <display_parse_vendor_config+0x12c>
+   678c0: f7 06 00 91  	add	x23, x23, #1
+   678c4: ff c2 28 eb  	cmp	x23, w8, sxtw
+   678c8: 2a 03 00 54  	b.ge	0x6792c <display_parse_vendor_config+0x18c>
+   678cc: 3f 09 00 71  	cmp	w9, #2
+   678d0: 83 ff ff 54  	b.lo	0x678c0 <display_parse_vendor_config+0x120>
+   678d4: 68 2a 44 f9  	ldr	x8, [x19, #2128]
+   678d8: e0 03 15 aa  	mov	x0, x21
+   678dc: e1 03 16 aa  	mov	x1, x22
+   678e0: c2 1c 80 52  	mov	w2, #230
+   678e4: 03 79 77 b8  	ldr	w3, [x8, x23, lsl #2]
+   678e8: 00 00 00 94  	bl	0x678e8 <display_parse_vendor_config+0x148> // _printk+0x0
+   678ec: 09 03 40 b9  	ldr	w9, [x24] // xjmz_lcd_log_level+0x0
+   678f0: 68 62 48 b9  	ldr	w8, [x19, #2144]
+   678f4: f3 ff ff 17  	b	0x678c0 <display_parse_vendor_config+0x120>
+   678f8: 00 00 00 90  	adrp	x0, 0x67000 <display_parse_vendor_config+0x158> // '\x013[LCD][ERR][%s:%d] failed to get property, check dts first\n'
+   678fc: 01 00 00 90  	adrp	x1, 0x67000 <display_parse_vendor_config+0x15c> // 'display_parse_vendor_config'
+   67900: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] failed to get property, check dts first\n'
+   67904: 21 00 00 91  	add	x1, x1, #0 // 'display_parse_vendor_config'
+   67908: 02 1a 80 52  	mov	w2, #208
+   6790c: 06 00 00 14  	b	0x67924 <display_parse_vendor_config+0x184>
+   67910: 00 00 00 90  	adrp	x0, 0x67000 <display_parse_vendor_config+0x170> // '\x013[LCD][ERR][%s:%d] mem alloc failed for panel id config\n'
+   67914: 01 00 00 90  	adrp	x1, 0x67000 <display_parse_vendor_config+0x174> // 'display_parse_vendor_config'
+   67918: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] mem alloc failed for panel id config\n'
+   6791c: 21 00 00 91  	add	x1, x1, #0 // 'display_parse_vendor_config'
+   67920: e2 1a 80 52  	mov	w2, #215
+   67924: 00 00 00 94  	bl	0x67924 <display_parse_vendor_config+0x184> // _printk+0x0
+   67928: b4 02 80 12  	mov	w20, #-22
+   6792c: 08 41 38 d5  	mrs	x8, SP_EL0
+   67930: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   67934: e9 07 40 f9  	ldr	x9, [sp, #8]
+   67938: 1f 01 09 eb  	cmp	x8, x9
+   6793c: 41 03 00 54  	b.ne	0x679a4 <display_parse_vendor_config+0x204>
+   67940: e0 03 14 2a  	mov	w0, w20
+   67944: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+   67948: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+   6794c: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+   67950: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+   67954: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   67958: ff 43 01 91  	add	sp, sp, #80
+   6795c: bf 23 03 d5  	hint	#29
+   67960: c0 03 5f d6  	ret
+   67964: 00 00 00 90  	adrp	x0, 0x67000 <display_parse_vendor_config+0x1c4> // '\x013[LCD][ERR][%s:%d] error reading panel id config\n'
+   67968: 01 00 00 90  	adrp	x1, 0x67000 <display_parse_vendor_config+0x1c8> // 'display_parse_vendor_config'
+   6796c: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] error reading panel id config\n'
+   67970: 21 00 00 91  	add	x1, x1, #0 // 'display_parse_vendor_config'
+   67974: 02 1c 80 52  	mov	w2, #224
+   67978: 00 00 00 94  	bl	0x67978 <display_parse_vendor_config+0x1d8> // _printk+0x0
+   6797c: c5 ff ff 17  	b	0x67890 <display_parse_vendor_config+0xf0>
+   67980: 60 a2 9b d2  	mov	x0, #56595
+   67984: 02 00 00 90  	adrp	x2, 0x67000 <display_parse_vendor_config+0x1e4> // +0xd430
+   67988: 40 82 a3 f2  	movk	x0, #7186, lsl #16
+   6798c: 42 00 00 91  	add	x2, x2, #0 // +0xd430
+   67990: 80 52 d4 f2  	movk	x0, #41620, lsl #32
+   67994: e1 03 14 aa  	mov	x1, x20
+   67998: e0 c7 e2 f2  	movk	x0, #5695, lsl #48
+   6799c: 00 00 00 94  	bl	0x6799c <display_parse_vendor_config+0x1fc> // __cfi_slowpath_diag+0x0
+   679a0: 94 ff ff 17  	b	0x677f0 <display_parse_vendor_config+0x50>
+   679a4: 00 00 00 94  	bl	0x679a4 <display_parse_vendor_config+0x204> // __stack_chk_fail+0x0
+   679a8: 80 04 83 d2  	mov	x0, #6180
+   679ac: 02 00 00 90  	adrp	x2, 0x67000 <display_parse_vendor_config+0x20c> // +0xd450
+   679b0: 80 c9 a4 f2  	movk	x0, #9804, lsl #16
+   679b4: 42 00 00 91  	add	x2, x2, #0 // +0xd450
+   679b8: 80 d2 c8 f2  	movk	x0, #18068, lsl #32
+   679bc: e1 03 14 aa  	mov	x1, x20
+   679c0: 00 ca e0 f2  	movk	x0, #1616, lsl #48
+   679c4: 00 00 00 94  	bl	0x679c4 <display_parse_vendor_config+0x224> // __cfi_slowpath_diag+0x0
+   679c8: 62 2a 44 f9  	ldr	x2, [x19, #2128]
+   679cc: 68 62 48 b9  	ldr	w8, [x19, #2144]
+   679d0: a9 ff ff 17  	b	0x67874 <display_parse_vendor_config+0xd4>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000673a0 <display_print_cmd_desc>:
+   673a0: 3f 23 03 d5  	hint	#25
+   673a4: 5e 86 00 f8  	str	x30, [x18], #8
+   673a8: fd 7b bb a9  	stp	x29, x30, [sp, #-80]!
+   673ac: fc 67 01 a9  	stp	x28, x25, [sp, #16]
+   673b0: fd 03 00 91  	mov	x29, sp
+   673b4: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+   673b8: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+   673bc: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+   673c0: ff 43 08 d1  	sub	sp, sp, #528
+   673c4: 08 41 38 d5  	mrs	x8, SP_EL0
+   673c8: f3 03 00 aa  	mov	x19, x0
+   673cc: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   673d0: e1 03 1f 2a  	mov	w1, wzr
+   673d4: 02 40 80 52  	mov	w2, #512
+   673d8: f4 23 00 91  	add	x20, sp, #8
+   673dc: a8 83 1f f8  	stur	x8, [x29, #-8]
+   673e0: 15 08 40 f9  	ldr	x21, [x0, #16]
+   673e4: e0 23 00 91  	add	x0, sp, #8
+   673e8: 00 00 00 94  	bl	0x673e8 <display_print_cmd_desc+0x48> // memset+0x0
+   673ec: 02 00 00 90  	adrp	x2, 0x67000 <display_print_cmd_desc+0x4c> // '%02X '
+   673f0: 63 06 40 39  	ldrb	w3, [x19, #1]
+   673f4: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   673f8: e0 23 00 91  	add	x0, sp, #8
+   673fc: 01 40 80 52  	mov	w1, #512
+   67400: 00 00 00 94  	bl	0x67400 <display_print_cmd_desc+0x60> // snprintf+0x0
+   67404: 1f 04 08 71  	cmp	w0, #513
+   67408: a2 0d 00 54  	b.hs	0x675bc <display_print_cmd_desc+0x21c>
+   6740c: 16 7c 40 93  	sxtw	x22, w0
+   67410: 08 40 80 52  	mov	w8, #512
+   67414: 02 00 00 90  	adrp	x2, 0x67000 <display_print_cmd_desc+0x74> // '%02X '
+   67418: 80 02 16 8b  	add	x0, x20, x22
+   6741c: 01 01 16 cb  	sub	x1, x8, x22
+   67420: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   67424: e3 03 1f 2a  	mov	w3, wzr
+   67428: 00 00 00 94  	bl	0x67428 <display_print_cmd_desc+0x88> // snprintf+0x0
+   6742c: 08 00 16 0b  	add	w8, w0, w22
+   67430: 1f 01 08 71  	cmp	w8, #512
+   67434: 48 0c 00 54  	b.hi	0x675bc <display_print_cmd_desc+0x21c>
+   67438: 16 7d 40 93  	sxtw	x22, w8
+   6743c: f4 23 00 91  	add	x20, sp, #8
+   67440: 08 40 80 52  	mov	w8, #512
+   67444: 02 00 00 90  	adrp	x2, 0x67000 <display_print_cmd_desc+0xa4> // '%02X '
+   67448: 80 02 16 8b  	add	x0, x20, x22
+   6744c: 01 01 16 cb  	sub	x1, x8, x22
+   67450: 63 02 40 39  	ldrb	w3, [x19]
+   67454: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   67458: 00 00 00 94  	bl	0x67458 <display_print_cmd_desc+0xb8> // snprintf+0x0
+   6745c: 08 00 16 0b  	add	w8, w0, w22
+   67460: 1f 01 08 71  	cmp	w8, #512
+   67464: c8 0a 00 54  	b.hi	0x675bc <display_print_cmd_desc+0x21c>
+   67468: 69 a2 40 39  	ldrb	w9, [x19, #40]
+   6746c: 16 7d 40 93  	sxtw	x22, w8
+   67470: 08 40 80 52  	mov	w8, #512
+   67474: 02 00 00 90  	adrp	x2, 0x67000 <display_print_cmd_desc+0xd4> // '%02X '
+   67478: 80 02 16 8b  	add	x0, x20, x22
+   6747c: 01 01 16 cb  	sub	x1, x8, x22
+   67480: 3f 01 00 71  	cmp	w9, #0
+   67484: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   67488: e9 17 9f 1a  	cset	w9, eq
+   6748c: 23 e5 7a d3  	lsl	x3, x9, #6
+   67490: 00 00 00 94  	bl	0x67490 <display_print_cmd_desc+0xf0> // snprintf+0x0
+   67494: 08 00 16 0b  	add	w8, w0, w22
+   67498: 1f 01 08 71  	cmp	w8, #512
+   6749c: 08 09 00 54  	b.hi	0x675bc <display_print_cmd_desc+0x21c>
+   674a0: 16 7d 40 93  	sxtw	x22, w8
+   674a4: f4 23 00 91  	add	x20, sp, #8
+   674a8: 08 40 80 52  	mov	w8, #512
+   674ac: 02 00 00 90  	adrp	x2, 0x67000 <display_print_cmd_desc+0x10c> // '%02X '
+   674b0: 80 02 16 8b  	add	x0, x20, x22
+   674b4: 01 01 16 cb  	sub	x1, x8, x22
+   674b8: 63 2e 40 b9  	ldr	w3, [x19, #44]
+   674bc: 42 00 00 91  	add	x2, x2, #0 // '%02X '
+   674c0: 00 00 00 94  	bl	0x674c0 <display_print_cmd_desc+0x120> // snprintf+0x0
+   674c4: 08 00 16 0b  	add	w8, w0, w22
+   674c8: 1f 01 08 71  	cmp	w8, #512
+   674cc: 88 07 00 54  	b.hi	0x675bc <display_print_cmd_desc+0x21c>
+   674d0: 69 06 40 f9  	ldr	x9, [x19, #8]
+   674d4: 17 7d 40 93  	sxtw	x23, w8
+   674d8: 08 40 80 52  	mov	w8, #512
+   674dc: 02 00 00 90  	adrp	x2, 0x67000 <display_print_cmd_desc+0x13c> // '%02X %02X '
+   674e0: 80 02 17 8b  	add	x0, x20, x23
+   674e4: 01 01 17 cb  	sub	x1, x8, x23
+   674e8: 23 fd 48 d3  	lsr	x3, x9, #8
+   674ec: 24 1d 40 92  	and	x4, x9, #0xff
+   674f0: 42 00 00 91  	add	x2, x2, #0 // '%02X %02X '
+   674f4: 00 00 00 94  	bl	0x674f4 <display_print_cmd_desc+0x154> // snprintf+0x0
+   674f8: 68 06 40 f9  	ldr	x8, [x19, #8]
+   674fc: c8 02 00 b4  	cbz	x8, 0x67554 <display_print_cmd_desc+0x1b4>
+   67500: 14 00 00 90  	adrp	x20, 0x67000 <display_print_cmd_desc+0x160> // '%02X '
+   67504: f6 03 1f aa  	mov	x22, xzr
+   67508: 08 00 17 0b  	add	w8, w0, w23
+   6750c: f7 23 00 91  	add	x23, sp, #8
+   67510: 18 40 80 52  	mov	w24, #512
+   67514: 94 02 00 91  	add	x20, x20, #0 // '%02X '
+   67518: 1f 01 08 71  	cmp	w8, #512
+   6751c: 08 05 00 54  	b.hi	0x675bc <display_print_cmd_desc+0x21c>
+   67520: 19 7d 40 93  	sxtw	x25, w8
+   67524: a3 6a 76 38  	ldrb	w3, [x21, x22]
+   67528: e0 02 19 8b  	add	x0, x23, x25
+   6752c: 01 03 19 cb  	sub	x1, x24, x25
+   67530: e2 03 14 aa  	mov	x2, x20
+   67534: 00 00 00 94  	bl	0x67534 <display_print_cmd_desc+0x194> // snprintf+0x0
+   67538: df ee 03 f1  	cmp	x22, #251
+   6753c: c0 00 00 54  	b.eq	0x67554 <display_print_cmd_desc+0x1b4>
+   67540: 69 06 40 f9  	ldr	x9, [x19, #8]
+   67544: 08 00 19 0b  	add	w8, w0, w25
+   67548: d6 06 00 91  	add	x22, x22, #1
+   6754c: df 02 09 eb  	cmp	x22, x9
+   67550: 43 fe ff 54  	b.lo	0x67518 <display_print_cmd_desc+0x178>
+   67554: 08 00 00 90  	adrp	x8, 0x67000 <display_print_cmd_desc+0x1b4> // xjmz_lcd_log_level+0x0
+   67558: 08 01 40 b9  	ldr	w8, [x8] // xjmz_lcd_log_level+0x0
+   6755c: 1f 09 00 71  	cmp	w8, #2
+   67560: e2 01 00 54  	b.hs	0x6759c <display_print_cmd_desc+0x1fc>
+   67564: 08 41 38 d5  	mrs	x8, SP_EL0
+   67568: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   6756c: a9 83 5f f8  	ldur	x9, [x29, #-8]
+   67570: 1f 01 09 eb  	cmp	x8, x9
+   67574: 61 02 00 54  	b.ne	0x675c0 <display_print_cmd_desc+0x220>
+   67578: ff 43 08 91  	add	sp, sp, #528
+   6757c: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+   67580: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+   67584: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+   67588: fc 67 41 a9  	ldp	x28, x25, [sp, #16]
+   6758c: fd 7b c5 a8  	ldp	x29, x30, [sp], #80
+   67590: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   67594: bf 23 03 d5  	hint	#29
+   67598: c0 03 5f d6  	ret
+   6759c: 00 00 00 90  	adrp	x0, 0x67000 <display_print_cmd_desc+0x1fc> // '\x016[LCD][INFO][%s:%d]  %s\n'
+   675a0: 01 00 00 90  	adrp	x1, 0x67000 <display_print_cmd_desc+0x200> // 'display_print_cmd_desc'
+   675a4: 00 00 00 91  	add	x0, x0, #0 // '\x016[LCD][INFO][%s:%d]  %s\n'
+   675a8: 21 00 00 91  	add	x1, x1, #0 // 'display_print_cmd_desc'
+   675ac: e3 23 00 91  	add	x3, sp, #8
+   675b0: 02 14 80 52  	mov	w2, #160
+   675b4: 00 00 00 94  	bl	0x675b4 <display_print_cmd_desc+0x214> // _printk+0x0
+   675b8: eb ff ff 17  	b	0x67564 <display_print_cmd_desc+0x1c4>
+   675bc: 40 a2 2a d4  	brk	#0x5512
+   675c0: 00 00 00 94  	bl	0x675c0 <display_print_cmd_desc+0x220> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000662bc <display_set_panel_dsi_cmd>:
+   662bc: 3f 23 03 d5  	hint	#25
+   662c0: 5e 86 00 f8  	str	x30, [x18], #8
+   662c4: fd 7b ba a9  	stp	x29, x30, [sp, #-96]!
+   662c8: fc 6f 01 a9  	stp	x28, x27, [sp, #16]
+   662cc: fd 03 00 91  	mov	x29, sp
+   662d0: fa 67 02 a9  	stp	x26, x25, [sp, #32]
+   662d4: f8 5f 03 a9  	stp	x24, x23, [sp, #48]
+   662d8: f6 57 04 a9  	stp	x22, x21, [sp, #64]
+   662dc: f4 4f 05 a9  	stp	x20, x19, [sp, #80]
+   662e0: ff 43 15 d1  	sub	sp, sp, #1360
+   662e4: 08 41 38 d5  	mrs	x8, SP_EL0
+   662e8: 16 00 00 90  	adrp	x22, 0x66000 <display_set_panel_dsi_cmd+0x2c> // +0x1668
+   662ec: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   662f0: 15 00 00 90  	adrp	x21, 0x66000 <display_set_panel_dsi_cmd+0x34> // +0x728
+   662f4: f9 03 03 aa  	mov	x25, x3
+   662f8: f4 03 02 aa  	mov	x20, x2
+   662fc: e9 03 01 91  	add	x9, sp, #64
+   66300: a8 03 1f f8  	stur	x8, [x29, #-16]
+   66304: 08 00 00 90  	adrp	x8, 0x66000 <display_set_panel_dsi_cmd+0x48> // +0x4f78
+   66308: bb 02 40 b9  	ldr	w27, [x21] // +0x728
+   6630c: ff 7f 0b a9  	stp	xzr, xzr, [sp, #176]
+   66310: 3f 7d 0f a9  	stp	xzr, xzr, [x9, #240]
+   66314: 1a 01 40 f9  	ldr	x26, [x8] // +0x4f78
+   66318: 3f 7d 0e a9  	stp	xzr, xzr, [x9, #224]
+   6631c: c8 02 40 f9  	ldr	x8, [x22] // +0x1668
+   66320: 3f 7d 0d a9  	stp	xzr, xzr, [x9, #208]
+   66324: 3f 7d 0c a9  	stp	xzr, xzr, [x9, #192]
+   66328: 3f 7d 0b a9  	stp	xzr, xzr, [x9, #176]
+   6632c: 3f 7d 0a a9  	stp	xzr, xzr, [x9, #160]
+   66330: 3f 7d 09 a9  	stp	xzr, xzr, [x9, #144]
+   66334: 3f 7d 08 a9  	stp	xzr, xzr, [x9, #128]
+   66338: ff 7f 0a a9  	stp	xzr, xzr, [sp, #160]
+   6633c: ff 7f 09 a9  	stp	xzr, xzr, [sp, #144]
+   66340: ff 7f 08 a9  	stp	xzr, xzr, [sp, #128]
+   66344: ff 7f 07 a9  	stp	xzr, xzr, [sp, #112]
+   66348: ff 7f 06 a9  	stp	xzr, xzr, [sp, #96]
+   6634c: ff 7f 05 a9  	stp	xzr, xzr, [sp, #80]
+   66350: ff 7f 04 a9  	stp	xzr, xzr, [sp, #64]
+   66354: 08 01 00 b5  	cbnz	x8, 0x66374 <display_set_panel_dsi_cmd+0xb8>
+   66358: 08 00 00 90  	adrp	x8, 0x66000 <display_set_panel_dsi_cmd+0x9c> // kmalloc_caches+0x60
+   6635c: 01 98 81 52  	mov	w1, #3264
+   66360: 02 00 82 52  	mov	w2, #4096
+   66364: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x60
+   66368: 00 00 00 94  	bl	0x66368 <display_set_panel_dsi_cmd+0xac> // kmem_cache_alloc_trace+0x0
+   6636c: c0 02 00 f9  	str	x0, [x22] // +0x1668
+   66370: c0 16 00 b4  	cbz	x0, 0x66648 <display_set_panel_dsi_cmd+0x38c>
+   66374: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0xb8> // '%s'
+   66378: e2 03 01 91  	add	x2, sp, #64
+   6637c: 21 00 00 91  	add	x1, x1, #0 // '%s'
+   66380: e0 03 14 aa  	mov	x0, x20
+   66384: 00 00 00 94  	bl	0x66384 <display_set_panel_dsi_cmd+0xc8> // sscanf+0x0
+   66388: e8 43 40 b9  	ldr	w8, [sp, #64]
+   6638c: 8a ac 8e 52  	mov	w10, #30052
+   66390: e9 13 41 39  	ldrb	w9, [sp, #68]
+   66394: aa 0d ae 72  	movk	w10, #28781, lsl #16
+   66398: 08 01 0a 4a  	eor	w8, w8, w10
+   6639c: 08 01 09 2a  	orr	w8, w8, w9
+   663a0: c8 05 00 34  	cbz	w8, 0x66458 <display_set_panel_dsi_cmd+0x19c>
+   663a4: e8 43 40 b9  	ldr	w8, [sp, #64]
+   663a8: ca 8c 8d 52  	mov	w10, #27750
+   663ac: e9 8b 40 79  	ldrh	w9, [sp, #68]
+   663b0: aa 6e ae 72  	movk	w10, #29557, lsl #16
+   663b4: 0b 0d 80 52  	mov	w11, #104
+   663b8: 17 00 00 90  	adrp	x23, 0x66000 <display_set_panel_dsi_cmd+0xfc> // +0x1670
+   663bc: 08 01 0a 4a  	eor	w8, w8, w10
+   663c0: 29 01 0b 4a  	eor	w9, w9, w11
+   663c4: 08 01 09 2a  	orr	w8, w8, w9
+   663c8: 68 14 00 34  	cbz	w8, 0x66654 <display_set_panel_dsi_cmd+0x398>
+   663cc: 8b 6c 8e d2  	mov	x11, #29540
+   663d0: e8 23 40 f9  	ldr	x8, [sp, #64]
+   663d4: ea 4b 40 b9  	ldr	w10, [sp, #72]
+   663d8: 2b ed ab f2  	movk	x11, #24425, lsl #16
+   663dc: e9 8d 8c 52  	mov	w9, #25711
+   663e0: 0b 6d ce f2  	movk	x11, #29544, lsl #32
+   663e4: a9 0c a0 72  	movk	w9, #101, lsl #16
+   663e8: eb ab ed f2  	movk	x11, #27999, lsl #48
+   663ec: 08 01 0b ca  	eor	x8, x8, x11
+   663f0: 4a 01 09 ca  	eor	x10, x10, x9
+   663f4: 0a 01 0a aa  	orr	x10, x8, x10
+   663f8: 5f 01 00 f1  	cmp	x10, #0
+   663fc: e8 07 9f 1a  	cset	w8, ne
+   66400: ca 0e 00 b4  	cbz	x10, 0x665d8 <display_set_panel_dsi_cmd+0x31c>
+   66404: 8c 6c 8e d2  	mov	x12, #29540
+   66408: ea 23 40 f9  	ldr	x10, [sp, #64]
+   6640c: eb 4b 40 b9  	ldr	w11, [sp, #72]
+   66410: 2c ed ab f2  	movk	x12, #24425, lsl #16
+   66414: 8c 0d ce f2  	movk	x12, #28780, lsl #32
+   66418: ec ab ed f2  	movk	x12, #27999, lsl #48
+   6641c: 4a 01 0c ca  	eor	x10, x10, x12
+   66420: 29 01 0b ca  	eor	x9, x9, x11
+   66424: 49 01 09 aa  	orr	x9, x10, x9
+   66428: 89 0d 00 b4  	cbz	x9, 0x665d8 <display_set_panel_dsi_cmd+0x31c>
+   6642c: 18 00 00 90  	adrp	x24, 0x66000 <display_set_panel_dsi_cmd+0x170> // cmd_set_prop_map+0x0
+   66430: f3 03 1f aa  	mov	x19, xzr
+   66434: 18 03 00 91  	add	x24, x24, #0 // cmd_set_prop_map+0x0
+   66438: 00 7b 73 f8  	ldr	x0, [x24, x19, lsl #3]
+   6643c: e1 03 01 91  	add	x1, sp, #64
+   66440: 00 00 00 94  	bl	0x66440 <display_set_panel_dsi_cmd+0x184> // strcmp+0x0
+   66444: 60 10 00 34  	cbz	w0, 0x66650 <display_set_panel_dsi_cmd+0x394>
+   66448: 73 06 00 91  	add	x19, x19, #1
+   6644c: 7f b6 00 f1  	cmp	x19, #45
+   66450: 41 ff ff 54  	b.ne	0x66438 <display_set_panel_dsi_cmd+0x17c>
+   66454: 65 00 00 14  	b	0x665e8 <display_set_panel_dsi_cmd+0x32c>
+   66458: e0 03 05 91  	add	x0, sp, #320
+   6645c: e1 03 1f 2a  	mov	w1, wzr
+   66460: 02 80 80 52  	mov	w2, #1024
+   66464: 00 00 00 94  	bl	0x66464 <display_set_panel_dsi_cmd+0x1a8> // memset+0x0
+   66468: 5a 1e 00 b4  	cbz	x26, 0x66830 <display_set_panel_dsi_cmd+0x574>
+   6646c: 48 87 40 f9  	ldr	x8, [x26, #264]
+   66470: 08 1e 00 b4  	cbz	x8, 0x66830 <display_set_panel_dsi_cmd+0x574>
+   66474: 08 95 42 f9  	ldr	x8, [x8, #1320]
+   66478: c8 1d 00 b4  	cbz	x8, 0x66830 <display_set_panel_dsi_cmd+0x574>
+   6647c: 08 55 40 f9  	ldr	x8, [x8, #168]
+   66480: e8 13 00 f9  	str	x8, [sp, #32]
+   66484: 28 1f 00 b4  	cbz	x8, 0x66868 <display_set_panel_dsi_cmd+0x5ac>
+   66488: 1b 00 00 90  	adrp	x27, 0x66000 <display_set_panel_dsi_cmd+0x1cc> // cmd_set_prop_map+0x0
+   6648c: 17 00 00 90  	adrp	x23, 0x66000 <display_set_panel_dsi_cmd+0x1d0> // ' %02x'
+   66490: fa 03 1f aa  	mov	x26, xzr
+   66494: 7b 03 00 91  	add	x27, x27, #0 // cmd_set_prop_map+0x0
+   66498: 14 80 80 52  	mov	w20, #1024
+   6649c: fc 03 05 91  	add	x28, sp, #320
+   664a0: f7 02 00 91  	add	x23, x23, #0 // ' %02x'
+   664a4: f9 0f 00 f9  	str	x25, [sp, #24]
+   664a8: 04 00 00 14  	b	0x664b8 <display_set_panel_dsi_cmd+0x1fc>
+   664ac: 5a 07 00 91  	add	x26, x26, #1
+   664b0: 5f b7 00 f1  	cmp	x26, #45
+   664b4: e0 08 00 54  	b.eq	0x665d0 <display_set_panel_dsi_cmd+0x314>
+   664b8: 61 7b 7a f8  	ldr	x1, [x27, x26, lsl #3]
+   664bc: 81 ff ff b4  	cbz	x1, 0x664ac <display_set_panel_dsi_cmd+0x1f0>
+   664c0: e8 13 40 f9  	ldr	x8, [sp, #32]
+   664c4: 09 03 80 52  	mov	w9, #24
+   664c8: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x20c> // '\x013[display:sh]%s: %s'
+   664cc: 00 00 00 91  	add	x0, x0, #0 // '\x013[display:sh]%s: %s'
+   664d0: 53 23 09 9b  	madd	x19, x26, x9, x8
+   664d4: 09 00 00 90  	adrp	x9, 0x66000 <display_set_panel_dsi_cmd+0x218> // 'dsi_lp_mode'
+   664d8: 29 01 00 91  	add	x9, x9, #0 // 'dsi_lp_mode'
+   664dc: 68 06 40 b9  	ldr	w8, [x19, #4]
+   664e0: 1f 01 00 71  	cmp	w8, #0
+   664e4: 08 00 00 90  	adrp	x8, 0x66000 <display_set_panel_dsi_cmd+0x228> // 'dsi_hs_mode'
+   664e8: 08 01 00 91  	add	x8, x8, #0 // 'dsi_hs_mode'
+   664ec: 22 01 88 9a  	csel	x2, x9, x8, eq
+   664f0: 00 00 00 94  	bl	0x664f0 <display_set_panel_dsi_cmd+0x234> // _printk+0x0
+   664f4: 68 8e 40 b8  	ldr	w8, [x19, #8]!
+   664f8: a8 fd ff 34  	cbz	w8, 0x664ac <display_set_panel_dsi_cmd+0x1f0>
+   664fc: f6 03 1f 2a  	mov	w22, wzr
+   66500: 68 22 00 91  	add	x8, x19, #8
+   66504: f3 a3 02 a9  	stp	x19, x8, [sp, #40]
+   66508: e8 1b 40 f9  	ldr	x8, [sp, #48]
+   6650c: 09 07 80 52  	mov	w9, #56
+   66510: 02 00 00 90  	adrp	x2, 0x66000 <display_set_panel_dsi_cmd+0x254> // ' %02x %02x %02x %02x %02x %02x %02x'
+   66514: e4 03 1f 2a  	mov	w4, wzr
+   66518: e0 03 05 91  	add	x0, sp, #320
+   6651c: 01 80 80 52  	mov	w1, #1024
+   66520: 08 01 40 f9  	ldr	x8, [x8]
+   66524: 42 00 00 91  	add	x2, x2, #0 // ' %02x %02x %02x %02x %02x %02x %02x'
+   66528: d9 22 29 9b  	smaddl	x25, w22, w9, x8
+   6652c: 28 a3 40 39  	ldrb	w8, [x25, #40]
+   66530: 33 0b 40 f9  	ldr	x19, [x25, #16]
+   66534: 23 07 40 39  	ldrb	w3, [x25, #1]
+   66538: 25 03 40 39  	ldrb	w5, [x25]
+   6653c: 1f 01 00 71  	cmp	w8, #0
+   66540: 27 2f 40 b9  	ldr	w7, [x25, #44]
+   66544: e8 17 9f 1a  	cset	w8, eq
+   66548: 29 8f 40 f8  	ldr	x9, [x25, #8]!
+   6654c: 06 e5 7a d3  	lsl	x6, x8, #6
+   66550: 28 fd 48 d3  	lsr	x8, x9, #8
+   66554: 29 1d 00 12  	and	w9, w9, #0xff
+   66558: e9 0b 00 b9  	str	w9, [sp, #8]
+   6655c: e8 03 00 b9  	str	w8, [sp]
+   66560: 00 00 00 94  	bl	0x66560 <display_set_panel_dsi_cmd+0x2a4> // snprintf+0x0
+   66564: 28 03 40 f9  	ldr	x8, [x25]
+   66568: 08 02 00 b4  	cbz	x8, 0x665a8 <display_set_panel_dsi_cmd+0x2ec>
+   6656c: f8 03 00 2a  	mov	w24, w0
+   66570: f5 03 1f aa  	mov	x21, xzr
+   66574: 1f 07 10 71  	cmp	w24, #1025
+   66578: 62 22 00 54  	b.hs	0x669c4 <display_set_panel_dsi_cmd+0x708>
+   6657c: 63 6a 75 38  	ldrb	w3, [x19, x21]
+   66580: 80 43 38 8b  	add	x0, x28, w24, uxtw
+   66584: 81 02 18 4b  	sub	w1, w20, w24
+   66588: e2 03 17 aa  	mov	x2, x23
+   6658c: 00 00 00 94  	bl	0x6658c <display_set_panel_dsi_cmd+0x2d0> // snprintf+0x0
+   66590: 28 03 40 f9  	ldr	x8, [x25]
+   66594: a9 06 00 11  	add	w9, w21, #1
+   66598: 18 00 18 0b  	add	w24, w0, w24
+   6659c: 35 7d 40 93  	sxtw	x21, w9
+   665a0: 1f 01 15 eb  	cmp	x8, x21
+   665a4: 88 fe ff 54  	b.hi	0x66574 <display_set_panel_dsi_cmd+0x2b8>
+   665a8: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x2ec> // '\x013[display:sh]%s'
+   665ac: e1 03 05 91  	add	x1, sp, #320
+   665b0: 00 00 00 91  	add	x0, x0, #0 // '\x013[display:sh]%s'
+   665b4: 00 00 00 94  	bl	0x665b4 <display_set_panel_dsi_cmd+0x2f8> // _printk+0x0
+   665b8: f3 17 40 f9  	ldr	x19, [sp, #40]
+   665bc: d6 06 00 11  	add	w22, w22, #1
+   665c0: 68 02 40 b9  	ldr	w8, [x19]
+   665c4: df 02 08 6b  	cmp	w22, w8
+   665c8: 03 fa ff 54  	b.lo	0x66508 <display_set_panel_dsi_cmd+0x24c>
+   665cc: b8 ff ff 17  	b	0x664ac <display_set_panel_dsi_cmd+0x1f0>
+   665d0: f9 0f 40 f9  	ldr	x25, [sp, #24]
+   665d4: ca 00 00 14  	b	0x668fc <display_set_panel_dsi_cmd+0x640>
+   665d8: 1f 01 00 71  	cmp	w8, #0
+   665dc: 09 00 00 90  	adrp	x9, 0x66000 <display_set_panel_dsi_cmd+0x320> // +0x1674
+   665e0: e8 07 9f 1a  	cset	w8, ne
+   665e4: 28 01 00 39  	strb	w8, [x9] // +0x1674
+   665e8: 15 00 00 90  	adrp	x21, 0x66000 <display_set_panel_dsi_cmd+0x32c> // '%x%n'
+   665ec: ff 43 01 b9  	str	wzr, [sp, #320]
+   665f0: b5 02 00 91  	add	x21, x21, #0 // '%x%n'
+   665f4: ff 3f 00 b9  	str	wzr, [sp, #60]
+   665f8: e2 03 05 91  	add	x2, sp, #320
+   665fc: e3 f3 00 91  	add	x3, sp, #60
+   66600: e0 03 14 aa  	mov	x0, x20
+   66604: e1 03 15 aa  	mov	x1, x21
+   66608: 00 00 00 94  	bl	0x66608 <display_set_panel_dsi_cmd+0x34c> // sscanf+0x0
+   6660c: 1f 04 00 71  	cmp	w0, #1
+   66610: 6b 17 00 54  	b.lt	0x668fc <display_set_panel_dsi_cmd+0x640>
+   66614: e8 43 41 b9  	ldr	w8, [sp, #320]
+   66618: 1f 01 04 71  	cmp	w8, #256
+   6661c: 62 13 00 54  	b.hs	0x66888 <display_set_panel_dsi_cmd+0x5cc>
+   66620: e9 02 80 b9  	ldrsw	x9, [x23] // +0x1670
+   66624: cb 02 40 f9  	ldr	x11, [x22] // +0x1668
+   66628: 2a 05 00 11  	add	w10, w9, #1
+   6662c: 5f 05 40 71  	cmp	w10, #1, lsl #12        // =4096
+   66630: ea 02 00 b9  	str	w10, [x23] // +0x1670
+   66634: 68 69 29 38  	strb	w8, [x11, x9]
+   66638: 2a 13 00 54  	b.ge	0x6689c <display_set_panel_dsi_cmd+0x5e0>
+   6663c: e8 3f 40 b9  	ldr	w8, [sp, #60]
+   66640: 94 02 08 8b  	add	x20, x20, x8
+   66644: ed ff ff 17  	b	0x665f8 <display_set_panel_dsi_cmd+0x33c>
+   66648: 79 01 80 92  	mov	x25, #-12
+   6664c: ac 00 00 14  	b	0x668fc <display_set_panel_dsi_cmd+0x640>
+   66650: b3 02 00 b9  	str	w19, [x21] // +0x728
+   66654: e4 02 40 b9  	ldr	w4, [x23] // +0x1670
+   66658: 44 03 00 34  	cbz	w4, 0x666c0 <display_set_panel_dsi_cmd+0x404>
+   6665c: 7f b7 00 71  	cmp	w27, #45
+   66660: a2 12 00 54  	b.hs	0x668b4 <display_set_panel_dsi_cmd+0x5f8>
+   66664: 7a 0f 00 b4  	cbz	x26, 0x66850 <display_set_panel_dsi_cmd+0x594>
+   66668: 48 87 40 f9  	ldr	x8, [x26, #264]
+   6666c: 28 0f 00 b4  	cbz	x8, 0x66850 <display_set_panel_dsi_cmd+0x594>
+   66670: 08 95 42 f9  	ldr	x8, [x8, #1320]
+   66674: e8 0e 00 b4  	cbz	x8, 0x66850 <display_set_panel_dsi_cmd+0x594>
+   66678: 13 55 40 f9  	ldr	x19, [x8, #168]
+   6667c: d3 12 00 b4  	cbz	x19, 0x668d4 <display_set_panel_dsi_cmd+0x618>
+   66680: 9f 1c 00 71  	cmp	w4, #7
+   66684: 23 02 00 54  	b.lo	0x666c8 <display_set_panel_dsi_cmd+0x40c>
+   66688: f4 03 1f 2a  	mov	w20, wzr
+   6668c: c8 02 40 f9  	ldr	x8, [x22] // +0x1668
+   66690: 09 51 40 78  	ldurh	w9, [x8, #5]
+   66694: 29 3d 50 d3  	lsl	x9, x9, #48
+   66698: 29 0d c0 da  	rev	x9, x9
+   6669c: 23 1d 00 91  	add	x3, x9, #7
+   666a0: 89 00 03 6b  	subs	w9, w4, w3
+   666a4: c3 14 00 54  	b.lo	0x6693c <display_set_panel_dsi_cmd+0x680>
+   666a8: 08 01 03 8b  	add	x8, x8, x3
+   666ac: 94 06 00 11  	add	w20, w20, #1
+   666b0: e4 03 09 2a  	mov	w4, w9
+   666b4: 3f 19 00 71  	cmp	w9, #6
+   666b8: c8 fe ff 54  	b.hi	0x66690 <display_set_panel_dsi_cmd+0x3d4>
+   666bc: 04 00 00 14  	b	0x666cc <display_set_panel_dsi_cmd+0x410>
+   666c0: 39 7f 40 93  	sxtw	x25, w25
+   666c4: 8e 00 00 14  	b	0x668fc <display_set_panel_dsi_cmd+0x640>
+   666c8: f4 03 1f 2a  	mov	w20, wzr
+   666cc: 08 07 80 52  	mov	w8, #56
+   666d0: 01 b8 81 52  	mov	w1, #3520
+   666d4: 80 7e 08 1b  	mul	w0, w20, w8
+   666d8: 00 00 00 94  	bl	0x666d8 <display_set_panel_dsi_cmd+0x41c> // __kmalloc+0x0
+   666dc: 60 0b 00 b4  	cbz	x0, 0x66848 <display_set_panel_dsi_cmd+0x58c>
+   666e0: f5 03 00 aa  	mov	x21, x0
+   666e4: f3 6f 02 a9  	stp	x19, x27, [sp, #32]
+   666e8: fa 1b 00 f9  	str	x26, [sp, #48]
+   666ec: f9 0f 00 f9  	str	x25, [sp, #24]
+   666f0: f4 06 00 34  	cbz	w20, 0x667cc <display_set_panel_dsi_cmd+0x510>
+   666f4: fb 03 1f 2a  	mov	w27, wzr
+   666f8: e8 03 1f 2a  	mov	w8, wzr
+   666fc: dc 02 40 f9  	ldr	x28, [x22] // +0x1668
+   66700: 13 07 80 52  	mov	w19, #56
+   66704: f9 00 c0 d2  	mov	x25, #30064771072
+   66708: 38 00 c0 d2  	mov	x24, #4294967296
+   6670c: 09 00 00 14  	b	0x66730 <display_set_panel_dsi_cmd+0x474>
+   66710: 49 57 13 9b  	madd	x9, x26, x19, x21
+   66714: c8 02 1c 8b  	add	x8, x22, x28
+   66718: 1c 1d 00 91  	add	x28, x8, #7
+   6671c: 48 07 00 11  	add	w8, w26, #1
+   66720: 7b 07 00 51  	sub	w27, w27, #1
+   66724: 1f 01 14 6b  	cmp	w8, w20
+   66728: 20 09 00 f9  	str	x0, [x9, #16]
+   6672c: 00 05 00 54  	b.eq	0x667cc <display_set_panel_dsi_cmd+0x510>
+   66730: 09 55 33 9b  	smaddl	x9, w8, w19, x21
+   66734: 8a 03 40 39  	ldrb	w10, [x28]
+   66738: 2b 00 80 52  	mov	w11, #1
+   6673c: 01 b8 81 52  	mov	w1, #3520
+   66740: 1a 7d 40 93  	sxtw	x26, w8
+   66744: 2a 05 00 39  	strb	w10, [x9, #1]
+   66748: 8a 0f 40 39  	ldrb	w10, [x28, #3]
+   6674c: 6a 19 6a 0a  	bic	w10, w11, w10, lsr #6
+   66750: 2b 05 40 79  	ldrh	w11, [x9, #2]
+   66754: 2a a1 00 39  	strb	w10, [x9, #40]
+   66758: 8a 0b 40 39  	ldrb	w10, [x28, #2]
+   6675c: 2a 01 00 39  	strb	w10, [x9]
+   66760: 8a 0f 40 39  	ldrb	w10, [x28, #3]
+   66764: 3f 31 00 b9  	str	wzr, [x9, #48]
+   66768: 5f 05 00 71  	cmp	w10, #1
+   6676c: ea 17 9f 1a  	cset	w10, eq
+   66770: 6a 01 0a 2a  	orr	w10, w11, w10
+   66774: 2a 05 00 79  	strh	w10, [x9, #2]
+   66778: 8a 13 40 39  	ldrb	w10, [x28, #4]
+   6677c: 2a 2d 00 b9  	str	w10, [x9, #44]
+   66780: 8a 53 40 78  	ldurh	w10, [x28, #5]
+   66784: 4a 3d 50 d3  	lsl	x10, x10, #48
+   66788: 56 0d c0 da  	rev	x22, x10
+   6678c: e0 03 16 aa  	mov	x0, x22
+   66790: 36 05 00 f9  	str	x22, [x9, #8]
+   66794: 00 00 00 94  	bl	0x66794 <display_set_panel_dsi_cmd+0x4d8> // __kmalloc+0x0
+   66798: 20 0f 00 b4  	cbz	x0, 0x6697c <display_set_panel_dsi_cmd+0x6c0>
+   6679c: b6 fb ff b4  	cbz	x22, 0x66710 <display_set_panel_dsi_cmd+0x454>
+   667a0: e8 03 1f aa  	mov	x8, xzr
+   667a4: 09 7d 60 d3  	lsl	x9, x8, #32
+   667a8: 2a 01 19 8b  	add	x10, x9, x25
+   667ac: 29 01 18 8b  	add	x9, x9, x24
+   667b0: 4a fd 60 93  	asr	x10, x10, #32
+   667b4: 8a 6b 6a 38  	ldrb	w10, [x28, x10]
+   667b8: 0a 68 28 38  	strb	w10, [x0, x8]
+   667bc: 28 fd 60 93  	asr	x8, x9, #32
+   667c0: df 02 08 eb  	cmp	x22, x8
+   667c4: 08 ff ff 54  	b.hi	0x667a4 <display_set_panel_dsi_cmd+0x4e8>
+   667c8: d2 ff ff 17  	b	0x66710 <display_set_panel_dsi_cmd+0x454>
+   667cc: f8 1b 40 f9  	ldr	x24, [sp, #48]
+   667d0: 08 87 40 f9  	ldr	x8, [x24, #264]
+   667d4: 00 c1 0f 91  	add	x0, x8, #1008
+   667d8: 00 00 00 94  	bl	0x667d8 <display_set_panel_dsi_cmd+0x51c> // mutex_lock+0x0
+   667dc: fa 67 42 a9  	ldp	x26, x25, [sp, #32]
+   667e0: 08 03 80 52  	mov	w8, #24
+   667e4: 36 6b 08 9b  	madd	x22, x25, x8, x26
+   667e8: c0 0a 40 f9  	ldr	x0, [x22, #16]
+   667ec: 00 00 00 94  	bl	0x667ec <display_set_panel_dsi_cmd+0x530> // kfree+0x0
+   667f0: 13 00 00 90  	adrp	x19, 0x66000 <display_set_panel_dsi_cmd+0x534> // +0x1674
+   667f4: d4 0a 00 b9  	str	w20, [x22, #8]
+   667f8: d5 0a 00 f9  	str	x21, [x22, #16]
+   667fc: 68 02 40 39  	ldrb	w8, [x19] // +0x1674
+   66800: 1f 05 00 71  	cmp	w8, #1
+   66804: 81 00 00 54  	b.ne	0x66814 <display_set_panel_dsi_cmd+0x558>
+   66808: 08 03 80 52  	mov	w8, #24
+   6680c: 28 6b 08 9b  	madd	x8, x25, x8, x26
+   66810: 1f 05 00 b9  	str	wzr, [x8, #4]
+   66814: 08 87 40 f9  	ldr	x8, [x24, #264]
+   66818: 00 c1 0f 91  	add	x0, x8, #1008
+   6681c: 00 00 00 94  	bl	0x6681c <display_set_panel_dsi_cmd+0x560> // mutex_unlock+0x0
+   66820: f9 0f 40 f9  	ldr	x25, [sp, #24]
+   66824: ff 02 00 b9  	str	wzr, [x23] // +0x1670
+   66828: 7f 02 00 39  	strb	wzr, [x19] // +0x1674
+   6682c: 34 00 00 14  	b	0x668fc <display_set_panel_dsi_cmd+0x640>
+   66830: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x574> // '\x013[LCD][ERR][%s:%d] failed to get main dsi display\n'
+   66834: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0x578> // 'display_dump_panel_dsi_cmd'
+   66838: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] failed to get main dsi display\n'
+   6683c: 21 00 00 91  	add	x1, x1, #0 // 'display_dump_panel_dsi_cmd'
+   66840: 02 21 80 52  	mov	w2, #264
+   66844: 0e 00 00 14  	b	0x6687c <display_set_panel_dsi_cmd+0x5c0>
+   66848: 79 01 80 92  	mov	x25, #-12
+   6684c: 29 00 00 14  	b	0x668f0 <display_set_panel_dsi_cmd+0x634>
+   66850: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x594> // '\x013[LCD][ERR][%s:%d] failed to get main dsi display\n'
+   66854: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0x598> // 'display_set_panel_dsi_cmd'
+   66858: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] failed to get main dsi display\n'
+   6685c: 21 00 00 91  	add	x1, x1, #0 // 'display_set_panel_dsi_cmd'
+   66860: a2 32 80 52  	mov	w2, #405
+   66864: 21 00 00 14  	b	0x668e8 <display_set_panel_dsi_cmd+0x62c>
+   66868: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x5ac> // '\x013[LCD][ERR][%s:%d] failed to get dsi display mode\n'
+   6686c: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0x5b0> // 'display_dump_panel_dsi_cmd'
+   66870: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] failed to get dsi display mode\n'
+   66874: 21 00 00 91  	add	x1, x1, #0 // 'display_dump_panel_dsi_cmd'
+   66878: e2 21 80 52  	mov	w2, #271
+   6687c: 00 00 00 94  	bl	0x6687c <display_set_panel_dsi_cmd+0x5c0> // _printk+0x0
+   66880: b9 01 80 92  	mov	x25, #-14
+   66884: 1e 00 00 14  	b	0x668fc <display_set_panel_dsi_cmd+0x640>
+   66888: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x5cc> // "\x013input reg don't large than 0xff\n"
+   6688c: 00 00 00 91  	add	x0, x0, #0 // "\x013input reg don't large than 0xff\n"
+   66890: 00 00 00 94  	bl	0x66890 <display_set_panel_dsi_cmd+0x5d4> // _printk+0x0
+   66894: b9 02 80 92  	mov	x25, #-22
+   66898: 19 00 00 14  	b	0x668fc <display_set_panel_dsi_cmd+0x640>
+   6689c: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x5e0> // '\x013wrong input reg len\n'
+   668a0: 00 00 00 91  	add	x0, x0, #0 // '\x013wrong input reg len\n'
+   668a4: 00 00 00 94  	bl	0x668a4 <display_set_panel_dsi_cmd+0x5e8> // _printk+0x0
+   668a8: b9 01 80 92  	mov	x25, #-14
+   668ac: ff 02 00 b9  	str	wzr, [x23] // +0x1670
+   668b0: 13 00 00 14  	b	0x668fc <display_set_panel_dsi_cmd+0x640>
+   668b4: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x5f8> // '\x013[LCD][ERR][%s:%d] UnSupport dsi command set\n'
+   668b8: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0x5fc> // 'display_set_panel_dsi_cmd'
+   668bc: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] UnSupport dsi command set\n'
+   668c0: 21 00 00 91  	add	x1, x1, #0 // 'display_set_panel_dsi_cmd'
+   668c4: 02 32 80 52  	mov	w2, #400
+   668c8: 00 00 00 94  	bl	0x668c8 <display_set_panel_dsi_cmd+0x60c> // _printk+0x0
+   668cc: 39 7f 40 93  	sxtw	x25, w25
+   668d0: 08 00 00 14  	b	0x668f0 <display_set_panel_dsi_cmd+0x634>
+   668d4: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x618> // '\x013[LCD][ERR][%s:%d] failed to get dsi display mode\n'
+   668d8: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0x61c> // 'display_set_panel_dsi_cmd'
+   668dc: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] failed to get dsi display mode\n'
+   668e0: 21 00 00 91  	add	x1, x1, #0 // 'display_set_panel_dsi_cmd'
+   668e4: a2 33 80 52  	mov	w2, #413
+   668e8: 00 00 00 94  	bl	0x668e8 <display_set_panel_dsi_cmd+0x62c> // _printk+0x0
+   668ec: b9 01 80 92  	mov	x25, #-14
+   668f0: 08 00 00 90  	adrp	x8, 0x66000 <display_set_panel_dsi_cmd+0x634> // +0x1674
+   668f4: ff 02 00 b9  	str	wzr, [x23] // +0x1670
+   668f8: 1f 01 00 39  	strb	wzr, [x8] // +0x1674
+   668fc: 08 41 38 d5  	mrs	x8, SP_EL0
+   66900: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   66904: a9 03 5f f8  	ldur	x9, [x29, #-16]
+   66908: 1f 01 09 eb  	cmp	x8, x9
+   6690c: e1 05 00 54  	b.ne	0x669c8 <display_set_panel_dsi_cmd+0x70c>
+   66910: e0 03 19 aa  	mov	x0, x25
+   66914: ff 43 15 91  	add	sp, sp, #1360
+   66918: f4 4f 45 a9  	ldp	x20, x19, [sp, #80]
+   6691c: f6 57 44 a9  	ldp	x22, x21, [sp, #64]
+   66920: f8 5f 43 a9  	ldp	x24, x23, [sp, #48]
+   66924: fa 67 42 a9  	ldp	x26, x25, [sp, #32]
+   66928: fc 6f 41 a9  	ldp	x28, x27, [sp, #16]
+   6692c: fd 7b c6 a8  	ldp	x29, x30, [sp], #96
+   66930: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   66934: bf 23 03 d5  	hint	#29
+   66938: c0 03 5f d6  	ret
+   6693c: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x680> // '\x013[LCD][ERR][%s:%d] format error packet_length[%d] length[%d] count[%d]\n'
+   66940: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0x684> // 'display_dsi_panel_get_cmd_pkt_count'
+   66944: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] format error packet_length[%d] length[%d] count[%d]\n'
+   66948: 21 00 00 91  	add	x1, x1, #0 // 'display_dsi_panel_get_cmd_pkt_count'
+   6694c: a2 17 80 52  	mov	w2, #189
+   66950: e5 03 14 2a  	mov	w5, w20
+   66954: 00 00 00 94  	bl	0x66954 <display_set_panel_dsi_cmd+0x698> // _printk+0x0
+   66958: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x69c> // '\x013[LCD][ERR][%s:%d] commands failed, rc=%d\n'
+   6695c: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0x6a0> // 'display_set_panel_dsi_cmd'
+   66960: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] commands failed, rc=%d\n'
+   66964: 21 00 00 91  	add	x1, x1, #0 // 'display_set_panel_dsi_cmd'
+   66968: 62 35 80 52  	mov	w2, #427
+   6696c: a3 02 80 12  	mov	w3, #-22
+   66970: 00 00 00 94  	bl	0x66970 <display_set_panel_dsi_cmd+0x6b4> // _printk+0x0
+   66974: b9 02 80 92  	mov	x25, #-22
+   66978: de ff ff 17  	b	0x668f0 <display_set_panel_dsi_cmd+0x634>
+   6697c: 5f 07 00 71  	cmp	w26, #1
+   66980: c4 00 00 54  	b.mi	0x66998 <display_set_panel_dsi_cmd+0x6dc>
+   66984: b3 a2 00 d1  	sub	x19, x21, #40
+   66988: 60 86 5c f8  	ldr	x0, [x19], #-56
+   6698c: 00 00 00 94  	bl	0x6698c <display_set_panel_dsi_cmd+0x6d0> // kfree+0x0
+   66990: 7b 07 00 31  	adds	w27, w27, #1
+   66994: a3 ff ff 54  	b.lo	0x66988 <display_set_panel_dsi_cmd+0x6cc>
+   66998: 00 00 00 90  	adrp	x0, 0x66000 <display_set_panel_dsi_cmd+0x6dc> // '\x013[LCD][ERR][%s:%d] failed to create cmd packets, rc=%d\n'
+   6699c: 01 00 00 90  	adrp	x1, 0x66000 <display_set_panel_dsi_cmd+0x6e0> // 'display_set_panel_dsi_cmd'
+   669a0: 00 00 00 91  	add	x0, x0, #0 // '\x013[LCD][ERR][%s:%d] failed to create cmd packets, rc=%d\n'
+   669a4: 21 00 00 91  	add	x1, x1, #0 // 'display_set_panel_dsi_cmd'
+   669a8: 82 37 80 52  	mov	w2, #444
+   669ac: 63 01 80 12  	mov	w3, #-12
+   669b0: 00 00 00 94  	bl	0x669b0 <display_set_panel_dsi_cmd+0x6f4> // _printk+0x0
+   669b4: e0 03 15 aa  	mov	x0, x21
+   669b8: 00 00 00 94  	bl	0x669b8 <display_set_panel_dsi_cmd+0x6fc> // kfree+0x0
+   669bc: 79 01 80 92  	mov	x25, #-12
+   669c0: cc ff ff 17  	b	0x668f0 <display_set_panel_dsi_cmd+0x634>
+   669c4: 40 a2 2a d4  	brk	#0x5512
+   669c8: 00 00 00 94  	bl	0x669c8 <display_set_panel_dsi_cmd+0x70c> // __stack_chk_fail+0x0

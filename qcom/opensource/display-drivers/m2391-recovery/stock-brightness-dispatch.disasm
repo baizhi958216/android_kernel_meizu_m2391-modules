@@ -1,0 +1,121 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000067b08 <xjmz_set_brightness>:
+   67b08: 3f 23 03 d5  	hint	#25
+   67b0c: 5e 86 00 f8  	str	x30, [x18], #8
+   67b10: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+   67b14: f4 4f 01 a9  	stp	x20, x19, [sp, #16]
+   67b18: fd 03 00 91  	mov	x29, sp
+   67b1c: 08 00 00 90  	adrp	x8, 0x67000 <xjmz_set_brightness+0x14>
+   67b20: f4 03 00 2a  	mov	w20, w0
+   67b24: 08 01 40 f9  	ldr	x8, [x8]
+   67b28: 09 85 40 f9  	ldr	x9, [x8, #264]
+   67b2c: 20 6d 05 b9  	str	w0, [x9, #1388]
+   67b30: 13 85 40 f9  	ldr	x19, [x8, #264]
+   67b34: 68 3a 48 b9  	ldr	w8, [x19, #2104]
+   67b38: 48 03 00 34  	cbz	w8, 0x67ba0 <xjmz_set_brightness+0x98>
+   67b3c: 88 3e 00 12  	and	w8, w20, #0xffff
+   67b40: 1f ad 00 71  	cmp	w8, #43
+   67b44: 20 04 00 54  	b.eq	0x67bc8 <xjmz_set_brightness+0xc0>
+   67b48: 1f 5d 03 71  	cmp	w8, #215
+   67b4c: 21 03 00 54  	b.ne	0x67bb0 <xjmz_set_brightness+0xa8>
+   67b50: 81 03 80 52  	mov	w1, #28
+   67b54: f3 03 00 b4  	cbz	x19, 0x67bd0 <xjmz_set_brightness+0xc8>
+   67b58: 68 52 5c 39  	ldrb	w8, [x19, #1812]
+   67b5c: 88 04 00 34  	cbz	w8, 0x67bec <xjmz_set_brightness+0xe4>
+   67b60: 68 42 48 b9  	ldr	w8, [x19, #2112]
+   67b64: 1f 01 01 6b  	cmp	w8, w1
+   67b68: 40 02 00 54  	b.eq	0x67bb0 <xjmz_set_brightness+0xa8>
+   67b6c: e0 03 13 aa  	mov	x0, x19
+   67b70: 61 42 08 b9  	str	w1, [x19, #2112]
+   67b74: 00 00 00 94  	bl	0x67b74 <xjmz_set_brightness+0x6c>
+   67b78: c0 01 00 34  	cbz	w0, 0x67bb0 <xjmz_set_brightness+0xa8>
+   67b7c: e4 03 00 2a  	mov	w4, w0
+   67b80: 00 00 00 90  	adrp	x0, 0x67000 <xjmz_set_brightness+0x78>
+   67b84: 01 00 00 90  	adrp	x1, 0x67000 <xjmz_set_brightness+0x7c>
+   67b88: 63 02 40 f9  	ldr	x3, [x19]
+   67b8c: 00 00 00 91  	add	x0, x0, #0
+   67b90: 21 00 00 91  	add	x1, x1, #0
+   67b94: 42 13 80 52  	mov	w2, #154
+   67b98: 00 00 00 94  	bl	0x67b98 <xjmz_set_brightness+0x90>
+   67b9c: 05 00 00 14  	b	0x67bb0 <xjmz_set_brightness+0xa8>
+   67ba0: e0 03 13 aa  	mov	x0, x19
+   67ba4: e1 03 14 2a  	mov	w1, w20
+   67ba8: 00 00 00 94  	bl	0x67ba8 <xjmz_set_brightness+0xa0>
+   67bac: e0 02 f8 37  	tbnz	w0, #31, 0x67c08 <xjmz_set_brightness+0x100>
+   67bb0: f4 4f 41 a9  	ldp	x20, x19, [sp, #16]
+   67bb4: e0 03 1f 2a  	mov	w0, wzr
+   67bb8: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+   67bbc: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   67bc0: bf 23 03 d5  	hint	#29
+   67bc4: c0 03 5f d6  	ret
+   67bc8: 61 03 80 52  	mov	w1, #27
+   67bcc: 73 fc ff b5  	cbnz	x19, 0x67b58 <xjmz_set_brightness+0x50>
+   67bd0: 00 00 00 90  	adrp	x0, 0x67000 <xjmz_set_brightness+0xc8>
+   67bd4: 01 00 00 90  	adrp	x1, 0x67000 <xjmz_set_brightness+0xcc>
+   67bd8: 00 00 00 91  	add	x0, x0, #0
+   67bdc: 21 00 00 91  	add	x1, x1, #0
+   67be0: 82 10 80 52  	mov	w2, #132
+   67be4: 00 00 00 94  	bl	0x67be4 <xjmz_set_brightness+0xdc>
+   67be8: f2 ff ff 17  	b	0x67bb0 <xjmz_set_brightness+0xa8>
+   67bec: 00 00 00 90  	adrp	x0, 0x67000 <xjmz_set_brightness+0xe4>
+   67bf0: 01 00 00 90  	adrp	x1, 0x67000 <xjmz_set_brightness+0xe8>
+   67bf4: 00 00 00 91  	add	x0, x0, #0
+   67bf8: 21 00 00 91  	add	x1, x1, #0
+   67bfc: 22 11 80 52  	mov	w2, #137
+   67c00: 00 00 00 94  	bl	0x67c00 <xjmz_set_brightness+0xf8>
+   67c04: eb ff ff 17  	b	0x67bb0 <xjmz_set_brightness+0xa8>
+   67c08: 00 00 00 90  	adrp	x0, 0x67000 <xjmz_set_brightness+0x100>
+   67c0c: 01 00 00 90  	adrp	x1, 0x67000 <xjmz_set_brightness+0x104>
+   67c10: 00 00 00 91  	add	x0, x0, #0
+   67c14: 21 00 00 91  	add	x1, x1, #0
+   67c18: c2 18 80 52  	mov	w2, #198
+   67c1c: e3 03 14 2a  	mov	w3, w20
+   67c20: 00 00 00 94  	bl	0x67c20 <xjmz_set_brightness+0x118>
+   67c24: e3 ff ff 17  	b	0x67bb0 <xjmz_set_brightness+0xa8>
+
+000000000016d244 <dsi_panel_update_backlight>:
+  16d244: 3f 23 03 d5  	hint	#25
+  16d248: 5e 86 00 f8  	str	x30, [x18], #8
+  16d24c: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  16d250: f4 4f 01 a9  	stp	x20, x19, [sp, #16]
+  16d254: fd 03 00 91  	mov	x29, sp
+  16d258: 20 02 00 b4  	cbz	x0, 0x16d29c <dsi_panel_update_backlight+0x58>
+  16d25c: 3f 40 40 71  	cmp	w1, #16, lsl #12        // =65536
+  16d260: e2 01 00 54  	b.hs	0x16d29c <dsi_panel_update_backlight+0x58>
+  16d264: f3 03 00 aa  	mov	x19, x0
+  16d268: 08 c0 56 39  	ldrb	w8, [x0, #1456]
+  16d26c: 08 03 00 35  	cbnz	w8, 0x16d2cc <dsi_panel_update_backlight+0x88>
+  16d270: f4 03 1f aa  	mov	x20, xzr
+  16d274: 68 c2 55 39  	ldrb	w8, [x19, #1392]
+  16d278: 29 1c 18 53  	ubfiz	w9, w1, #8, #8
+  16d27c: 29 21 41 2a  	orr	w9, w9, w1, lsr #8
+  16d280: 1f 01 00 71  	cmp	w8, #0
+  16d284: 20 00 89 1a  	csel	w0, w1, w9, eq
+  16d288: 00 00 00 94  	bl	0x16d288 <dsi_panel_update_backlight+0x44>
+  16d28c: 68 c2 56 39  	ldrb	w8, [x19, #1456]
+  16d290: 68 02 00 35  	cbnz	w8, 0x16d2dc <dsi_panel_update_backlight+0x98>
+  16d294: e0 03 1f 2a  	mov	w0, wzr
+  16d298: 08 00 00 14  	b	0x16d2b8 <dsi_panel_update_backlight+0x74>
+  16d29c: 01 00 00 90  	adrp	x1, 0x16d000 <dsi_panel_update_backlight+0x58>
+  16d2a0: 02 00 00 90  	adrp	x2, 0x16d000 <dsi_panel_update_backlight+0x5c>
+  16d2a4: 21 00 00 91  	add	x1, x1, #0
+  16d2a8: 42 00 00 91  	add	x2, x2, #0
+  16d2ac: e0 03 1f aa  	mov	x0, xzr
+  16d2b0: 00 00 00 94  	bl	0x16d2b0 <dsi_panel_update_backlight+0x6c>
+  16d2b4: a0 02 80 12  	mov	w0, #-22
+  16d2b8: f4 4f 41 a9  	ldp	x20, x19, [sp, #16]
+  16d2bc: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  16d2c0: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  16d2c4: bf 23 03 d5  	hint	#29
+  16d2c8: c0 03 5f d6  	ret
+  16d2cc: 74 ea 41 f9  	ldr	x20, [x19, #976]
+  16d2d0: 88 02 75 b2  	orr	x8, x20, #0x800
+  16d2d4: 68 ea 01 f9  	str	x8, [x19, #976]
+  16d2d8: e7 ff ff 17  	b	0x16d274 <dsi_panel_update_backlight+0x30>
+  16d2dc: e0 03 1f 2a  	mov	w0, wzr
+  16d2e0: 74 ea 01 f9  	str	x20, [x19, #976]
+  16d2e4: f5 ff ff 17  	b	0x16d2b8 <dsi_panel_update_backlight+0x74>

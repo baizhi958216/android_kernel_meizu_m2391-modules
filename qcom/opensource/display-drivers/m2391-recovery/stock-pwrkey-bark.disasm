@@ -1,0 +1,27 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000015ed3c <dsi_display_off>:
+  15ed3c: 3f 23 03 d5  	hint	#25
+  15ed40: 5e 86 00 f8  	str	x30, [x18], #8
+  15ed44: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  15ed48: f3 0b 00 f9  	str	x19, [sp, #16]
+  15ed4c: fd 03 00 91  	mov	x29, sp
+  15ed50: 13 00 00 90  	adrp	x19, 0x15e000 <dsi_display_off+0x14> // +0x4f70
+  15ed54: 60 02 40 f9  	ldr	x0, [x19] // +0x4f70
+  15ed58: 40 01 00 b4  	cbz	x0, 0x15ed80 <dsi_display_off+0x44>
+  15ed5c: 00 00 00 94  	bl	0x15ed5c <dsi_display_off+0x20> // dsi_panel_disable+0x0
+  15ed60: 60 02 40 f9  	ldr	x0, [x19] // +0x4f70
+  15ed64: 00 00 00 94  	bl	0x15ed64 <dsi_display_off+0x28> // dsi_panel_post_unprepare+0x0
+  15ed68: f3 0b 40 f9  	ldr	x19, [sp, #16]
+  15ed6c: e0 03 1f 2a  	mov	w0, wzr
+  15ed70: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  15ed74: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  15ed78: bf 23 03 d5  	hint	#29
+  15ed7c: c0 03 5f d6  	ret
+  15ed80: 00 00 00 90  	adrp	x0, 0x15e000 <dsi_display_off+0x44> // '\x013[DDI]display has not ready yet! do nothing.\n'
+  15ed84: 00 00 00 91  	add	x0, x0, #0 // '\x013[DDI]display has not ready yet! do nothing.\n'
+  15ed88: 00 00 00 94  	bl	0x15ed88 <dsi_display_off+0x4c> // _printk+0x0
+  15ed8c: f7 ff ff 17  	b	0x15ed68 <dsi_display_off+0x2c>

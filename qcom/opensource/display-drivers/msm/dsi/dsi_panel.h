@@ -256,6 +256,11 @@ struct dsi_panel {
 	atomic_t esd_recovery_pending;
 
 	bool panel_initialized;
+	/* Recovered M2391 state; source layout is independent of stock offsets. */
+	bool meizu_aod_active;
+	int meizu_last_aod_command;
+	u32 meizu_adfr_fps;
+	bool meizu_adfr_auto;
 	bool te_using_watchdog_timer;
 	struct dsi_qsync_capabilities qsync_caps;
 	struct dsi_avr_capabilities avr_caps;
@@ -410,4 +415,14 @@ int dsi_panel_create_cmd_packets(const char *data, u32 length, u32 count,
 void dsi_panel_destroy_cmd_packets(struct dsi_panel_cmd_set *set);
 
 void dsi_panel_dealloc_cmd_packets(struct dsi_panel_cmd_set *set);
+
+/* Caller supplies a live panel and handles locking, LP mode and AOD dispatch. */
+int dsi_panel_meizu_set_brightness(struct dsi_panel *panel, u16 brightness);
+int dsi_panel_meizu_dispatch_brightness(struct dsi_panel *panel, u32 brightness,
+		bool aod_active, int *last_aod_command);
+int dsi_panel_meizu_set_adfr(struct dsi_panel *panel, u32 request, bool force);
+int dsi_panel_meizu_set_aod(struct dsi_panel *panel, bool active);
+bool dsi_panel_is_m2391(struct dsi_panel *panel);
+int dsi_panel_meizu_set_aod_light(struct dsi_panel *panel, int mode,
+		int *current_mode);
 #endif /* _DSI_PANEL_H_ */

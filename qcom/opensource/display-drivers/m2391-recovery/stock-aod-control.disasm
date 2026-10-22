@@ -1,0 +1,168 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000176994 <dsi_panel_set_aod>:
+  176994: 3f 23 03 d5  	hint	#25
+  176998: 5e 86 00 f8  	str	x30, [x18], #8
+  17699c: fd 7b bb a9  	stp	x29, x30, [sp, #-80]!
+  1769a0: fa 67 01 a9  	stp	x26, x25, [sp, #16]
+  1769a4: fd 03 00 91  	mov	x29, sp
+  1769a8: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+  1769ac: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+  1769b0: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+  1769b4: c0 00 00 b5  	cbnz	x0, 0x1769cc <dsi_panel_set_aod+0x38>
+  1769b8: 00 00 00 90  	adrp	x0, 0x176000 <dsi_panel_set_aod+0x24>
+  1769bc: 00 00 00 91  	add	x0, x0, #0
+  1769c0: 00 00 00 94  	bl	0x1769c0 <dsi_panel_set_aod+0x2c>
+  1769c4: b8 02 80 12  	mov	w24, #-22
+  1769c8: 1b 00 00 14  	b	0x176a34 <dsi_panel_set_aod+0xa0>
+  1769cc: 14 c0 0f 91  	add	x20, x0, #1008
+  1769d0: f3 03 00 aa  	mov	x19, x0
+  1769d4: e0 03 14 aa  	mov	x0, x20
+  1769d8: 3f 00 00 71  	cmp	w1, #0
+  1769dc: 28 03 80 52  	mov	w8, #25
+  1769e0: f5 03 01 2a  	mov	w21, w1
+  1769e4: 18 15 88 1a  	cinc	w24, w8, eq
+  1769e8: 00 00 00 94  	bl	0x1769e8 <dsi_panel_set_aod+0x54>
+  1769ec: 68 52 5c 39  	ldrb	w8, [x19, #1812]
+  1769f0: 88 00 00 35  	cbnz	w8, 0x176a00 <dsi_panel_set_aod+0x6c>
+  1769f4: 00 00 00 90  	adrp	x0, 0x176000 <dsi_panel_set_aod+0x60>
+  1769f8: 00 00 00 91  	add	x0, x0, #0
+  1769fc: 06 00 00 14  	b	0x176a14 <dsi_panel_set_aod+0x80>
+  176a00: 68 3a 48 b9  	ldr	w8, [x19, #2104]
+  176a04: 1f 01 15 6b  	cmp	w8, w21
+  176a08: 81 02 00 54  	b.ne	0x176a58 <dsi_panel_set_aod+0xc4>
+  176a0c: 00 00 00 90  	adrp	x0, 0x176000 <dsi_panel_set_aod+0x78>
+  176a10: 00 00 00 91  	add	x0, x0, #0
+  176a14: 00 00 00 94  	bl	0x176a14 <dsi_panel_set_aod+0x80>
+  176a18: f8 03 1f 2a  	mov	w24, wzr
+  176a1c: e0 03 14 aa  	mov	x0, x20
+  176a20: 00 00 00 94  	bl	0x176a20 <dsi_panel_set_aod+0x8c>
+  176a24: 61 3e 48 b9  	ldr	w1, [x19, #2108]
+  176a28: e0 03 13 aa  	mov	x0, x19
+  176a2c: 22 00 80 52  	mov	w2, #1
+  176a30: 00 00 00 94  	bl	0x176a30 <dsi_panel_set_aod+0x9c>
+  176a34: e0 03 18 2a  	mov	w0, w24
+  176a38: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+  176a3c: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+  176a40: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+  176a44: fa 67 41 a9  	ldp	x26, x25, [sp, #16]
+  176a48: fd 7b c5 a8  	ldp	x29, x30, [sp], #80
+  176a4c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  176a50: bf 23 03 d5  	hint	#29
+  176a54: c0 03 5f d6  	ret
+  176a58: 00 00 00 90  	adrp	x0, 0x176000 <dsi_panel_set_aod+0xc4>
+  176a5c: 01 00 00 90  	adrp	x1, 0x176000 <dsi_panel_set_aod+0xc8>
+  176a60: 00 00 00 91  	add	x0, x0, #0
+  176a64: 21 00 00 91  	add	x1, x1, #0
+  176a68: e2 03 15 2a  	mov	w2, w21
+  176a6c: 00 00 00 94  	bl	0x176a6c <dsi_panel_set_aod+0xd8>
+  176a70: 08 00 00 90  	adrp	x8, 0x176000 <dsi_panel_set_aod+0xdc>
+  176a74: 09 00 00 90  	adrp	x9, 0x176000 <dsi_panel_set_aod+0xe0>
+  176a78: 08 01 00 91  	add	x8, x8, #0
+  176a7c: 29 01 00 91  	add	x9, x9, #0
+  176a80: bf 02 00 71  	cmp	w21, #0
+  176a84: 0a 00 80 12  	mov	w10, #-1
+  176a88: 37 01 88 9a  	csel	x23, x9, x8, eq
+  176a8c: 16 41 38 d5  	mrs	x22, SP_EL0
+  176a90: 6a 42 08 b9  	str	w10, [x19, #2112]
+  176a94: 1f 20 03 d5  	nop
+
+0000000000176a98 <$x.8263>:
+  176a98: e0 03 13 aa  	mov	x0, x19
+  176a9c: e1 03 18 2a  	mov	w1, w24
+  176aa0: 00 00 00 94  	bl	0x176aa0 <$x.8263+0x8>
+  176aa4: f8 03 00 2a  	mov	w24, w0
+  176aa8: 1f 20 03 d5  	nop
+
+0000000000176aac <$x.8265>:
+  176aac: 58 01 00 34  	cbz	w24, 0x176ad4 <$x.8265+0x28>
+  176ab0: 01 00 00 90  	adrp	x1, 0x176000 <$x.8265+0x4>
+  176ab4: 02 00 00 90  	adrp	x2, 0x176000 <$x.8265+0x8>
+  176ab8: 63 02 40 f9  	ldr	x3, [x19]
+  176abc: 21 00 00 91  	add	x1, x1, #0
+  176ac0: 42 00 00 91  	add	x2, x2, #0
+  176ac4: e0 03 1f aa  	mov	x0, xzr
+  176ac8: e4 03 18 2a  	mov	w4, w24
+  176acc: 00 00 00 94  	bl	0x176acc <$x.8265+0x20>
+  176ad0: d3 ff ff 17  	b	0x176a1c <dsi_panel_set_aod+0x88>
+  176ad4: 75 3a 08 b9  	str	w21, [x19, #2104]
+  176ad8: d1 ff ff 17  	b	0x176a1c <dsi_panel_set_aod+0x88>
+  176adc: 9f 24 03 d5  	hint	#36
+  176ae0: 09 00 00 90  	adrp	x9, 0x176000 <$x.8265+0x34>
+  176ae4: 88 d0 38 d5  	mrs	x8, TPIDR_EL1
+  176ae8: 29 01 00 91  	add	x9, x9, #0
+  176aec: 0a 00 00 90  	adrp	x10, 0x176000 <$x.8265+0x40>
+  176af0: 4a 01 00 91  	add	x10, x10, #0
+  176af4: 08 69 69 b8  	ldr	w8, [x8, x9]
+  176af8: 09 fd 43 d3  	lsr	x9, x8, #3
+  176afc: 29 65 7d 92  	and	x9, x9, #0x1ffffff8
+  176b00: 49 69 69 f8  	ldr	x9, [x10, x9]
+  176b04: 28 25 c8 9a  	lsr	x8, x9, x8
+  176b08: 88 fc 07 36  	tbz	w8, #0, 0x176a98 <$x.8263>
+  176b0c: d9 42 00 91  	add	x25, x22, #16
+  176b10: 28 ff df 88  	ldar	w8, [x25]
+  176b14: 08 05 00 11  	add	w8, w8, #1
+  176b18: c8 12 00 b9  	str	w8, [x22, #16]
+  176b1c: 08 00 00 90  	adrp	x8, 0x176000 <$x.8265+0x70>
+  176b20: 08 01 00 91  	add	x8, x8, #0
+  176b24: 1a fd df c8  	ldar	x26, [x8]
+  176b28: 5a 01 00 b4  	cbz	x26, 0x176b50 <$x.8265+0xa4>
+  176b2c: 48 ff df c8  	ldar	x8, [x26]
+  176b30: 41 08 80 52  	mov	w1, #66
+  176b34: 40 07 40 f9  	ldr	x0, [x26, #8]
+  176b38: e2 03 16 aa  	mov	x2, x22
+  176b3c: e3 03 17 aa  	mov	x3, x23
+  176b40: e4 03 1f 2a  	mov	w4, wzr
+  176b44: 00 01 3f d6  	blr	x8
+  176b48: 48 8f 41 f8  	ldr	x8, [x26, #24]!
+  176b4c: 08 ff ff b5  	cbnz	x8, 0x176b2c <$x.8265+0x80>
+  176b50: 28 ff df c8  	ldar	x8, [x25]
+  176b54: 08 05 00 f1  	subs	x8, x8, #1
+  176b58: c8 12 00 b9  	str	w8, [x22, #16]
+  176b5c: 80 00 00 54  	b.eq	0x176b6c <$x.8265+0xc0>
+  176b60: c8 42 00 91  	add	x8, x22, #16
+  176b64: 08 fd df c8  	ldar	x8, [x8]
+  176b68: 88 f9 ff b5  	cbnz	x8, 0x176a98 <$x.8263>
+  176b6c: 00 00 00 94  	bl	0x176b6c <$x.8265+0xc0>
+  176b70: ca ff ff 17  	b	0x176a98 <$x.8263>
+  176b74: 9f 24 03 d5  	hint	#36
+  176b78: 09 00 00 90  	adrp	x9, 0x176000 <$x.8265+0xcc>
+  176b7c: 88 d0 38 d5  	mrs	x8, TPIDR_EL1
+  176b80: 29 01 00 91  	add	x9, x9, #0
+  176b84: 0a 00 00 90  	adrp	x10, 0x176000 <$x.8265+0xd8>
+  176b88: 4a 01 00 91  	add	x10, x10, #0
+  176b8c: 08 69 69 b8  	ldr	w8, [x8, x9]
+  176b90: 09 fd 43 d3  	lsr	x9, x8, #3
+  176b94: 29 65 7d 92  	and	x9, x9, #0x1ffffff8
+  176b98: 49 69 69 f8  	ldr	x9, [x10, x9]
+  176b9c: 28 25 c8 9a  	lsr	x8, x9, x8
+  176ba0: 68 f8 07 36  	tbz	w8, #0, 0x176aac <$x.8265>
+  176ba4: d9 42 00 91  	add	x25, x22, #16
+  176ba8: 28 ff df 88  	ldar	w8, [x25]
+  176bac: 08 05 00 11  	add	w8, w8, #1
+  176bb0: c8 12 00 b9  	str	w8, [x22, #16]
+  176bb4: 08 00 00 90  	adrp	x8, 0x176000 <$x.8265+0x108>
+  176bb8: 08 01 00 91  	add	x8, x8, #0
+  176bbc: 1a fd df c8  	ldar	x26, [x8]
+  176bc0: 5a 01 00 b4  	cbz	x26, 0x176be8 <$x.8265+0x13c>
+  176bc4: 48 ff df c8  	ldar	x8, [x26]
+  176bc8: a1 08 80 52  	mov	w1, #69
+  176bcc: 40 07 40 f9  	ldr	x0, [x26, #8]
+  176bd0: e2 03 16 aa  	mov	x2, x22
+  176bd4: e3 03 17 aa  	mov	x3, x23
+  176bd8: e4 03 1f 2a  	mov	w4, wzr
+  176bdc: 00 01 3f d6  	blr	x8
+  176be0: 48 8f 41 f8  	ldr	x8, [x26, #24]!
+  176be4: 08 ff ff b5  	cbnz	x8, 0x176bc4 <$x.8265+0x118>
+  176be8: 28 ff df c8  	ldar	x8, [x25]
+  176bec: 08 05 00 f1  	subs	x8, x8, #1
+  176bf0: c8 12 00 b9  	str	w8, [x22, #16]
+  176bf4: 80 00 00 54  	b.eq	0x176c04 <$x.8265+0x158>
+  176bf8: c8 42 00 91  	add	x8, x22, #16
+  176bfc: 08 fd df c8  	ldar	x8, [x8]
+  176c00: 68 f5 ff b5  	cbnz	x8, 0x176aac <$x.8265>
+  176c04: 00 00 00 94  	bl	0x176c04 <$x.8265+0x158>
+  176c08: a9 ff ff 17  	b	0x176aac <$x.8265>

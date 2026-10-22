@@ -1,0 +1,224 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001613e0 <dsi_display_adfr_show>:
+  1613e0: 3f 23 03 d5  	hint	#25
+  1613e4: 5e 86 00 f8  	str	x30, [x18], #8
+  1613e8: fd 7b bf a9  	stp	x29, x30, [sp, #-16]!
+  1613ec: fd 03 00 91  	mov	x29, sp
+  1613f0: e0 03 00 b4  	cbz	x0, 0x16146c <dsi_display_adfr_show+0x8c>
+  1613f4: 08 40 00 d1  	sub	x8, x0, #16
+  1613f8: a8 03 00 b4  	cbz	x8, 0x16146c <dsi_display_adfr_show+0x8c>
+  1613fc: 08 55 40 f9  	ldr	x8, [x8, #168]
+  161400: 88 02 00 b4  	cbz	x8, 0x161450 <dsi_display_adfr_show+0x70>
+  161404: 08 85 40 f9  	ldr	x8, [x8, #264]
+  161408: 48 02 00 b4  	cbz	x8, 0x161450 <dsi_display_adfr_show+0x70>
+  16140c: 09 11 61 39  	ldrb	w9, [x8, #2116]
+  161410: 03 3d 48 b9  	ldr	w3, [x8, #2108]
+  161414: 89 00 00 34  	cbz	w9, 0x161424 <dsi_display_adfr_show+0x44>
+  161418: 08 00 00 90  	adrp	x8, 0x161000 <dsi_display_adfr_show+0x38>
+  16141c: 08 01 00 91  	add	x8, x8, #0
+  161420: 03 00 00 14  	b	0x16142c <dsi_display_adfr_show+0x4c>
+  161424: 08 00 00 90  	adrp	x8, 0x161000 <dsi_display_adfr_show+0x44>
+  161428: 08 01 00 91  	add	x8, x8, #0
+  16142c: e0 03 02 aa  	mov	x0, x2
+  161430: 01 00 82 52  	mov	w1, #4096
+  161434: e2 03 08 aa  	mov	x2, x8
+  161438: 00 00 00 94  	bl	0x161438 <dsi_display_adfr_show+0x58>
+  16143c: 00 7c 40 93  	sxtw	x0, w0
+  161440: fd 7b c1 a8  	ldp	x29, x30, [sp], #16
+  161444: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  161448: bf 23 03 d5  	hint	#29
+  16144c: c0 03 5f d6  	ret
+  161450: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_adfr_show+0x70>
+  161454: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_adfr_show+0x74>
+  161458: 00 00 00 91  	add	x0, x0, #0
+  16145c: 21 00 00 91  	add	x1, x1, #0
+  161460: 00 00 00 94  	bl	0x161460 <dsi_display_adfr_show+0x80>
+  161464: 80 00 80 92  	mov	x0, #-5
+  161468: f6 ff ff 17  	b	0x161440 <dsi_display_adfr_show+0x60>
+  16146c: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_adfr_show+0x8c>
+  161470: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_adfr_show+0x90>
+  161474: 00 00 00 91  	add	x0, x0, #0
+  161478: 21 00 00 91  	add	x1, x1, #0
+  16147c: 00 00 00 94  	bl	0x16147c <dsi_display_adfr_show+0x9c>
+  161480: a0 02 80 92  	mov	x0, #-22
+  161484: ef ff ff 17  	b	0x161440 <dsi_display_adfr_show+0x60>
+
+0000000000161488 <dsi_display_adfr_store>:
+  161488: 3f 23 03 d5  	hint	#25
+  16148c: ff c3 00 d1  	sub	sp, sp, #48
+  161490: 5e 86 00 f8  	str	x30, [x18], #8
+  161494: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  161498: fd 43 00 91  	add	x29, sp, #16
+  16149c: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  1614a0: 09 41 38 d5  	mrs	x9, SP_EL0
+  1614a4: 29 f1 42 f9  	ldr	x9, [x9, #1504]
+  1614a8: e9 07 00 f9  	str	x9, [sp, #8]
+  1614ac: ff 07 00 b9  	str	wzr, [sp, #4]
+  1614b0: a0 04 00 b4  	cbz	x0, 0x161544 <dsi_display_adfr_store+0xbc>
+  1614b4: 09 40 00 d1  	sub	x9, x0, #16
+  1614b8: 69 04 00 b4  	cbz	x9, 0x161544 <dsi_display_adfr_store+0xbc>
+  1614bc: 29 55 40 f9  	ldr	x9, [x9, #168]
+  1614c0: 49 03 00 b4  	cbz	x9, 0x161528 <dsi_display_adfr_store+0xa0>
+  1614c4: 34 85 40 f9  	ldr	x20, [x9, #264]
+  1614c8: 14 03 00 b4  	cbz	x20, 0x161528 <dsi_display_adfr_store+0xa0>
+  1614cc: e8 03 02 aa  	mov	x8, x2
+  1614d0: e2 13 00 91  	add	x2, sp, #4
+  1614d4: e0 03 08 aa  	mov	x0, x8
+  1614d8: e1 03 1f 2a  	mov	w1, wzr
+  1614dc: f3 03 03 aa  	mov	x19, x3
+  1614e0: 00 00 00 94  	bl	0x1614e0 <dsi_display_adfr_store+0x58>
+  1614e4: e0 03 00 35  	cbnz	w0, 0x161560 <dsi_display_adfr_store+0xd8>
+  1614e8: e1 07 40 b9  	ldr	w1, [sp, #4]
+  1614ec: e0 03 14 aa  	mov	x0, x20
+  1614f0: e2 03 1f 2a  	mov	w2, wzr
+  1614f4: 00 00 00 94  	bl	0x1614f4 <dsi_display_adfr_store+0x6c>
+  1614f8: 08 41 38 d5  	mrs	x8, SP_EL0
+  1614fc: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  161500: e9 07 40 f9  	ldr	x9, [sp, #8]
+  161504: 1f 01 09 eb  	cmp	x8, x9
+  161508: a1 03 00 54  	b.ne	0x16157c <dsi_display_adfr_store+0xf4>
+  16150c: e0 03 13 aa  	mov	x0, x19
+  161510: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  161514: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  161518: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  16151c: ff c3 00 91  	add	sp, sp, #48
+  161520: bf 23 03 d5  	hint	#29
+  161524: c0 03 5f d6  	ret
+  161528: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_adfr_store+0xa0>
+  16152c: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_adfr_store+0xa4>
+  161530: 00 00 00 91  	add	x0, x0, #0
+  161534: 21 00 00 91  	add	x1, x1, #0
+  161538: 00 00 00 94  	bl	0x161538 <dsi_display_adfr_store+0xb0>
+  16153c: 93 00 80 92  	mov	x19, #-5
+  161540: ee ff ff 17  	b	0x1614f8 <dsi_display_adfr_store+0x70>
+  161544: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_adfr_store+0xbc>
+  161548: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_adfr_store+0xc0>
+  16154c: 00 00 00 91  	add	x0, x0, #0
+  161550: 21 00 00 91  	add	x1, x1, #0
+  161554: 00 00 00 94  	bl	0x161554 <dsi_display_adfr_store+0xcc>
+  161558: b3 02 80 92  	mov	x19, #-22
+  16155c: e7 ff ff 17  	b	0x1614f8 <dsi_display_adfr_store+0x70>
+  161560: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_adfr_store+0xd8>
+  161564: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_adfr_store+0xdc>
+  161568: 00 00 00 91  	add	x0, x0, #0
+  16156c: 21 00 00 91  	add	x1, x1, #0
+  161570: 00 00 00 94  	bl	0x161570 <dsi_display_adfr_store+0xe8>
+  161574: b3 01 80 92  	mov	x19, #-14
+  161578: e0 ff ff 17  	b	0x1614f8 <dsi_display_adfr_store+0x70>
+  16157c: 00 00 00 94  	bl	0x16157c <dsi_display_adfr_store+0xf4>
+
+0000000000161580 <dsi_display_aod_show>:
+  161580: 3f 23 03 d5  	hint	#25
+  161584: 5e 86 00 f8  	str	x30, [x18], #8
+  161588: fd 7b bf a9  	stp	x29, x30, [sp, #-16]!
+  16158c: fd 03 00 91  	mov	x29, sp
+  161590: 40 03 00 b4  	cbz	x0, 0x1615f8 <dsi_display_aod_show+0x78>
+  161594: 08 40 00 d1  	sub	x8, x0, #16
+  161598: 08 03 00 b4  	cbz	x8, 0x1615f8 <dsi_display_aod_show+0x78>
+  16159c: 08 55 40 f9  	ldr	x8, [x8, #168]
+  1615a0: e8 01 00 b4  	cbz	x8, 0x1615dc <dsi_display_aod_show+0x5c>
+  1615a4: 08 85 40 f9  	ldr	x8, [x8, #264]
+  1615a8: a8 01 00 b4  	cbz	x8, 0x1615dc <dsi_display_aod_show+0x5c>
+  1615ac: 03 39 48 b9  	ldr	w3, [x8, #2104]
+  1615b0: 08 00 00 90  	adrp	x8, 0x161000 <dsi_display_aod_show+0x30>
+  1615b4: 08 01 00 91  	add	x8, x8, #0
+  1615b8: e0 03 02 aa  	mov	x0, x2
+  1615bc: 01 00 82 52  	mov	w1, #4096
+  1615c0: e2 03 08 aa  	mov	x2, x8
+  1615c4: 00 00 00 94  	bl	0x1615c4 <dsi_display_aod_show+0x44>
+  1615c8: 00 7c 40 93  	sxtw	x0, w0
+  1615cc: fd 7b c1 a8  	ldp	x29, x30, [sp], #16
+  1615d0: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1615d4: bf 23 03 d5  	hint	#29
+  1615d8: c0 03 5f d6  	ret
+  1615dc: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_aod_show+0x5c>
+  1615e0: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_aod_show+0x60>
+  1615e4: 00 00 00 91  	add	x0, x0, #0
+  1615e8: 21 00 00 91  	add	x1, x1, #0
+  1615ec: 00 00 00 94  	bl	0x1615ec <dsi_display_aod_show+0x6c>
+  1615f0: 80 00 80 92  	mov	x0, #-5
+  1615f4: f6 ff ff 17  	b	0x1615cc <dsi_display_aod_show+0x4c>
+  1615f8: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_aod_show+0x78>
+  1615fc: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_aod_show+0x7c>
+  161600: 00 00 00 91  	add	x0, x0, #0
+  161604: 21 00 00 91  	add	x1, x1, #0
+  161608: 00 00 00 94  	bl	0x161608 <dsi_display_aod_show+0x88>
+  16160c: a0 02 80 92  	mov	x0, #-22
+  161610: ef ff ff 17  	b	0x1615cc <dsi_display_aod_show+0x4c>
+
+0000000000161614 <dsi_display_aod_store>:
+  161614: 3f 23 03 d5  	hint	#25
+  161618: ff c3 00 d1  	sub	sp, sp, #48
+  16161c: 5e 86 00 f8  	str	x30, [x18], #8
+  161620: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  161624: fd 43 00 91  	add	x29, sp, #16
+  161628: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  16162c: 09 41 38 d5  	mrs	x9, SP_EL0
+  161630: 29 f1 42 f9  	ldr	x9, [x9, #1504]
+  161634: e9 07 00 f9  	str	x9, [sp, #8]
+  161638: ff 07 00 b9  	str	wzr, [sp, #4]
+  16163c: e0 04 00 b4  	cbz	x0, 0x1616d8 <dsi_display_aod_store+0xc4>
+  161640: 09 40 00 d1  	sub	x9, x0, #16
+  161644: a9 04 00 b4  	cbz	x9, 0x1616d8 <dsi_display_aod_store+0xc4>
+  161648: 29 55 40 f9  	ldr	x9, [x9, #168]
+  16164c: 89 03 00 b4  	cbz	x9, 0x1616bc <dsi_display_aod_store+0xa8>
+  161650: 34 85 40 f9  	ldr	x20, [x9, #264]
+  161654: 54 03 00 b4  	cbz	x20, 0x1616bc <dsi_display_aod_store+0xa8>
+  161658: e8 03 02 aa  	mov	x8, x2
+  16165c: e2 13 00 91  	add	x2, sp, #4
+  161660: e0 03 08 aa  	mov	x0, x8
+  161664: e1 03 1f 2a  	mov	w1, wzr
+  161668: f3 03 03 aa  	mov	x19, x3
+  16166c: 00 00 00 94  	bl	0x16166c <dsi_display_aod_store+0x58>
+  161670: 20 04 00 35  	cbnz	w0, 0x1616f4 <dsi_display_aod_store+0xe0>
+  161674: e2 07 40 b9  	ldr	w2, [sp, #4]
+  161678: 5f 08 00 71  	cmp	w2, #2
+  16167c: a2 04 00 54  	b.hs	0x161710 <dsi_display_aod_store+0xfc>
+  161680: e0 03 14 aa  	mov	x0, x20
+  161684: e1 03 02 2a  	mov	w1, w2
+  161688: 00 00 00 94  	bl	0x161688 <dsi_display_aod_store+0x74>
+  16168c: 08 41 38 d5  	mrs	x8, SP_EL0
+  161690: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  161694: e9 07 40 f9  	ldr	x9, [sp, #8]
+  161698: 1f 01 09 eb  	cmp	x8, x9
+  16169c: 81 04 00 54  	b.ne	0x16172c <dsi_display_aod_store+0x118>
+  1616a0: e0 03 13 aa  	mov	x0, x19
+  1616a4: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  1616a8: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  1616ac: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1616b0: ff c3 00 91  	add	sp, sp, #48
+  1616b4: bf 23 03 d5  	hint	#29
+  1616b8: c0 03 5f d6  	ret
+  1616bc: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_aod_store+0xa8>
+  1616c0: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_aod_store+0xac>
+  1616c4: 00 00 00 91  	add	x0, x0, #0
+  1616c8: 21 00 00 91  	add	x1, x1, #0
+  1616cc: 00 00 00 94  	bl	0x1616cc <dsi_display_aod_store+0xb8>
+  1616d0: 93 00 80 92  	mov	x19, #-5
+  1616d4: ee ff ff 17  	b	0x16168c <dsi_display_aod_store+0x78>
+  1616d8: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_aod_store+0xc4>
+  1616dc: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_aod_store+0xc8>
+  1616e0: 00 00 00 91  	add	x0, x0, #0
+  1616e4: 21 00 00 91  	add	x1, x1, #0
+  1616e8: 00 00 00 94  	bl	0x1616e8 <dsi_display_aod_store+0xd4>
+  1616ec: b3 02 80 92  	mov	x19, #-22
+  1616f0: e7 ff ff 17  	b	0x16168c <dsi_display_aod_store+0x78>
+  1616f4: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_aod_store+0xe0>
+  1616f8: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_aod_store+0xe4>
+  1616fc: 00 00 00 91  	add	x0, x0, #0
+  161700: 21 00 00 91  	add	x1, x1, #0
+  161704: 00 00 00 94  	bl	0x161704 <dsi_display_aod_store+0xf0>
+  161708: b3 01 80 92  	mov	x19, #-14
+  16170c: e0 ff ff 17  	b	0x16168c <dsi_display_aod_store+0x78>
+  161710: 00 00 00 90  	adrp	x0, 0x161000 <dsi_display_aod_store+0xfc>
+  161714: 01 00 00 90  	adrp	x1, 0x161000 <dsi_display_aod_store+0x100>
+  161718: 00 00 00 91  	add	x0, x0, #0
+  16171c: 21 00 00 91  	add	x1, x1, #0
+  161720: 00 00 00 94  	bl	0x161720 <dsi_display_aod_store+0x10c>
+  161724: b3 02 80 92  	mov	x19, #-22
+  161728: d9 ff ff 17  	b	0x16168c <dsi_display_aod_store+0x78>
+  16172c: 00 00 00 94  	bl	0x16172c <dsi_display_aod_store+0x118>

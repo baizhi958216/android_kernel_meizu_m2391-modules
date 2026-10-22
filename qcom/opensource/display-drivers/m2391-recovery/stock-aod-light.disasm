@@ -1,0 +1,247 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000065dd4 <display_get_aod_light_mode>:
+   65dd4: 3f 23 03 d5  	hint	#25
+   65dd8: 5e 86 00 f8  	str	x30, [x18], #8
+   65ddc: fd 7b bf a9  	stp	x29, x30, [sp, #-16]!
+   65de0: fd 03 00 91  	mov	x29, sp
+   65de4: 08 00 00 90  	adrp	x8, 0x65000 <display_get_aod_light_mode+0x10>
+   65de8: 01 00 00 90  	adrp	x1, 0x65000 <display_get_aod_light_mode+0x14>
+   65dec: e0 03 02 aa  	mov	x0, x2
+   65df0: 21 00 00 91  	add	x1, x1, #0
+   65df4: 02 01 40 b9  	ldr	w2, [x8]
+   65df8: 00 00 00 94  	bl	0x65df8 <display_get_aod_light_mode+0x24>
+   65dfc: 00 7c 40 93  	sxtw	x0, w0
+   65e00: fd 7b c1 a8  	ldp	x29, x30, [sp], #16
+   65e04: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   65e08: bf 23 03 d5  	hint	#29
+   65e0c: c0 03 5f d6  	ret
+
+0000000000065e10 <display_set_aod_light_mode>:
+   65e10: 3f 23 03 d5  	hint	#25
+   65e14: ff c3 00 d1  	sub	sp, sp, #48
+   65e18: 5e 86 00 f8  	str	x30, [x18], #8
+   65e1c: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+   65e20: fd 43 00 91  	add	x29, sp, #16
+   65e24: f3 13 00 f9  	str	x19, [sp, #32]
+   65e28: 08 41 38 d5  	mrs	x8, SP_EL0
+   65e2c: f3 03 03 aa  	mov	x19, x3
+   65e30: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   65e34: e8 07 00 f9  	str	x8, [sp, #8]
+   65e38: ff 07 00 b9  	str	wzr, [sp, #4]
+   65e3c: a2 03 00 b4  	cbz	x2, 0x65eb0 <display_set_aod_light_mode+0xa0>
+   65e40: 08 00 00 90  	adrp	x8, 0x65000 <display_set_aod_light_mode+0x30>
+   65e44: 08 01 40 39  	ldrb	w8, [x8]
+   65e48: 28 04 00 34  	cbz	w8, 0x65ecc <display_set_aod_light_mode+0xbc>
+   65e4c: 01 00 00 90  	adrp	x1, 0x65000 <display_set_aod_light_mode+0x3c>
+   65e50: e0 03 02 aa  	mov	x0, x2
+   65e54: 21 00 00 91  	add	x1, x1, #0
+   65e58: e2 13 00 91  	add	x2, sp, #4
+   65e5c: 00 00 00 94  	bl	0x65e5c <display_set_aod_light_mode+0x4c>
+   65e60: e0 07 40 b9  	ldr	w0, [sp, #4]
+   65e64: 1f 04 00 71  	cmp	w0, #1
+   65e68: 08 04 00 54  	b.hi	0x65ee8 <display_set_aod_light_mode+0xd8>
+   65e6c: 00 00 00 94  	bl	0x65e6c <display_set_aod_light_mode+0x5c>
+   65e70: 08 00 00 90  	adrp	x8, 0x65000 <display_set_aod_light_mode+0x60>
+   65e74: 08 01 40 b9  	ldr	w8, [x8]
+   65e78: 1f 09 00 71  	cmp	w8, #2
+   65e7c: 42 04 00 54  	b.hs	0x65f04 <display_set_aod_light_mode+0xf4>
+   65e80: 08 41 38 d5  	mrs	x8, SP_EL0
+   65e84: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   65e88: e9 07 40 f9  	ldr	x9, [sp, #8]
+   65e8c: 1f 01 09 eb  	cmp	x8, x9
+   65e90: a1 04 00 54  	b.ne	0x65f24 <display_set_aod_light_mode+0x114>
+   65e94: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+   65e98: e0 03 13 aa  	mov	x0, x19
+   65e9c: f3 13 40 f9  	ldr	x19, [sp, #32]
+   65ea0: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   65ea4: ff c3 00 91  	add	sp, sp, #48
+   65ea8: bf 23 03 d5  	hint	#29
+   65eac: c0 03 5f d6  	ret
+   65eb0: 00 00 00 90  	adrp	x0, 0x65000 <display_set_aod_light_mode+0xa0>
+   65eb4: 01 00 00 90  	adrp	x1, 0x65000 <display_set_aod_light_mode+0xa4>
+   65eb8: 00 00 00 91  	add	x0, x0, #0
+   65ebc: 21 00 00 91  	add	x1, x1, #0
+   65ec0: e2 51 80 52  	mov	w2, #655
+   65ec4: 00 00 00 94  	bl	0x65ec4 <display_set_aod_light_mode+0xb4>
+   65ec8: ee ff ff 17  	b	0x65e80 <display_set_aod_light_mode+0x70>
+   65ecc: 00 00 00 90  	adrp	x0, 0x65000 <display_set_aod_light_mode+0xbc>
+   65ed0: 01 00 00 90  	adrp	x1, 0x65000 <display_set_aod_light_mode+0xc0>
+   65ed4: 00 00 00 91  	add	x0, x0, #0
+   65ed8: 21 00 00 91  	add	x1, x1, #0
+   65edc: a2 52 80 52  	mov	w2, #661
+   65ee0: 00 00 00 94  	bl	0x65ee0 <display_set_aod_light_mode+0xd0>
+   65ee4: e7 ff ff 17  	b	0x65e80 <display_set_aod_light_mode+0x70>
+   65ee8: 00 00 00 90  	adrp	x0, 0x65000 <display_set_aod_light_mode+0xd8>
+   65eec: 01 00 00 90  	adrp	x1, 0x65000 <display_set_aod_light_mode+0xdc>
+   65ef0: 00 00 00 91  	add	x0, x0, #0
+   65ef4: 21 00 00 91  	add	x1, x1, #0
+   65ef8: c2 53 80 52  	mov	w2, #670
+   65efc: 00 00 00 94  	bl	0x65efc <display_set_aod_light_mode+0xec>
+   65f00: dc ff ff 17  	b	0x65e70 <display_set_aod_light_mode+0x60>
+   65f04: 00 00 00 90  	adrp	x0, 0x65000 <display_set_aod_light_mode+0xf4>
+   65f08: 01 00 00 90  	adrp	x1, 0x65000 <display_set_aod_light_mode+0xf8>
+   65f0c: e3 07 40 b9  	ldr	w3, [sp, #4]
+   65f10: 00 00 00 91  	add	x0, x0, #0
+   65f14: 21 00 00 91  	add	x1, x1, #0
+   65f18: 02 54 80 52  	mov	w2, #672
+   65f1c: 00 00 00 94  	bl	0x65f1c <display_set_aod_light_mode+0x10c>
+   65f20: d8 ff ff 17  	b	0x65e80 <display_set_aod_light_mode+0x70>
+   65f24: 00 00 00 94  	bl	0x65f24 <display_set_aod_light_mode+0x114>
+
+0000000000068090 <display_panel_set_aod_light_mode>:
+   68090: 3f 23 03 d5  	hint	#25
+   68094: 5e 86 00 f8  	str	x30, [x18], #8
+   68098: fd 7b bc a9  	stp	x29, x30, [sp, #-64]!
+   6809c: f7 0b 00 f9  	str	x23, [sp, #16]
+   680a0: fd 03 00 91  	mov	x29, sp
+   680a4: f6 57 02 a9  	stp	x22, x21, [sp, #32]
+   680a8: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+   680ac: 08 00 00 90  	adrp	x8, 0x68000 <display_panel_set_aod_light_mode+0x1c>
+   680b0: 16 01 40 f9  	ldr	x22, [x8]
+   680b4: 96 05 00 b4  	cbz	x22, 0x68164 <display_panel_set_aod_light_mode+0xd4>
+   680b8: c8 86 40 f9  	ldr	x8, [x22, #264]
+   680bc: 48 05 00 b4  	cbz	x8, 0x68164 <display_panel_set_aod_light_mode+0xd4>
+   680c0: 08 00 00 90  	adrp	x8, 0x68000 <display_panel_set_aod_light_mode+0x30>
+   680c4: 08 01 40 39  	ldrb	w8, [x8]
+   680c8: e8 08 00 34  	cbz	w8, 0x681e4 <display_panel_set_aod_light_mode+0x154>
+   680cc: 17 00 00 90  	adrp	x23, 0x68000 <display_panel_set_aod_light_mode+0x3c>
+   680d0: f4 03 00 2a  	mov	w20, w0
+   680d4: e8 02 40 b9  	ldr	w8, [x23]
+   680d8: 1f 01 00 6b  	cmp	w8, w0
+   680dc: e1 00 00 54  	b.ne	0x680f8 <display_panel_set_aod_light_mode+0x68>
+   680e0: 08 00 00 90  	adrp	x8, 0x68000 <display_panel_set_aod_light_mode+0x50>
+   680e4: 08 01 40 b9  	ldr	w8, [x8]
+   680e8: 1f 09 00 71  	cmp	w8, #2
+   680ec: 82 08 00 54  	b.hs	0x681fc <display_panel_set_aod_light_mode+0x16c>
+   680f0: b4 02 80 12  	mov	w20, #-22
+   680f4: 77 00 00 14  	b	0x682d0 <display_panel_set_aod_light_mode+0x240>
+   680f8: d3 22 01 91  	add	x19, x22, #72
+   680fc: e0 03 13 aa  	mov	x0, x19
+   68100: 00 00 00 94  	bl	0x68100 <display_panel_set_aod_light_mode+0x70>
+   68104: c8 32 43 b9  	ldr	w8, [x22, #816]
+   68108: 1f 09 00 71  	cmp	w8, #2
+   6810c: 41 04 00 54  	b.ne	0x68194 <display_panel_set_aod_light_mode+0x104>
+   68110: d5 6a 42 f9  	ldr	x21, [x22, #1232]
+   68114: 55 03 00 b4  	cbz	x21, 0x6817c <display_panel_set_aod_light_mode+0xec>
+   68118: 00 00 00 90  	adrp	x0, 0x68000 <display_panel_set_aod_light_mode+0x88>
+   6811c: 00 00 00 91  	add	x0, x0, #0
+   68120: 00 00 00 94  	bl	0x68120 <display_panel_set_aod_light_mode+0x90>
+   68124: e0 03 15 aa  	mov	x0, x21
+   68128: 21 00 80 52  	mov	w1, #1
+   6812c: 22 00 80 52  	mov	w2, #1
+   68130: 00 00 00 94  	bl	0x68130 <display_panel_set_aod_light_mode+0xa0>
+   68134: 00 01 00 34  	cbz	w0, 0x68154 <display_panel_set_aod_light_mode+0xc4>
+   68138: 01 00 00 90  	adrp	x1, 0x68000 <display_panel_set_aod_light_mode+0xa8>
+   6813c: 02 00 00 90  	adrp	x2, 0x68000 <display_panel_set_aod_light_mode+0xac>
+   68140: e3 03 00 2a  	mov	w3, w0
+   68144: 21 00 00 91  	add	x1, x1, #0
+   68148: 42 00 00 91  	add	x2, x2, #0
+   6814c: e0 03 1f aa  	mov	x0, xzr
+   68150: 00 00 00 94  	bl	0x68150 <display_panel_set_aod_light_mode+0xc0>
+   68154: 00 00 00 90  	adrp	x0, 0x68000 <display_panel_set_aod_light_mode+0xc4>
+   68158: 00 00 00 91  	add	x0, x0, #0
+   6815c: 00 00 00 94  	bl	0x6815c <display_panel_set_aod_light_mode+0xcc>
+   68160: 0d 00 00 14  	b	0x68194 <display_panel_set_aod_light_mode+0x104>
+   68164: 00 00 00 90  	adrp	x0, 0x68000 <display_panel_set_aod_light_mode+0xd4>
+   68168: 01 00 00 90  	adrp	x1, 0x68000 <display_panel_set_aod_light_mode+0xd8>
+   6816c: 00 00 00 91  	add	x0, x0, #0
+   68170: 21 00 00 91  	add	x1, x1, #0
+   68174: 02 06 80 52  	mov	w2, #48
+   68178: 26 00 00 14  	b	0x68210 <display_panel_set_aod_light_mode+0x180>
+   6817c: 01 00 00 90  	adrp	x1, 0x68000 <display_panel_set_aod_light_mode+0xec>
+   68180: 02 00 00 90  	adrp	x2, 0x68000 <display_panel_set_aod_light_mode+0xf0>
+   68184: 21 00 00 91  	add	x1, x1, #0
+   68188: 42 00 00 91  	add	x2, x2, #0
+   6818c: e0 03 1f aa  	mov	x0, xzr
+   68190: 00 00 00 94  	bl	0x68190 <display_panel_set_aod_light_mode+0x100>
+   68194: c8 86 40 f9  	ldr	x8, [x22, #264]
+   68198: 00 c1 0f 91  	add	x0, x8, #1008
+   6819c: 00 00 00 94  	bl	0x6819c <display_panel_set_aod_light_mode+0x10c>
+   681a0: c0 86 40 f9  	ldr	x0, [x22, #264]
+   681a4: 08 50 5c 39  	ldrb	w8, [x0, #1812]
+   681a8: 88 04 00 34  	cbz	w8, 0x68238 <display_panel_set_aod_light_mode+0x1a8>
+   681ac: 9f 06 00 71  	cmp	w20, #1
+   681b0: e0 00 00 54  	b.eq	0x681cc <display_panel_set_aod_light_mode+0x13c>
+   681b4: 54 03 00 35  	cbnz	w20, 0x6821c <display_panel_set_aod_light_mode+0x18c>
+   681b8: 61 03 80 52  	mov	w1, #27
+   681bc: 00 00 00 94  	bl	0x681bc <display_panel_set_aod_light_mode+0x12c>
+   681c0: f4 03 00 2a  	mov	w20, w0
+   681c4: ff 02 00 b9  	str	wzr, [x23]
+   681c8: 1d 00 00 14  	b	0x6823c <display_panel_set_aod_light_mode+0x1ac>
+   681cc: 81 03 80 52  	mov	w1, #28
+   681d0: 00 00 00 94  	bl	0x681d0 <display_panel_set_aod_light_mode+0x140>
+   681d4: 28 00 80 52  	mov	w8, #1
+   681d8: f4 03 00 2a  	mov	w20, w0
+   681dc: e8 02 00 b9  	str	w8, [x23]
+   681e0: 17 00 00 14  	b	0x6823c <display_panel_set_aod_light_mode+0x1ac>
+   681e4: 00 00 00 90  	adrp	x0, 0x68000 <display_panel_set_aod_light_mode+0x154>
+   681e8: 01 00 00 90  	adrp	x1, 0x68000 <display_panel_set_aod_light_mode+0x158>
+   681ec: 00 00 00 91  	add	x0, x0, #0
+   681f0: 21 00 00 91  	add	x1, x1, #0
+   681f4: a2 06 80 52  	mov	w2, #53
+   681f8: 06 00 00 14  	b	0x68210 <display_panel_set_aod_light_mode+0x180>
+   681fc: 00 00 00 90  	adrp	x0, 0x68000 <display_panel_set_aod_light_mode+0x16c>
+   68200: 01 00 00 90  	adrp	x1, 0x68000 <display_panel_set_aod_light_mode+0x170>
+   68204: 00 00 00 91  	add	x0, x0, #0
+   68208: 21 00 00 91  	add	x1, x1, #0
+   6820c: 42 07 80 52  	mov	w2, #58
+   68210: 00 00 00 94  	bl	0x68210 <display_panel_set_aod_light_mode+0x180>
+   68214: b4 02 80 12  	mov	w20, #-22
+   68218: 2e 00 00 14  	b	0x682d0 <display_panel_set_aod_light_mode+0x240>
+   6821c: 01 00 00 90  	adrp	x1, 0x68000 <display_panel_set_aod_light_mode+0x18c>
+   68220: 00 00 00 90  	adrp	x0, 0x68000 <display_panel_set_aod_light_mode+0x190>
+   68224: 21 00 00 91  	add	x1, x1, #0
+   68228: 00 00 00 91  	add	x0, x0, #0
+   6822c: c2 0a 80 52  	mov	w2, #86
+   68230: e3 03 01 aa  	mov	x3, x1
+   68234: 00 00 00 94  	bl	0x68234 <display_panel_set_aod_light_mode+0x1a4>
+   68238: b4 02 80 12  	mov	w20, #-22
+   6823c: c8 86 40 f9  	ldr	x8, [x22, #264]
+   68240: 00 c1 0f 91  	add	x0, x8, #1008
+   68244: 00 00 00 94  	bl	0x68244 <display_panel_set_aod_light_mode+0x1b4>
+   68248: c8 32 43 b9  	ldr	w8, [x22, #816]
+   6824c: 1f 09 00 71  	cmp	w8, #2
+   68250: c1 03 00 54  	b.ne	0x682c8 <display_panel_set_aod_light_mode+0x238>
+   68254: d4 6a 42 f9  	ldr	x20, [x22, #1232]
+   68258: b4 02 00 b4  	cbz	x20, 0x682ac <display_panel_set_aod_light_mode+0x21c>
+   6825c: 00 00 00 90  	adrp	x0, 0x68000 <display_panel_set_aod_light_mode+0x1cc>
+   68260: 00 00 00 91  	add	x0, x0, #0
+   68264: 00 00 00 94  	bl	0x68264 <display_panel_set_aod_light_mode+0x1d4>
+   68268: e0 03 14 aa  	mov	x0, x20
+   6826c: 21 00 80 52  	mov	w1, #1
+   68270: e2 03 1f 2a  	mov	w2, wzr
+   68274: 00 00 00 94  	bl	0x68274 <display_panel_set_aod_light_mode+0x1e4>
+   68278: f4 03 00 2a  	mov	w20, w0
+   6827c: 00 01 00 34  	cbz	w0, 0x6829c <display_panel_set_aod_light_mode+0x20c>
+   68280: 01 00 00 90  	adrp	x1, 0x68000 <display_panel_set_aod_light_mode+0x1f0>
+   68284: 02 00 00 90  	adrp	x2, 0x68000 <display_panel_set_aod_light_mode+0x1f4>
+   68288: 21 00 00 91  	add	x1, x1, #0
+   6828c: 42 00 00 91  	add	x2, x2, #0
+   68290: e0 03 1f aa  	mov	x0, xzr
+   68294: e3 03 14 2a  	mov	w3, w20
+   68298: 00 00 00 94  	bl	0x68298 <display_panel_set_aod_light_mode+0x208>
+   6829c: 00 00 00 90  	adrp	x0, 0x68000 <display_panel_set_aod_light_mode+0x20c>
+   682a0: 00 00 00 91  	add	x0, x0, #0
+   682a4: 00 00 00 94  	bl	0x682a4 <display_panel_set_aod_light_mode+0x214>
+   682a8: 08 00 00 14  	b	0x682c8 <display_panel_set_aod_light_mode+0x238>
+   682ac: 01 00 00 90  	adrp	x1, 0x68000 <display_panel_set_aod_light_mode+0x21c>
+   682b0: 02 00 00 90  	adrp	x2, 0x68000 <display_panel_set_aod_light_mode+0x220>
+   682b4: 21 00 00 91  	add	x1, x1, #0
+   682b8: 42 00 00 91  	add	x2, x2, #0
+   682bc: e0 03 1f aa  	mov	x0, xzr
+   682c0: 00 00 00 94  	bl	0x682c0 <display_panel_set_aod_light_mode+0x230>
+   682c4: b4 02 80 12  	mov	w20, #-22
+   682c8: e0 03 13 aa  	mov	x0, x19
+   682cc: 00 00 00 94  	bl	0x682cc <display_panel_set_aod_light_mode+0x23c>
+   682d0: e0 03 14 2a  	mov	w0, w20
+   682d4: f7 0b 40 f9  	ldr	x23, [sp, #16]
+   682d8: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+   682dc: f6 57 42 a9  	ldp	x22, x21, [sp, #32]
+   682e0: fd 7b c4 a8  	ldp	x29, x30, [sp], #64
+   682e4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   682e8: bf 23 03 d5  	hint	#29
+   682ec: c0 03 5f d6  	ret

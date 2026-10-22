@@ -1,0 +1,7 @@
+offset	width_bytes	observed_use
+1388	4	backlight level stored before dispatch
+1812	1	panel initialized flag
+2104	4	AOD mode nonzero selects AOD brightness dispatch
+2108	4	last successful ADFR FPS request
+2112	4	last AOD command index for deduplication
+2116	1	ADFR auto mode flag for sysfs response

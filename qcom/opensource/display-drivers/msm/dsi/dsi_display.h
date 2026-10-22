@@ -200,6 +200,12 @@ struct dsi_display_ext_bridge {
  */
 struct dsi_display {
 	struct platform_device *pdev;
+	struct kobject *meizu_sysfs_kobj;
+	int meizu_aod_light_mode;
+	bool meizu_aod_requested;
+	bool meizu_bark_registered;
+	bool meizu_sysfs_group_created;
+	bool meizu_sysfs_link_registered;
 	struct drm_device *drm_dev;
 	struct drm_connector *drm_conn;
 	struct drm_connector *ext_conn;
@@ -843,5 +849,11 @@ bool dsi_display_mode_match(const struct dsi_display_mode *mode1,
  * Return: error code
  */
 int dsi_display_update_transfer_time(void *display, u32 transfer_time);
+
+/* Source group private counterparts of the recovered M2391 exports. */
+struct dsi_display *get_main_display(void);
+struct dsi_display *get_sec_display(void);
+void display_get_power_status(uint32_t *status);
+void display_set_power_status(uint32_t enabled);
 
 #endif /* _DSI_DISPLAY_H_ */

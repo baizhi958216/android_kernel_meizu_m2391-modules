@@ -9,12 +9,14 @@
 #include <linux/of_gpio.h>
 #include <linux/err.h>
 #include <linux/version.h>
+#include <linux/pm8941-pwrkey.h>
 
 #include "msm_drv.h"
 #include "sde_connector.h"
 #include "msm_mmu.h"
 #include "dsi_display.h"
 #include "dsi_panel.h"
+#include "dsi_meizu.h"
 #include "dsi_ctrl.h"
 #include "dsi_ctrl_hw.h"
 #include "dsi_drm.h"
@@ -22,6 +24,7 @@
 #include "dsi_pwr.h"
 #include "sde_dbg.h"
 #include "dsi_parser.h"
+#include "../../../../../meizu/system/meizu_sys.h"
 
 #define to_dsi_display(x) container_of(x, struct dsi_display, host)
 #define INT_BASE_10 10
@@ -38,6 +41,275 @@
 #define MAX_TE_SOURCE_ID  2
 
 #define SEC_PANEL_NAME_MAX_LEN  256
+
+/* Recovered stock /sys/class/meizu/lcm/display/{aod,adfr} group. */
+static ssize_t aod_show(struct device *dev, struct device_attribute *attr,
+		char *buf)
+{
+	struct dsi_display *display = dev_get_drvdata(dev);
+
+	if (!display || !display->panel)
+		return -EIO;
+	return sysfs_emit(buf, "%d\n", display->panel->meizu_aod_active);
+}
+
+static ssize_t aod_store(struct device *dev, struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	struct dsi_display *display = dev_get_drvdata(dev);
+	u32 value;
+
+	if (!display || !display->panel)
+		return -EIO;
+	if (kstrtou32(buf, 0, &value))
+		return -EFAULT;
+	if (value > 1)
+		return -EINVAL;
+	dsi_panel_meizu_set_aod(display->panel, value);
+	return count;
+}
+
+static ssize_t adfr_show(struct device *dev, struct device_attribute *attr,
+		char *buf)
+{
+	struct dsi_display *display = dev_get_drvdata(dev);
+	struct dsi_panel *panel;
+
+	if (!display || !display->panel)
+		return -EIO;
+	panel = display->panel;
+	/* Preserve the spelling of the stock userspace response. */
+	return sysfs_emit(buf, panel->meizu_adfr_auto ? "auto:%d\n" :
+		"maual:%d\n", panel->meizu_adfr_fps);
+}
+
+static ssize_t adfr_store(struct device *dev, struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	struct dsi_display *display = dev_get_drvdata(dev);
+	u32 value;
+
+	if (!display || !display->panel)
+		return -EIO;
+	if (kstrtou32(buf, 0, &value))
+		return -EFAULT;
+	dsi_panel_meizu_set_adfr(display->panel, value, false);
+	return count;
+}
+
+static DEVICE_ATTR_RW(aod);
+static DEVICE_ATTR_RW(adfr);
+static struct attribute *meizu_display_attrs[] = {
+	&dev_attr_aod.attr,
+	&dev_attr_adfr.attr,
+	NULL,
+};
+static const struct attribute_group meizu_display_attr_group = {
+	.name = "display",
+	.attrs = meizu_display_attrs,
+};
+
+static struct dsi_display *meizu_primary_display;
+static DEFINE_MUTEX(meizu_display_registry_lock);
+static struct dsi_display *meizu_public_primary, *meizu_public_secondary;
+static atomic_t meizu_display_power = ATOMIC_INIT(1);
+static struct dsi_display *meizu_bark_display;
+
+/* Original dsi_display_off disables and post-unprepares main_panel, ignoring
+ * both return codes. The pwrkey provider invokes this from a threaded IRQ.
+ */
+static unsigned int dsi_display_meizu_pwrkey_off(void)
+{
+	struct dsi_display *display = READ_ONCE(meizu_bark_display);
+
+	if (!display || !display->panel) return 0;
+	mutex_lock(&display->display_lock);
+	dsi_panel_disable(display->panel);
+	dsi_panel_post_unprepare(display->panel);
+	mutex_unlock(&display->display_lock);
+	return 0;
+}
+
+static int dsi_display_meizu_register_bark(struct dsi_display *display)
+{
+	int rc = 0;
+
+	if (!dsi_panel_is_m2391(display->panel) || strcmp(display->display_type, "primary"))
+		return 0;
+	mutex_lock(&meizu_display_registry_lock);
+	if (meizu_bark_display == display && display->meizu_bark_registered) goto out;
+	if (meizu_bark_display && meizu_bark_display != display) {
+		rc = -EBUSY;
+		goto out;
+	}
+	WRITE_ONCE(meizu_bark_display, display);
+	rc = pm8941_pwrkey_register_bark_callback(dsi_display_meizu_pwrkey_off);
+	if (rc) WRITE_ONCE(meizu_bark_display, NULL);
+	else display->meizu_bark_registered = true;
+out:
+	mutex_unlock(&meizu_display_registry_lock);
+	return rc;
+}
+
+/* Do not hold display/panel/registry locks while SRCU drains the callback. */
+static void dsi_display_meizu_unregister_bark(struct dsi_display *display)
+{
+	if (!display->meizu_bark_registered) return;
+	pm8941_pwrkey_unregister_bark_callback(dsi_display_meizu_pwrkey_off);
+	mutex_lock(&meizu_display_registry_lock);
+	if (meizu_bark_display == display) WRITE_ONCE(meizu_bark_display, NULL);
+	display->meizu_bark_registered = false;
+	mutex_unlock(&meizu_display_registry_lock);
+}
+
+
+/* Stock returns the published primary/secondary pointers directly. Callers
+ * must retain the display/component lifetime while using the returned object.
+ * These source interfaces are private to the source display group: original
+ * module type names were not preserved in BTF, so old CRCs are not fabricated.
+ */
+struct dsi_display *get_main_display(void)
+{
+	return READ_ONCE(meizu_public_primary);
+}
+EXPORT_SYMBOL(get_main_display);
+struct dsi_display *get_sec_display(void)
+{
+	return READ_ONCE(meizu_public_secondary);
+}
+EXPORT_SYMBOL(get_sec_display);
+
+void display_get_power_status(uint32_t *status)
+{
+	if (status) *status = atomic_read_acquire(&meizu_display_power) ? 2 : 0;
+}
+EXPORT_SYMBOL(display_get_power_status);
+
+void display_set_power_status(uint32_t enabled)
+{
+	struct dsi_display *display;
+
+	atomic_set(&meizu_display_power, !!enabled);
+	if (enabled) return;
+	mutex_lock(&meizu_display_registry_lock);
+	display = meizu_public_primary;
+	if (display && display->panel) {
+		mutex_lock(&display->panel->panel_lock);
+		display->panel->meizu_aod_active = false;
+		mutex_unlock(&display->panel->panel_lock);
+	}
+	mutex_unlock(&meizu_display_registry_lock);
+}
+EXPORT_SYMBOL(display_set_power_status);
+
+
+static ssize_t aod_light_mode_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	struct dsi_display *display = meizu_primary_display;
+
+	if (!display)
+		return -ENODEV;
+	return sysfs_emit(buf, "%d\n", display->meizu_aod_light_mode);
+}
+
+static ssize_t aod_light_mode_store(struct kobject *kobj,
+		struct kobj_attribute *attr, const char *buf, size_t count)
+{
+	struct dsi_display *display = meizu_primary_display;
+	int mode = 0, rc;
+	bool command_mode;
+
+	/* Stock uses sscanf into an initially zero value and returns count. */
+	if (!display || !display->panel)
+		return count;
+	sscanf(buf, "%d", &mode);
+	mutex_lock(&display->display_lock);
+	if (!display->meizu_aod_requested || mode < 0 || mode > 1 ||
+		mode == display->meizu_aod_light_mode)
+		goto unlock;
+	command_mode = display->config.panel_mode == DSI_OP_CMD_MODE;
+	if (command_mode && display->dsi_clk_handle) {
+		rc = dsi_display_clk_ctrl(display->dsi_clk_handle, DSI_CORE_CLK,
+			DSI_CLK_ON);
+		if (rc) {
+			DSI_ERR("Meizu AOD clock enable failed: %d\n", rc);
+			goto unlock;
+		}
+	}
+	rc = dsi_panel_meizu_set_aod_light(display->panel, mode,
+		&display->meizu_aod_light_mode);
+	if (rc)
+		DSI_ERR("Meizu AOD light command failed: %d\n", rc);
+	if (command_mode && display->dsi_clk_handle) {
+		rc = dsi_display_clk_ctrl(display->dsi_clk_handle, DSI_CORE_CLK,
+			DSI_CLK_OFF);
+		if (rc)
+			DSI_ERR("Meizu AOD clock disable failed: %d\n", rc);
+	}
+unlock:
+	mutex_unlock(&display->display_lock);
+	return count;
+}
+
+static struct kobj_attribute meizu_aod_light_attr =
+	__ATTR(aod_light_mode, 0644, aod_light_mode_show, aod_light_mode_store);
+
+static void dsi_display_meizu_remove_kernel_sysfs(void *data)
+{
+	struct dsi_display *display = data;
+
+	dsi_meizu_factory_remove(display, display->meizu_sysfs_kobj);
+	sysfs_remove_file(display->meizu_sysfs_kobj, &meizu_aod_light_attr.attr);
+	kobject_put(display->meizu_sysfs_kobj);
+	display->meizu_sysfs_kobj = NULL;
+	meizu_primary_display = NULL;
+}
+
+static void dsi_display_meizu_remove_link(void *unused)
+{
+	meizu_sysfslink_remove_name("lcm");
+}
+
+static int dsi_display_meizu_sysfs_init(struct dsi_display *display)
+{
+	struct device *dev = &display->pdev->dev;
+	int rc;
+
+	if (!display->panel || !dsi_panel_is_m2391(display->panel) ||
+		strcmp(display->display_type, "primary"))
+		return 0;
+	rc = devm_device_add_group(dev, &meizu_display_attr_group);
+	if (rc)
+		return rc;
+	display->meizu_sysfs_group_created = true;
+	rc = meizu_sysfslink_register_name(dev, "lcm");
+	if (rc)
+		return rc;
+	rc = devm_add_action_or_reset(dev, dsi_display_meizu_remove_link, NULL);
+	if (rc)
+		return rc;
+	display->meizu_sysfs_link_registered = true;
+	display->meizu_aod_light_mode = 2;
+	display->meizu_sysfs_kobj = kobject_create_and_add("display_drivers", kernel_kobj);
+	if (!display->meizu_sysfs_kobj)
+		return -ENOMEM;
+	meizu_primary_display = display;
+	rc = sysfs_create_file(display->meizu_sysfs_kobj, &meizu_aod_light_attr.attr);
+	if (rc) {
+		kobject_put(display->meizu_sysfs_kobj);
+		display->meizu_sysfs_kobj = NULL;
+		meizu_primary_display = NULL;
+		return rc;
+	}
+	rc = dsi_meizu_factory_init(display, display->meizu_sysfs_kobj);
+	if (rc) {
+		dsi_display_meizu_remove_kernel_sysfs(display);
+		return rc;
+	}
+	return devm_add_action_or_reset(dev, dsi_display_meizu_remove_kernel_sysfs,
+		display);
+}
 
 u8 dbgfs_tx_cmd_buf[SZ_4K];
 static char dsi_display_primary[MAX_CMDLINE_PARAM_LEN];
@@ -1337,27 +1609,41 @@ int dsi_display_set_power(struct drm_connector *connector,
 {
 	struct dsi_display *display = disp;
 	int rc = 0;
+	bool meizu_panel;
 
 	if (!display || !display->panel) {
 		DSI_ERR("invalid display/panel\n");
 		return -EINVAL;
 	}
+	meizu_panel = dsi_panel_is_m2391(display->panel);
+	if (meizu_panel)
+		mutex_lock(&display->display_lock);
 
 	switch (power_mode) {
 	case SDE_MODE_DPMS_LP1:
 		rc = dsi_panel_set_lp1(display->panel);
+		if (dsi_panel_is_m2391(display->panel)) {
+			display->meizu_aod_light_mode = 2;
+			display->meizu_aod_requested = true;
+		}
 		break;
 	case SDE_MODE_DPMS_LP2:
-		rc = dsi_panel_set_lp2(display->panel);
+		if (!dsi_panel_is_m2391(display->panel))
+			rc = dsi_panel_set_lp2(display->panel);
 		break;
 	case SDE_MODE_DPMS_ON:
 		if ((display->panel->power_mode == SDE_MODE_DPMS_LP1) ||
-			(display->panel->power_mode == SDE_MODE_DPMS_LP2))
+			(display->panel->power_mode == SDE_MODE_DPMS_LP2)) {
 			rc = dsi_panel_set_nolp(display->panel);
+			if (dsi_panel_is_m2391(display->panel)) {
+				display->meizu_aod_light_mode = 2;
+				display->meizu_aod_requested = false;
+			}
+		}
 		break;
 	case SDE_MODE_DPMS_OFF:
 	default:
-		return rc;
+		goto unlock;
 	}
 
 	SDE_EVT32(display->panel->power_mode, power_mode, rc);
@@ -1367,6 +1653,9 @@ int dsi_display_set_power(struct drm_connector *connector,
 	if (!rc)
 		display->panel->power_mode = power_mode;
 
+unlock:
+	if (meizu_panel)
+		mutex_unlock(&display->display_lock);
 	return rc;
 }
 
@@ -3398,6 +3687,8 @@ int dsi_host_transfer_sub(struct mipi_dsi_host *host, struct dsi_cmd_desc *cmd)
 	}
 
 	display = to_dsi_display(host);
+	if (dsi_panel_is_m2391(display->panel) && dsi_meizu_log_enabled(BIT(0)))
+		dsi_meizu_log_command(cmd);
 
 	/* Avoid sending DCS commands when ESD recovery is pending */
 	if (atomic_read(&display->panel->esd_recovery_pending)) {
@@ -5834,6 +6125,8 @@ static int dsi_display_bind(struct device *dev,
 
 
 	msm_register_vm_event(master, dev, &vm_event_ops, (void *)display);
+	if (dsi_display_meizu_register_bark(display))
+		DSI_ERR("failed to register Meizu power-key bark callback\n");
 
 	goto error;
 
@@ -5882,6 +6175,7 @@ static void dsi_display_unbind(struct device *dev,
 		return;
 	}
 
+	dsi_display_meizu_unregister_bark(display);
 	mutex_lock(&display->display_lock);
 
 	rc = dsi_display_mipi_host_deinit(display);
@@ -5962,7 +6256,18 @@ static int dsi_display_init(struct dsi_display *display)
 	rc = component_add(&pdev->dev, &dsi_display_comp_ops);
 	if (rc)
 		DSI_ERR("component add failed, rc=%d\n", rc);
+	else if (dsi_display_meizu_sysfs_init(display))
+		DSI_ERR("failed to create Meizu display sysfs group\n");
 
+	if (!rc) {
+		mutex_lock(&meizu_display_registry_lock);
+		if (!strcmp(display->display_type, "primary") &&
+			(!meizu_public_primary || meizu_public_primary == display))
+			WRITE_ONCE(meizu_public_primary, display);
+		else if (!strcmp(display->display_type, "secondary"))
+			WRITE_ONCE(meizu_public_secondary, display);
+		mutex_unlock(&meizu_display_registry_lock);
+	}
 	DSI_DEBUG("component add success: %s\n", display->name);
 end:
 	return rc;
@@ -6124,6 +6429,25 @@ int dsi_display_dev_remove(struct platform_device *pdev)
 	if (!display || !display->panel_node) {
 		DSI_ERR("invalid display\n");
 		return -EINVAL;
+	}
+
+	dsi_display_meizu_unregister_bark(display);
+	mutex_lock(&meizu_display_registry_lock);
+	if (meizu_public_primary == display) WRITE_ONCE(meizu_public_primary, NULL);
+	if (meizu_public_secondary == display) WRITE_ONCE(meizu_public_secondary, NULL);
+	mutex_unlock(&meizu_display_registry_lock);
+
+	/* Release callbacks before the existing explicit devm_kfree(display). */
+	if (display->meizu_sysfs_kobj)
+		devm_release_action(&pdev->dev, dsi_display_meizu_remove_kernel_sysfs,
+			display);
+	if (display->meizu_sysfs_link_registered) {
+		devm_release_action(&pdev->dev, dsi_display_meizu_remove_link, NULL);
+		display->meizu_sysfs_link_registered = false;
+	}
+	if (display->meizu_sysfs_group_created) {
+		devm_device_remove_group(&pdev->dev, &meizu_display_attr_group);
+		display->meizu_sysfs_group_created = false;
 	}
 
 	/* decrement ref count */
@@ -8692,6 +9016,8 @@ int dsi_display_enable(struct dsi_display *display)
 
 		return 0;
 	}
+
+	if (dsi_panel_is_m2391(display->panel)) display_set_power_status(1);
 
 	mutex_lock(&display->display_lock);
 

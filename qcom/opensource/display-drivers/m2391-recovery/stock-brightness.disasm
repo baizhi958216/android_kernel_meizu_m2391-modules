@@ -1,0 +1,186 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000067c28 <meizu_mipi_dsi_dcs_set_display_brightness>:
+   67c28: 3f 23 03 d5  	hint	#25
+   67c2c: ff 43 01 d1  	sub	sp, sp, #80
+   67c30: 5e 86 00 f8  	str	x30, [x18], #8
+   67c34: fd 7b 03 a9  	stp	x29, x30, [sp, #48]
+   67c38: fd c3 00 91  	add	x29, sp, #48
+   67c3c: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+   67c40: 08 41 38 d5  	mrs	x8, SP_EL0
+   67c44: 49 4b 8b 52  	mov	w9, #23130
+   67c48: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   67c4c: 4a 18 80 52  	mov	w10, #194
+   67c50: 13 60 00 91  	add	x19, x0, #24
+   67c54: 34 3c 00 12  	and	w20, w1, #0xffff
+   67c58: 9f 02 20 71  	cmp	w20, #2048
+   67c5c: a8 83 1f f8  	stur	x8, [x29, #-8]
+   67c60: 08 80 81 52  	mov	w8, #3072
+   67c64: e9 2b 00 79  	strh	w9, [sp, #20]
+   67c68: 09 2c 81 52  	mov	w9, #2400
+   67c6c: aa 63 1f 38  	sturb	w10, [x29, #-10]
+   67c70: ea 01 80 52  	mov	w10, #15
+   67c74: a8 43 1f 78  	sturh	w8, [x29, #-12]
+   67c78: a8 b4 94 52  	mov	w8, #42405
+   67c7c: e9 23 00 79  	strh	w9, [sp, #16]
+   67c80: aa c3 1e 38  	sturb	w10, [x29, #-20]
+   67c84: e8 1b 00 79  	strh	w8, [sp, #12]
+   67c88: 83 00 00 54  	b.lo	0x67c98 <meizu_mipi_dsi_dcs_set_display_brightness+0x70>
+   67c8c: 09 1d 80 52  	mov	w9, #232
+   67c90: 28 28 08 53  	ubfx	w8, w1, #8, #3
+   67c94: 03 00 00 14  	b	0x67ca0 <meizu_mipi_dsi_dcs_set_display_brightness+0x78>
+   67c98: 09 05 80 52  	mov	w9, #40
+   67c9c: 28 3c 08 53  	ubfx	w8, w1, #8, #8
+   67ca0: e1 67 00 39  	strb	w1, [sp, #25]
+   67ca4: e2 53 00 91  	add	x2, sp, #20
+   67ca8: e0 03 13 aa  	mov	x0, x19
+   67cac: 01 1e 80 52  	mov	w1, #240
+   67cb0: 43 00 80 52  	mov	w3, #2
+   67cb4: a9 03 1f 38  	sturb	w9, [x29, #-16]
+   67cb8: e8 63 00 39  	strb	w8, [sp, #24]
+   67cbc: 00 00 00 94  	bl	0x67cbc <meizu_mipi_dsi_dcs_set_display_brightness+0x94>
+   67cc0: 60 08 f8 b7  	tbnz	x0, #63, 0x67dcc <meizu_mipi_dsi_dcs_set_display_brightness+0x1a4>
+   67cc4: e2 53 00 91  	add	x2, sp, #20
+   67cc8: e0 03 13 aa  	mov	x0, x19
+   67ccc: 21 1e 80 52  	mov	w1, #241
+   67cd0: 43 00 80 52  	mov	w3, #2
+   67cd4: 00 00 00 94  	bl	0x67cd4 <meizu_mipi_dsi_dcs_set_display_brightness+0xac>
+   67cd8: 60 08 f8 b7  	tbnz	x0, #63, 0x67de4 <meizu_mipi_dsi_dcs_set_display_brightness+0x1bc>
+   67cdc: e2 53 00 91  	add	x2, sp, #20
+   67ce0: e0 03 13 aa  	mov	x0, x19
+   67ce4: 81 1f 80 52  	mov	w1, #252
+   67ce8: 43 00 80 52  	mov	w3, #2
+   67cec: 00 00 00 94  	bl	0x67cec <meizu_mipi_dsi_dcs_set_display_brightness+0xc4>
+   67cf0: 60 08 f8 b7  	tbnz	x0, #63, 0x67dfc <meizu_mipi_dsi_dcs_set_display_brightness+0x1d4>
+   67cf4: a2 33 00 d1  	sub	x2, x29, #12
+   67cf8: e0 03 13 aa  	mov	x0, x19
+   67cfc: 01 16 80 52  	mov	w1, #176
+   67d00: 63 00 80 52  	mov	w3, #3
+   67d04: 00 00 00 94  	bl	0x67d04 <meizu_mipi_dsi_dcs_set_display_brightness+0xdc>
+   67d08: 60 08 f8 b7  	tbnz	x0, #63, 0x67e14 <meizu_mipi_dsi_dcs_set_display_brightness+0x1ec>
+   67d0c: e2 43 00 91  	add	x2, sp, #16
+   67d10: e0 03 13 aa  	mov	x0, x19
+   67d14: 41 18 80 52  	mov	w1, #194
+   67d18: 43 00 80 52  	mov	w3, #2
+   67d1c: 00 00 00 94  	bl	0x67d1c <meizu_mipi_dsi_dcs_set_display_brightness+0xf4>
+   67d20: 60 08 f8 b7  	tbnz	x0, #63, 0x67e2c <meizu_mipi_dsi_dcs_set_display_brightness+0x204>
+   67d24: a2 43 00 d1  	sub	x2, x29, #16
+   67d28: e0 03 13 aa  	mov	x0, x19
+   67d2c: 61 0a 80 52  	mov	w1, #83
+   67d30: 23 00 80 52  	mov	w3, #1
+   67d34: 00 00 00 94  	bl	0x67d34 <meizu_mipi_dsi_dcs_set_display_brightness+0x10c>
+   67d38: 60 08 f8 b7  	tbnz	x0, #63, 0x67e44 <meizu_mipi_dsi_dcs_set_display_brightness+0x21c>
+   67d3c: e2 63 00 91  	add	x2, sp, #24
+   67d40: e0 03 13 aa  	mov	x0, x19
+   67d44: 21 0a 80 52  	mov	w1, #81
+   67d48: 43 00 80 52  	mov	w3, #2
+   67d4c: 00 00 00 94  	bl	0x67d4c <meizu_mipi_dsi_dcs_set_display_brightness+0x124>
+   67d50: 60 08 f8 b7  	tbnz	x0, #63, 0x67e5c <meizu_mipi_dsi_dcs_set_display_brightness+0x234>
+   67d54: a2 53 00 d1  	sub	x2, x29, #20
+   67d58: e0 03 13 aa  	mov	x0, x19
+   67d5c: e1 1e 80 52  	mov	w1, #247
+   67d60: 23 00 80 52  	mov	w3, #1
+   67d64: 00 00 00 94  	bl	0x67d64 <meizu_mipi_dsi_dcs_set_display_brightness+0x13c>
+   67d68: a0 08 f8 b7  	tbnz	x0, #63, 0x67e7c <meizu_mipi_dsi_dcs_set_display_brightness+0x254>
+   67d6c: e2 33 00 91  	add	x2, sp, #12
+   67d70: e0 03 13 aa  	mov	x0, x19
+   67d74: 81 1f 80 52  	mov	w1, #252
+   67d78: 43 00 80 52  	mov	w3, #2
+   67d7c: 00 00 00 94  	bl	0x67d7c <meizu_mipi_dsi_dcs_set_display_brightness+0x154>
+   67d80: a0 08 f8 b7  	tbnz	x0, #63, 0x67e94 <meizu_mipi_dsi_dcs_set_display_brightness+0x26c>
+   67d84: e2 33 00 91  	add	x2, sp, #12
+   67d88: e0 03 13 aa  	mov	x0, x19
+   67d8c: 21 1e 80 52  	mov	w1, #241
+   67d90: 43 00 80 52  	mov	w3, #2
+   67d94: 00 00 00 94  	bl	0x67d94 <meizu_mipi_dsi_dcs_set_display_brightness+0x16c>
+   67d98: a0 08 f8 b7  	tbnz	x0, #63, 0x67eac <meizu_mipi_dsi_dcs_set_display_brightness+0x284>
+   67d9c: e2 33 00 91  	add	x2, sp, #12
+   67da0: e0 03 13 aa  	mov	x0, x19
+   67da4: 01 1e 80 52  	mov	w1, #240
+   67da8: 43 00 80 52  	mov	w3, #2
+   67dac: 00 00 00 94  	bl	0x67dac <meizu_mipi_dsi_dcs_set_display_brightness+0x184>
+   67db0: c0 08 f8 b6  	tbz	x0, #63, 0x67ec8 <meizu_mipi_dsi_dcs_set_display_brightness+0x2a0>
+   67db4: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x18c>
+   67db8: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x190>
+   67dbc: 00 00 00 91  	add	x0, x0, #0
+   67dc0: 21 00 00 91  	add	x1, x1, #0
+   67dc4: 62 0e 80 52  	mov	w2, #115
+   67dc8: 3e 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67dcc: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x1a4>
+   67dd0: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x1a8>
+   67dd4: 00 00 00 91  	add	x0, x0, #0
+   67dd8: 21 00 00 91  	add	x1, x1, #0
+   67ddc: e2 06 80 52  	mov	w2, #55
+   67de0: 38 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67de4: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x1bc>
+   67de8: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x1c0>
+   67dec: 00 00 00 91  	add	x0, x0, #0
+   67df0: 21 00 00 91  	add	x1, x1, #0
+   67df4: a2 07 80 52  	mov	w2, #61
+   67df8: 32 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67dfc: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x1d4>
+   67e00: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x1d8>
+   67e04: 00 00 00 91  	add	x0, x0, #0
+   67e08: 21 00 00 91  	add	x1, x1, #0
+   67e0c: 62 08 80 52  	mov	w2, #67
+   67e10: 2c 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67e14: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x1ec>
+   67e18: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x1f0>
+   67e1c: 00 00 00 91  	add	x0, x0, #0
+   67e20: 21 00 00 91  	add	x1, x1, #0
+   67e24: 22 09 80 52  	mov	w2, #73
+   67e28: 26 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67e2c: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x204>
+   67e30: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x208>
+   67e34: 00 00 00 91  	add	x0, x0, #0
+   67e38: 21 00 00 91  	add	x1, x1, #0
+   67e3c: e2 09 80 52  	mov	w2, #79
+   67e40: 20 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67e44: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x21c>
+   67e48: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x220>
+   67e4c: 00 00 00 91  	add	x0, x0, #0
+   67e50: 21 00 00 91  	add	x1, x1, #0
+   67e54: a2 0a 80 52  	mov	w2, #85
+   67e58: 1a 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67e5c: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x234>
+   67e60: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x238>
+   67e64: 00 00 00 91  	add	x0, x0, #0
+   67e68: 21 00 00 91  	add	x1, x1, #0
+   67e6c: 62 0b 80 52  	mov	w2, #91
+   67e70: e3 03 14 2a  	mov	w3, w20
+   67e74: 00 00 00 94  	bl	0x67e74 <meizu_mipi_dsi_dcs_set_display_brightness+0x24c>
+   67e78: 13 00 00 14  	b	0x67ec4 <meizu_mipi_dsi_dcs_set_display_brightness+0x29c>
+   67e7c: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x254>
+   67e80: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x258>
+   67e84: 00 00 00 91  	add	x0, x0, #0
+   67e88: 21 00 00 91  	add	x1, x1, #0
+   67e8c: 22 0c 80 52  	mov	w2, #97
+   67e90: 0c 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67e94: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x26c>
+   67e98: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x270>
+   67e9c: 00 00 00 91  	add	x0, x0, #0
+   67ea0: 21 00 00 91  	add	x1, x1, #0
+   67ea4: e2 0c 80 52  	mov	w2, #103
+   67ea8: 06 00 00 14  	b	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67eac: 00 00 00 90  	adrp	x0, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x284>
+   67eb0: 01 00 00 90  	adrp	x1, 0x67000 <meizu_mipi_dsi_dcs_set_display_brightness+0x288>
+   67eb4: 00 00 00 91  	add	x0, x0, #0
+   67eb8: 21 00 00 91  	add	x1, x1, #0
+   67ebc: a2 0d 80 52  	mov	w2, #109
+   67ec0: 00 00 00 94  	bl	0x67ec0 <meizu_mipi_dsi_dcs_set_display_brightness+0x298>
+   67ec4: a0 02 80 12  	mov	w0, #-22
+   67ec8: 08 41 38 d5  	mrs	x8, SP_EL0
+   67ecc: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+   67ed0: a9 83 5f f8  	ldur	x9, [x29, #-8]
+   67ed4: 1f 01 09 eb  	cmp	x8, x9
+   67ed8: e1 00 00 54  	b.ne	0x67ef4 <meizu_mipi_dsi_dcs_set_display_brightness+0x2cc>
+   67edc: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+   67ee0: fd 7b 43 a9  	ldp	x29, x30, [sp, #48]
+   67ee4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+   67ee8: ff 43 01 91  	add	sp, sp, #80
+   67eec: bf 23 03 d5  	hint	#29
+   67ef0: c0 03 5f d6  	ret
+   67ef4: 00 00 00 94  	bl	0x67ef4 <meizu_mipi_dsi_dcs_set_display_brightness+0x2cc>

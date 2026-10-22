@@ -1,0 +1,38 @@
+M2391 display source recovery
+============================
+Original msm_drm.ko provides 45 exports. Independent complete msm_drm.o
+Kbuild retains all 45: 40 public exports naturally match the stock CRCs.
+Four display getters and msm_ioctl_rmfb2 retain real source interfaces but
+have different type spelling/layout-derived CRCs. The private-symbol guard
+rejects retained stock consumers of these five symbols; direct ELF UND scans
+found none. CRC metadata is not rewritten.
+
+Recovered OEM behavior includes the 45-slot command map, AOD/normal transitions,
+brightness/HBM/restore dispatch, ADFR timing commands, display power state,
+factory command replacement, raw register access, PPS capture, ESD scheduling,
+log controls, panel information and original sysfs links/permissions.
+The command parser validates complete packets before replacing live tables.
+All real hardware accesses retain display/panel locking and clock votes.
+PPS registry access and connector destruction are synchronized with factory
+callbacks; sysfs removal drains callbacks before releasing their context.
+
+The power-key bark chain uses the original unsigned int(void) callback,
+proven by stock CFI and the provider pointer CRC 1562b237. It performs the
+original panel_disable then panel_post_unprepare sequence. New paired SRCU
+registration in the source pm8941-pwrkey provider drains the callback before
+panel/host teardown, avoiding the stock dangling raw-pointer lifetime.
+The complete target imports only the two paired registration APIs.
+
+M2391 DTS overlays do not supply vendor,panel-id-reg; no register addresses
+were invented for the inactive stock panel-ID reader. Proprietary panel
+command bytes and panel firmware behavior remain device data, not invented
+replacement implementations.
+
+Validation: independent prepared-core Kalama Kbuild of complete msm_drm.o,
+including dsi_meizu.o, passed. Actual genksyms output and export kinds were
+checked against original ELF CRCs; the source-private import guard passed.
+Camera/flash and display lifetime paths received independent peer review.
+No module load, hardware IO test, whole-kernel build or ROM rebuild performed.
+Source display selection is enabled for vendor and ramdisk as a protected
+source group with pm8941-pwrkey. Both original display modules are SHA-verified
+and backed up under out/m2391-515-analysis/removed-stock-modules before removal.

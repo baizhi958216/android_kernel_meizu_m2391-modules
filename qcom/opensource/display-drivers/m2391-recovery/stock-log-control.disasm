@@ -1,0 +1,13 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000067784 <display_customize_log_control>:
+   67784: 3f 23 03 d5  	hint	#25
+   67788: 08 00 00 90  	adrp	x8, 0x67000 <display_customize_log_control+0x4> // xjmz_dsi_log_type+0x0
+   6778c: 08 01 40 b9  	ldr	w8, [x8] // xjmz_dsi_log_type+0x0
+   67790: bf 23 03 d5  	hint	#29
+   67794: 1f 01 00 6a  	tst	w8, w0
+   67798: e0 07 9f 1a  	cset	w0, ne
+   6779c: c0 03 5f d6  	ret

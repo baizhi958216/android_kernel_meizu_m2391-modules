@@ -12,6 +12,8 @@
 #include <video/mipi_display.h>
 
 #include "dsi_panel.h"
+#include "dsi_display.h"
+#include "dsi_meizu.h"
 #include "dsi_ctrl_hw.h"
 #include "dsi_parser.h"
 #include "sde_dbg.h"
@@ -548,6 +550,223 @@ static int dsi_panel_wled_register(struct dsi_panel *panel,
 	return 0;
 }
 
+/*
+ * Recovered from M2391 msm_drm.ko, .text 0x67c28..0x67ef8.
+ * This is the normal-brightness transport, not the AOD dispatcher.
+ * Preserve the OEM command order, HBM encoding and -EINVAL on write failure.
+ * See m2391-recovery/stock-brightness.disasm and its relocation evidence.
+ */
+int dsi_panel_meizu_set_brightness(struct dsi_panel *panel, u16 brightness)
+{
+	struct {
+		u8 command;
+		u8 length;
+		u8 payload[3];
+	} writes[] = {
+		{ 0xf0, 2, { 0x5a, 0x5a } },
+		{ 0xf1, 2, { 0x5a, 0x5a } },
+		{ 0xfc, 2, { 0x5a, 0x5a } },
+		{ 0xb0, 3, { 0x00, 0x0c, 0xc2 } },
+		{ 0xc2, 2, { 0x60, 0x09 } },
+		{ 0x53, 1, { 0x28 } },
+		{ 0x51, 2, { brightness >> 8, brightness & 0xff } },
+		{ 0xf7, 1, { 0x0f } },
+		{ 0xfc, 2, { 0xa5, 0xa5 } },
+		{ 0xf1, 2, { 0xa5, 0xa5 } },
+		{ 0xf0, 2, { 0xa5, 0xa5 } },
+	};
+	ssize_t rc = 0;
+	unsigned int i;
+
+	if (brightness >= 0x800) {
+		writes[5].payload[0] = 0xe8;
+		writes[6].payload[0] &= 0x07;
+	}
+
+	for (i = 0; i < ARRAY_SIZE(writes); i++) {
+		rc = mipi_dsi_dcs_write(&panel->mipi_device, writes[i].command,
+				       writes[i].payload, writes[i].length);
+		if (rc < 0) {
+			DSI_ERR("Meizu brightness command 0x%02x failed: %zd\n",
+				writes[i].command, rc);
+			return -EINVAL;
+		}
+	}
+
+	return rc;
+}
+
+/*
+ * xjmz_set_brightness, stock .text 0x67b08..0x67c28. OEM panel fields
+ * at offsets 2104 (AOD mode) and 2112 (last AOD command) are passed
+ * explicitly: their original structure declarations are not available.
+ * The caller must supply the state and serialize this with mode changes.
+ * Stock deliberately logs transport errors and returns zero to backlight.
+ */
+int dsi_panel_meizu_dispatch_brightness(struct dsi_panel *panel, u32 brightness,
+		bool aod_active, int *last_aod_command)
+{
+	enum dsi_cmd_set_type command;
+	int rc;
+
+	panel->bl_config.bl_level = brightness;
+	if (!aod_active) {
+		rc = dsi_panel_meizu_set_brightness(panel, (u16)brightness);
+		if (rc < 0)
+			DSI_ERR("Meizu normal brightness %u failed: %d\n",
+				brightness, rc);
+		return 0;
+	}
+
+	switch ((u16)brightness) {
+	case 43:
+		command = DSI_CMD_SET_AOD_LOW_BRIGHTNESS;
+		break;
+	case 215:
+		command = DSI_CMD_SET_AOD_HIGH_BRIGHTNESS;
+		break;
+	default:
+		return 0;
+	}
+
+	if (!panel->panel_initialized) {
+		DSI_ERR("Meizu AOD brightness before panel initialization\n");
+		return 0;
+	}
+	if (*last_aod_command == (int)command)
+		return 0;
+
+	*last_aod_command = command;
+	rc = dsi_panel_tx_cmd_set(panel, command);
+	if (rc)
+		DSI_ERR("Meizu AOD brightness command %d failed: %d\n",
+			command, rc);
+	return 0;
+}
+
+bool dsi_panel_is_m2391(struct dsi_panel *panel)
+{
+	return panel->name && !strcmp(panel->name,
+		"meizu amoled cmd mode dsi samsung panel with DSC");
+}
+
+/* Stock xjmz_recover_brightness excludes these AOD brightness sentinels. */
+static void dsi_panel_meizu_recover_brightness(struct dsi_panel *panel)
+{
+	u32 brightness = panel->bl_config.bl_level;
+
+	if (brightness == 4 || brightness == 6 || brightness == 43 ||
+		brightness == 215)
+		return;
+	if (dsi_meizu_log_enabled(BIT(1)))
+		DSI_INFO("Meizu restore brightness=%u\n", brightness);
+	dsi_panel_meizu_set_brightness(panel, (u16)brightness);
+}
+
+/* Stock dsi_panel_set_adfr .text 0x176674..0x176994. */
+int dsi_panel_meizu_set_adfr(struct dsi_panel *panel, u32 request, bool force)
+{
+	static u32 manual_flag = 1;
+	u32 mode = request >> 16;
+	u32 fps = request & 0xffff;
+	bool optimized = false;
+	enum dsi_cmd_set_type command;
+	int rc = 0;
+
+	if (!panel || !panel->cur_mode || panel->meizu_aod_active ||
+		panel->cur_mode->timing.refresh_rate != 120)
+		return -EINVAL;
+	if (mode > 2)
+		mode = 1;
+
+	mutex_lock(&panel->panel_lock);
+	if (!panel->panel_initialized)
+		goto out;
+	if (force || (mode && mode != manual_flag)) {
+		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_OPTIMIZE);
+		optimized = true;
+		if (rc)
+			DSI_ERR("Meizu ADFR optimize failed: %d\n", rc);
+	}
+	if (mode)
+		manual_flag = mode;
+	if (!optimized && fps == panel->meizu_adfr_fps)
+		goto out;
+
+	if (manual_flag == 1) {
+		if (fps == panel->meizu_adfr_fps)
+			goto out;
+		switch (fps) {
+		case 1: command = DSI_CMD_SET_HOP_AUTO_1HZ; break;
+		case 10: command = DSI_CMD_SET_HOP_AUTO_10HZ; break;
+		case 40: command = DSI_CMD_SET_HOP_AUTO_40HZ; break;
+		default: command = DSI_CMD_SET_HOP_AUTO_30HZ; break;
+		}
+	} else if (manual_flag == 2) {
+		switch (fps) {
+		case 1: command = DSI_CMD_SET_MINFPS_1; break;
+		case 5: command = DSI_CMD_SET_MINFPS_5; break;
+		case 10: command = DSI_CMD_SET_MINFPS_10; break;
+		case 15: command = DSI_CMD_SET_MINFPS_15; break;
+		case 20: command = DSI_CMD_SET_MINFPS_20; break;
+		case 24: command = DSI_CMD_SET_MINFPS_24; break;
+		case 30: command = DSI_CMD_SET_MINFPS_30; break;
+		case 40: command = DSI_CMD_SET_MINFPS_40; break;
+		case 60: command = DSI_CMD_SET_MINFPS_60; break;
+		case 120: command = DSI_CMD_SET_MINFPS_120; break;
+		default: command = DSI_CMD_SET_MINFPS_10; break;
+		}
+	} else {
+		goto out;
+	}
+	rc = dsi_panel_tx_cmd_set(panel, command);
+	if (!rc)
+		panel->meizu_adfr_fps = fps;
+	else
+		DSI_ERR("Meizu ADFR command %d failed: %d\n", command, rc);
+	panel->meizu_adfr_auto = manual_flag == 1;
+out:
+	mutex_unlock(&panel->panel_lock);
+	return rc;
+}
+
+/* Stock explicit AOD control also restores the saved ADFR request. */
+int dsi_panel_meizu_set_aod(struct dsi_panel *panel, bool active)
+{
+	int rc = 0;
+
+	if (!panel)
+		return -EINVAL;
+	mutex_lock(&panel->panel_lock);
+	if (panel->panel_initialized && panel->meizu_aod_active != active) {
+		panel->meizu_last_aod_command = -1;
+		rc = dsi_panel_tx_cmd_set(panel, active ? DSI_CMD_SET_NOR2AOD :
+			DSI_CMD_SET_AOD2NOR);
+		if (!rc)
+			panel->meizu_aod_active = active;
+	}
+	mutex_unlock(&panel->panel_lock);
+	dsi_panel_meizu_set_adfr(panel, panel->meizu_adfr_fps, true);
+	return rc;
+}
+
+int dsi_panel_meizu_set_aod_light(struct dsi_panel *panel, int mode,
+		int *current_mode)
+{
+	int rc = -EINVAL;
+
+	mutex_lock(&panel->panel_lock);
+	if (panel->panel_initialized && (mode == 0 || mode == 1)) {
+		rc = dsi_panel_tx_cmd_set(panel, mode ?
+			DSI_CMD_SET_AOD_HIGH_BRIGHTNESS :
+			DSI_CMD_SET_AOD_LOW_BRIGHTNESS);
+		/* Stock updates this global even when transmission fails. */
+		*current_mode = mode;
+	}
+	mutex_unlock(&panel->panel_lock);
+	return rc;
+}
+
 static int dsi_panel_update_backlight(struct dsi_panel *panel,
 	u32 bl_lvl)
 {
@@ -569,7 +788,11 @@ static int dsi_panel_update_backlight(struct dsi_panel *panel,
 	if (panel->bl_config.bl_inverted_dbv)
 		bl_lvl = (((bl_lvl & 0xff) << 8) | (bl_lvl >> 8));
 
-	rc = mipi_dsi_dcs_set_display_brightness(dsi, bl_lvl);
+	if (dsi_panel_is_m2391(panel))
+		rc = dsi_panel_meizu_dispatch_brightness(panel, bl_lvl,
+			panel->meizu_aod_active, &panel->meizu_last_aod_command);
+	else
+		rc = mipi_dsi_dcs_set_display_brightness(dsi, bl_lvl);
 	if (rc < 0)
 		DSI_ERR("failed to update dcs backlight:%d\n", bl_lvl);
 
@@ -1877,6 +2100,26 @@ const char *cmd_set_prop_map[DSI_CMD_SET_MAX] = {
 	"qcom,mdss-dsi-post-mode-switch-on-command",
 	"qcom,mdss-dsi-qsync-on-commands",
 	"qcom,mdss-dsi-qsync-off-commands",
+	"qcom,mdss-dsi-nor2aod-command",
+	"qcom,mdss-dsi-aod2nor-command",
+	"qcom,mdss-dsi-aod-low-brightness-command",
+	"qcom,mdss-dsi-aod-high-brightness-command",
+	"qcom,mdss-dsi-minfps-120-commands",
+	"qcom,mdss-dsi-minfps-60-commands",
+	"qcom,mdss-dsi-minfps-40-commands",
+	"qcom,mdss-dsi-minfps-30-commands",
+	"qcom,mdss-dsi-minfps-24-commands",
+	"qcom,mdss-dsi-minfps-20-commands",
+	"qcom,mdss-dsi-minfps-15-commands",
+	"qcom,mdss-dsi-minfps-10-commands",
+	"qcom,mdss-dsi-minfps-5-commands",
+	"qcom,mdss-dsi-minfps-1-commands",
+	"qcom,mdss-dsi-optimize-commands",
+	"qcom,mdss-dsi-hop-auto-1hz-commands",
+	"qcom,mdss-dsi-hop-auto-10hz-commands",
+	"qcom,mdss-dsi-hop-auto-20hz-commands",
+	"qcom,mdss-dsi-hop-auto-30hz-commands",
+	"qcom,mdss-dsi-hop-auto-40hz-commands",
 };
 
 const char *cmd_set_state_map[DSI_CMD_SET_MAX] = {
@@ -1905,6 +2148,26 @@ const char *cmd_set_state_map[DSI_CMD_SET_MAX] = {
 	"qcom,mdss-dsi-post-mode-switch-on-command-state",
 	"qcom,mdss-dsi-qsync-on-commands-state",
 	"qcom,mdss-dsi-qsync-off-commands-state",
+	"qcom,mdss-dsi-nor2aod-command-state",
+	"qcom,mdss-dsi-aod2nor-command-state",
+	"qcom,mdss-dsi-aod-low-brightness-command-state",
+	"qcom,mdss-dsi-aod-high-brightness-command-state",
+	"qcom,mdss-dsi-minfps-120-commands-state",
+	"qcom,mdss-dsi-minfps-60-commands-state",
+	"qcom,mdss-dsi-minfps-40-commands-state",
+	"qcom,mdss-dsi-minfps-30-commands-state",
+	"qcom,mdss-dsi-minfps-24-commands-state",
+	"qcom,mdss-dsi-minfps-20-commands-state",
+	"qcom,mdss-dsi-minfps-15-commands-state",
+	"qcom,mdss-dsi-minfps-10-commands-state",
+	"qcom,mdss-dsi-minfps-5-commands-state",
+	"qcom,mdss-dsi-minfps-1-commands-state",
+	"qcom,mdss-dsi-optimize-commands-state",
+	"qcom,mdss-dsi-hop-auto-1hz-commands-state",
+	"qcom,mdss-dsi-hop-auto-10hz-commands-state",
+	"qcom,mdss-dsi-hop-auto-20hz-commands-state",
+	"qcom,mdss-dsi-hop-auto-30hz-commands-state",
+	"qcom,mdss-dsi-hop-auto-40hz-commands-state",
 };
 
 int dsi_panel_get_cmd_pkt_count(const char *data, u32 length, u32 *cnt)
@@ -4381,6 +4644,10 @@ int dsi_panel_update_pps(struct dsi_panel *panel)
 		}
 	}
 
+	if (dsi_panel_is_m2391(panel) && set->cmds)
+		dsi_meizu_capture_pps(panel, set->cmds);
+	if (dsi_panel_is_m2391(panel) && set->cmds && dsi_meizu_log_enabled(BIT(4)))
+		dsi_meizu_log_command(set->cmds);
 	rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_PPS);
 	if (rc) {
 		DSI_ERR("[%s] failed to send DSI_CMD_SET_PPS cmds, rc=%d\n",
@@ -4405,6 +4672,17 @@ int dsi_panel_set_lp1(struct dsi_panel *panel)
 	mutex_lock(&panel->panel_lock);
 	if (!panel->panel_initialized)
 		goto exit;
+
+	if (dsi_panel_is_m2391(panel)) {
+		/* Stock .text 0x176ce4: NOR2AOD replaces generic LP1. */
+		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_NOR2AOD);
+		if (!rc)
+			panel->meizu_aod_active = true;
+		panel->meizu_last_aod_command = -1;
+		if (rc)
+			DSI_ERR("Meizu NOR2AOD failed: %d\n", rc);
+		goto exit;
+	}
 
 	/*
 	 * Consider LP1->LP2->LP1.
@@ -4460,6 +4738,21 @@ int dsi_panel_set_nolp(struct dsi_panel *panel)
 	mutex_lock(&panel->panel_lock);
 	if (!panel->panel_initialized)
 		goto exit;
+
+	if (dsi_panel_is_m2391(panel)) {
+		/* Stock .text 0x176f8c..0x176fcc, including error order. */
+		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_AOD2NOR);
+		if (!rc)
+			panel->meizu_aod_active = false;
+		else
+			DSI_ERR("Meizu AOD2NOR failed: %d\n", rc);
+		panel->meizu_last_aod_command = -1;
+		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_OPTIMIZE);
+		if (rc)
+			DSI_ERR("Meizu optimize command failed: %d\n", rc);
+		dsi_panel_meizu_recover_brightness(panel);
+		goto exit;
+	}
 
 	/*
 	 * Consider about LP1->LP2->NOLP.
@@ -4886,6 +5179,8 @@ int dsi_panel_disable(struct dsi_panel *panel)
 		DSI_ERR("invalid params\n");
 		return -EINVAL;
 	}
+
+	if (dsi_panel_is_m2391(panel)) display_set_power_status(0);
 
 	mutex_lock(&panel->panel_lock);
 

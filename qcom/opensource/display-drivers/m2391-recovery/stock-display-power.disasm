@@ -1,0 +1,112 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/msm_drm.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000015bd80 <dsi_display_set_power>:
+  15bd80: 3f 23 03 d5  	hint	#25
+  15bd84: 5e 86 00 f8  	str	x30, [x18], #8
+  15bd88: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+  15bd8c: f5 0b 00 f9  	str	x21, [sp, #16]
+  15bd90: fd 03 00 91  	mov	x29, sp
+  15bd94: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  15bd98: 82 00 00 b4  	cbz	x2, 0x15bda8 <dsi_display_set_power+0x28>
+  15bd9c: f4 03 02 aa  	mov	x20, x2
+  15bda0: 48 84 40 f9  	ldr	x8, [x2, #264]
+  15bda4: e8 01 00 b5  	cbnz	x8, 0x15bde0 <dsi_display_set_power+0x60>
+  15bda8: 01 00 00 90  	adrp	x1, 0x15b000 <dsi_display_set_power+0x28>
+  15bdac: 02 00 00 90  	adrp	x2, 0x15b000 <dsi_display_set_power+0x2c>
+  15bdb0: 21 00 00 91  	add	x1, x1, #0
+  15bdb4: 42 00 00 91  	add	x2, x2, #0
+  15bdb8: e0 03 1f aa  	mov	x0, xzr
+  15bdbc: 00 00 00 94  	bl	0x15bdbc <dsi_display_set_power+0x3c>
+  15bdc0: b5 02 80 12  	mov	w21, #-22
+  15bdc4: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  15bdc8: e0 03 15 2a  	mov	w0, w21
+  15bdcc: f5 0b 40 f9  	ldr	x21, [sp, #16]
+  15bdd0: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+  15bdd4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  15bdd8: bf 23 03 d5  	hint	#29
+  15bddc: c0 03 5f d6  	ret
+  15bde0: 15 00 00 90  	adrp	x21, 0x15b000 <dsi_display_set_power+0x60>
+  15bde4: 00 00 00 90  	adrp	x0, 0x15b000 <dsi_display_set_power+0x64>
+  15bde8: b5 02 00 91  	add	x21, x21, #0
+  15bdec: f3 03 01 2a  	mov	w19, w1
+  15bdf0: 00 00 00 91  	add	x0, x0, #0
+  15bdf4: e1 03 15 aa  	mov	x1, x21
+  15bdf8: a2 a9 80 52  	mov	w2, #1357
+  15bdfc: 00 00 00 94  	bl	0x15bdfc <dsi_display_set_power+0x7c>
+  15be00: 88 86 40 f9  	ldr	x8, [x20, #264]
+  15be04: 00 00 00 90  	adrp	x0, 0x15b000 <dsi_display_set_power+0x84>
+  15be08: 00 00 00 91  	add	x0, x0, #0
+  15be0c: e1 03 15 aa  	mov	x1, x21
+  15be10: c2 a9 80 52  	mov	w2, #1358
+  15be14: e3 03 13 2a  	mov	w3, w19
+  15be18: 04 e5 47 b9  	ldr	w4, [x8, #2020]
+  15be1c: 00 00 00 94  	bl	0x15be1c <dsi_display_set_power+0x9c>
+  15be20: 68 06 00 51  	sub	w8, w19, #1
+  15be24: 1f 09 00 71  	cmp	w8, #2
+  15be28: 83 00 00 54  	b.lo	0x15be38 <dsi_display_set_power+0xb8>
+  15be2c: 13 02 00 34  	cbz	w19, 0x15be6c <dsi_display_set_power+0xec>
+  15be30: 7f 16 00 71  	cmp	w19, #5
+  15be34: 61 03 00 54  	b.ne	0x15bea0 <dsi_display_set_power+0x120>
+  15be38: 88 86 40 f9  	ldr	x8, [x20, #264]
+  15be3c: 29 00 80 52  	mov	w9, #1
+  15be40: f5 03 1f 2a  	mov	w21, wzr
+  15be44: 7f 0a 00 71  	cmp	w19, #2
+  15be48: 09 49 08 b9  	str	w9, [x8, #2120]
+  15be4c: 00 03 00 54  	b.eq	0x15beac <dsi_display_set_power+0x12c>
+  15be50: 7f 06 00 71  	cmp	w19, #1
+  15be54: 81 fb ff 54  	b.ne	0x15bdc4 <dsi_display_set_power+0x44>
+  15be58: 80 86 40 f9  	ldr	x0, [x20, #264]
+  15be5c: 00 00 00 94  	bl	0x15be5c <dsi_display_set_power+0xdc>
+  15be60: f5 03 00 2a  	mov	w21, w0
+  15be64: 20 00 80 52  	mov	w0, #1
+  15be68: 09 00 00 14  	b	0x15be8c <dsi_display_set_power+0x10c>
+  15be6c: 80 86 40 f9  	ldr	x0, [x20, #264]
+  15be70: 08 e4 47 b9  	ldr	w8, [x0, #2020]
+  15be74: 08 05 00 51  	sub	w8, w8, #1
+  15be78: 1f 05 00 71  	cmp	w8, #1
+  15be7c: 68 01 00 54  	b.hi	0x15bea8 <dsi_display_set_power+0x128>
+  15be80: 00 00 00 94  	bl	0x15be80 <dsi_display_set_power+0x100>
+  15be84: f5 03 00 2a  	mov	w21, w0
+  15be88: e0 03 1f 2a  	mov	w0, wzr
+  15be8c: 08 00 00 90  	adrp	x8, 0x15b000 <dsi_display_set_power+0x10c>
+  15be90: 49 00 80 52  	mov	w9, #2
+  15be94: 09 01 00 b9  	str	w9, [x8]
+  15be98: 00 00 00 94  	bl	0x15be98 <dsi_display_set_power+0x118>
+  15be9c: 04 00 00 14  	b	0x15beac <dsi_display_set_power+0x12c>
+  15bea0: f5 03 1f 2a  	mov	w21, wzr
+  15bea4: c8 ff ff 17  	b	0x15bdc4 <dsi_display_set_power+0x44>
+  15bea8: f5 03 1f 2a  	mov	w21, wzr
+  15beac: 08 00 00 90  	adrp	x8, 0x15b000 <dsi_display_set_power+0x12c>
+  15beb0: 89 86 40 f9  	ldr	x9, [x20, #264]
+  15beb4: 01 00 00 90  	adrp	x1, 0x15b000 <dsi_display_set_power+0x134>
+  15beb8: e7 dd 97 52  	mov	w7, #48879
+  15bebc: 21 00 00 91  	add	x1, x1, #0
+  15bec0: c2 ae 80 52  	mov	w2, #1398
+  15bec4: 00 01 40 f9  	ldr	x0, [x8]
+  15bec8: 03 00 80 12  	mov	w3, #-1
+  15becc: 24 e5 47 b9  	ldr	w4, [x9, #2020]
+  15bed0: e5 03 13 2a  	mov	w5, w19
+  15bed4: e6 03 15 2a  	mov	w6, w21
+  15bed8: c7 1b b8 72  	movk	w7, #49374, lsl #16
+  15bedc: 00 00 00 94  	bl	0x15bedc <dsi_display_set_power+0x15c>
+  15bee0: 88 86 40 f9  	ldr	x8, [x20, #264]
+  15bee4: 09 00 00 90  	adrp	x9, 0x15b000 <dsi_display_set_power+0x164>
+  15bee8: 0a 00 00 90  	adrp	x10, 0x15b000 <dsi_display_set_power+0x168>
+  15beec: 29 01 00 91  	add	x9, x9, #0
+  15bef0: 4a 01 00 91  	add	x10, x10, #0
+  15bef4: bf 02 00 71  	cmp	w21, #0
+  15bef8: 02 00 00 90  	adrp	x2, 0x15b000 <dsi_display_set_power+0x178>
+  15befc: 03 e5 47 b9  	ldr	w3, [x8, #2020]
+  15bf00: 45 01 89 9a  	csel	x5, x10, x9, eq
+  15bf04: 42 00 00 91  	add	x2, x2, #0
+  15bf08: e0 03 1f aa  	mov	x0, xzr
+  15bf0c: 21 00 80 52  	mov	w1, #1
+  15bf10: e4 03 13 2a  	mov	w4, w19
+  15bf14: 00 00 00 94  	bl	0x15bf14 <dsi_display_set_power+0x194>
+  15bf18: 75 f5 ff 35  	cbnz	w21, 0x15bdc4 <dsi_display_set_power+0x44>
+  15bf1c: 88 86 40 f9  	ldr	x8, [x20, #264]
+  15bf20: 13 e5 07 b9  	str	w19, [x8, #2020]
+  15bf24: a8 ff ff 17  	b	0x15bdc4 <dsi_display_set_power+0x44>
