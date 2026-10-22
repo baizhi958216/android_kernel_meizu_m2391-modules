@@ -867,6 +867,21 @@ int cam_flash_pmic_apply_setting(struct cam_flash_ctrl *fctrl,
 
 			if (flash_data->opcode ==
 				CAMERA_SENSOR_FLASH_OP_FIRELOW) {
+				/* The framework torch (setTorchMode) arrives as
+				 * WIDGET, and stock cam_flash_apply_setting enables
+				 * the Meizu flash power/init here as well; without it
+				 * the SY7808 stays unpowered and every I2C access
+				 * fails with -EINVAL.
+				 */
+				if (cam_flash_meizu_matches(fctrl)) {
+					rc = cam_flash_meizu_apply_power(fctrl, true);
+					if (rc) {
+						CAM_ERR(CAM_FLASH,
+							"Meizu torch power on failed: %d",
+							rc);
+						goto nrt_del_req;
+					}
+				}
 				rc = cam_flash_low(fctrl, flash_data);
 				if (rc) {
 					CAM_ERR(CAM_FLASH,
@@ -881,6 +896,8 @@ int cam_flash_pmic_apply_setting(struct cam_flash_ctrl *fctrl,
 					CAM_ERR(CAM_FLASH,
 					"LED off failed: %d",
 					rc);
+				if (cam_flash_meizu_matches(fctrl))
+					cam_flash_meizu_apply_power(fctrl, false);
 			}
 		} else if (fctrl->nrt_info.cmn_attr.cmd_type ==
 			CAMERA_SENSOR_FLASH_CMD_TYPE_RER) {
