@@ -126,6 +126,11 @@ struct nvt_ts_data {
 	struct mutex xbuf_lock;
 	bool irq_enabled;
 	void *notifier_cookie;
+	bool irq_requested;
+	bool gpio_configured;
+	bool late_initialized;
+	bool removed;
+	struct task_struct *late_thread;
 };
 
 #if NVT_TOUCH_PROC
