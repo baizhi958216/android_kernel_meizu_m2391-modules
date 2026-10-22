@@ -11,6 +11,7 @@
 #include "msm_vidc_driver.h"
 #include "msm_vidc.h"
 #include "msm_vidc_events.h"
+#include "msm_vidc_lifetime.h"
 
 extern struct msm_vidc_core *g_core;
 
@@ -29,7 +30,7 @@ unsigned int msm_v4l2_poll(struct file *filp, struct poll_table_struct *pt)
 	return msm_vidc_poll((void *)inst, filp, pt);
 }
 
-int msm_v4l2_open(struct file *filp)
+static int msm_v4l2_open_live(struct file *filp)
 {
 	struct video_device *vdev = video_devdata(filp);
 	struct msm_video_device *vid_dev =
@@ -810,16 +811,54 @@ unlock:
 	return rc;
 }
 
+struct media_request *msm_v4l2_request_alloc(struct media_device *mdev)
+{
+	struct msm_vidc_core *core = container_of(mdev, struct msm_vidc_core, media_dev);
+	struct media_request *req = NULL;
+	int idx = srcu_read_lock(&vidc_operations);
+
+	if (smp_load_acquire(&vidc_ready) && !READ_ONCE(core->stopping) &&
+	    try_module_get(THIS_MODULE)) {
+		req = kzalloc(sizeof(*req), GFP_KERNEL);
+		if (req) {
+			req->mdev = mdev; /* error unwind can call req_free before core init */
+			kref_get(&core->lifetime);
+		} else
+			module_put(THIS_MODULE);
+	}
+	srcu_read_unlock(&vidc_operations, idx);
+	return req;
+}
+
+void msm_v4l2_request_free(struct media_request *req)
+{
+	struct msm_vidc_core *core = container_of(req->mdev, struct msm_vidc_core, media_dev);
+
+	kfree(req);
+	vidc_core_put(core);
+	module_put(THIS_MODULE);
+}
+
 int msm_v4l2_request_validate(struct media_request *req)
 {
-	d_vpr_l("%s()\n", __func__);
-	return vb2_request_validate(req);
+	struct msm_vidc_core *core = container_of(req->mdev, struct msm_vidc_core, media_dev);
+	int idx = srcu_read_lock(&vidc_operations);
+	int rc = -ENODEV;
+
+	if (smp_load_acquire(&vidc_ready) && !READ_ONCE(core->stopping))
+		rc = vb2_request_validate(req);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
 }
 
 void msm_v4l2_request_queue(struct media_request *req)
 {
-	d_vpr_l("%s()\n", __func__);
-	v4l2_m2m_request_queue(req);
+	struct msm_vidc_core *core = container_of(req->mdev, struct msm_vidc_core, media_dev);
+	int idx = srcu_read_lock(&vidc_operations);
+
+	if (smp_load_acquire(&vidc_ready) && !READ_ONCE(core->stopping))
+		v4l2_m2m_request_queue(req);
+	srcu_read_unlock(&vidc_operations, idx);
 }
 
 void msm_v4l2_m2m_device_run(void *priv)
@@ -837,4 +876,26 @@ void msm_v4l2_m2m_job_abort(void *priv)
 	}
 	i_vpr_h(inst, "%s: m2m job aborted\n", __func__);
 	v4l2_m2m_job_finish(inst->m2m_dev, inst->m2m_ctx);
+}
+int msm_v4l2_open(struct file *filp)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int rc = -ENODEV;
+
+	if (smp_load_acquire(&vidc_ready) && video_is_registered(video_devdata(filp)))
+		rc = msm_v4l2_open_live(filp);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
+}
+
+long msm_v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+{
+	struct msm_vidc_inst *inst = get_vidc_inst(filp, NULL);
+	int idx = srcu_read_lock(&vidc_operations);
+	long rc = -ENODEV;
+
+	if (smp_load_acquire(&vidc_ready) && inst && !READ_ONCE(inst->detached))
+		rc = video_ioctl2(filp, cmd, arg);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
 }

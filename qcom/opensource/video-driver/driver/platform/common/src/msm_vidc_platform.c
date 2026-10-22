@@ -60,7 +60,7 @@ static struct v4l2_file_operations msm_v4l2_file_operations = {
 	.owner                          = THIS_MODULE,
 	.open                           = msm_v4l2_open,
 	.release                        = msm_v4l2_close,
-	.unlocked_ioctl                 = video_ioctl2,
+	.unlocked_ioctl                 = msm_v4l2_ioctl,
 	.poll                           = msm_v4l2_poll,
 };
 
@@ -176,6 +176,8 @@ static struct vb2_mem_ops msm_vb2_mem_ops = {
 };
 
 static struct media_device_ops msm_v4l2_media_ops = {
+	.req_alloc                      = msm_v4l2_request_alloc,
+	.req_free                       = msm_v4l2_request_free,
 	.req_validate                   = msm_v4l2_request_validate,
 	.req_queue                      = msm_v4l2_request_queue,
 };

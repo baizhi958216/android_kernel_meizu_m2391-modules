@@ -53,7 +53,7 @@ static struct msm_platform_core_capability core_data_kalama[] = {
 	{MAX_NUM_4K_SESSIONS, 8},
 	{MAX_NUM_8K_SESSIONS, 2},
 	{MAX_SECURE_SESSION_COUNT, 3},
-	{MAX_RT_MBPF, 259200},	/* ((7680x4320)/256) * 2)*/
+	{MAX_RT_MBPF, 174080}, /* M2391 original core capability */
 	{MAX_MBPF, 278528}, /* ((8192x4352)/256) * 2 */
 	{MAX_MBPS, 7833600},	/* max_load
 					 * 7680x4320@60fps or 3840x2176@240fps
@@ -687,7 +687,7 @@ static struct msm_platform_inst_capability instance_cap_data_kalama[] = {
 		CAP_FLAG_OUTPUT_PORT},
 
 	{VBV_DELAY, ENC, H264|HEVC,
-		34, 300, 1, 300,
+		200, 300, 100, 300,
 		V4L2_CID_MPEG_VIDEO_VBV_DELAY,
 		HFI_PROP_VBV_DELAY,
 		CAP_FLAG_OUTPUT_PORT},
@@ -1911,7 +1911,7 @@ static struct msm_platform_inst_cap_dependency instance_cap_dependency_data_kala
 		msm_vidc_set_constant_quality},
 
 	{GOP_SIZE, ENC, CODECS_ALL,
-		{ENH_LAYER_COUNT, VBV_DELAY},
+		{ENH_LAYER_COUNT},
 		{ALL_INTRA},
 		msm_vidc_adjust_gop_size,
 		msm_vidc_set_gop_size},
@@ -2039,8 +2039,8 @@ static struct msm_platform_inst_cap_dependency instance_cap_dependency_data_kala
 
 	{VBV_DELAY, ENC, H264|HEVC,
 		{BITRATE_MODE},
-		{GOP_SIZE, ENH_LAYER_COUNT},
-		msm_vidc_adjust_vbv_delay,
+		{0},
+		NULL,
 		msm_vidc_set_cbr_related_properties},
 
 	{PEAK_BITRATE, ENC, H264|HEVC,
@@ -2118,7 +2118,7 @@ static struct msm_platform_inst_cap_dependency instance_cap_dependency_data_kala
 		{CONTENT_ADAPTIVE_CODING}},
 
 	{ENH_LAYER_COUNT, ENC, H264|HEVC,
-		{BITRATE_MODE, META_EVA_STATS, VBV_DELAY},
+		{BITRATE_MODE, META_EVA_STATS},
 		{GOP_SIZE, B_FRAME, BIT_RATE, MIN_QUALITY, SLICE_MODE},
 		msm_vidc_adjust_layer_count,
 		msm_vidc_set_layer_count_and_type},

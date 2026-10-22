@@ -10,6 +10,7 @@
 #include "msm_media_info.h"
 
 #include "msm_vidc_driver.h"
+#include "msm_vidc_lifetime.h"
 #include "msm_vidc_platform.h"
 #include "msm_vidc_internal.h"
 #include "msm_vidc_control.h"
@@ -3700,7 +3701,7 @@ int schedule_stats_work(struct msm_vidc_inst *inst)
 		return 0;
 	}
 	core = inst->core;
-	mod_delayed_work(inst->workq, &inst->stats_work,
+	vidc_queue_delayed(core, inst->workq, &inst->stats_work,
 		msecs_to_jiffies(core->capabilities[STATS_TIMEOUT_MS].value));
 
 	return 0;
@@ -5530,7 +5531,7 @@ void msm_vidc_print_core_info(struct msm_vidc_core *core)
 	vfree(instances);
 }
 
-int msm_vidc_smmu_fault_handler(struct iommu_domain *domain,
+static int msm_vidc_smmu_fault_handler_live(struct iommu_domain *domain,
 		struct device *dev, unsigned long iova, int flags, void *data)
 {
 	struct msm_vidc_core *core = data;
@@ -5567,6 +5568,19 @@ int msm_vidc_smmu_fault_handler(struct iommu_domain *domain,
 	return -ENOSYS;
 }
 
+int msm_vidc_smmu_fault_handler(struct iommu_domain *domain,
+		struct device *dev, unsigned long iova, int flags, void *data)
+{
+	int idx = srcu_read_lock(&vidc_operations);
+	int rc = -ENOSYS;
+
+	/* Compare an old domain's opaque cookie before dereferencing it. */
+	if (smp_load_acquire(&vidc_ready) && data == READ_ONCE(g_core))
+		rc = msm_vidc_smmu_fault_handler_live(domain, dev, iova, flags, data);
+	srcu_read_unlock(&vidc_operations, idx);
+	return rc;
+}
+
 int msm_vidc_trigger_ssr(struct msm_vidc_core *core,
 		u64 trigger_ssr_val)
 {
@@ -5590,7 +5604,7 @@ int msm_vidc_trigger_ssr(struct msm_vidc_core *core,
 			(unsigned long)SSR_SUB_CLIENT_ID) >> SSR_SUB_CLIENT_ID_SHIFT;
 	ssr->test_addr = (trigger_ssr_val &
 			(unsigned long)SSR_ADDR_ID) >> SSR_ADDR_SHIFT;
-	schedule_work(&core->ssr_work);
+	vidc_queue_work(core, &core->ssr_work);
 	return 0;
 }
 
@@ -5658,7 +5672,7 @@ int msm_vidc_trigger_stability(struct msm_vidc_core *core,
 	core_lock(core, __func__);
 	list_for_each_entry(inst, &core->instances, list) {
 		memcpy(&inst->stability, &stability, sizeof(struct msm_vidc_stability));
-		schedule_work(&inst->stability_work);
+		vidc_queue_work(core, &inst->stability_work);
 	}
 	core_unlock(core, __func__);
 
@@ -6027,11 +6041,11 @@ void msm_vidc_destroy_buffers(struct msm_vidc_inst *inst)
 	msm_memory_pools_deinit(inst);
 }
 
-static void msm_vidc_close_helper(struct kref *kref)
+void vidc_inst_cleanup(struct msm_vidc_inst *inst)
 {
-	struct msm_vidc_inst *inst = container_of(kref,
-		struct msm_vidc_inst, kref);
-
+	if (inst->resources_released)
+		return;
+	vidc_poll_detach(inst);
 	i_vpr_h(inst, "%s()\n", __func__);
 	msm_vidc_fence_deinit(inst);
 	msm_vidc_event_queue_deinit(inst);
@@ -6045,10 +6059,21 @@ static void msm_vidc_close_helper(struct kref *kref)
 	if (inst->workq)
 		destroy_workqueue(inst->workq);
 	msm_vidc_remove_dangling_session(inst);
+	wake_up_all(&((struct msm_vidc_core *)inst->core)->lifetime_wait);
 	mutex_destroy(&inst->client_lock);
 	mutex_destroy(&inst->request_lock);
 	mutex_destroy(&inst->lock);
 	msm_vidc_vmem_free((void **)&inst->capabilities);
+
+	WRITE_ONCE(inst->resources_released, true);
+	wake_up_all(&inst->lifetime_wait);
+}
+
+static void msm_vidc_close_helper(struct kref *kref)
+{
+	struct msm_vidc_inst *inst = container_of(kref, struct msm_vidc_inst, kref);
+
+	vidc_inst_cleanup(inst);
 	msm_vidc_vmem_free((void **)&inst);
 }
 
@@ -6296,7 +6321,7 @@ void msm_vidc_schedule_core_deinit(struct msm_vidc_core *core)
 
 	cancel_delayed_work(&core->fw_unload_work);
 
-	schedule_delayed_work(&core->fw_unload_work,
+	vidc_queue_delayed(core, system_wq, &core->fw_unload_work,
 		msecs_to_jiffies(core->capabilities[FW_UNLOAD_DELAY].value));
 
 	d_vpr_h("firmware unload delayed by %u ms\n",
@@ -6419,7 +6444,6 @@ int msm_vidc_check_core_mbps(struct msm_vidc_inst *inst)
 {
 	u32 mbps = 0, total_mbps = 0, enc_mbps = 0;
 	u32 critical_mbps = 0;
-	s32 priority = 0;
 	struct msm_vidc_core *core;
 	struct msm_vidc_inst *instance;
 
@@ -6485,12 +6509,8 @@ int msm_vidc_check_core_mbps(struct msm_vidc_inst *inst)
 				/* reduce realtime decode sessions priority */
 				if (is_decode_session(instance) && is_realtime_session(instance)) {
 					instance->adjust_priority = RT_DEC_DOWN_PRORITY_OFFSET;
-					i_vpr_h(instance, "%s: update priority database from %d -> %d explicitly\n",
-						__func__, instance->capabilities->cap[PRIORITY].value,
-                                                instance->adjust_priority);
-
-					priority = instance->capabilities->cap[PRIORITY].value + instance->adjust_priority;
-					msm_vidc_update_cap_value(instance, PRIORITY, priority, __func__);
+					i_vpr_h(instance, "%s: pending adjust priority by %d\n",
+						__func__, instance->adjust_priority);
 				}
 			}
 			core_unlock(core, __func__);
@@ -6498,12 +6518,8 @@ int msm_vidc_check_core_mbps(struct msm_vidc_inst *inst)
 	} else if (is_decode_session(inst)){
 		if (total_mbps > core->capabilities[MAX_MBPS].value) {
 			inst->adjust_priority = RT_DEC_DOWN_PRORITY_OFFSET;
-			i_vpr_h(inst, "%s: update priority database from %d -> %d explicitly\n",
-				__func__, inst->capabilities->cap[PRIORITY].value,
-                                inst->adjust_priority);
-
-			priority = inst->capabilities->cap[PRIORITY].value + inst->adjust_priority;
-			msm_vidc_update_cap_value(inst, PRIORITY, priority, __func__);
+			i_vpr_h(inst, "%s: pending adjust priority by %d\n",
+				__func__, inst->adjust_priority);
 		}
 	}
 
@@ -6818,7 +6834,6 @@ static int msm_vidc_check_resolution_supported(struct msm_vidc_inst *inst)
 static int msm_vidc_check_max_sessions(struct msm_vidc_inst *inst)
 {
 	u32 width = 0, height = 0;
-	u32 aspect_ratio = 0;
 	u32 num_1080p_sessions = 0, num_4k_sessions = 0, num_8k_sessions = 0;
 	struct msm_vidc_inst *i;
 	struct msm_vidc_core *core;
@@ -6848,20 +6863,7 @@ static int msm_vidc_check_max_sessions(struct msm_vidc_inst *inst)
 			height = i->crop.height;
 		}
 
-		/* In XR use cases with sliced height, width can be large
-		 * but the corresponding height is minimal. To support such
-		 * use cases below aspect ratio is considered. If the aspect
-		 * ratio is more than 7(based on experiments) then we skip
-		 * the resolution checks.
-		 */
-		if (is_decode_session(i)) {
-			if (width > height)
-				aspect_ratio = width / height;
-			else
-				aspect_ratio = height / width;
-			if (aspect_ratio > 7)
-				continue;
-		}
+
 		/*
 		 * one 8k session equals to 64 720p sessions in reality.
 		 * So for one 8k session the number of 720p sessions will

@@ -10,6 +10,14 @@
 //todo: DP: remove below header
 #include <linux/types.h>
 
+/* Legacy HFI buffer expressions use these arithmetic helpers. */
+#ifndef MAX
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef MIN
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
 #define HFI_PROP_BEGIN                                          0x03000000
 #define HFI_PROP_IMAGE_VERSION                                  0x03000001
 #define HFI_PROP_INTRA_FRAME_POWER_COLLAPSE                     0x03000002

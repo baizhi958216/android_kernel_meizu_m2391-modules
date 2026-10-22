@@ -122,6 +122,15 @@ struct msm_vidc_core {
 	bool                                   pm_suspended;
 	bool                                   cpu_watchdog;
 	bool                                   video_unresponsive;
+	struct kref                            lifetime;
+	spinlock_t                             async_lock;
+	bool                                   stopping;
+	bool                                   irq_requested;
+	struct mutex                           teardown_lock;
+	bool                                   sessions_stopped;
+	wait_queue_head_t                      lifetime_wait;
+	bool                                   media_initialized;
+	void (*media_node_release)(struct media_devnode *node);
 };
 
 #endif // _MSM_VIDC_CORE_H_
