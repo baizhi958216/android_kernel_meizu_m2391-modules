@@ -13,7 +13,7 @@
 #include <linux/module.h>
 #include <linux/mutex.h>
 #include <linux/platform_device.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 
 #include "mz_gesture_ts.h"
 #include "../../../../meizu/system/meizu_sys.h"
@@ -169,12 +169,11 @@ remove_control:
 	return ret;
 }
 
-static int mz_gesture_remove(struct platform_device *pdev)
+static void mz_gesture_remove(struct platform_device *pdev)
 {
 	meizu_sysfslink_remove_name("tp");
 	device_remove_file(&pdev->dev, &dev_attr_gesture_data);
 	device_remove_file(&pdev->dev, &dev_attr_gesture_control);
-	return 0;
 }
 
 static struct platform_driver mz_gesture_driver = {
