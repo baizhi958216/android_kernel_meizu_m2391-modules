@@ -1,0 +1,1 @@
+obj-m += xcharge_notify_subsys.o
