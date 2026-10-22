@@ -1,0 +1,1 @@
+cmd_/home/zhi/derp/kernel/meizu/m2391-modules/meizu/audio-dummy/dummy_dlkm.mod := printf '%s\n'   meizu-dummy.o | awk '!x[$$0]++ { print("/home/zhi/derp/kernel/meizu/m2391-modules/meizu/audio-dummy/"$$0) }' > /home/zhi/derp/kernel/meizu/m2391-modules/meizu/audio-dummy/dummy_dlkm.mod
