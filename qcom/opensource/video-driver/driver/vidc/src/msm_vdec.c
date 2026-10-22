@@ -4,6 +4,7 @@
  */
 /* Copyright (c) 2022. Qualcomm Innovation Center, Inc. All rights reserved. */
 
+#include "msm_vidc_lifetime.h"
 #include <media/v4l2_vidc_extensions.h>
 #include "msm_media_info.h"
 #include <linux/v4l2-common.h>
@@ -1538,7 +1539,7 @@ static int schedule_batch_work(struct msm_vidc_inst *inst)
 		return -EINVAL;
 	}
 	core = inst->core;
-	mod_delayed_work(core->batch_workq, &inst->decode_batch.work,
+	vidc_queue_delayed(core, core->batch_workq, &inst->decode_batch.work,
 		msecs_to_jiffies(core->capabilities[DECODE_BATCH_TIMEOUT].value));
 
 	return 0;
@@ -2119,7 +2120,11 @@ int msm_vdec_qbuf(struct msm_vidc_inst *inst, struct vb2_buffer *vb2)
 	}
 
 	if (inst->adjust_priority) {
+		u32 priority = inst->capabilities->cap[PRIORITY].value +
+			inst->adjust_priority;
+
 		inst->adjust_priority = 0;
+		msm_vidc_update_cap_value(inst, PRIORITY, priority, __func__);
 		msm_vidc_set_session_priority(inst, PRIORITY);
 	}
 

@@ -12,7 +12,10 @@
 #include <media/v4l2-ioctl.h>
 #include <media/v4l2-ctrls.h>
 
+struct media_request *msm_v4l2_request_alloc(struct media_device *mdev);
+void msm_v4l2_request_free(struct media_request *req);
 int msm_v4l2_open(struct file *filp);
+long msm_v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
 int msm_v4l2_close(struct file *filp);
 int msm_v4l2_querycap(struct file *filp, void *fh,
 		struct v4l2_capability *cap);

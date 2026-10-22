@@ -218,6 +218,7 @@ struct msm_vidc_dt {
 };
 
 int msm_vidc_init_dt(struct platform_device *pdev);
+void msm_vidc_release_context_bank(struct platform_device *pdev);
 int msm_vidc_read_context_bank_resources_from_dt(struct platform_device *pdev);
 void msm_vidc_deinit_dt(struct platform_device *pdev);
 

@@ -106,6 +106,12 @@ struct buf_queue {
 	struct vb2_queue *vb2q;
 };
 
+struct vidc_poll_bridge {
+	wait_queue_entry_t entry;
+	wait_queue_head_t *source;
+	struct msm_vidc_inst *inst;
+};
+
 struct msm_vidc_inst {
 	struct list_head                   list;
 	struct mutex                       lock;
@@ -191,5 +197,11 @@ struct msm_vidc_inst {
 	bool                               iframe;
 	u32                                fences_per_output_counter;
 	u32                                prev_fence_id;
+	bool                               detached;
+	bool                               removal_pin;
+	bool                               session_closed;
+	bool                               resources_released;
+	wait_queue_head_t                  lifetime_wait;
+	struct vidc_poll_bridge            poll_bridge[5];
 };
 #endif // _MSM_VIDC_INST_H_

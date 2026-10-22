@@ -4,6 +4,7 @@
  */
 /* Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved. */
 
+#include "msm_vidc_lifetime.h"
 #include <linux/iommu.h>
 #include <linux/qcom_scm.h>
 #include <linux/soc/qcom/smem.h>
@@ -369,7 +370,7 @@ static void __schedule_power_collapse_work(struct msm_vidc_core *core)
 		return;
 	}
 
-	if (!mod_delayed_work(core->pm_workq, &core->pm_work,
+	if (!vidc_queue_delayed(core, core->pm_workq, &core->pm_work,
 			msecs_to_jiffies(core->capabilities[SW_PC_DELAY].value))) {
 		d_vpr_h("power collapse already scheduled\n");
 	} else {
@@ -2670,8 +2671,11 @@ irqreturn_t venus_hfi_isr_handler(int irq, void *data)
 	num_responses = __response_handler(core);
 
 exit:
-	if (!call_venus_op(core, watchdog, core, core->intr_status))
+	core_lock(core, __func__);
+	if (core->irq_requested &&
+	    !call_venus_op(core, watchdog, core, core->intr_status))
 		enable_irq(irq);
+	core_unlock(core, __func__);
 
 	return IRQ_HANDLED;
 }
