@@ -1,0 +1,4 @@
+# The original implementation accesses class->p->subsys.kobj.
+ccflags-y += -I$(srctree)/drivers/base
+obj-m += meizu-sys.o
+meizu-sys-y := meizu_sys.o
