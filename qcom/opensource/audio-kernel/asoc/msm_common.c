@@ -106,7 +106,13 @@ static ssize_t aud_dev_sysfs_store(struct kobject *kobj,
 		goto done;
 	}
 
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	if (sscanf(buf, "%u %u", &pcm_id, &state) != 2 ||
+	    pcm_id >= pdata->num_aud_devs)
+		return -EINVAL;
+#else
 	sscanf(buf, "%d %d", &pcm_id, &state);
+#endif
 
 	if ((pcm_id > pdata->num_aud_devs) || (pcm_id < 0)) {
 		pr_err("%s: invalid pcm id %d \n", __func__, pcm_id);
@@ -130,7 +136,20 @@ static const struct sysfs_ops aud_dev_sysfs_ops = {
 	.store = aud_dev_sysfs_store,
 };
 
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+static void aud_dev_release(struct kobject *kobj)
+{
+	struct msm_common_pdata *pdata = to_asoc_mach_common_pdata(kobj);
+
+	kfree(pdata->aud_dev_state);
+	kfree(pdata);
+}
+#endif
+
 static struct kobj_type aud_dev_ktype = {
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	.release = aud_dev_release,
+#endif
 	.sysfs_ops = &aud_dev_sysfs_ops,
 };
 
@@ -157,7 +176,9 @@ static int aud_dev_sysfs_init(struct msm_common_pdata *pdata)
 	return ret;
 
 fail_create_file:
+#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	kobject_put(&pdata->aud_dev_kobj);
+#endif
 done:
 	return ret;
 }
@@ -201,7 +222,26 @@ static const struct sysfs_ops snd_card_sysfs_ops = {
 	.store = snd_card_sysfs_store,
 };
 
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+static void snd_card_release(struct kobject *kobj)
+{
+	kfree(container_of(kobj, struct snd_card_pdata, snd_card_kobj));
+}
+
+void snd_card_sysfs_exit(void)
+{
+	if (!snd_card_pdata)
+		return;
+	sysfs_remove_file(&snd_card_pdata->snd_card_kobj, &card_state_attr);
+	kobject_put(&snd_card_pdata->snd_card_kobj);
+	snd_card_pdata = NULL;
+}
+#endif
+
 static struct kobj_type snd_card_ktype = {
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	.release = snd_card_release,
+#endif
 	.sysfs_ops = &snd_card_sysfs_ops,
 };
 
@@ -211,6 +251,10 @@ int snd_card_sysfs_init(void)
 	char dir[DIR_SZ] = "snd_card";
 
 	snd_card_pdata = kcalloc(1, sizeof(struct snd_card_pdata), GFP_KERNEL);
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	if (!snd_card_pdata)
+		return -ENOMEM;
+#endif
 	ret = kobject_init_and_add(&snd_card_pdata->snd_card_kobj, &snd_card_ktype,
 		kernel_kobj, dir);
 	if (ret < 0) {
@@ -229,8 +273,16 @@ int snd_card_sysfs_init(void)
 	return ret;
 
 fail_create_file:
+#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	kobject_put(&snd_card_pdata->snd_card_kobj);
+#endif
 done:
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	if (ret) {
+		kobject_put(&snd_card_pdata->snd_card_kobj);
+		snd_card_pdata = NULL;
+	}
+#endif
 	return ret;
 }
 
@@ -764,13 +816,23 @@ int msm_common_snd_init(struct platform_device *pdev, struct snd_soc_card *card)
 			"qcom,sen-mi2s-gpios", 0);
 	common_pdata->mi2s_gpio_p[SEP_MI2S_TDM_AUXPCM] = of_parse_phandle(pdev->dev.of_node,
 			"qcom,sep-mi2s-gpios", 0);
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	common_pdata->aud_dev_state = kcalloc(card->num_links, sizeof(uint8_t), GFP_KERNEL);
+	if (!common_pdata->aud_dev_state) {
+		kfree(common_pdata);
+		return -ENOMEM;
+	}
+#else
 	common_pdata->aud_dev_state = devm_kcalloc(&pdev->dev, card->num_links,
 						sizeof(uint8_t), GFP_KERNEL);
+#endif
 	dev_info(&pdev->dev, "num_links %d \n", card->num_links);
 	common_pdata->num_aud_devs = card->num_links;
 	mutex_init(&common_pdata->aud_dev_lock);
 
+#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	aud_dev_sysfs_init(common_pdata);
+#endif
 
 	msm_common_set_pdata(card, common_pdata);
 
@@ -778,6 +840,14 @@ int msm_common_snd_init(struct platform_device *pdev, struct snd_soc_card *card)
 	msm_audio_add_qos_request();
 
 	mutex_init(&vote_against_sleep_lock);
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	ret = aud_dev_sysfs_init(common_pdata);
+	if (ret) {
+		msm_common_set_pdata(card, NULL);
+		msm_common_snd_deinit(common_pdata);
+		return ret;
+	}
+#endif
 
 	return 0;
 };
@@ -789,6 +859,12 @@ void msm_common_snd_deinit(struct msm_common_pdata *common_pdata)
 	if (!common_pdata)
 		return;
 
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	/* Drain writers before destroying their state or locks. */
+	sysfs_remove_file(&common_pdata->aud_dev_kobj, &device_state_attr);
+	if (common_pdata->aud_dev_kobj.state_in_sysfs)
+		kobject_del(&common_pdata->aud_dev_kobj);
+#endif
 	mutex_destroy(&vote_against_sleep_lock);
 	msm_audio_remove_qos_request();
 
@@ -796,6 +872,11 @@ void msm_common_snd_deinit(struct msm_common_pdata *common_pdata)
 	for (count = 0; count < MI2S_TDM_AUXPCM_MAX; count++) {
 		mutex_destroy(&common_pdata->lock[count]);
 	}
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+	for (count = 0; count < MI2S_TDM_AUXPCM_MAX; count++)
+		of_node_put(common_pdata->mi2s_gpio_p[count]);
+	kobject_put(&common_pdata->aud_dev_kobj);
+#endif
 }
 
 int msm_channel_map_info(struct snd_kcontrol *kcontrol,

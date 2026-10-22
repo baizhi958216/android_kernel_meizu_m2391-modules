@@ -56,6 +56,9 @@ void msm_common_set_pdata(struct snd_soc_card *card,
 			  struct msm_common_pdata *pdata);
 
 int snd_card_sysfs_init(void);
+#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
+void snd_card_sysfs_exit(void);
+#endif
 
 int msm_common_snd_hw_params(struct snd_pcm_substream *substream,
 			struct snd_pcm_hw_params *params);
