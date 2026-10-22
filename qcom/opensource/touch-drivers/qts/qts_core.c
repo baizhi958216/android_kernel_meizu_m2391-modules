@@ -1498,38 +1498,25 @@ static int qts_create_sysfs(struct qts_data *qts_data)
 	int ret = 0;
 	struct kobject *qts_kobj;
 	struct kobject *client_kobj;
+	const char *name;
 
 	qts_kobj = &qts_data_entries->qts_kset->kobj;
 
-	if (qts_data->client_type == QTS_CLIENT_PRIMARY_TOUCH) {
-
-		client_kobj = kobject_create_and_add("primary", qts_kobj);
-		if (!client_kobj) {
-			pr_err("primary kobject_create_and_add failed\n");
-			return -ENOMEM;
-		}
-
-		ret = sysfs_create_group(client_kobj, &qts_attribute_group);
-		if (ret) {
-			pr_err("[EX]: sysfs_create_group() failed!!\n");
-			sysfs_remove_group(client_kobj, &qts_attribute_group);
-			return -ENOMEM;
-		}
-	} else if (qts_data->client_type == QTS_CLIENT_SECONDARY_TOUCH) {
-
-		client_kobj = kobject_create_and_add("secondary", qts_kobj);
-		if (!client_kobj) {
-			pr_err("secondary kobject_create_and_add failed\n");
-			return -ENOMEM;
-		}
-
-		ret = sysfs_create_group(client_kobj, &qts_attribute_group);
-		if (ret) {
-			pr_err("[EX]: sysfs_create_group() failed!!\n");
-			sysfs_remove_group(client_kobj, &qts_attribute_group);
-			return -ENOMEM;
-		}
+	if (qts_data->client_type == QTS_CLIENT_PRIMARY_TOUCH)
+		name = "primary";
+	else if (qts_data->client_type == QTS_CLIENT_SECONDARY_TOUCH)
+		name = "secondary";
+	else
+		return -EINVAL;
+	client_kobj = kobject_create_and_add(name, qts_kobj);
+	if (!client_kobj)
+		return -ENOMEM;
+	ret = sysfs_create_group(client_kobj, &qts_attribute_group);
+	if (ret) {
+		kobject_put(client_kobj);
+		return ret;
 	}
+	qts_data->client_kobj = client_kobj;
 
 	pr_debug("sysfs_create_group() succeeded\n");
 	return ret;
@@ -1748,8 +1735,9 @@ static void qts_ts_register_for_panel_events(struct qts_data *qts_data)
 	cookie = panel_event_notifier_register(PANEL_EVENT_NOTIFICATION_PRIMARY,
 		PANEL_EVENT_NOTIFIER_CLIENT_PRIMARY_TOUCH, qts_data->panel,
 		&qts_panel_notifier_callback, qts_data);
-	if (!cookie) {
+	if (IS_ERR_OR_NULL(cookie)) {
 		pr_err("Failed to register for panel events\n");
+		qts_data->notifier_cookie = NULL;
 		return;
 	}
 
@@ -1775,6 +1763,8 @@ int qts_client_register(struct qts_vendor_data qts_vendor_data)
 		qts_data_entries->qts_kset = kset_create_and_add("qts", NULL, kernel_kobj);
 		if (!qts_data_entries->qts_kset) {
 			pr_err("qts kset create failed\n");
+			kfree(qts_data_entries);
+			qts_data_entries = NULL;
 			return -ENOMEM;
 		}
 	}
@@ -1819,31 +1809,38 @@ int qts_client_register(struct qts_vendor_data qts_vendor_data)
 	qts_trusted_touch_init(qts_data);
 
 	mutex_init(&(qts_data->qts_clk_io_ctrl_mutex));
-	if (qts_data->tui_supported)
-		qts_create_sysfs(qts_data);
 
 	mutex_init(&qts_data->transition_lock);
-	qts_ts_register_for_panel_events(qts_data);
-	qts_vendor_data.notifier_cookie = qts_data->notifier_cookie;
-
-#ifdef CONFIG_ARCH_QTI_VM
-	atomic_set(&qts_data->delayed_tvm_probe_pending, 1);
-	goto qts_register_end;
-#else
-	atomic_set(&qts_data->delayed_pvm_probe_pending, 1);
+#ifndef CONFIG_ARCH_QTI_VM
+	qts_power_source_init(qts_data);
 #endif
 
-	qts_power_source_init(qts_data);
-
 	qts_data->ts_workqueue = create_singlethread_workqueue("qts_wq");
-	if (!qts_data->ts_workqueue)
-		pr_err("create qts workqueue fail\n");
+	if (!qts_data->ts_workqueue) {
+		/* Both synchronous paths are supported by the client contract. */
+		pr_warn("create qts workqueue failed; using synchronous callbacks\n");
+		qts_data->schedule_resume = false;
+		qts_data->schedule_suspend = false;
+	}
 
 	if (qts_data->ts_workqueue && qts_data->schedule_resume)
 		INIT_WORK(&qts_data->resume_work, qts_resume_work);
 
 	if (qts_data->ts_workqueue && qts_data->schedule_suspend)
 		INIT_WORK(&qts_data->suspend_work, qts_suspend_work);
+
+#ifdef CONFIG_ARCH_QTI_VM
+	atomic_set(&qts_data->delayed_tvm_probe_pending, 1);
+#else
+	atomic_set(&qts_data->delayed_pvm_probe_pending, 1);
+#endif
+	/* Registration may immediately expose callbacks: initialize their work,
+	 * pending-probe and power state before publishing the notifier.
+	 */
+	qts_ts_register_for_panel_events(qts_data);
+	qts_vendor_data.notifier_cookie = qts_data->notifier_cookie;
+	if (qts_data->tui_supported && qts_create_sysfs(qts_data))
+		pr_err("failed to create trusted-touch sysfs\n");
 
 qts_register_end:
 	pr_debug("client register end\n");
@@ -1861,21 +1858,41 @@ void qts_client_unregister(void)
 	if (!qts_data_entries)
 		return;
 
-	if (qts_data_entries->qts_kset) {
-		kset_unregister(qts_data_entries->qts_kset);
-		qts_data_entries->qts_kset = NULL;
+	/* Remove every entry's interfaces and drain in-flight sysfs callbacks
+	 * while both child objects and all callback state remain alive.
+	 */
+	for (i = QTS_CLIENT_PRIMARY_TOUCH; i < QTS_CLIENT_MAX; i++) {
+		qts_data = &qts_data_entries->info[i];
+		if (qts_data->client_kobj)
+			sysfs_remove_group(qts_data->client_kobj, &qts_attribute_group);
 	}
-
 	for (i = QTS_CLIENT_PRIMARY_TOUCH; i < QTS_CLIENT_MAX; i++) {
 		qts_data = &qts_data_entries->info[i];
 		if (!IS_ERR_OR_NULL(qts_data->notifier_cookie))
 			panel_event_notifier_unregister(qts_data->notifier_cookie);
+		qts_data->notifier_cookie = NULL;
+		if (qts_data->ts_workqueue) {
+			if (qts_data->schedule_resume)
+				cancel_work_sync(&qts_data->resume_work);
+			if (qts_data->schedule_suspend)
+				cancel_work_sync(&qts_data->suspend_work);
+			destroy_workqueue(qts_data->ts_workqueue);
+			qts_data->ts_workqueue = NULL;
+		}
 		if (qts_data->vm_info) {
 			qts_vm_deinit(qts_data);
 			qts_data->vm_info = NULL;
 		}
 	}
+	for (i = QTS_CLIENT_PRIMARY_TOUCH; i < QTS_CLIENT_MAX; i++) {
+		qts_data = &qts_data_entries->info[i];
+		kobject_put(qts_data->client_kobj);
+		qts_data->client_kobj = NULL;
+	}
+	if (qts_data_entries->qts_kset)
+		kset_unregister(qts_data_entries->qts_kset);
 	kfree(qts_data_entries);
+	qts_data_entries = NULL;
 }
 EXPORT_SYMBOL_GPL(qts_client_unregister);
 

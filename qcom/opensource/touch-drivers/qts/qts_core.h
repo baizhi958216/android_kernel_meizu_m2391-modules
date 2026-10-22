@@ -120,6 +120,7 @@ struct qts_data {
 	bool schedule_suspend;
 	bool schedule_resume;
 	void *notifier_cookie;
+	struct kobject *client_kobj;
 
 	/* Resources */
 	struct regulator *vdd;
