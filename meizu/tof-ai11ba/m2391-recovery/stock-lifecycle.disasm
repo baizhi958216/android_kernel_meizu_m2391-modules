@@ -1,0 +1,1077 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000002b4 <dtof_parse_dt>:
+     2b4: 3f 23 03 d5  	hint	#25
+     2b8: 5e 86 00 f8  	str	x30, [x18], #8
+     2bc: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+     2c0: f3 0b 00 f9  	str	x19, [sp, #16]
+     2c4: fd 03 00 91  	mov	x29, sp
+     2c8: 00 78 41 f9  	ldr	x0, [x0, #752]
+     2cc: 60 02 00 b4  	cbz	x0, 0x318 <dtof_parse_dt+0x64>
+     2d0: a8 02 80 12  	mov	w8, #-22
+     2d4: f3 03 01 aa  	mov	x19, x1
+     2d8: e2 03 1f 2a  	mov	w2, wzr
+     2dc: e3 03 1f aa  	mov	x3, xzr
+     2e0: 28 00 00 b9  	str	w8, [x1]
+     2e4: 01 00 00 90  	adrp	x1, 0x0 <dtof_parse_dt+0x30> // 'reset-gpio'
+     2e8: 21 00 00 91  	add	x1, x1, #0 // 'reset-gpio'
+     2ec: 00 00 00 94  	bl	0x2ec <dtof_parse_dt+0x38> // of_get_named_gpio_flags+0x0
+     2f0: e4 03 00 2a  	mov	w4, w0
+     2f4: e0 03 1f 2a  	mov	w0, wzr
+     2f8: 9f 00 08 71  	cmp	w4, #512
+     2fc: 64 02 00 b9  	str	w4, [x19]
+     300: c2 02 00 54  	b.hs	0x358 <dtof_parse_dt+0xa4>
+     304: f3 0b 40 f9  	ldr	x19, [sp, #16]
+     308: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+     30c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     310: bf 23 03 d5  	hint	#29
+     314: c0 03 5f d6  	ret
+     318: 08 00 00 90  	adrp	x8, 0x0 <dtof_parse_dt+0x64> // dtof_ctx+0x58
+     31c: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     320: e0 00 00 b4  	cbz	x0, 0x33c <dtof_parse_dt+0x88>
+     324: 01 00 00 90  	adrp	x1, 0x0 <dtof_parse_dt+0x70> // '%s %d dt of_node NULL'
+     328: 02 00 00 90  	adrp	x2, 0x0 <dtof_parse_dt+0x74> // 'dtof_parse_dt'
+     32c: 21 00 00 91  	add	x1, x1, #0 // '%s %d dt of_node NULL'
+     330: 42 00 00 91  	add	x2, x2, #0 // 'dtof_parse_dt'
+     334: 23 40 80 52  	mov	w3, #513
+     338: 00 00 00 94  	bl	0x338 <dtof_parse_dt+0x84> // ipc_log_string+0x0
+     33c: 00 00 00 90  	adrp	x0, 0x0 <dtof_parse_dt+0x88> // '\x013[DTOF] %s %d : dt of_node NULL'
+     340: 01 00 00 90  	adrp	x1, 0x0 <dtof_parse_dt+0x8c> // 'dtof_parse_dt'
+     344: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dt of_node NULL'
+     348: 21 00 00 91  	add	x1, x1, #0 // 'dtof_parse_dt'
+     34c: 22 40 80 52  	mov	w2, #513
+     350: 00 00 00 94  	bl	0x350 <dtof_parse_dt+0x9c> // _printk+0x0
+     354: 12 00 00 14  	b	0x39c <dtof_parse_dt+0xe8>
+     358: 08 00 00 90  	adrp	x8, 0x0 <dtof_parse_dt+0xa4> // dtof_ctx+0x58
+     35c: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     360: 00 01 00 b4  	cbz	x0, 0x380 <dtof_parse_dt+0xcc>
+     364: 01 00 00 90  	adrp	x1, 0x0 <dtof_parse_dt+0xb0> // '%s %d config reset gpio invalid %d\n'
+     368: 02 00 00 90  	adrp	x2, 0x0 <dtof_parse_dt+0xb4> // 'dtof_parse_dt'
+     36c: 21 00 00 91  	add	x1, x1, #0 // '%s %d config reset gpio invalid %d\n'
+     370: 42 00 00 91  	add	x2, x2, #0 // 'dtof_parse_dt'
+     374: 23 41 80 52  	mov	w3, #521
+     378: 00 00 00 94  	bl	0x378 <dtof_parse_dt+0xc4> // ipc_log_string+0x0
+     37c: 64 02 40 b9  	ldr	w4, [x19]
+     380: 00 00 00 90  	adrp	x0, 0x0 <dtof_parse_dt+0xcc> // '\x013[DTOF] %s %d : config reset gpio invalid %d\n'
+     384: 01 00 00 90  	adrp	x1, 0x0 <dtof_parse_dt+0xd0> // 'dtof_parse_dt'
+     388: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : config reset gpio invalid %d\n'
+     38c: 21 00 00 91  	add	x1, x1, #0 // 'dtof_parse_dt'
+     390: 22 41 80 52  	mov	w2, #521
+     394: e3 03 04 2a  	mov	w3, w4
+     398: 00 00 00 94  	bl	0x398 <dtof_parse_dt+0xe4> // _printk+0x0
+     39c: a0 02 80 12  	mov	w0, #-22
+     3a0: d9 ff ff 17  	b	0x304 <dtof_parse_dt+0x50>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000003a4 <dtof_request_resource>:
+     3a4: 3f 23 03 d5  	hint	#25
+     3a8: 5e 86 00 f8  	str	x30, [x18], #8
+     3ac: fd 7b bc a9  	stp	x29, x30, [sp, #-64]!
+     3b0: f8 5f 01 a9  	stp	x24, x23, [sp, #16]
+     3b4: fd 03 00 91  	mov	x29, sp
+     3b8: f6 57 02 a9  	stp	x22, x21, [sp, #32]
+     3bc: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+     3c0: f4 03 00 aa  	mov	x20, x0
+     3c4: f6 03 00 aa  	mov	x22, x0
+     3c8: 80 06 45 f8  	ldr	x0, [x20], #80
+     3cc: e1 03 14 aa  	mov	x1, x20
+     3d0: 00 00 00 94  	bl	0x3d0 <dtof_request_resource+0x2c> // dtof_parse_dt+0x0
+     3d4: a0 08 00 35  	cbnz	w0, 0x4e8 <dtof_request_resource+0x144>
+     3d8: 95 02 40 b9  	ldr	w21, [x20]
+     3dc: bf fe 07 71  	cmp	w21, #511
+     3e0: 88 0a 00 54  	b.hi	0x530 <dtof_request_resource+0x18c>
+     3e4: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x40> // 'reset-gpio'
+     3e8: e0 03 15 2a  	mov	w0, w21
+     3ec: 21 00 00 91  	add	x1, x1, #0 // 'reset-gpio'
+     3f0: 00 00 00 94  	bl	0x3f0 <dtof_request_resource+0x4c> // gpio_request+0x0
+     3f4: 40 0c 00 35  	cbnz	w0, 0x57c <dtof_request_resource+0x1d8>
+     3f8: e0 03 15 2a  	mov	w0, w21
+     3fc: 00 00 00 94  	bl	0x3fc <dtof_request_resource+0x58> // gpio_to_desc+0x0
+     400: e1 03 1f 2a  	mov	w1, wzr
+     404: 00 00 00 94  	bl	0x404 <dtof_request_resource+0x60> // gpiod_direction_output_raw+0x0
+     408: 18 00 00 90  	adrp	x24, 0x0 <dtof_request_resource+0x64> // dtof_ctx+0x58
+     40c: f3 03 00 2a  	mov	w19, w0
+     410: 17 03 40 f9  	ldr	x23, [x24] // dtof_ctx+0x58
+     414: b7 01 00 b4  	cbz	x23, 0x448 <dtof_request_resource+0xa4>
+     418: e0 03 15 2a  	mov	w0, w21
+     41c: 00 00 00 94  	bl	0x41c <dtof_request_resource+0x78> // gpio_to_desc+0x0
+     420: 00 00 00 94  	bl	0x420 <dtof_request_resource+0x7c> // gpiod_get_raw_value+0x0
+     424: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x80> // '%s %d set gpio %d output to level %d\n'
+     428: 02 00 00 90  	adrp	x2, 0x0 <dtof_request_resource+0x84> // 'dtof_configure_gpio'
+     42c: e5 03 00 2a  	mov	w5, w0
+     430: 21 00 00 91  	add	x1, x1, #0 // '%s %d set gpio %d output to level %d\n'
+     434: 42 00 00 91  	add	x2, x2, #0 // 'dtof_configure_gpio'
+     438: e0 03 17 aa  	mov	x0, x23
+     43c: 43 38 80 52  	mov	w3, #450
+     440: e4 03 15 2a  	mov	w4, w21
+     444: 00 00 00 94  	bl	0x444 <dtof_request_resource+0xa0> // ipc_log_string+0x0
+     448: e0 03 15 2a  	mov	w0, w21
+     44c: 00 00 00 94  	bl	0x44c <dtof_request_resource+0xa8> // gpio_to_desc+0x0
+     450: 00 00 00 94  	bl	0x450 <dtof_request_resource+0xac> // gpiod_get_raw_value+0x0
+     454: e4 03 00 2a  	mov	w4, w0
+     458: 00 00 00 90  	adrp	x0, 0x0 <dtof_request_resource+0xb4> // '\x013[DTOF] %s %d : set gpio %d output to level %d\n'
+     45c: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0xb8> // 'dtof_configure_gpio'
+     460: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : set gpio %d output to level %d\n'
+     464: 21 00 00 91  	add	x1, x1, #0 // 'dtof_configure_gpio'
+     468: 42 38 80 52  	mov	w2, #450
+     46c: e3 03 15 2a  	mov	w3, w21
+     470: 00 00 00 94  	bl	0x470 <dtof_request_resource+0xcc> // _printk+0x0
+     474: b3 0d 00 35  	cbnz	w19, 0x628 <dtof_request_resource+0x284>
+     478: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0xd4> // ''
+     47c: c0 02 40 f9  	ldr	x0, [x22]
+     480: 21 00 00 91  	add	x1, x1, #0 // ''
+     484: 00 00 00 94  	bl	0x484 <dtof_request_resource+0xe0> // sysfs_create_group+0x0
+     488: 60 0f 00 35  	cbnz	w0, 0x674 <dtof_request_resource+0x2d0>
+     48c: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0xe8> // 'dtof'
+     490: c0 02 40 f9  	ldr	x0, [x22]
+     494: 21 00 00 91  	add	x1, x1, #0 // 'dtof'
+     498: 00 00 00 94  	bl	0x498 <dtof_request_resource+0xf4> // meizu_sysfslink_register_name+0x0
+     49c: f3 03 00 2a  	mov	w19, w0
+     4a0: 40 0b 00 34  	cbz	w0, 0x608 <dtof_request_resource+0x264>
+     4a4: 00 03 40 f9  	ldr	x0, [x24] // dtof_ctx+0x58
+     4a8: 00 01 00 b4  	cbz	x0, 0x4c8 <dtof_request_resource+0x124>
+     4ac: 02 00 00 90  	adrp	x2, 0x0 <dtof_request_resource+0x108> // 'dtof_request_resource'
+     4b0: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x10c> // '%s %d %s:failed to create sysfs dtof.'
+     4b4: 42 00 00 91  	add	x2, x2, #0 // 'dtof_request_resource'
+     4b8: 21 00 00 91  	add	x1, x1, #0 // '%s %d %s:failed to create sysfs dtof.'
+     4bc: 03 4b 80 52  	mov	w3, #600
+     4c0: e4 03 02 aa  	mov	x4, x2
+     4c4: 00 00 00 94  	bl	0x4c4 <dtof_request_resource+0x120> // ipc_log_string+0x0
+     4c8: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x124> // 'dtof_request_resource'
+     4cc: 00 00 00 90  	adrp	x0, 0x0 <dtof_request_resource+0x128> // '\x013[DTOF] %s %d : %s:failed to create sysfs dtof.'
+     4d0: 21 00 00 91  	add	x1, x1, #0 // 'dtof_request_resource'
+     4d4: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : %s:failed to create sysfs dtof.'
+     4d8: 02 4b 80 52  	mov	w2, #600
+     4dc: e3 03 01 aa  	mov	x3, x1
+     4e0: 00 00 00 94  	bl	0x4e0 <dtof_request_resource+0x13c> // _printk+0x0
+     4e4: 49 00 00 14  	b	0x608 <dtof_request_resource+0x264>
+     4e8: 08 00 00 90  	adrp	x8, 0x0 <dtof_request_resource+0x144> // dtof_ctx+0x58
+     4ec: f3 03 00 2a  	mov	w19, w0
+     4f0: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     4f4: 00 01 00 b4  	cbz	x0, 0x514 <dtof_request_resource+0x170>
+     4f8: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x154> // '%s %d parse device tree fail [%d]\n'
+     4fc: 02 00 00 90  	adrp	x2, 0x0 <dtof_request_resource+0x158> // 'dtof_request_resource'
+     500: 21 00 00 91  	add	x1, x1, #0 // '%s %d parse device tree fail [%d]\n'
+     504: 42 00 00 91  	add	x2, x2, #0 // 'dtof_request_resource'
+     508: 03 45 80 52  	mov	w3, #552
+     50c: e4 03 13 2a  	mov	w4, w19
+     510: 00 00 00 94  	bl	0x510 <dtof_request_resource+0x16c> // ipc_log_string+0x0
+     514: 00 00 00 90  	adrp	x0, 0x0 <dtof_request_resource+0x170> // '\x013[DTOF] %s %d : parse device tree fail [%d]\n'
+     518: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x174> // 'dtof_request_resource'
+     51c: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : parse device tree fail [%d]\n'
+     520: 21 00 00 91  	add	x1, x1, #0 // 'dtof_request_resource'
+     524: 02 45 80 52  	mov	w2, #552
+     528: e3 03 13 2a  	mov	w3, w19
+     52c: 36 00 00 14  	b	0x604 <dtof_request_resource+0x260>
+     530: 08 00 00 90  	adrp	x8, 0x0 <dtof_request_resource+0x18c> // dtof_ctx+0x58
+     534: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     538: 00 01 00 b4  	cbz	x0, 0x558 <dtof_request_resource+0x1b4>
+     53c: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x198> // '%s %d invalid gpio [%d]\n'
+     540: 02 00 00 90  	adrp	x2, 0x0 <dtof_request_resource+0x19c> // 'dtof_configure_gpio'
+     544: 21 00 00 91  	add	x1, x1, #0 // '%s %d invalid gpio [%d]\n'
+     548: 42 00 00 91  	add	x2, x2, #0 // 'dtof_configure_gpio'
+     54c: a3 3b 80 52  	mov	w3, #477
+     550: e4 03 15 2a  	mov	w4, w21
+     554: 00 00 00 94  	bl	0x554 <dtof_request_resource+0x1b0> // ipc_log_string+0x0
+     558: 00 00 00 90  	adrp	x0, 0x0 <dtof_request_resource+0x1b4> // '\x013[DTOF] %s %d : invalid gpio [%d]\n'
+     55c: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x1b8> // 'dtof_configure_gpio'
+     560: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : invalid gpio [%d]\n'
+     564: 21 00 00 91  	add	x1, x1, #0 // 'dtof_configure_gpio'
+     568: a2 3b 80 52  	mov	w2, #477
+     56c: e3 03 15 2a  	mov	w3, w21
+     570: 00 00 00 94  	bl	0x570 <dtof_request_resource+0x1cc> // _printk+0x0
+     574: b3 02 80 12  	mov	w19, #-22
+     578: 13 00 00 14  	b	0x5c4 <dtof_request_resource+0x220>
+     57c: 08 00 00 90  	adrp	x8, 0x0 <dtof_request_resource+0x1d8> // dtof_ctx+0x58
+     580: f3 03 00 2a  	mov	w19, w0
+     584: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     588: 00 01 00 b4  	cbz	x0, 0x5a8 <dtof_request_resource+0x204>
+     58c: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x1e8> // '%s %d unable to request gpio [%d]\n'
+     590: 02 00 00 90  	adrp	x2, 0x0 <dtof_request_resource+0x1ec> // 'dtof_configure_gpio'
+     594: 21 00 00 91  	add	x1, x1, #0 // '%s %d unable to request gpio [%d]\n'
+     598: 42 00 00 91  	add	x2, x2, #0 // 'dtof_configure_gpio'
+     59c: 63 37 80 52  	mov	w3, #443
+     5a0: e4 03 15 2a  	mov	w4, w21
+     5a4: 00 00 00 94  	bl	0x5a4 <dtof_request_resource+0x200> // ipc_log_string+0x0
+     5a8: 00 00 00 90  	adrp	x0, 0x0 <dtof_request_resource+0x204> // '\x013[DTOF] %s %d : unable to request gpio [%d]\n'
+     5ac: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x208> // 'dtof_configure_gpio'
+     5b0: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : unable to request gpio [%d]\n'
+     5b4: 21 00 00 91  	add	x1, x1, #0 // 'dtof_configure_gpio'
+     5b8: 62 37 80 52  	mov	w2, #443
+     5bc: e3 03 15 2a  	mov	w3, w21
+     5c0: 00 00 00 94  	bl	0x5c0 <dtof_request_resource+0x21c> // _printk+0x0
+     5c4: 08 00 00 90  	adrp	x8, 0x0 <dtof_request_resource+0x220> // dtof_ctx+0x58
+     5c8: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     5cc: 00 01 00 b4  	cbz	x0, 0x5ec <dtof_request_resource+0x248>
+     5d0: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x22c> // '%s %d unable to request reset gpio [%d]\n'
+     5d4: 02 00 00 90  	adrp	x2, 0x0 <dtof_request_resource+0x230> // 'dtof_request_resource'
+     5d8: 84 02 40 b9  	ldr	w4, [x20]
+     5dc: 21 00 00 91  	add	x1, x1, #0 // '%s %d unable to request reset gpio [%d]\n'
+     5e0: 42 00 00 91  	add	x2, x2, #0 // 'dtof_request_resource'
+     5e4: 43 48 80 52  	mov	w3, #578
+     5e8: 00 00 00 94  	bl	0x5e8 <dtof_request_resource+0x244> // ipc_log_string+0x0
+     5ec: 00 00 00 90  	adrp	x0, 0x0 <dtof_request_resource+0x248> // '\x013[DTOF] %s %d : unable to request reset gpio [%d]\n'
+     5f0: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x24c> // 'dtof_request_resource'
+     5f4: 83 02 40 b9  	ldr	w3, [x20]
+     5f8: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : unable to request reset gpio [%d]\n'
+     5fc: 21 00 00 91  	add	x1, x1, #0 // 'dtof_request_resource'
+     600: 42 48 80 52  	mov	w2, #578
+     604: 00 00 00 94  	bl	0x604 <dtof_request_resource+0x260> // _printk+0x0
+     608: e0 03 13 2a  	mov	w0, w19
+     60c: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+     610: f6 57 42 a9  	ldp	x22, x21, [sp, #32]
+     614: f8 5f 41 a9  	ldp	x24, x23, [sp, #16]
+     618: fd 7b c4 a8  	ldp	x29, x30, [sp], #64
+     61c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     620: bf 23 03 d5  	hint	#29
+     624: c0 03 5f d6  	ret
+     628: 00 03 40 f9  	ldr	x0, [x24] // dtof_ctx+0x58
+     62c: 00 01 00 b4  	cbz	x0, 0x64c <dtof_request_resource+0x2a8>
+     630: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x28c> // '%s %d unable to set direction for gpio [%d]\n'
+     634: 02 00 00 90  	adrp	x2, 0x0 <dtof_request_resource+0x290> // 'dtof_configure_gpio'
+     638: 21 00 00 91  	add	x1, x1, #0 // '%s %d unable to set direction for gpio [%d]\n'
+     63c: 42 00 00 91  	add	x2, x2, #0 // 'dtof_configure_gpio'
+     640: 63 39 80 52  	mov	w3, #459
+     644: e4 03 15 2a  	mov	w4, w21
+     648: 00 00 00 94  	bl	0x648 <dtof_request_resource+0x2a4> // ipc_log_string+0x0
+     64c: 00 00 00 90  	adrp	x0, 0x0 <dtof_request_resource+0x2a8> // '\x013[DTOF] %s %d : unable to set direction for gpio [%d]\n'
+     650: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x2ac> // 'dtof_configure_gpio'
+     654: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : unable to set direction for gpio [%d]\n'
+     658: 21 00 00 91  	add	x1, x1, #0 // 'dtof_configure_gpio'
+     65c: 62 39 80 52  	mov	w2, #459
+     660: e3 03 15 2a  	mov	w3, w21
+     664: 00 00 00 94  	bl	0x664 <dtof_request_resource+0x2c0> // _printk+0x0
+     668: e0 03 15 2a  	mov	w0, w21
+     66c: 00 00 00 94  	bl	0x66c <dtof_request_resource+0x2c8> // gpio_free+0x0
+     670: d5 ff ff 17  	b	0x5c4 <dtof_request_resource+0x220>
+     674: 00 03 40 f9  	ldr	x0, [x24] // dtof_ctx+0x58
+     678: e0 00 00 b4  	cbz	x0, 0x694 <dtof_request_resource+0x2f0>
+     67c: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x2d8> // '%s %d Error creating sysfs attribute group.'
+     680: 02 00 00 90  	adrp	x2, 0x0 <dtof_request_resource+0x2dc> // 'dtof_request_resource'
+     684: 21 00 00 91  	add	x1, x1, #0 // '%s %d Error creating sysfs attribute group.'
+     688: 42 00 00 91  	add	x2, x2, #0 // 'dtof_request_resource'
+     68c: 43 4a 80 52  	mov	w3, #594
+     690: 00 00 00 94  	bl	0x690 <dtof_request_resource+0x2ec> // ipc_log_string+0x0
+     694: 00 00 00 90  	adrp	x0, 0x0 <dtof_request_resource+0x2f0> // '\x013[DTOF] %s %d : Error creating sysfs attribute group.'
+     698: 01 00 00 90  	adrp	x1, 0x0 <dtof_request_resource+0x2f4> // 'dtof_request_resource'
+     69c: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Error creating sysfs attribute group.'
+     6a0: 21 00 00 91  	add	x1, x1, #0 // 'dtof_request_resource'
+     6a4: 42 4a 80 52  	mov	w2, #594
+     6a8: 00 00 00 94  	bl	0x6a8 <dtof_request_resource+0x304> // _printk+0x0
+     6ac: 78 ff ff 17  	b	0x48c <dtof_request_resource+0xe8>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000000904 <dtof_release_resource>:
+     904: 3f 23 03 d5  	hint	#25
+     908: 5e 86 00 f8  	str	x30, [x18], #8
+     90c: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+     910: f4 4f 01 a9  	stp	x20, x19, [sp, #16]
+     914: fd 03 00 91  	mov	x29, sp
+     918: 14 50 40 b9  	ldr	w20, [x0, #80]
+     91c: f3 03 00 aa  	mov	x19, x0
+     920: 9f fe 07 71  	cmp	w20, #511
+     924: e8 01 00 54  	b.hi	0x960 <dtof_release_resource+0x5c>
+     928: e0 03 14 2a  	mov	w0, w20
+     92c: 00 00 00 94  	bl	0x92c <dtof_release_resource+0x28> // gpio_free+0x0
+     930: 01 00 00 90  	adrp	x1, 0x0 <dtof_release_resource+0x2c> // ''
+     934: 60 02 40 f9  	ldr	x0, [x19]
+     938: 21 00 00 91  	add	x1, x1, #0 // ''
+     93c: 00 00 00 94  	bl	0x93c <dtof_release_resource+0x38> // sysfs_remove_group+0x0
+     940: 00 00 00 90  	adrp	x0, 0x0 <dtof_release_resource+0x3c> // 'dtof'
+     944: 00 00 00 91  	add	x0, x0, #0 // 'dtof'
+     948: 00 00 00 94  	bl	0x948 <dtof_release_resource+0x44> // meizu_sysfslink_remove_name+0x0
+     94c: f4 4f 41 a9  	ldp	x20, x19, [sp, #16]
+     950: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+     954: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     958: bf 23 03 d5  	hint	#29
+     95c: c0 03 5f d6  	ret
+     960: 08 00 00 90  	adrp	x8, 0x0 <dtof_release_resource+0x5c> // dtof_ctx+0x58
+     964: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     968: 00 01 00 b4  	cbz	x0, 0x988 <dtof_release_resource+0x84>
+     96c: 01 00 00 90  	adrp	x1, 0x0 <dtof_release_resource+0x68> // '%s %d dtof_release_gpio, invalid gpio [%d]\n'
+     970: 02 00 00 90  	adrp	x2, 0x0 <dtof_release_resource+0x6c> // 'dtof_release_gpio'
+     974: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_release_gpio, invalid gpio [%d]\n'
+     978: 42 00 00 91  	add	x2, x2, #0 // 'dtof_release_gpio'
+     97c: c3 3d 80 52  	mov	w3, #494
+     980: e4 03 14 2a  	mov	w4, w20
+     984: 00 00 00 94  	bl	0x984 <dtof_release_resource+0x80> // ipc_log_string+0x0
+     988: 00 00 00 90  	adrp	x0, 0x0 <dtof_release_resource+0x84> // '\x013[DTOF] %s %d : dtof_release_gpio, invalid gpio [%d]\n'
+     98c: 01 00 00 90  	adrp	x1, 0x0 <dtof_release_resource+0x88> // 'dtof_release_gpio'
+     990: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof_release_gpio, invalid gpio [%d]\n'
+     994: 21 00 00 91  	add	x1, x1, #0 // 'dtof_release_gpio'
+     998: c2 3d 80 52  	mov	w2, #494
+     99c: e3 03 14 2a  	mov	w3, w20
+     9a0: 00 00 00 94  	bl	0x9a0 <dtof_release_resource+0x9c> // _printk+0x0
+     9a4: e3 ff ff 17  	b	0x930 <dtof_release_resource+0x2c>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000009a8 <dtof_reset>:
+     9a8: 3f 23 03 d5  	hint	#25
+     9ac: ff 03 01 d1  	sub	sp, sp, #64
+     9b0: 5e 86 00 f8  	str	x30, [x18], #8
+     9b4: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+     9b8: fd 43 00 91  	add	x29, sp, #16
+     9bc: f6 57 02 a9  	stp	x22, x21, [sp, #32]
+     9c0: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+     9c4: f3 03 00 aa  	mov	x19, x0
+     9c8: 01 03 00 35  	cbnz	w1, 0xa28 <dtof_reset+0x80>
+     9cc: 60 52 40 b9  	ldr	w0, [x19, #80]
+     9d0: 00 00 00 94  	bl	0x9d0 <dtof_reset+0x28> // gpio_to_desc+0x0
+     9d4: e1 03 1f 2a  	mov	w1, wzr
+     9d8: 00 00 00 94  	bl	0x9d8 <dtof_reset+0x30> // gpiod_set_raw_value_cansleep+0x0
+     9dc: 08 00 00 90  	adrp	x8, 0x0 <dtof_reset+0x34> // +0x8
+     9e0: 0a 00 00 90  	adrp	x10, 0x0 <dtof_reset+0x38> // +0x4
+     9e4: 60 09 80 52  	mov	w0, #75
+     9e8: 81 0c 80 52  	mov	w1, #100
+     9ec: 42 00 80 52  	mov	w2, #2
+     9f0: 09 01 40 b9  	ldr	w9, [x8] // +0x8
+     9f4: 5f 01 00 39  	strb	wzr, [x10] // +0x4
+     9f8: 29 05 00 11  	add	w9, w9, #1
+     9fc: 09 01 00 b9  	str	w9, [x8] // +0x8
+     a00: 00 00 00 94  	bl	0xa00 <dtof_reset+0x58> // usleep_range_state+0x0
+     a04: f4 03 1f 2a  	mov	w20, wzr
+     a08: e0 03 14 2a  	mov	w0, w20
+     a0c: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+     a10: f6 57 42 a9  	ldp	x22, x21, [sp, #32]
+     a14: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+     a18: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     a1c: ff 03 01 91  	add	sp, sp, #64
+     a20: bf 23 03 d5  	hint	#29
+     a24: c0 03 5f d6  	ret
+     a28: 68 22 40 f9  	ldr	x8, [x19, #64]
+     a2c: 16 00 00 90  	adrp	x22, 0x0 <dtof_reset+0x84> // +0x33b8
+     a30: d6 02 00 91  	add	x22, x22, #0 // +0x33b8
+     a34: 14 21 40 f9  	ldr	x20, [x8, #64]
+     a38: 88 02 16 cb  	sub	x8, x20, x22
+     a3c: 08 0d c8 93  	ror	x8, x8, #3
+     a40: 1f 09 00 f1  	cmp	x8, #2
+     a44: 22 14 00 54  	b.hs	0xcc8 <dtof_reset+0x320>
+     a48: e0 03 13 aa  	mov	x0, x19
+     a4c: 80 02 3f d6  	blr	x20
+     a50: a0 0b 00 35  	cbnz	w0, 0xbc4 <dtof_reset+0x21c>
+     a54: 60 52 40 b9  	ldr	w0, [x19, #80]
+     a58: 00 00 00 94  	bl	0xa58 <dtof_reset+0xb0> // gpio_to_desc+0x0
+     a5c: 21 00 80 52  	mov	w1, #1
+     a60: 34 00 80 52  	mov	w20, #1
+     a64: 00 00 00 94  	bl	0xa64 <dtof_reset+0xbc> // gpiod_set_raw_value_cansleep+0x0
+     a68: 08 00 00 90  	adrp	x8, 0x0 <dtof_reset+0xc0> // +0x8
+     a6c: 0a 00 00 90  	adrp	x10, 0x0 <dtof_reset+0xc4> // +0x4
+     a70: 00 7d 80 52  	mov	w0, #1000
+     a74: 01 fa 80 52  	mov	w1, #2000
+     a78: 42 00 80 52  	mov	w2, #2
+     a7c: 09 01 40 b9  	ldr	w9, [x8] // +0x8
+     a80: 54 01 00 39  	strb	w20, [x10] // +0x4
+     a84: 29 05 00 11  	add	w9, w9, #1
+     a88: 09 01 00 b9  	str	w9, [x8] // +0x8
+     a8c: 00 00 00 94  	bl	0xa8c <dtof_reset+0xe4> // usleep_range_state+0x0
+     a90: e0 03 13 aa  	mov	x0, x19
+     a94: 41 14 80 52  	mov	w1, #162
+     a98: 62 fa 86 52  	mov	w2, #14291
+     a9c: 00 00 00 94  	bl	0xa9c <dtof_reset+0xf4> // +0xd84
+     aa0: 40 0b 00 35  	cbnz	w0, 0xc08 <dtof_reset+0x260>
+     aa4: 15 00 00 90  	adrp	x21, 0x0 <dtof_reset+0xfc> // dtof_ctx+0x58
+     aa8: a0 02 40 f9  	ldr	x0, [x21] // dtof_ctx+0x58
+     aac: e0 00 00 b4  	cbz	x0, 0xac8 <dtof_reset+0x120>
+     ab0: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x108> // '%s %d a2 config ok\n'
+     ab4: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x10c> // 'dtof_reset'
+     ab8: 21 00 00 91  	add	x1, x1, #0 // '%s %d a2 config ok\n'
+     abc: 42 00 00 91  	add	x2, x2, #0 // 'dtof_reset'
+     ac0: 83 13 80 52  	mov	w3, #156
+     ac4: 00 00 00 94  	bl	0xac4 <dtof_reset+0x11c> // ipc_log_string+0x0
+     ac8: 00 00 00 90  	adrp	x0, 0x0 <dtof_reset+0x120> // '\x016[DTOF] %s %d : a2 config ok\n'
+     acc: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x124> // 'dtof_reset'
+     ad0: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : a2 config ok\n'
+     ad4: 21 00 00 91  	add	x1, x1, #0 // 'dtof_reset'
+     ad8: 82 13 80 52  	mov	w2, #156
+     adc: 00 00 00 94  	bl	0xadc <dtof_reset+0x134> // _printk+0x0
+     ae0: e0 03 13 aa  	mov	x0, x19
+     ae4: 01 1a 80 52  	mov	w1, #208
+     ae8: 02 01 80 52  	mov	w2, #8
+     aec: 00 00 00 94  	bl	0xaec <dtof_reset+0x144> // +0xd84
+     af0: 68 22 40 f9  	ldr	x8, [x19, #64]
+     af4: 14 25 40 f9  	ldr	x20, [x8, #72]
+     af8: 88 02 16 cb  	sub	x8, x20, x22
+     afc: 08 0d c8 93  	ror	x8, x8, #3
+     b00: 1f 09 00 f1  	cmp	x8, #2
+     b04: 80 0b 00 35  	cbnz	w0, 0xc74 <dtof_reset+0x2cc>
+     b08: 82 10 00 54  	b.hs	0xd18 <dtof_reset+0x370>
+     b0c: e0 03 13 aa  	mov	x0, x19
+     b10: 80 02 3f d6  	blr	x20
+     b14: a0 02 40 f9  	ldr	x0, [x21] // dtof_ctx+0x58
+     b18: e0 00 00 b4  	cbz	x0, 0xb34 <dtof_reset+0x18c>
+     b1c: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x174> // '%s %d d0 config ok\n'
+     b20: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x178> // 'dtof_reset'
+     b24: 21 00 00 91  	add	x1, x1, #0 // '%s %d d0 config ok\n'
+     b28: 42 00 00 91  	add	x2, x2, #0 // 'dtof_reset'
+     b2c: 83 14 80 52  	mov	w3, #164
+     b30: 00 00 00 94  	bl	0xb30 <dtof_reset+0x188> // ipc_log_string+0x0
+     b34: 00 00 00 90  	adrp	x0, 0x0 <dtof_reset+0x18c> // '\x016[DTOF] %s %d : d0 config ok\n'
+     b38: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x190> // 'dtof_reset'
+     b3c: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : d0 config ok\n'
+     b40: 21 00 00 91  	add	x1, x1, #0 // 'dtof_reset'
+     b44: 82 14 80 52  	mov	w2, #164
+     b48: 00 00 00 94  	bl	0xb48 <dtof_reset+0x1a0> // _printk+0x0
+     b4c: 68 22 40 f9  	ldr	x8, [x19, #64]
+     b50: 14 01 40 f9  	ldr	x20, [x8]
+     b54: 08 00 00 90  	adrp	x8, 0x0 <dtof_reset+0x1ac> // +0x3378
+     b58: 08 01 00 91  	add	x8, x8, #0 // +0x3378
+     b5c: 88 02 08 cb  	sub	x8, x20, x8
+     b60: 08 0d c8 93  	ror	x8, x8, #3
+     b64: 1f 09 00 f1  	cmp	x8, #2
+     b68: a2 0e 00 54  	b.hs	0xd3c <dtof_reset+0x394>
+     b6c: e0 03 13 aa  	mov	x0, x19
+     b70: 21 16 80 52  	mov	w1, #177
+     b74: 22 28 90 52  	mov	w2, #33089
+     b78: 80 02 3f d6  	blr	x20
+     b7c: f4 03 00 2a  	mov	w20, w0
+     b80: 40 f4 ff 34  	cbz	w0, 0xa08 <dtof_reset+0x60>
+     b84: a0 02 40 f9  	ldr	x0, [x21] // dtof_ctx+0x58
+     b88: 00 01 00 b4  	cbz	x0, 0xba8 <dtof_reset+0x200>
+     b8c: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x1e4> // '%s %d write reg 0x%04x failed.\n'
+     b90: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x1e8> // 'dtof_reset'
+     b94: 21 00 00 91  	add	x1, x1, #0 // '%s %d write reg 0x%04x failed.\n'
+     b98: 42 00 00 91  	add	x2, x2, #0 // 'dtof_reset'
+     b9c: 03 15 80 52  	mov	w3, #168
+     ba0: 24 16 80 52  	mov	w4, #177
+     ba4: 00 00 00 94  	bl	0xba4 <dtof_reset+0x1fc> // ipc_log_string+0x0
+     ba8: 00 00 00 90  	adrp	x0, 0x0 <dtof_reset+0x200> // '\x013[DTOF] %s %d : write reg 0x%04x failed.\n'
+     bac: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x204> // 'dtof_reset'
+     bb0: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : write reg 0x%04x failed.\n'
+     bb4: 21 00 00 91  	add	x1, x1, #0 // 'dtof_reset'
+     bb8: 02 15 80 52  	mov	w2, #168
+     bbc: 23 16 80 52  	mov	w3, #177
+     bc0: 2b 00 00 14  	b	0xc6c <dtof_reset+0x2c4>
+     bc4: 08 00 00 90  	adrp	x8, 0x0 <dtof_reset+0x21c> // dtof_ctx+0x58
+     bc8: f4 03 00 2a  	mov	w20, w0
+     bcc: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     bd0: e0 00 00 b4  	cbz	x0, 0xbec <dtof_reset+0x244>
+     bd4: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x22c> // '%s %d dtof_reset fail to lock i2c\n'
+     bd8: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x230> // 'dtof_reset'
+     bdc: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_reset fail to lock i2c\n'
+     be0: 42 00 00 91  	add	x2, x2, #0 // 'dtof_reset'
+     be4: 23 12 80 52  	mov	w3, #145
+     be8: 00 00 00 94  	bl	0xbe8 <dtof_reset+0x240> // ipc_log_string+0x0
+     bec: 00 00 00 90  	adrp	x0, 0x0 <dtof_reset+0x244> // '\x013[DTOF] %s %d : dtof_reset fail to lock i2c\n'
+     bf0: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x248> // 'dtof_reset'
+     bf4: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof_reset fail to lock i2c\n'
+     bf8: 21 00 00 91  	add	x1, x1, #0 // 'dtof_reset'
+     bfc: 22 12 80 52  	mov	w2, #145
+     c00: 00 00 00 94  	bl	0xc00 <dtof_reset+0x258> // _printk+0x0
+     c04: 81 ff ff 17  	b	0xa08 <dtof_reset+0x60>
+     c08: 68 22 40 f9  	ldr	x8, [x19, #64]
+     c0c: f4 03 00 2a  	mov	w20, w0
+     c10: 08 25 40 f9  	ldr	x8, [x8, #72]
+     c14: 09 01 16 cb  	sub	x9, x8, x22
+     c18: 29 0d c9 93  	ror	x9, x9, #3
+     c1c: 3f 09 00 f1  	cmp	x9, #2
+     c20: 62 06 00 54  	b.hs	0xcec <dtof_reset+0x344>
+     c24: e0 03 13 aa  	mov	x0, x19
+     c28: 00 01 3f d6  	blr	x8
+     c2c: 08 00 00 90  	adrp	x8, 0x0 <dtof_reset+0x284> // dtof_ctx+0x58
+     c30: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+     c34: 00 01 00 b4  	cbz	x0, 0xc54 <dtof_reset+0x2ac>
+     c38: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x290> // '%s %d write reg 0x%04x failed.\n'
+     c3c: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x294> // 'dtof_reset'
+     c40: 21 00 00 91  	add	x1, x1, #0 // '%s %d write reg 0x%04x failed.\n'
+     c44: 42 00 00 91  	add	x2, x2, #0 // 'dtof_reset'
+     c48: 23 13 80 52  	mov	w3, #153
+     c4c: 44 14 80 52  	mov	w4, #162
+     c50: 00 00 00 94  	bl	0xc50 <dtof_reset+0x2a8> // ipc_log_string+0x0
+     c54: 00 00 00 90  	adrp	x0, 0x0 <dtof_reset+0x2ac> // '\x013[DTOF] %s %d : write reg 0x%04x failed.\n'
+     c58: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x2b0> // 'dtof_reset'
+     c5c: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : write reg 0x%04x failed.\n'
+     c60: 21 00 00 91  	add	x1, x1, #0 // 'dtof_reset'
+     c64: 22 13 80 52  	mov	w2, #153
+     c68: 43 14 80 52  	mov	w3, #162
+     c6c: 00 00 00 94  	bl	0xc6c <dtof_reset+0x2c4> // _printk+0x0
+     c70: 66 ff ff 17  	b	0xa08 <dtof_reset+0x60>
+     c74: 62 07 00 54  	b.hs	0xd60 <dtof_reset+0x3b8>
+     c78: e0 03 13 aa  	mov	x0, x19
+     c7c: 80 02 3f d6  	blr	x20
+     c80: a0 02 40 f9  	ldr	x0, [x21] // dtof_ctx+0x58
+     c84: 00 01 00 b4  	cbz	x0, 0xca4 <dtof_reset+0x2fc>
+     c88: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x2e0> // '%s %d write reg 0x%04x failed.\n'
+     c8c: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x2e4> // 'dtof_reset'
+     c90: 21 00 00 91  	add	x1, x1, #0 // '%s %d write reg 0x%04x failed.\n'
+     c94: 42 00 00 91  	add	x2, x2, #0 // 'dtof_reset'
+     c98: 03 14 80 52  	mov	w3, #160
+     c9c: 04 1a 80 52  	mov	w4, #208
+     ca0: 00 00 00 94  	bl	0xca0 <dtof_reset+0x2f8> // ipc_log_string+0x0
+     ca4: 00 00 00 90  	adrp	x0, 0x0 <dtof_reset+0x2fc> // '\x013[DTOF] %s %d : write reg 0x%04x failed.\n'
+     ca8: 01 00 00 90  	adrp	x1, 0x0 <dtof_reset+0x300> // 'dtof_reset'
+     cac: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : write reg 0x%04x failed.\n'
+     cb0: 21 00 00 91  	add	x1, x1, #0 // 'dtof_reset'
+     cb4: 02 14 80 52  	mov	w2, #160
+     cb8: 03 1a 80 52  	mov	w3, #208
+     cbc: 00 00 00 94  	bl	0xcbc <dtof_reset+0x314> // _printk+0x0
+     cc0: 14 00 80 12  	mov	w20, #-1
+     cc4: 51 ff ff 17  	b	0xa08 <dtof_reset+0x60>
+     cc8: 20 73 9b d2  	mov	x0, #56217
+     ccc: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x324> // +0x1c0
+     cd0: a0 39 a7 f2  	movk	x0, #14797, lsl #16
+     cd4: 42 00 00 91  	add	x2, x2, #0 // +0x1c0
+     cd8: e0 bc c2 f2  	movk	x0, #5607, lsl #32
+     cdc: e1 03 14 aa  	mov	x1, x20
+     ce0: c0 d2 ef f2  	movk	x0, #32406, lsl #48
+     ce4: 00 00 00 94  	bl	0xce4 <dtof_reset+0x33c> // __cfi_slowpath_diag+0x0
+     ce8: 58 ff ff 17  	b	0xa48 <dtof_reset+0xa0>
+     cec: 20 73 9b d2  	mov	x0, #56217
+     cf0: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x348> // +0x1e0
+     cf4: a0 39 a7 f2  	movk	x0, #14797, lsl #16
+     cf8: 42 00 00 91  	add	x2, x2, #0 // +0x1e0
+     cfc: e0 bc c2 f2  	movk	x0, #5607, lsl #32
+     d00: e1 03 08 aa  	mov	x1, x8
+     d04: c0 d2 ef f2  	movk	x0, #32406, lsl #48
+     d08: e8 07 00 f9  	str	x8, [sp, #8]
+     d0c: 00 00 00 94  	bl	0xd0c <dtof_reset+0x364> // __cfi_slowpath_diag+0x0
+     d10: e8 07 40 f9  	ldr	x8, [sp, #8]
+     d14: c4 ff ff 17  	b	0xc24 <dtof_reset+0x27c>
+     d18: 20 73 9b d2  	mov	x0, #56217
+     d1c: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x374> // +0x220
+     d20: a0 39 a7 f2  	movk	x0, #14797, lsl #16
+     d24: 42 00 00 91  	add	x2, x2, #0 // +0x220
+     d28: e0 bc c2 f2  	movk	x0, #5607, lsl #32
+     d2c: e1 03 14 aa  	mov	x1, x20
+     d30: c0 d2 ef f2  	movk	x0, #32406, lsl #48
+     d34: 00 00 00 94  	bl	0xd34 <dtof_reset+0x38c> // __cfi_slowpath_diag+0x0
+     d38: 75 ff ff 17  	b	0xb0c <dtof_reset+0x164>
+     d3c: a0 40 8c d2  	mov	x0, #25093
+     d40: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x398> // +0x240
+     d44: 20 a4 a8 f2  	movk	x0, #17697, lsl #16
+     d48: 42 00 00 91  	add	x2, x2, #0 // +0x240
+     d4c: c0 f1 c6 f2  	movk	x0, #14222, lsl #32
+     d50: e1 03 14 aa  	mov	x1, x20
+     d54: 80 7c f2 f2  	movk	x0, #37860, lsl #48
+     d58: 00 00 00 94  	bl	0xd58 <dtof_reset+0x3b0> // __cfi_slowpath_diag+0x0
+     d5c: 84 ff ff 17  	b	0xb6c <dtof_reset+0x1c4>
+     d60: 20 73 9b d2  	mov	x0, #56217
+     d64: 02 00 00 90  	adrp	x2, 0x0 <dtof_reset+0x3bc> // +0x200
+     d68: a0 39 a7 f2  	movk	x0, #14797, lsl #16
+     d6c: 42 00 00 91  	add	x2, x2, #0 // +0x200
+     d70: e0 bc c2 f2  	movk	x0, #5607, lsl #32
+     d74: e1 03 14 aa  	mov	x1, x20
+     d78: c0 d2 ef f2  	movk	x0, #32406, lsl #48
+     d7c: 00 00 00 94  	bl	0xd7c <dtof_reset+0x3d4> // __cfi_slowpath_diag+0x0
+     d80: be ff ff 17  	b	0xc78 <dtof_reset+0x2d0>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000000f54 <dtof_common_probe>:
+     f54: 3f 23 03 d5  	hint	#25
+     f58: ff 43 02 d1  	sub	sp, sp, #144
+     f5c: 5e 86 00 f8  	str	x30, [x18], #8
+     f60: fd 7b 03 a9  	stp	x29, x30, [sp, #48]
+     f64: fd c3 00 91  	add	x29, sp, #48
+     f68: fc 6f 04 a9  	stp	x28, x27, [sp, #64]
+     f6c: fa 67 05 a9  	stp	x26, x25, [sp, #80]
+     f70: f8 5f 06 a9  	stp	x24, x23, [sp, #96]
+     f74: f6 57 07 a9  	stp	x22, x21, [sp, #112]
+     f78: f4 4f 08 a9  	stp	x20, x19, [sp, #128]
+     f7c: 08 41 38 d5  	mrs	x8, SP_EL0
+     f80: 1a 00 00 90  	adrp	x26, 0x0 <dtof_common_probe+0x2c> // dtof_ctx+0x58
+     f84: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     f88: f3 03 00 aa  	mov	x19, x0
+     f8c: a8 83 1f f8  	stur	x8, [x29, #-8]
+     f90: 48 03 40 f9  	ldr	x8, [x26] // dtof_ctx+0x58
+     f94: 08 01 00 b4  	cbz	x8, 0xfb4 <dtof_common_probe+0x60>
+     f98: 01 00 00 90  	adrp	x1, 0x0 <dtof_common_probe+0x44> // '%s %d dtof_common_probe enter !'
+     f9c: 02 00 00 90  	adrp	x2, 0x0 <dtof_common_probe+0x48> // 'dtof_common_probe'
+     fa0: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_common_probe enter !'
+     fa4: 42 00 00 91  	add	x2, x2, #0 // 'dtof_common_probe'
+     fa8: e0 03 08 aa  	mov	x0, x8
+     fac: a3 31 80 52  	mov	w3, #397
+     fb0: 00 00 00 94  	bl	0xfb0 <dtof_common_probe+0x5c> // ipc_log_string+0x0
+     fb4: 14 00 00 90  	adrp	x20, 0x0 <dtof_common_probe+0x60> // 'dtof_common_probe'
+     fb8: 00 00 00 90  	adrp	x0, 0x0 <dtof_common_probe+0x64> // '\x016[DTOF] %s %d : dtof_common_probe enter !'
+     fbc: 94 02 00 91  	add	x20, x20, #0 // 'dtof_common_probe'
+     fc0: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : dtof_common_probe enter !'
+     fc4: e1 03 14 aa  	mov	x1, x20
+     fc8: a2 31 80 52  	mov	w2, #397
+     fcc: 00 00 00 94  	bl	0xfcc <dtof_common_probe+0x78> // _printk+0x0
+     fd0: 60 52 40 b9  	ldr	w0, [x19, #80]
+     fd4: 00 00 00 94  	bl	0xfd4 <dtof_common_probe+0x80> // gpio_to_desc+0x0
+     fd8: e1 03 1f 2a  	mov	w1, wzr
+     fdc: 00 00 00 94  	bl	0xfdc <dtof_common_probe+0x88> // gpiod_set_raw_value_cansleep+0x0
+     fe0: 1c 00 00 90  	adrp	x28, 0x0 <dtof_common_probe+0x8c> // +0x8
+     fe4: 09 00 00 90  	adrp	x9, 0x0 <dtof_common_probe+0x90> // +0x4
+     fe8: 60 09 80 52  	mov	w0, #75
+     fec: 81 0c 80 52  	mov	w1, #100
+     ff0: 42 00 80 52  	mov	w2, #2
+     ff4: 88 03 40 b9  	ldr	w8, [x28] // +0x8
+     ff8: 3f 01 00 39  	strb	wzr, [x9] // +0x4
+     ffc: 08 05 00 11  	add	w8, w8, #1
+    1000: 88 03 00 b9  	str	w8, [x28] // +0x8
+    1004: 00 00 00 94  	bl	0x1004 <dtof_common_probe+0xb0> // usleep_range_state+0x0
+    1008: e0 03 13 aa  	mov	x0, x19
+    100c: 21 00 80 52  	mov	w1, #1
+    1010: 36 00 80 52  	mov	w22, #1
+    1014: 00 00 00 94  	bl	0x1014 <dtof_common_probe+0xc0> // dtof_reset+0x0
+    1018: 3b 00 80 52  	mov	w27, #1
+    101c: f5 03 1f 2a  	mov	w21, wzr
+    1020: f8 13 00 91  	add	x24, sp, #4
+    1024: 5b 00 a0 72  	movk	w27, #2, lsl #16
+    1028: f7 03 00 91  	mov	x23, sp
+    102c: 0a 00 00 14  	b	0x1054 <dtof_common_probe+0x100>
+    1030: 00 00 00 90  	adrp	x0, 0x1000 <dtof_common_probe+0xdc> // '\x013[DTOF] %s %d : dtof_i2c_read_word error, ret=%d\n'
+    1034: e1 03 14 aa  	mov	x1, x20
+    1038: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof_i2c_read_word error, ret=%d\n'
+    103c: a2 32 80 52  	mov	w2, #405
+    1040: e3 03 19 2a  	mov	w3, w25
+    1044: 00 00 00 94  	bl	0x1044 <dtof_common_probe+0xf0> // _printk+0x0
+    1048: b5 06 00 11  	add	w21, w21, #1
+    104c: bf 16 00 71  	cmp	w21, #5
+    1050: 20 0b 00 54  	b.eq	0x11b4 <dtof_common_probe+0x260>
+    1054: 68 1e 40 f9  	ldr	x8, [x19, #56]
+    1058: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+    105c: ff 07 00 f9  	str	xzr, [sp, #8]
+    1060: e1 23 00 91  	add	x1, sp, #8
+    1064: 42 00 80 52  	mov	w2, #2
+    1068: ff 13 00 39  	strb	wzr, [sp, #4]
+    106c: 09 05 40 79  	ldrh	w9, [x8, #2]
+    1070: f6 1b 00 79  	strh	w22, [sp, #12]
+    1074: f8 0b 00 f9  	str	x24, [sp, #16]
+    1078: ff 03 00 79  	strh	wzr, [sp]
+    107c: e9 13 00 79  	strh	w9, [sp, #8]
+    1080: 09 05 40 79  	ldrh	w9, [x8, #2]
+    1084: f7 13 00 f9  	str	x23, [sp, #32]
+    1088: 00 0d 40 f9  	ldr	x0, [x8, #24]
+    108c: fb a3 01 b8  	stur	w27, [sp, #26]
+    1090: e9 33 00 79  	strh	w9, [sp, #24]
+    1094: 00 00 00 94  	bl	0x1094 <dtof_common_probe+0x140> // i2c_transfer+0x0
+    1098: a0 03 f8 36  	tbz	w0, #31, 0x110c <dtof_common_probe+0x1b8>
+    109c: f9 03 00 2a  	mov	w25, w0
+    10a0: 40 03 40 f9  	ldr	x0, [x26] // dtof_ctx+0x58
+    10a4: 20 01 00 b4  	cbz	x0, 0x10c8 <dtof_common_probe+0x174>
+    10a8: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x154> // '%s %d i2c read failed: %d, reg = 0x%02x'
+    10ac: 02 00 00 90  	adrp	x2, 0x1000 <dtof_common_probe+0x158> // 'dtof_i2c_read_word'
+    10b0: e5 13 40 39  	ldrb	w5, [sp, #4]
+    10b4: 21 00 00 91  	add	x1, x1, #0 // '%s %d i2c read failed: %d, reg = 0x%02x'
+    10b8: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_read_word'
+    10bc: e3 0d 80 52  	mov	w3, #111
+    10c0: e4 03 19 2a  	mov	w4, w25
+    10c4: 00 00 00 94  	bl	0x10c4 <dtof_common_probe+0x170> // ipc_log_string+0x0
+    10c8: 00 00 00 90  	adrp	x0, 0x1000 <dtof_common_probe+0x174> // '\x013[DTOF] %s %d : i2c read failed: %d, reg = 0x%02x'
+    10cc: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x178> // 'dtof_i2c_read_word'
+    10d0: e4 13 40 39  	ldrb	w4, [sp, #4]
+    10d4: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : i2c read failed: %d, reg = 0x%02x'
+    10d8: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_read_word'
+    10dc: e2 0d 80 52  	mov	w2, #111
+    10e0: e3 03 19 2a  	mov	w3, w25
+    10e4: 00 00 00 94  	bl	0x10e4 <dtof_common_probe+0x190> // _printk+0x0
+    10e8: 40 03 40 f9  	ldr	x0, [x26] // dtof_ctx+0x58
+    10ec: 20 fa ff b4  	cbz	x0, 0x1030 <dtof_common_probe+0xdc>
+    10f0: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x19c> // '%s %d dtof_i2c_read_word error, ret=%d\n'
+    10f4: e2 03 14 aa  	mov	x2, x20
+    10f8: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_i2c_read_word error, ret=%d\n'
+    10fc: a3 32 80 52  	mov	w3, #405
+    1100: e4 03 19 2a  	mov	w4, w25
+    1104: 00 00 00 94  	bl	0x1104 <dtof_common_probe+0x1b0> // ipc_log_string+0x0
+    1108: ca ff ff 17  	b	0x1030 <dtof_common_probe+0xdc>
+    110c: e8 03 40 79  	ldrh	w8, [sp]
+    1110: 40 03 40 f9  	ldr	x0, [x26] // dtof_ctx+0x58
+    1114: 08 3d 10 53  	lsl	w8, w8, #16
+    1118: 19 09 c0 5a  	rev	w25, w8
+    111c: 00 01 00 b4  	cbz	x0, 0x113c <dtof_common_probe+0x1e8>
+    1120: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x1cc> // '%s %d [%d]read 0x00: 0x%04x'
+    1124: e2 03 14 aa  	mov	x2, x20
+    1128: 21 00 00 91  	add	x1, x1, #0 // '%s %d [%d]read 0x00: 0x%04x'
+    112c: 03 33 80 52  	mov	w3, #408
+    1130: e4 03 15 2a  	mov	w4, w21
+    1134: e5 03 19 2a  	mov	w5, w25
+    1138: 00 00 00 94  	bl	0x1138 <dtof_common_probe+0x1e4> // ipc_log_string+0x0
+    113c: 00 00 00 90  	adrp	x0, 0x1000 <dtof_common_probe+0x1e8> // '\x016[DTOF] %s %d : [%d]read 0x00: 0x%04x'
+    1140: e1 03 14 aa  	mov	x1, x20
+    1144: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : [%d]read 0x00: 0x%04x'
+    1148: 02 33 80 52  	mov	w2, #408
+    114c: e3 03 15 2a  	mov	w3, w21
+    1150: e4 03 19 2a  	mov	w4, w25
+    1154: 00 00 00 94  	bl	0x1154 <dtof_common_probe+0x200> // _printk+0x0
+    1158: 08 23 94 52  	mov	w8, #41240
+    115c: 3f 03 08 6b  	cmp	w25, w8
+    1160: 00 06 00 54  	b.eq	0x1220 <dtof_common_probe+0x2cc>
+    1164: 68 23 94 52  	mov	w8, #41243
+    1168: 3f 03 08 6b  	cmp	w25, w8
+    116c: a0 05 00 54  	b.eq	0x1220 <dtof_common_probe+0x2cc>
+    1170: 60 52 40 b9  	ldr	w0, [x19, #80]
+    1174: 00 00 00 94  	bl	0x1174 <dtof_common_probe+0x220> // gpio_to_desc+0x0
+    1178: e1 03 1f 2a  	mov	w1, wzr
+    117c: 00 00 00 94  	bl	0x117c <dtof_common_probe+0x228> // gpiod_set_raw_value_cansleep+0x0
+    1180: 88 03 40 b9  	ldr	w8, [x28] // +0x8
+    1184: 09 00 00 90  	adrp	x9, 0x1000 <dtof_common_probe+0x230> // +0x4
+    1188: 60 09 80 52  	mov	w0, #75
+    118c: 81 0c 80 52  	mov	w1, #100
+    1190: 42 00 80 52  	mov	w2, #2
+    1194: 08 05 00 11  	add	w8, w8, #1
+    1198: 3f 01 00 39  	strb	wzr, [x9] // +0x4
+    119c: 88 03 00 b9  	str	w8, [x28] // +0x8
+    11a0: 00 00 00 94  	bl	0x11a0 <dtof_common_probe+0x24c> // usleep_range_state+0x0
+    11a4: e0 03 13 aa  	mov	x0, x19
+    11a8: 21 00 80 52  	mov	w1, #1
+    11ac: 00 00 00 94  	bl	0x11ac <dtof_common_probe+0x258> // dtof_reset+0x0
+    11b0: a6 ff ff 17  	b	0x1048 <dtof_common_probe+0xf4>
+    11b4: 60 52 40 b9  	ldr	w0, [x19, #80]
+    11b8: 00 00 00 94  	bl	0x11b8 <dtof_common_probe+0x264> // gpio_to_desc+0x0
+    11bc: e1 03 1f 2a  	mov	w1, wzr
+    11c0: 00 00 00 94  	bl	0x11c0 <dtof_common_probe+0x26c> // gpiod_set_raw_value_cansleep+0x0
+    11c4: 88 03 40 b9  	ldr	w8, [x28] // +0x8
+    11c8: 09 00 00 90  	adrp	x9, 0x1000 <dtof_common_probe+0x274> // +0x4
+    11cc: 60 09 80 52  	mov	w0, #75
+    11d0: 81 0c 80 52  	mov	w1, #100
+    11d4: 42 00 80 52  	mov	w2, #2
+    11d8: 08 05 00 11  	add	w8, w8, #1
+    11dc: 3f 01 00 39  	strb	wzr, [x9] // +0x4
+    11e0: 88 03 00 b9  	str	w8, [x28] // +0x8
+    11e4: 00 00 00 94  	bl	0x11e4 <dtof_common_probe+0x290> // usleep_range_state+0x0
+    11e8: 40 03 40 f9  	ldr	x0, [x26] // dtof_ctx+0x58
+    11ec: e0 00 00 b4  	cbz	x0, 0x1208 <dtof_common_probe+0x2b4>
+    11f0: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x29c> // '%s %d read chip id failed'
+    11f4: 02 00 00 90  	adrp	x2, 0x1000 <dtof_common_probe+0x2a0> // 'dtof_common_probe'
+    11f8: 21 00 00 91  	add	x1, x1, #0 // '%s %d read chip id failed'
+    11fc: 42 00 00 91  	add	x2, x2, #0 // 'dtof_common_probe'
+    1200: a3 34 80 52  	mov	w3, #421
+    1204: 00 00 00 94  	bl	0x1204 <dtof_common_probe+0x2b0> // ipc_log_string+0x0
+    1208: 00 00 00 90  	adrp	x0, 0x1000 <dtof_common_probe+0x2b4> // '\x013[DTOF] %s %d : read chip id failed'
+    120c: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x2b8> // 'dtof_common_probe'
+    1210: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : read chip id failed'
+    1214: 21 00 00 91  	add	x1, x1, #0 // 'dtof_common_probe'
+    1218: a2 34 80 52  	mov	w2, #421
+    121c: 3f 00 00 14  	b	0x1318 <dtof_common_probe+0x3c4>
+    1220: 00 00 00 90  	adrp	x0, 0x1000 <dtof_common_probe+0x2cc> // +0x58
+    1224: 00 00 00 91  	add	x0, x0, #0 // +0x58
+    1228: 00 00 00 94  	bl	0x1228 <dtof_common_probe+0x2d4> // misc_register+0x0
+    122c: 20 04 00 35  	cbnz	w0, 0x12b0 <dtof_common_probe+0x35c>
+    1230: 68 02 40 f9  	ldr	x8, [x19]
+    1234: 09 00 00 90  	adrp	x9, 0x1000 <dtof_common_probe+0x2e0> // +0x10
+    1238: 60 52 40 b9  	ldr	w0, [x19, #80]
+    123c: 28 01 00 f9  	str	x8, [x9] // +0x10
+    1240: 00 00 00 94  	bl	0x1240 <dtof_common_probe+0x2ec> // gpio_to_desc+0x0
+    1244: e1 03 1f 2a  	mov	w1, wzr
+    1248: 00 00 00 94  	bl	0x1248 <dtof_common_probe+0x2f4> // gpiod_set_raw_value_cansleep+0x0
+    124c: 88 03 40 b9  	ldr	w8, [x28] // +0x8
+    1250: 09 00 00 90  	adrp	x9, 0x1000 <dtof_common_probe+0x2fc> // +0x4
+    1254: 60 09 80 52  	mov	w0, #75
+    1258: 81 0c 80 52  	mov	w1, #100
+    125c: 42 00 80 52  	mov	w2, #2
+    1260: 08 05 00 11  	add	w8, w8, #1
+    1264: 3f 01 00 39  	strb	wzr, [x9] // +0x4
+    1268: 88 03 00 b9  	str	w8, [x28] // +0x8
+    126c: 00 00 00 94  	bl	0x126c <dtof_common_probe+0x318> // usleep_range_state+0x0
+    1270: 40 03 40 f9  	ldr	x0, [x26] // dtof_ctx+0x58
+    1274: e0 00 00 b4  	cbz	x0, 0x1290 <dtof_common_probe+0x33c>
+    1278: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x324> // '%s %d dtof_common_probe ok !'
+    127c: 02 00 00 90  	adrp	x2, 0x1000 <dtof_common_probe+0x328> // 'dtof_common_probe'
+    1280: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_common_probe ok !'
+    1284: 42 00 00 91  	add	x2, x2, #0 // 'dtof_common_probe'
+    1288: a3 36 80 52  	mov	w3, #437
+    128c: 00 00 00 94  	bl	0x128c <dtof_common_probe+0x338> // ipc_log_string+0x0
+    1290: 00 00 00 90  	adrp	x0, 0x1000 <dtof_common_probe+0x33c> // '\x016[DTOF] %s %d : dtof_common_probe ok !'
+    1294: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x340> // 'dtof_common_probe'
+    1298: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : dtof_common_probe ok !'
+    129c: 21 00 00 91  	add	x1, x1, #0 // 'dtof_common_probe'
+    12a0: a2 36 80 52  	mov	w2, #437
+    12a4: 00 00 00 94  	bl	0x12a4 <dtof_common_probe+0x350> // _printk+0x0
+    12a8: e0 03 1f 2a  	mov	w0, wzr
+    12ac: 1d 00 00 14  	b	0x1320 <dtof_common_probe+0x3cc>
+    12b0: 60 52 40 b9  	ldr	w0, [x19, #80]
+    12b4: 00 00 00 94  	bl	0x12b4 <dtof_common_probe+0x360> // gpio_to_desc+0x0
+    12b8: e1 03 1f 2a  	mov	w1, wzr
+    12bc: 00 00 00 94  	bl	0x12bc <dtof_common_probe+0x368> // gpiod_set_raw_value_cansleep+0x0
+    12c0: 88 03 40 b9  	ldr	w8, [x28] // +0x8
+    12c4: 09 00 00 90  	adrp	x9, 0x1000 <dtof_common_probe+0x370> // +0x4
+    12c8: 60 09 80 52  	mov	w0, #75
+    12cc: 81 0c 80 52  	mov	w1, #100
+    12d0: 42 00 80 52  	mov	w2, #2
+    12d4: 08 05 00 11  	add	w8, w8, #1
+    12d8: 3f 01 00 39  	strb	wzr, [x9] // +0x4
+    12dc: 88 03 00 b9  	str	w8, [x28] // +0x8
+    12e0: 00 00 00 94  	bl	0x12e0 <dtof_common_probe+0x38c> // usleep_range_state+0x0
+    12e4: 40 03 40 f9  	ldr	x0, [x26] // dtof_ctx+0x58
+    12e8: e0 00 00 b4  	cbz	x0, 0x1304 <dtof_common_probe+0x3b0>
+    12ec: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x398> // '%s %d dtof_device register failed'
+    12f0: 02 00 00 90  	adrp	x2, 0x1000 <dtof_common_probe+0x39c> // 'dtof_common_probe'
+    12f4: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_device register failed'
+    12f8: 42 00 00 91  	add	x2, x2, #0 // 'dtof_common_probe'
+    12fc: c3 35 80 52  	mov	w3, #430
+    1300: 00 00 00 94  	bl	0x1300 <dtof_common_probe+0x3ac> // ipc_log_string+0x0
+    1304: 00 00 00 90  	adrp	x0, 0x1000 <dtof_common_probe+0x3b0> // '\x013[DTOF] %s %d : dtof_device register failed'
+    1308: 01 00 00 90  	adrp	x1, 0x1000 <dtof_common_probe+0x3b4> // 'dtof_common_probe'
+    130c: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof_device register failed'
+    1310: 21 00 00 91  	add	x1, x1, #0 // 'dtof_common_probe'
+    1314: c2 35 80 52  	mov	w2, #430
+    1318: 00 00 00 94  	bl	0x1318 <dtof_common_probe+0x3c4> // _printk+0x0
+    131c: 80 00 80 12  	mov	w0, #-5
+    1320: 08 41 38 d5  	mrs	x8, SP_EL0
+    1324: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    1328: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    132c: 1f 01 09 eb  	cmp	x8, x9
+    1330: 61 01 00 54  	b.ne	0x135c <dtof_common_probe+0x408>
+    1334: f4 4f 48 a9  	ldp	x20, x19, [sp, #128]
+    1338: f6 57 47 a9  	ldp	x22, x21, [sp, #112]
+    133c: f8 5f 46 a9  	ldp	x24, x23, [sp, #96]
+    1340: fa 67 45 a9  	ldp	x26, x25, [sp, #80]
+    1344: fc 6f 44 a9  	ldp	x28, x27, [sp, #64]
+    1348: fd 7b 43 a9  	ldp	x29, x30, [sp, #48]
+    134c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    1350: ff 43 02 91  	add	sp, sp, #144
+    1354: bf 23 03 d5  	hint	#29
+    1358: c0 03 5f d6  	ret
+    135c: 00 00 00 94  	bl	0x135c <dtof_common_probe+0x408> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000002200 <dtof_i2c_probe>:
+    2200: 3f 23 03 d5  	hint	#25
+    2204: 5e 86 00 f8  	str	x30, [x18], #8
+    2208: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+    220c: f6 57 01 a9  	stp	x22, x21, [sp, #16]
+    2210: fd 03 00 91  	mov	x29, sp
+    2214: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+    2218: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x18> // 'dtof_only'
+    221c: f3 03 00 aa  	mov	x19, x0
+    2220: 21 00 00 91  	add	x1, x1, #0 // 'dtof_only'
+    2224: 40 01 80 52  	mov	w0, #10
+    2228: e2 03 1f 2a  	mov	w2, wzr
+    222c: 00 00 00 94  	bl	0x222c <dtof_i2c_probe+0x2c> // ipc_log_context_create+0x0
+    2230: 16 00 00 90  	adrp	x22, 0x2000 <dtof_i2c_probe+0x30> // dtof_ctx+0x58
+    2234: c0 02 00 f9  	str	x0, [x22] // dtof_ctx+0x58
+    2238: 00 01 00 b5  	cbnz	x0, 0x2258 <dtof_i2c_probe+0x58>
+    223c: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x3c> // '\x013[DTOF] %s %d : failed to create ipclog_ctx.'
+    2240: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x40> // 'dtof_i2c_probe'
+    2244: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : failed to create ipclog_ctx.'
+    2248: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    224c: c2 35 80 52  	mov	w2, #430
+    2250: 00 00 00 94  	bl	0x2250 <dtof_i2c_probe+0x50> // _printk+0x0
+    2254: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    2258: 13 02 00 b5  	cbnz	x19, 0x2298 <dtof_i2c_probe+0x98>
+    225c: e0 00 00 b4  	cbz	x0, 0x2278 <dtof_i2c_probe+0x78>
+    2260: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x60> // '%s %d client == NULL'
+    2264: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x64> // 'dtof_i2c_probe'
+    2268: 21 00 00 91  	add	x1, x1, #0 // '%s %d client == NULL'
+    226c: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    2270: 43 36 80 52  	mov	w3, #434
+    2274: 00 00 00 94  	bl	0x2274 <dtof_i2c_probe+0x74> // ipc_log_string+0x0
+    2278: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x78> // '\x013[DTOF] %s %d : client == NULL'
+    227c: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x7c> // 'dtof_i2c_probe'
+    2280: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : client == NULL'
+    2284: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    2288: 42 36 80 52  	mov	w2, #434
+    228c: 00 00 00 94  	bl	0x228c <dtof_i2c_probe+0x8c> // _printk+0x0
+    2290: 13 00 80 12  	mov	w19, #-1
+    2294: b2 00 00 14  	b	0x255c <dtof_i2c_probe+0x35c>
+    2298: 20 01 00 b4  	cbz	x0, 0x22bc <dtof_i2c_probe+0xbc>
+    229c: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x9c> // '%s %d dtof_i2c_probe enter ! driver ver: %s'
+    22a0: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0xa0> // 'dtof_i2c_probe'
+    22a4: 04 00 00 90  	adrp	x4, 0x2000 <dtof_i2c_probe+0xa4> // 'Dtof_V2.1_Build20221202a'
+    22a8: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_i2c_probe enter ! driver ver: %s'
+    22ac: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    22b0: 84 00 00 91  	add	x4, x4, #0 // 'Dtof_V2.1_Build20221202a'
+    22b4: c3 36 80 52  	mov	w3, #438
+    22b8: 00 00 00 94  	bl	0x22b8 <dtof_i2c_probe+0xb8> // ipc_log_string+0x0
+    22bc: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0xbc> // '\x016[DTOF] %s %d : dtof_i2c_probe enter ! driver ver: %s'
+    22c0: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0xc0> // 'dtof_i2c_probe'
+    22c4: 03 00 00 90  	adrp	x3, 0x2000 <dtof_i2c_probe+0xc4> // 'Dtof_V2.1_Build20221202a'
+    22c8: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : dtof_i2c_probe enter ! driver ver: %s'
+    22cc: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    22d0: 63 00 00 91  	add	x3, x3, #0 // 'Dtof_V2.1_Build20221202a'
+    22d4: c2 36 80 52  	mov	w2, #438
+    22d8: 00 00 00 94  	bl	0x22d8 <dtof_i2c_probe+0xd8> // _printk+0x0
+    22dc: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    22e0: e0 00 00 b4  	cbz	x0, 0x22fc <dtof_i2c_probe+0xfc>
+    22e4: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0xe4> // '%s %d dtof poweroff disable'
+    22e8: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0xe8> // 'dtof_i2c_probe'
+    22ec: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof poweroff disable'
+    22f0: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    22f4: 63 37 80 52  	mov	w3, #443
+    22f8: 00 00 00 94  	bl	0x22f8 <dtof_i2c_probe+0xf8> // ipc_log_string+0x0
+    22fc: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0xfc> // '\x016[DTOF] %s %d : dtof poweroff disable'
+    2300: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x100> // 'dtof_i2c_probe'
+    2304: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : dtof poweroff disable'
+    2308: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    230c: 62 37 80 52  	mov	w2, #443
+    2310: 00 00 00 94  	bl	0x2310 <dtof_i2c_probe+0x110> // _printk+0x0
+    2314: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    2318: e0 00 00 b4  	cbz	x0, 0x2334 <dtof_i2c_probe+0x134>
+    231c: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x11c> // '%s %d dtof regulator ctrl disable'
+    2320: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x120> // 'dtof_i2c_probe'
+    2324: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof regulator ctrl disable'
+    2328: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    232c: 23 38 80 52  	mov	w3, #449
+    2330: 00 00 00 94  	bl	0x2330 <dtof_i2c_probe+0x130> // ipc_log_string+0x0
+    2334: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x134> // '\x016[DTOF] %s %d : dtof regulator ctrl disable'
+    2338: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x138> // 'dtof_i2c_probe'
+    233c: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : dtof regulator ctrl disable'
+    2340: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    2344: 22 38 80 52  	mov	w2, #449
+    2348: 00 00 00 94  	bl	0x2348 <dtof_i2c_probe+0x148> // _printk+0x0
+    234c: 74 0e 40 f9  	ldr	x20, [x19, #24]
+    2350: 20 ea 90 d2  	mov	x0, #34641
+    2354: 20 d9 b9 f2  	movk	x0, #52937, lsl #16
+    2358: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x158> // +0x340
+    235c: c0 8c dc f2  	movk	x0, #58470, lsl #32
+    2360: 42 00 00 91  	add	x2, x2, #0 // +0x340
+    2364: 88 0a 40 f9  	ldr	x8, [x20, #16]
+    2368: 20 0e ed f2  	movk	x0, #26737, lsl #48
+    236c: 15 11 40 f9  	ldr	x21, [x8, #32]
+    2370: e1 03 15 aa  	mov	x1, x21
+    2374: 00 00 00 94  	bl	0x2374 <dtof_i2c_probe+0x174> // __cfi_slowpath_diag+0x0
+    2378: e0 03 14 aa  	mov	x0, x20
+    237c: a0 02 3f d6  	blr	x21
+    2380: 20 02 00 37  	tbnz	w0, #0, 0x23c4 <dtof_i2c_probe+0x1c4>
+    2384: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    2388: e0 00 00 b4  	cbz	x0, 0x23a4 <dtof_i2c_probe+0x1a4>
+    238c: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x18c> // '%s %d I2C check functionality failed.'
+    2390: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x190> // 'dtof_i2c_probe'
+    2394: 21 00 00 91  	add	x1, x1, #0 // '%s %d I2C check functionality failed.'
+    2398: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    239c: a3 38 80 52  	mov	w3, #453
+    23a0: 00 00 00 94  	bl	0x23a0 <dtof_i2c_probe+0x1a0> // ipc_log_string+0x0
+    23a4: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x1a4> // '\x013[DTOF] %s %d : I2C check functionality failed.'
+    23a8: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x1a8> // 'dtof_i2c_probe'
+    23ac: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : I2C check functionality failed.'
+    23b0: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    23b4: a2 38 80 52  	mov	w2, #453
+    23b8: 00 00 00 94  	bl	0x23b8 <dtof_i2c_probe+0x1b8> // _printk+0x0
+    23bc: b3 00 80 12  	mov	w19, #-6
+    23c0: 67 00 00 14  	b	0x255c <dtof_i2c_probe+0x35c>
+    23c4: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_probe+0x1c4> // kmalloc_caches+0x38
+    23c8: 01 b8 81 52  	mov	w1, #3520
+    23cc: 02 0c 80 52  	mov	w2, #96
+    23d0: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x38
+    23d4: 00 00 00 94  	bl	0x23d4 <dtof_i2c_probe+0x1d4> // kmem_cache_alloc_trace+0x0
+    23d8: 20 02 00 b5  	cbnz	x0, 0x241c <dtof_i2c_probe+0x21c>
+    23dc: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    23e0: e0 00 00 b4  	cbz	x0, 0x23fc <dtof_i2c_probe+0x1fc>
+    23e4: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x1e4> // '%s %d memory error'
+    23e8: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x1e8> // 'dtof_i2c_probe'
+    23ec: 21 00 00 91  	add	x1, x1, #0 // '%s %d memory error'
+    23f0: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    23f4: 63 39 80 52  	mov	w3, #459
+    23f8: 00 00 00 94  	bl	0x23f8 <dtof_i2c_probe+0x1f8> // ipc_log_string+0x0
+    23fc: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x1fc> // '\x013[DTOF] %s %d : memory error'
+    2400: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x200> // 'dtof_i2c_probe'
+    2404: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : memory error'
+    2408: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    240c: 62 39 80 52  	mov	w2, #459
+    2410: 00 00 00 94  	bl	0x2410 <dtof_i2c_probe+0x210> // _printk+0x0
+    2414: 73 01 80 12  	mov	w19, #-12
+    2418: 51 00 00 14  	b	0x255c <dtof_i2c_probe+0x35c>
+    241c: 09 00 00 90  	adrp	x9, 0x2000 <dtof_i2c_probe+0x21c> // ''
+    2420: f4 03 00 aa  	mov	x20, x0
+    2424: 68 82 00 91  	add	x8, x19, #32
+    2428: 29 01 00 91  	add	x9, x9, #0 // ''
+    242c: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    2430: 74 5e 00 f9  	str	x20, [x19, #184]
+    2434: 93 a6 03 a9  	stp	x19, x9, [x20, #56]
+    2438: 88 02 00 f9  	str	x8, [x20]
+    243c: 00 01 00 b4  	cbz	x0, 0x245c <dtof_i2c_probe+0x25c>
+    2440: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x240> // '%s %d DTOF - probe,i2c_addr from DTS:0x%02x'
+    2444: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x244> // 'dtof_i2c_probe'
+    2448: 64 06 40 79  	ldrh	w4, [x19, #2]
+    244c: 21 00 00 91  	add	x1, x1, #0 // '%s %d DTOF - probe,i2c_addr from DTS:0x%02x'
+    2450: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    2454: 83 3a 80 52  	mov	w3, #468
+    2458: 00 00 00 94  	bl	0x2458 <dtof_i2c_probe+0x258> // ipc_log_string+0x0
+    245c: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x25c> // '\x016[DTOF] %s %d : DTOF - probe,i2c_addr from DTS:0x%02x'
+    2460: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x260> // 'dtof_i2c_probe'
+    2464: 63 06 40 79  	ldrh	w3, [x19, #2]
+    2468: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : DTOF - probe,i2c_addr from DTS:0x%02x'
+    246c: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    2470: 82 3a 80 52  	mov	w2, #468
+    2474: 00 00 00 94  	bl	0x2474 <dtof_i2c_probe+0x274> // _printk+0x0
+    2478: e0 03 14 aa  	mov	x0, x20
+    247c: 00 00 00 94  	bl	0x247c <dtof_i2c_probe+0x27c> // dtof_request_resource+0x0
+    2480: e0 03 14 aa  	mov	x0, x20
+    2484: 00 00 00 94  	bl	0x2484 <dtof_i2c_probe+0x284> // dtof_common_probe+0x0
+    2488: f3 03 00 2a  	mov	w19, w0
+    248c: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    2490: 53 04 f8 36  	tbz	w19, #31, 0x2518 <dtof_i2c_probe+0x318>
+    2494: 00 01 00 b4  	cbz	x0, 0x24b4 <dtof_i2c_probe+0x2b4>
+    2498: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x298> // '%s %d dtof_common_probe err, err %d!'
+    249c: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x29c> // 'dtof_i2c_probe'
+    24a0: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_common_probe err, err %d!'
+    24a4: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    24a8: 23 3b 80 52  	mov	w3, #473
+    24ac: e4 03 13 2a  	mov	w4, w19
+    24b0: 00 00 00 94  	bl	0x24b0 <dtof_i2c_probe+0x2b0> // ipc_log_string+0x0
+    24b4: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x2b4> // '\x013[DTOF] %s %d : dtof_common_probe err, err %d!'
+    24b8: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x2b8> // 'dtof_i2c_probe'
+    24bc: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof_common_probe err, err %d!'
+    24c0: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    24c4: 22 3b 80 52  	mov	w2, #473
+    24c8: e3 03 13 2a  	mov	w3, w19
+    24cc: 00 00 00 94  	bl	0x24cc <dtof_i2c_probe+0x2cc> // _printk+0x0
+    24d0: 95 52 40 b9  	ldr	w21, [x20, #80]
+    24d4: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_probe+0x2d4> // s_module_load_state+0x0
+    24d8: 49 00 80 52  	mov	w9, #2
+    24dc: bf fe 07 71  	cmp	w21, #511
+    24e0: 09 01 00 b9  	str	w9, [x8] // s_module_load_state+0x0
+    24e4: a8 04 00 54  	b.hi	0x2578 <dtof_i2c_probe+0x378>
+    24e8: e0 03 15 2a  	mov	w0, w21
+    24ec: 00 00 00 94  	bl	0x24ec <dtof_i2c_probe+0x2ec> // gpio_free+0x0
+    24f0: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x2f0> // ''
+    24f4: 80 02 40 f9  	ldr	x0, [x20]
+    24f8: 21 00 00 91  	add	x1, x1, #0 // ''
+    24fc: 00 00 00 94  	bl	0x24fc <dtof_i2c_probe+0x2fc> // sysfs_remove_group+0x0
+    2500: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x300> // 'dtof'
+    2504: 00 00 00 91  	add	x0, x0, #0 // 'dtof'
+    2508: 00 00 00 94  	bl	0x2508 <dtof_i2c_probe+0x308> // meizu_sysfslink_remove_name+0x0
+    250c: e0 03 14 aa  	mov	x0, x20
+    2510: 00 00 00 94  	bl	0x2510 <dtof_i2c_probe+0x310> // kfree+0x0
+    2514: 12 00 00 14  	b	0x255c <dtof_i2c_probe+0x35c>
+    2518: e0 00 00 b4  	cbz	x0, 0x2534 <dtof_i2c_probe+0x334>
+    251c: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x31c> // '%s %d dtof_i2c_high_speed_probe ok !'
+    2520: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x320> // 'dtof_i2c_probe'
+    2524: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_i2c_high_speed_probe ok !'
+    2528: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_probe'
+    252c: 23 3c 80 52  	mov	w3, #481
+    2530: 00 00 00 94  	bl	0x2530 <dtof_i2c_probe+0x330> // ipc_log_string+0x0
+    2534: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x334> // '\x016[DTOF] %s %d : dtof_i2c_high_speed_probe ok !'
+    2538: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x338> // 'dtof_i2c_probe'
+    253c: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : dtof_i2c_high_speed_probe ok !'
+    2540: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_probe'
+    2544: 22 3c 80 52  	mov	w2, #481
+    2548: 00 00 00 94  	bl	0x2548 <dtof_i2c_probe+0x348> // _printk+0x0
+    254c: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_probe+0x34c> // s_module_load_state+0x0
+    2550: 29 00 80 52  	mov	w9, #1
+    2554: f3 03 1f 2a  	mov	w19, wzr
+    2558: 09 01 00 b9  	str	w9, [x8] // s_module_load_state+0x0
+    255c: e0 03 13 2a  	mov	w0, w19
+    2560: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+    2564: f6 57 41 a9  	ldp	x22, x21, [sp, #16]
+    2568: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+    256c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    2570: bf 23 03 d5  	hint	#29
+    2574: c0 03 5f d6  	ret
+    2578: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    257c: 00 01 00 b4  	cbz	x0, 0x259c <dtof_i2c_probe+0x39c>
+    2580: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x380> // '%s %d dtof_release_gpio, invalid gpio [%d]\n'
+    2584: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_probe+0x384> // 'dtof_release_gpio'
+    2588: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof_release_gpio, invalid gpio [%d]\n'
+    258c: 42 00 00 91  	add	x2, x2, #0 // 'dtof_release_gpio'
+    2590: c3 3d 80 52  	mov	w3, #494
+    2594: e4 03 15 2a  	mov	w4, w21
+    2598: 00 00 00 94  	bl	0x2598 <dtof_i2c_probe+0x398> // ipc_log_string+0x0
+    259c: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_probe+0x39c> // '\x013[DTOF] %s %d : dtof_release_gpio, invalid gpio [%d]\n'
+    25a0: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_probe+0x3a0> // 'dtof_release_gpio'
+    25a4: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof_release_gpio, invalid gpio [%d]\n'
+    25a8: 21 00 00 91  	add	x1, x1, #0 // 'dtof_release_gpio'
+    25ac: c2 3d 80 52  	mov	w2, #494
+    25b0: e3 03 15 2a  	mov	w3, w21
+    25b4: 00 00 00 94  	bl	0x25b4 <dtof_i2c_probe+0x3b4> // _printk+0x0
+    25b8: ce ff ff 17  	b	0x24f0 <dtof_i2c_probe+0x2f0>

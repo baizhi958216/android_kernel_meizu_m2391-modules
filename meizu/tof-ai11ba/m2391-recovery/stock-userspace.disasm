@@ -1,0 +1,823 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000001360 <dtof_unlocked_ioctl>:
+    1360: 3f 23 03 d5  	hint	#25
+    1364: 5e 86 00 f8  	str	x30, [x18], #8
+    1368: fd 7b bb a9  	stp	x29, x30, [sp, #-80]!
+    136c: fc 0b 00 f9  	str	x28, [sp, #16]
+    1370: fd 03 00 91  	mov	x29, sp
+    1374: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+    1378: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+    137c: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+    1380: ff 03 23 d1  	sub	sp, sp, #2240
+    1384: 08 41 38 d5  	mrs	x8, SP_EL0
+    1388: f4 03 02 aa  	mov	x20, x2
+    138c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    1390: f5 03 01 2a  	mov	w21, w1
+    1394: e1 03 1f 2a  	mov	w1, wzr
+    1398: 82 10 81 52  	mov	w2, #2180
+    139c: a8 83 1f f8  	stur	x8, [x29, #-8]
+    13a0: 08 6c 40 f9  	ldr	x8, [x0, #216]
+    13a4: e0 c3 00 91  	add	x0, sp, #48
+    13a8: ff 17 00 f9  	str	xzr, [sp, #40]
+    13ac: ff 27 00 b9  	str	wzr, [sp, #36]
+    13b0: 13 4d 40 f9  	ldr	x19, [x8, #152]
+    13b4: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+    13b8: 00 00 00 94  	bl	0x13b8 <dtof_unlocked_ioctl+0x58> // memset+0x0
+    13bc: 28 20 88 52  	mov	w8, #16641
+    13c0: 08 02 b0 72  	movk	w8, #32784, lsl #16
+    13c4: bf 02 08 6b  	cmp	w21, w8
+    13c8: cc 04 00 54  	b.gt	0x1460 <dtof_unlocked_ioctl+0x100>
+    13cc: 08 20 88 52  	mov	w8, #16640
+    13d0: 88 00 b0 72  	movk	w8, #32772, lsl #16
+    13d4: bf 02 08 6b  	cmp	w21, w8
+    13d8: 00 0e 00 54  	b.eq	0x1598 <dtof_unlocked_ioctl+0x238>
+    13dc: 28 20 88 52  	mov	w8, #16641
+    13e0: 88 00 b0 72  	movk	w8, #32772, lsl #16
+    13e4: bf 02 08 6b  	cmp	w21, w8
+    13e8: 60 12 00 54  	b.eq	0x1634 <dtof_unlocked_ioctl+0x2d4>
+    13ec: e8 21 88 52  	mov	w8, #16655
+    13f0: 08 01 b0 72  	movk	w8, #32776, lsl #16
+    13f4: bf 02 08 6b  	cmp	w21, w8
+    13f8: e1 1b 00 54  	b.ne	0x1774 <dtof_unlocked_ioctl+0x414>
+    13fc: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x9c> // +0x4
+    1400: 09 00 00 90  	adrp	x9, 0x1000 <dtof_unlocked_ioctl+0xa0> // +0x8
+    1404: e1 23 00 91  	add	x1, sp, #8
+    1408: e0 03 14 aa  	mov	x0, x20
+    140c: 02 01 80 52  	mov	w2, #8
+    1410: 08 01 40 39  	ldrb	w8, [x8] // +0x4
+    1414: 29 01 40 b9  	ldr	w9, [x9] // +0x8
+    1418: e8 27 01 29  	stp	w8, w9, [sp, #8]
+    141c: 00 00 00 94  	bl	0x141c <dtof_unlocked_ioctl+0xbc> // +0x1f0c
+    1420: 00 3f 00 b4  	cbz	x0, 0x1c00 <dtof_unlocked_ioctl+0x8a0>
+    1424: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0xc4> // dtof_ctx+0x58
+    1428: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    142c: e0 00 00 b4  	cbz	x0, 0x1448 <dtof_unlocked_ioctl+0xe8>
+    1430: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0xd0> // '%s %d Oops,fail to copy dtof state to user space'
+    1434: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0xd4> // 'dtof_unlocked_ioctl'
+    1438: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to copy dtof state to user space'
+    143c: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1440: a3 1c 80 52  	mov	w3, #229
+    1444: 00 00 00 94  	bl	0x1444 <dtof_unlocked_ioctl+0xe4> // ipc_log_string+0x0
+    1448: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0xe8> // '\x013[DTOF] %s %d : Oops,fail to copy dtof state to user space'
+    144c: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0xec> // 'dtof_unlocked_ioctl'
+    1450: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to copy dtof state to user space'
+    1454: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1458: a2 1c 80 52  	mov	w2, #229
+    145c: 7b 01 00 14  	b	0x1a48 <dtof_unlocked_ioctl+0x6e8>
+    1460: 48 20 88 12  	mov	w8, #-16643
+    1464: a8 02 08 0b  	add	w8, w21, w8
+    1468: 1f 49 00 71  	cmp	w8, #18
+    146c: 08 04 00 54  	b.hi	0x14ec <dtof_unlocked_ioctl+0x18c>
+    1470: 09 00 00 90  	adrp	x9, 0x1000 <dtof_unlocked_ioctl+0x110> // ''
+    1474: 29 01 00 91  	add	x9, x9, #0 // ''
+    1478: 8a 00 00 10  	adr	x10, #16
+    147c: 2b 79 68 78  	ldrh	w11, [x9, x8, lsl #1]
+    1480: 4a 09 0b 8b  	add	x10, x10, x11, lsl #2
+    1484: 40 01 1f d6  	br	x10
+    1488: 9f 24 03 d5  	hint	#36
+    148c: e0 a3 00 91  	add	x0, sp, #40
+    1490: e1 03 14 aa  	mov	x1, x20
+    1494: 82 00 80 52  	mov	w2, #4
+    1498: 00 00 00 94  	bl	0x1498 <dtof_unlocked_ioctl+0x138> // +0x1d58
+    149c: e0 27 00 b5  	cbnz	x0, 0x1998 <dtof_unlocked_ioctl+0x638>
+    14a0: e1 2b 40 b9  	ldr	w1, [sp, #40]
+    14a4: e0 03 13 aa  	mov	x0, x19
+    14a8: 00 00 00 94  	bl	0x14a8 <dtof_unlocked_ioctl+0x148> // dtof_reset+0x0
+    14ac: 80 0e 00 34  	cbz	w0, 0x167c <dtof_unlocked_ioctl+0x31c>
+    14b0: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x150> // dtof_ctx+0x58
+    14b4: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    14b8: e0 00 00 b4  	cbz	x0, 0x14d4 <dtof_unlocked_ioctl+0x174>
+    14bc: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x15c> // '%s %d dtof reset failed.\n'
+    14c0: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x160> // 'dtof_unlocked_ioctl'
+    14c4: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof reset failed.\n'
+    14c8: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    14cc: 83 1b 80 52  	mov	w3, #220
+    14d0: 00 00 00 94  	bl	0x14d0 <dtof_unlocked_ioctl+0x170> // ipc_log_string+0x0
+    14d4: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x174> // '\x013[DTOF] %s %d : dtof reset failed.\n'
+    14d8: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x178> // 'dtof_unlocked_ioctl'
+    14dc: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof reset failed.\n'
+    14e0: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    14e4: 82 1b 80 52  	mov	w2, #220
+    14e8: 58 01 00 14  	b	0x1a48 <dtof_unlocked_ioctl+0x6e8>
+    14ec: 48 20 88 52  	mov	w8, #16642
+    14f0: 08 02 b0 72  	movk	w8, #32784, lsl #16
+    14f4: bf 02 08 6b  	cmp	w21, w8
+    14f8: 00 0f 00 54  	b.eq	0x16d8 <dtof_unlocked_ioctl+0x378>
+    14fc: 48 21 88 52  	mov	w8, #16650
+    1500: 88 10 b1 72  	movk	w8, #34948, lsl #16
+    1504: bf 02 08 6b  	cmp	w21, w8
+    1508: 61 13 00 54  	b.ne	0x1774 <dtof_unlocked_ioctl+0x414>
+    150c: e0 c3 00 91  	add	x0, sp, #48
+    1510: e1 03 14 aa  	mov	x1, x20
+    1514: 82 10 81 52  	mov	w2, #2180
+    1518: 00 00 00 94  	bl	0x1518 <dtof_unlocked_ioctl+0x1b8> // +0x1d58
+    151c: c0 25 00 b5  	cbnz	x0, 0x19d4 <dtof_unlocked_ioctl+0x674>
+    1520: 68 22 40 f9  	ldr	x8, [x19, #64]
+    1524: 15 1d 40 f9  	ldr	x21, [x8, #56]
+    1528: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x1c8> // +0x33b0
+    152c: 08 01 00 91  	add	x8, x8, #0 // +0x33b0
+    1530: bf 02 08 eb  	cmp	x21, x8
+    1534: 41 38 00 54  	b.ne	0x1c3c <dtof_unlocked_ioctl+0x8dc>
+    1538: e1 c3 00 91  	add	x1, sp, #48
+    153c: e0 03 13 aa  	mov	x0, x19
+    1540: a0 02 3f d6  	blr	x21
+    1544: 60 28 00 35  	cbnz	w0, 0x1a50 <dtof_unlocked_ioctl+0x6f0>
+    1548: e1 c3 00 91  	add	x1, sp, #48
+    154c: e0 03 14 aa  	mov	x0, x20
+    1550: 82 10 81 52  	mov	w2, #2180
+    1554: 00 00 00 94  	bl	0x1554 <dtof_unlocked_ioctl+0x1f4> // +0x1f0c
+    1558: 40 35 00 b4  	cbz	x0, 0x1c00 <dtof_unlocked_ioctl+0x8a0>
+    155c: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x1fc> // dtof_ctx+0x58
+    1560: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1564: e0 00 00 b4  	cbz	x0, 0x1580 <dtof_unlocked_ioctl+0x220>
+    1568: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x208> // '%s %d Oops,fail to copy reg value back to user space'
+    156c: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x20c> // 'dtof_unlocked_ioctl'
+    1570: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to copy reg value back to user space'
+    1574: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1578: 63 29 80 52  	mov	w3, #331
+    157c: 00 00 00 94  	bl	0x157c <dtof_unlocked_ioctl+0x21c> // ipc_log_string+0x0
+    1580: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x220> // '\x013[DTOF] %s %d : Oops,fail to copy reg value back to user space'
+    1584: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x224> // 'dtof_unlocked_ioctl'
+    1588: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to copy reg value back to user space'
+    158c: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1590: 62 29 80 52  	mov	w2, #331
+    1594: 2d 01 00 14  	b	0x1a48 <dtof_unlocked_ioctl+0x6e8>
+    1598: e0 b3 00 91  	add	x0, sp, #44
+    159c: e1 03 14 aa  	mov	x1, x20
+    15a0: 82 00 80 52  	mov	w2, #4
+    15a4: 00 00 00 94  	bl	0x15a4 <dtof_unlocked_ioctl+0x244> // +0x1d58
+    15a8: a0 32 00 b5  	cbnz	x0, 0x1bfc <dtof_unlocked_ioctl+0x89c>
+    15ac: 68 22 40 f9  	ldr	x8, [x19, #64]
+    15b0: 15 0d 40 f9  	ldr	x21, [x8, #24]
+    15b4: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x254> // +0x3388
+    15b8: 08 01 00 91  	add	x8, x8, #0 // +0x3388
+    15bc: a8 02 08 cb  	sub	x8, x21, x8
+    15c0: 08 0d c8 93  	ror	x8, x8, #3
+    15c4: 1f 09 00 f1  	cmp	x8, #2
+    15c8: e2 35 00 54  	b.hs	0x1c84 <dtof_unlocked_ioctl+0x924>
+    15cc: e8 b3 00 91  	add	x8, sp, #44
+    15d0: e1 b3 40 39  	ldrb	w1, [sp, #44]
+    15d4: 02 01 7f b2  	orr	x2, x8, #0x2
+    15d8: e0 03 13 aa  	mov	x0, x19
+    15dc: a0 02 3f d6  	blr	x21
+    15e0: a0 2c f8 37  	tbnz	w0, #31, 0x1b74 <dtof_unlocked_ioctl+0x814>
+    15e4: e1 b3 00 91  	add	x1, sp, #44
+    15e8: e0 03 14 aa  	mov	x0, x20
+    15ec: 82 00 80 52  	mov	w2, #4
+    15f0: 00 00 00 94  	bl	0x15f0 <dtof_unlocked_ioctl+0x290> // +0x1f0c
+    15f4: 60 30 00 b4  	cbz	x0, 0x1c00 <dtof_unlocked_ioctl+0x8a0>
+    15f8: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x298> // dtof_ctx+0x58
+    15fc: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1600: e0 00 00 b4  	cbz	x0, 0x161c <dtof_unlocked_ioctl+0x2bc>
+    1604: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x2a4> // '%s %d Oops,fail to copy reg value back to user space'
+    1608: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x2a8> // 'dtof_unlocked_ioctl'
+    160c: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to copy reg value back to user space'
+    1610: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1614: 03 1f 80 52  	mov	w3, #248
+    1618: 00 00 00 94  	bl	0x1618 <dtof_unlocked_ioctl+0x2b8> // ipc_log_string+0x0
+    161c: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x2bc> // '\x013[DTOF] %s %d : Oops,fail to copy reg value back to user space'
+    1620: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x2c0> // 'dtof_unlocked_ioctl'
+    1624: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to copy reg value back to user space'
+    1628: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    162c: 02 1f 80 52  	mov	w2, #248
+    1630: 06 01 00 14  	b	0x1a48 <dtof_unlocked_ioctl+0x6e8>
+    1634: e0 b3 00 91  	add	x0, sp, #44
+    1638: e1 03 14 aa  	mov	x1, x20
+    163c: 82 00 80 52  	mov	w2, #4
+    1640: 00 00 00 94  	bl	0x1640 <dtof_unlocked_ioctl+0x2e0> // +0x1d58
+    1644: c0 2d 00 b5  	cbnz	x0, 0x1bfc <dtof_unlocked_ioctl+0x89c>
+    1648: 68 22 40 f9  	ldr	x8, [x19, #64]
+    164c: 14 01 40 f9  	ldr	x20, [x8]
+    1650: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x2f0> // +0x3378
+    1654: 08 01 00 91  	add	x8, x8, #0 // +0x3378
+    1658: 88 02 08 cb  	sub	x8, x20, x8
+    165c: 08 0d c8 93  	ror	x8, x8, #3
+    1660: 1f 09 00 f1  	cmp	x8, #2
+    1664: 22 32 00 54  	b.hs	0x1ca8 <dtof_unlocked_ioctl+0x948>
+    1668: e2 5f 40 79  	ldrh	w2, [sp, #46]
+    166c: e0 03 13 aa  	mov	x0, x19
+    1670: e1 b3 40 39  	ldrb	w1, [sp, #44]
+    1674: 80 02 3f d6  	blr	x20
+    1678: 00 2a f8 37  	tbnz	w0, #31, 0x1bb8 <dtof_unlocked_ioctl+0x858>
+    167c: e0 03 1f aa  	mov	x0, xzr
+    1680: 60 01 00 14  	b	0x1c00 <dtof_unlocked_ioctl+0x8a0>
+    1684: 9f 24 03 d5  	hint	#36
+    1688: e0 93 00 91  	add	x0, sp, #36
+    168c: e1 03 14 aa  	mov	x1, x20
+    1690: 82 00 80 52  	mov	w2, #4
+    1694: 00 00 00 94  	bl	0x1694 <dtof_unlocked_ioctl+0x334> // +0x1d58
+    1698: 40 2b 00 b4  	cbz	x0, 0x1c00 <dtof_unlocked_ioctl+0x8a0>
+    169c: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x33c> // dtof_ctx+0x58
+    16a0: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    16a4: e0 00 00 b4  	cbz	x0, 0x16c0 <dtof_unlocked_ioctl+0x360>
+    16a8: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x348> // '%s %d Oops,fail to copy reg address from user space'
+    16ac: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x34c> // 'dtof_unlocked_ioctl'
+    16b0: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to copy reg address from user space'
+    16b4: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    16b8: a3 21 80 52  	mov	w3, #269
+    16bc: 00 00 00 94  	bl	0x16bc <dtof_unlocked_ioctl+0x35c> // ipc_log_string+0x0
+    16c0: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x360> // '\x013[DTOF] %s %d : Oops,fail to copy reg address from user space'
+    16c4: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x364> // 'dtof_unlocked_ioctl'
+    16c8: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to copy reg address from user space'
+    16cc: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    16d0: a2 21 80 52  	mov	w2, #269
+    16d4: ae 00 00 14  	b	0x198c <dtof_unlocked_ioctl+0x62c>
+    16d8: e0 43 00 91  	add	x0, sp, #16
+    16dc: e1 03 14 aa  	mov	x1, x20
+    16e0: 02 02 80 52  	mov	w2, #16
+    16e4: 00 00 00 94  	bl	0x16e4 <dtof_unlocked_ioctl+0x384> // +0x1d58
+    16e8: 40 19 00 b5  	cbnz	x0, 0x1a10 <dtof_unlocked_ioctl+0x6b0>
+    16ec: e8 23 40 79  	ldrh	w8, [sp, #16]
+    16f0: 01 98 81 52  	mov	w1, #3264
+    16f4: 00 f9 7f d3  	lsl	x0, x8, #1
+    16f8: 00 00 00 94  	bl	0x16f8 <dtof_unlocked_ioctl+0x398> // __kmalloc+0x0
+    16fc: e0 1c 00 b4  	cbz	x0, 0x1a98 <dtof_unlocked_ioctl+0x738>
+    1700: 68 22 40 f9  	ldr	x8, [x19, #64]
+    1704: f4 03 00 aa  	mov	x20, x0
+    1708: 15 19 40 f9  	ldr	x21, [x8, #48]
+    170c: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x3ac> // +0x33a8
+    1710: 08 01 00 91  	add	x8, x8, #0 // +0x33a8
+    1714: bf 02 08 eb  	cmp	x21, x8
+    1718: 41 2a 00 54  	b.ne	0x1c60 <dtof_unlocked_ioctl+0x900>
+    171c: e3 23 40 79  	ldrh	w3, [sp, #16]
+    1720: e0 03 13 aa  	mov	x0, x19
+    1724: e2 27 40 79  	ldrh	w2, [sp, #18]
+    1728: e1 03 14 aa  	mov	x1, x20
+    172c: a0 02 3f d6  	blr	x21
+    1730: a0 1d 00 35  	cbnz	w0, 0x1ae4 <dtof_unlocked_ioctl+0x784>
+    1734: e8 23 40 79  	ldrh	w8, [sp, #16]
+    1738: e0 03 14 aa  	mov	x0, x20
+    173c: 22 00 80 52  	mov	w2, #1
+    1740: f3 0f 40 f9  	ldr	x19, [sp, #24]
+    1744: 15 f9 7f d3  	lsl	x21, x8, #1
+    1748: e1 03 15 aa  	mov	x1, x21
+    174c: 00 00 00 94  	bl	0x174c <dtof_unlocked_ioctl+0x3ec> // __check_object_size+0x0
+    1750: e0 03 13 aa  	mov	x0, x19
+    1754: e1 03 14 aa  	mov	x1, x20
+    1758: e2 03 15 aa  	mov	x2, x21
+    175c: 00 00 00 94  	bl	0x175c <dtof_unlocked_ioctl+0x3fc> // +0x1f0c
+    1760: 60 1e 00 b5  	cbnz	x0, 0x1b2c <dtof_unlocked_ioctl+0x7cc>
+    1764: e0 03 14 aa  	mov	x0, x20
+    1768: 00 00 00 94  	bl	0x1768 <dtof_unlocked_ioctl+0x408> // kfree+0x0
+    176c: e0 03 1f aa  	mov	x0, xzr
+    1770: 24 01 00 14  	b	0x1c00 <dtof_unlocked_ioctl+0x8a0>
+    1774: 9f 24 03 d5  	hint	#36
+    1778: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x418> // dtof_ctx+0x58
+    177c: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1780: 20 01 00 b4  	cbz	x0, 0x17a4 <dtof_unlocked_ioctl+0x444>
+    1784: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x424> // 'dtof_unlocked_ioctl'
+    1788: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x428> // '%s %d %s not supported = 0x%04x'
+    178c: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1790: 21 00 00 91  	add	x1, x1, #0 // '%s %d %s not supported = 0x%04x'
+    1794: 43 2e 80 52  	mov	w3, #370
+    1798: e4 03 02 aa  	mov	x4, x2
+    179c: e5 03 15 2a  	mov	w5, w21
+    17a0: 00 00 00 94  	bl	0x17a0 <dtof_unlocked_ioctl+0x440> // ipc_log_string+0x0
+    17a4: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x444> // 'dtof_unlocked_ioctl'
+    17a8: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x448> // '\x013[DTOF] %s %d : %s not supported = 0x%04x'
+    17ac: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    17b0: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : %s not supported = 0x%04x'
+    17b4: 42 2e 80 52  	mov	w2, #370
+    17b8: e3 03 01 aa  	mov	x3, x1
+    17bc: e4 03 15 2a  	mov	w4, w21
+    17c0: 00 00 00 94  	bl	0x17c0 <dtof_unlocked_ioctl+0x460> // _printk+0x0
+    17c4: 40 40 80 92  	mov	x0, #-515
+    17c8: 0e 01 00 14  	b	0x1c00 <dtof_unlocked_ioctl+0x8a0>
+    17cc: 9f 24 03 d5  	hint	#36
+    17d0: 16 00 00 90  	adrp	x22, 0x1000 <dtof_unlocked_ioctl+0x470> // dtof_ctx+0x58
+    17d4: ff 13 00 79  	strh	wzr, [sp, #8]
+    17d8: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    17dc: e0 00 00 b4  	cbz	x0, 0x17f8 <dtof_unlocked_ioctl+0x498>
+    17e0: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x480> // '%s %d start debug 10\n'
+    17e4: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x484> // 'dtof_unlocked_ioctl'
+    17e8: 21 00 00 91  	add	x1, x1, #0 // '%s %d start debug 10\n'
+    17ec: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    17f0: 03 2b 80 52  	mov	w3, #344
+    17f4: 00 00 00 94  	bl	0x17f4 <dtof_unlocked_ioctl+0x494> // ipc_log_string+0x0
+    17f8: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x498> // '\x016[DTOF] %s %d : start debug 10\n'
+    17fc: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x49c> // 'dtof_unlocked_ioctl'
+    1800: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : start debug 10\n'
+    1804: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1808: 02 2b 80 52  	mov	w2, #344
+    180c: 00 00 00 94  	bl	0x180c <dtof_unlocked_ioctl+0x4ac> // _printk+0x0
+    1810: f7 e1 84 92  	mov	x23, #-10000
+    1814: 00 00 00 94  	bl	0x1814 <dtof_unlocked_ioctl+0x4b4> // ktime_get+0x0
+    1818: 18 00 00 90  	adrp	x24, 0x1000 <dtof_unlocked_ioctl+0x4b8> // +0x3388
+    181c: 15 00 00 90  	adrp	x21, 0x1000 <dtof_unlocked_ioctl+0x4bc> // +0x320
+    1820: f4 03 00 aa  	mov	x20, x0
+    1824: 18 03 00 91  	add	x24, x24, #0 // +0x3388
+    1828: b5 02 00 91  	add	x21, x21, #0 // +0x320
+    182c: 68 22 40 f9  	ldr	x8, [x19, #64]
+    1830: 08 0d 40 f9  	ldr	x8, [x8, #24]
+    1834: 09 01 18 cb  	sub	x9, x8, x24
+    1838: 29 0d c9 93  	ror	x9, x9, #3
+    183c: 3f 09 00 f1  	cmp	x9, #2
+    1840: 02 01 00 54  	b.hs	0x1860 <dtof_unlocked_ioctl+0x500>
+    1844: e2 23 00 91  	add	x2, sp, #8
+    1848: e0 03 13 aa  	mov	x0, x19
+    184c: e1 03 1f 2a  	mov	w1, wzr
+    1850: 00 01 3f d6  	blr	x8
+    1854: f7 06 00 b1  	adds	x23, x23, #1
+    1858: a3 fe ff 54  	b.lo	0x182c <dtof_unlocked_ioctl+0x4cc>
+    185c: 2a 00 00 14  	b	0x1904 <dtof_unlocked_ioctl+0x5a4>
+    1860: a0 67 80 d2  	mov	x0, #829
+    1864: e1 03 08 aa  	mov	x1, x8
+    1868: 00 ba a1 f2  	movk	x0, #3536, lsl #16
+    186c: e2 03 15 aa  	mov	x2, x21
+    1870: 60 c5 c9 f2  	movk	x0, #20011, lsl #32
+    1874: e8 03 00 f9  	str	x8, [sp]
+    1878: 80 10 eb f2  	movk	x0, #22660, lsl #48
+    187c: 00 00 00 94  	bl	0x187c <dtof_unlocked_ioctl+0x51c> // __cfi_slowpath_diag+0x0
+    1880: e8 03 40 f9  	ldr	x8, [sp]
+    1884: f0 ff ff 17  	b	0x1844 <dtof_unlocked_ioctl+0x4e4>
+    1888: 9f 24 03 d5  	hint	#36
+    188c: 60 52 40 b9  	ldr	w0, [x19, #80]
+    1890: 00 00 00 94  	bl	0x1890 <dtof_unlocked_ioctl+0x530> // gpio_to_desc+0x0
+    1894: 21 00 80 52  	mov	w1, #1
+    1898: 33 00 80 52  	mov	w19, #1
+    189c: 00 00 00 94  	bl	0x189c <dtof_unlocked_ioctl+0x53c> // gpiod_set_raw_value_cansleep+0x0
+    18a0: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x540> // +0x8
+    18a4: 0a 00 00 90  	adrp	x10, 0x1000 <dtof_unlocked_ioctl+0x544> // +0x4
+    18a8: 00 7d 80 52  	mov	w0, #1000
+    18ac: 01 fa 80 52  	mov	w1, #2000
+    18b0: 42 00 80 52  	mov	w2, #2
+    18b4: 09 01 40 b9  	ldr	w9, [x8] // +0x8
+    18b8: 53 01 00 39  	strb	w19, [x10] // +0x4
+    18bc: 29 05 00 11  	add	w9, w9, #1
+    18c0: 09 01 00 b9  	str	w9, [x8] // +0x8
+    18c4: 00 00 00 94  	bl	0x18c4 <dtof_unlocked_ioctl+0x564> // usleep_range_state+0x0
+    18c8: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x568> // dtof_ctx+0x58
+    18cc: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    18d0: e0 00 00 b4  	cbz	x0, 0x18ec <dtof_unlocked_ioctl+0x58c>
+    18d4: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x574> // '%s %d dtof reset high\n'
+    18d8: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x578> // 'dtof_unlocked_ioctl'
+    18dc: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof reset high\n'
+    18e0: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    18e4: c3 2d 80 52  	mov	w3, #366
+    18e8: 00 00 00 94  	bl	0x18e8 <dtof_unlocked_ioctl+0x588> // ipc_log_string+0x0
+    18ec: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x58c> // '\x016[DTOF] %s %d : dtof reset high\n'
+    18f0: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x590> // 'dtof_unlocked_ioctl'
+    18f4: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : dtof reset high\n'
+    18f8: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    18fc: c2 2d 80 52  	mov	w2, #366
+    1900: 23 00 00 14  	b	0x198c <dtof_unlocked_ioctl+0x62c>
+    1904: 00 00 00 94  	bl	0x1904 <dtof_unlocked_ioctl+0x5a4> // ktime_get+0x0
+    1908: e8 03 00 aa  	mov	x8, x0
+    190c: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    1910: 13 01 14 cb  	sub	x19, x8, x20
+    1914: 20 01 00 b4  	cbz	x0, 0x1938 <dtof_unlocked_ioctl+0x5d8>
+    1918: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x5b8> // '%s %d cnt=%lld difftime=%lld(ns)\n'
+    191c: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x5bc> // 'dtof_unlocked_ioctl'
+    1920: 21 00 00 91  	add	x1, x1, #0 // '%s %d cnt=%lld difftime=%lld(ns)\n'
+    1924: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1928: e3 2c 80 52  	mov	w3, #359
+    192c: e4 03 1f aa  	mov	x4, xzr
+    1930: e5 03 13 aa  	mov	x5, x19
+    1934: 00 00 00 94  	bl	0x1934 <dtof_unlocked_ioctl+0x5d4> // ipc_log_string+0x0
+    1938: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x5d8> // '\x016[DTOF] %s %d : cnt=%lld difftime=%lld(ns)\n'
+    193c: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x5dc> // 'dtof_unlocked_ioctl'
+    1940: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : cnt=%lld difftime=%lld(ns)\n'
+    1944: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1948: e2 2c 80 52  	mov	w2, #359
+    194c: e3 03 1f aa  	mov	x3, xzr
+    1950: e4 03 13 aa  	mov	x4, x19
+    1954: 00 00 00 94  	bl	0x1954 <dtof_unlocked_ioctl+0x5f4> // _printk+0x0
+    1958: c0 02 40 f9  	ldr	x0, [x22] // dtof_ctx+0x58
+    195c: e0 00 00 b4  	cbz	x0, 0x1978 <dtof_unlocked_ioctl+0x618>
+    1960: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x600> // '%s %d end debug\n'
+    1964: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x604> // 'dtof_unlocked_ioctl'
+    1968: 21 00 00 91  	add	x1, x1, #0 // '%s %d end debug\n'
+    196c: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1970: 03 2d 80 52  	mov	w3, #360
+    1974: 00 00 00 94  	bl	0x1974 <dtof_unlocked_ioctl+0x614> // ipc_log_string+0x0
+    1978: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x618> // '\x016[DTOF] %s %d : end debug\n'
+    197c: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x61c> // 'dtof_unlocked_ioctl'
+    1980: 00 00 00 91  	add	x0, x0, #0 // '\x016[DTOF] %s %d : end debug\n'
+    1984: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1988: 02 2d 80 52  	mov	w2, #360
+    198c: 00 00 00 94  	bl	0x198c <dtof_unlocked_ioctl+0x62c> // _printk+0x0
+    1990: e0 03 1f aa  	mov	x0, xzr
+    1994: 9b 00 00 14  	b	0x1c00 <dtof_unlocked_ioctl+0x8a0>
+    1998: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x638> // dtof_ctx+0x58
+    199c: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    19a0: e0 00 00 b4  	cbz	x0, 0x19bc <dtof_unlocked_ioctl+0x65c>
+    19a4: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x644> // '%s %d Oops,fail to copy reg address from user space'
+    19a8: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x648> // 'dtof_unlocked_ioctl'
+    19ac: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to copy reg address from user space'
+    19b0: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    19b4: c3 1a 80 52  	mov	w3, #214
+    19b8: 00 00 00 94  	bl	0x19b8 <dtof_unlocked_ioctl+0x658> // ipc_log_string+0x0
+    19bc: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x65c> // '\x013[DTOF] %s %d : Oops,fail to copy reg address from user space'
+    19c0: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x660> // 'dtof_unlocked_ioctl'
+    19c4: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to copy reg address from user space'
+    19c8: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    19cc: c2 1a 80 52  	mov	w2, #214
+    19d0: 1e 00 00 14  	b	0x1a48 <dtof_unlocked_ioctl+0x6e8>
+    19d4: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x674> // dtof_ctx+0x58
+    19d8: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    19dc: e0 00 00 b4  	cbz	x0, 0x19f8 <dtof_unlocked_ioctl+0x698>
+    19e0: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x680> // '%s %d Oops,fail to copy rw_reg_batch address from user space'
+    19e4: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x684> // 'dtof_unlocked_ioctl'
+    19e8: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to copy rw_reg_batch address from user space'
+    19ec: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    19f0: c3 27 80 52  	mov	w3, #318
+    19f4: 00 00 00 94  	bl	0x19f4 <dtof_unlocked_ioctl+0x694> // ipc_log_string+0x0
+    19f8: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x698> // '\x013[DTOF] %s %d : Oops,fail to copy rw_reg_batch address from user space'
+    19fc: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x69c> // 'dtof_unlocked_ioctl'
+    1a00: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to copy rw_reg_batch address from user space'
+    1a04: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1a08: c2 27 80 52  	mov	w2, #318
+    1a0c: 0f 00 00 14  	b	0x1a48 <dtof_unlocked_ioctl+0x6e8>
+    1a10: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x6b0> // dtof_ctx+0x58
+    1a14: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1a18: e0 00 00 b4  	cbz	x0, 0x1a34 <dtof_unlocked_ioctl+0x6d4>
+    1a1c: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x6bc> // '%s %d Oops,fail to copy reg address from user space'
+    1a20: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x6c0> // 'dtof_unlocked_ioctl'
+    1a24: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to copy reg address from user space'
+    1a28: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1a2c: 23 23 80 52  	mov	w3, #281
+    1a30: 00 00 00 94  	bl	0x1a30 <dtof_unlocked_ioctl+0x6d0> // ipc_log_string+0x0
+    1a34: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x6d4> // '\x013[DTOF] %s %d : Oops,fail to copy reg address from user space'
+    1a38: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x6d8> // 'dtof_unlocked_ioctl'
+    1a3c: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to copy reg address from user space'
+    1a40: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1a44: 22 23 80 52  	mov	w2, #281
+    1a48: 00 00 00 94  	bl	0x1a48 <dtof_unlocked_ioctl+0x6e8> // _printk+0x0
+    1a4c: 6c 00 00 14  	b	0x1bfc <dtof_unlocked_ioctl+0x89c>
+    1a50: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x6f0> // dtof_ctx+0x58
+    1a54: f3 03 00 2a  	mov	w19, w0
+    1a58: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1a5c: 00 01 00 b4  	cbz	x0, 0x1a7c <dtof_unlocked_ioctl+0x71c>
+    1a60: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x700> // '%s %d Oops,fail to rw_batch,ret : %d'
+    1a64: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x704> // 'dtof_unlocked_ioctl'
+    1a68: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to rw_batch,ret : %d'
+    1a6c: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1a70: a3 28 80 52  	mov	w3, #325
+    1a74: e4 03 13 2a  	mov	w4, w19
+    1a78: 00 00 00 94  	bl	0x1a78 <dtof_unlocked_ioctl+0x718> // ipc_log_string+0x0
+    1a7c: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x71c> // '\x013[DTOF] %s %d : Oops,fail to rw_batch,ret : %d'
+    1a80: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x720> // 'dtof_unlocked_ioctl'
+    1a84: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to rw_batch,ret : %d'
+    1a88: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1a8c: a2 28 80 52  	mov	w2, #325
+    1a90: e3 03 13 2a  	mov	w3, w19
+    1a94: 59 00 00 14  	b	0x1bf8 <dtof_unlocked_ioctl+0x898>
+    1a98: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x738> // dtof_ctx+0x58
+    1a9c: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1aa0: 20 01 00 b4  	cbz	x0, 0x1ac4 <dtof_unlocked_ioctl+0x764>
+    1aa4: e8 23 40 79  	ldrh	w8, [sp, #16]
+    1aa8: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x748> // '%s %d Oops,fail to kmalloc space %d bytes'
+    1aac: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x74c> // 'dtof_unlocked_ioctl'
+    1ab0: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to kmalloc space %d bytes'
+    1ab4: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1ab8: 43 24 80 52  	mov	w3, #290
+    1abc: 04 79 1f 53  	lsl	w4, w8, #1
+    1ac0: 00 00 00 94  	bl	0x1ac0 <dtof_unlocked_ioctl+0x760> // ipc_log_string+0x0
+    1ac4: e8 23 40 79  	ldrh	w8, [sp, #16]
+    1ac8: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x768> // '\x013[DTOF] %s %d : Oops,fail to kmalloc space %d bytes'
+    1acc: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x76c> // 'dtof_unlocked_ioctl'
+    1ad0: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to kmalloc space %d bytes'
+    1ad4: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1ad8: 42 24 80 52  	mov	w2, #290
+    1adc: 03 79 1f 53  	lsl	w3, w8, #1
+    1ae0: 46 00 00 14  	b	0x1bf8 <dtof_unlocked_ioctl+0x898>
+    1ae4: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x784> // dtof_ctx+0x58
+    1ae8: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1aec: 00 01 00 b4  	cbz	x0, 0x1b0c <dtof_unlocked_ioctl+0x7ac>
+    1af0: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x790> // '%s %d Oops,fail to read ram, offset: %d'
+    1af4: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x794> // 'dtof_unlocked_ioctl'
+    1af8: e4 27 40 79  	ldrh	w4, [sp, #18]
+    1afc: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to read ram, offset: %d'
+    1b00: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1b04: 23 25 80 52  	mov	w3, #297
+    1b08: 00 00 00 94  	bl	0x1b08 <dtof_unlocked_ioctl+0x7a8> // ipc_log_string+0x0
+    1b0c: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x7ac> // '\x013[DTOF] %s %d : Oops,fail to read ram, offset: %d'
+    1b10: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x7b0> // 'dtof_unlocked_ioctl'
+    1b14: e3 27 40 79  	ldrh	w3, [sp, #18]
+    1b18: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to read ram, offset: %d'
+    1b1c: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1b20: 22 25 80 52  	mov	w2, #297
+    1b24: 00 00 00 94  	bl	0x1b24 <dtof_unlocked_ioctl+0x7c4> // _printk+0x0
+    1b28: 10 00 00 14  	b	0x1b68 <dtof_unlocked_ioctl+0x808>
+    1b2c: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x7cc> // dtof_ctx+0x58
+    1b30: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1b34: e0 00 00 b4  	cbz	x0, 0x1b50 <dtof_unlocked_ioctl+0x7f0>
+    1b38: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x7d8> // '%s %d Oops,fail to copy reg value back to user space'
+    1b3c: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x7dc> // 'dtof_unlocked_ioctl'
+    1b40: 21 00 00 91  	add	x1, x1, #0 // '%s %d Oops,fail to copy reg value back to user space'
+    1b44: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1b48: 23 26 80 52  	mov	w3, #305
+    1b4c: 00 00 00 94  	bl	0x1b4c <dtof_unlocked_ioctl+0x7ec> // ipc_log_string+0x0
+    1b50: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x7f0> // '\x013[DTOF] %s %d : Oops,fail to copy reg value back to user space'
+    1b54: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x7f4> // 'dtof_unlocked_ioctl'
+    1b58: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : Oops,fail to copy reg value back to user space'
+    1b5c: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1b60: 22 26 80 52  	mov	w2, #305
+    1b64: 00 00 00 94  	bl	0x1b64 <dtof_unlocked_ioctl+0x804> // _printk+0x0
+    1b68: e0 03 14 aa  	mov	x0, x20
+    1b6c: 00 00 00 94  	bl	0x1b6c <dtof_unlocked_ioctl+0x80c> // kfree+0x0
+    1b70: 23 00 00 14  	b	0x1bfc <dtof_unlocked_ioctl+0x89c>
+    1b74: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x814> // dtof_ctx+0x58
+    1b78: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1b7c: 00 01 00 b4  	cbz	x0, 0x1b9c <dtof_unlocked_ioctl+0x83c>
+    1b80: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x820> // '%s %d dtof read reg fail, reg_addr = 0x%x\n'
+    1b84: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x824> // 'dtof_unlocked_ioctl'
+    1b88: e4 b3 40 39  	ldrb	w4, [sp, #44]
+    1b8c: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof read reg fail, reg_addr = 0x%x\n'
+    1b90: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1b94: 23 1e 80 52  	mov	w3, #241
+    1b98: 00 00 00 94  	bl	0x1b98 <dtof_unlocked_ioctl+0x838> // ipc_log_string+0x0
+    1b9c: e3 b3 40 39  	ldrb	w3, [sp, #44]
+    1ba0: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x840> // '\x013[DTOF] %s %d : dtof read reg fail, reg_addr = 0x%x\n'
+    1ba4: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x844> // 'dtof_unlocked_ioctl'
+    1ba8: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof read reg fail, reg_addr = 0x%x\n'
+    1bac: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1bb0: 22 1e 80 52  	mov	w2, #241
+    1bb4: 11 00 00 14  	b	0x1bf8 <dtof_unlocked_ioctl+0x898>
+    1bb8: 08 00 00 90  	adrp	x8, 0x1000 <dtof_unlocked_ioctl+0x858> // dtof_ctx+0x58
+    1bbc: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1bc0: 00 01 00 b4  	cbz	x0, 0x1be0 <dtof_unlocked_ioctl+0x880>
+    1bc4: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x864> // '%s %d dtof write reg fail, reg_addr = 0x%x\n'
+    1bc8: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x868> // 'dtof_unlocked_ioctl'
+    1bcc: e4 b3 40 39  	ldrb	w4, [sp, #44]
+    1bd0: 21 00 00 91  	add	x1, x1, #0 // '%s %d dtof write reg fail, reg_addr = 0x%x\n'
+    1bd4: 42 00 00 91  	add	x2, x2, #0 // 'dtof_unlocked_ioctl'
+    1bd8: 83 20 80 52  	mov	w3, #260
+    1bdc: 00 00 00 94  	bl	0x1bdc <dtof_unlocked_ioctl+0x87c> // ipc_log_string+0x0
+    1be0: e3 b3 40 39  	ldrb	w3, [sp, #44]
+    1be4: 00 00 00 90  	adrp	x0, 0x1000 <dtof_unlocked_ioctl+0x884> // '\x013[DTOF] %s %d : dtof write reg fail, reg_addr = 0x%x\n'
+    1be8: 01 00 00 90  	adrp	x1, 0x1000 <dtof_unlocked_ioctl+0x888> // 'dtof_unlocked_ioctl'
+    1bec: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : dtof write reg fail, reg_addr = 0x%x\n'
+    1bf0: 21 00 00 91  	add	x1, x1, #0 // 'dtof_unlocked_ioctl'
+    1bf4: 82 20 80 52  	mov	w2, #260
+    1bf8: 00 00 00 94  	bl	0x1bf8 <dtof_unlocked_ioctl+0x898> // _printk+0x0
+    1bfc: 80 00 80 92  	mov	x0, #-5
+    1c00: 08 41 38 d5  	mrs	x8, SP_EL0
+    1c04: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    1c08: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    1c0c: 1f 01 09 eb  	cmp	x8, x9
+    1c10: 41 01 00 54  	b.ne	0x1c38 <dtof_unlocked_ioctl+0x8d8>
+    1c14: ff 03 23 91  	add	sp, sp, #2240
+    1c18: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+    1c1c: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+    1c20: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+    1c24: fc 0b 40 f9  	ldr	x28, [sp, #16]
+    1c28: fd 7b c5 a8  	ldp	x29, x30, [sp], #80
+    1c2c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    1c30: bf 23 03 d5  	hint	#29
+    1c34: c0 03 5f d6  	ret
+    1c38: 00 00 00 94  	bl	0x1c38 <dtof_unlocked_ioctl+0x8d8> // __stack_chk_fail+0x0
+    1c3c: 40 6a 8a d2  	mov	x0, #21330
+    1c40: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x8e0> // +0x300
+    1c44: a0 37 a1 f2  	movk	x0, #2493, lsl #16
+    1c48: 42 00 00 91  	add	x2, x2, #0 // +0x300
+    1c4c: 20 8e d7 f2  	movk	x0, #48241, lsl #32
+    1c50: e1 03 15 aa  	mov	x1, x21
+    1c54: 20 8c fd f2  	movk	x0, #60513, lsl #48
+    1c58: 00 00 00 94  	bl	0x1c58 <dtof_unlocked_ioctl+0x8f8> // __cfi_slowpath_diag+0x0
+    1c5c: 37 fe ff 17  	b	0x1538 <dtof_unlocked_ioctl+0x1d8>
+    1c60: e0 6e 97 d2  	mov	x0, #47991
+    1c64: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x904> // +0x2e0
+    1c68: a0 dc b1 f2  	movk	x0, #36581, lsl #16
+    1c6c: 42 00 00 91  	add	x2, x2, #0 // +0x2e0
+    1c70: 60 00 c8 f2  	movk	x0, #16387, lsl #32
+    1c74: e1 03 15 aa  	mov	x1, x21
+    1c78: 80 f5 fe f2  	movk	x0, #63404, lsl #48
+    1c7c: 00 00 00 94  	bl	0x1c7c <dtof_unlocked_ioctl+0x91c> // __cfi_slowpath_diag+0x0
+    1c80: a7 fe ff 17  	b	0x171c <dtof_unlocked_ioctl+0x3bc>
+    1c84: a0 67 80 d2  	mov	x0, #829
+    1c88: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x928> // +0x2a0
+    1c8c: 00 ba a1 f2  	movk	x0, #3536, lsl #16
+    1c90: 42 00 00 91  	add	x2, x2, #0 // +0x2a0
+    1c94: 60 c5 c9 f2  	movk	x0, #20011, lsl #32
+    1c98: e1 03 15 aa  	mov	x1, x21
+    1c9c: 80 10 eb f2  	movk	x0, #22660, lsl #48
+    1ca0: 00 00 00 94  	bl	0x1ca0 <dtof_unlocked_ioctl+0x940> // __cfi_slowpath_diag+0x0
+    1ca4: 4a fe ff 17  	b	0x15cc <dtof_unlocked_ioctl+0x26c>
+    1ca8: a0 40 8c d2  	mov	x0, #25093
+    1cac: 02 00 00 90  	adrp	x2, 0x1000 <dtof_unlocked_ioctl+0x94c> // +0x2c0
+    1cb0: 20 a4 a8 f2  	movk	x0, #17697, lsl #16
+    1cb4: 42 00 00 91  	add	x2, x2, #0 // +0x2c0
+    1cb8: c0 f1 c6 f2  	movk	x0, #14222, lsl #32
+    1cbc: e1 03 14 aa  	mov	x1, x20
+    1cc0: 80 7c f2 f2  	movk	x0, #37860, lsl #48
+    1cc4: 00 00 00 94  	bl	0x1cc4 <dtof_unlocked_ioctl+0x964> // __cfi_slowpath_diag+0x0
+    1cc8: 68 fe ff 17  	b	0x1668 <dtof_unlocked_ioctl+0x308>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000001ccc <dtof_open>:
+    1ccc: 3f 23 03 d5  	hint	#25
+    1cd0: 5e 86 00 f8  	str	x30, [x18], #8
+    1cd4: fd 7b bf a9  	stp	x29, x30, [sp, #-16]!
+    1cd8: fd 03 00 91  	mov	x29, sp
+    1cdc: 08 00 00 90  	adrp	x8, 0x1000 <dtof_open+0x10> // +0x10
+    1ce0: 08 01 40 f9  	ldr	x8, [x8] // +0x10
+    1ce4: 28 6c 00 f9  	str	x8, [x1, #216]
+    1ce8: c8 00 00 b4  	cbz	x8, 0x1d00 <dtof_open+0x34>
+    1cec: 00 00 00 94  	bl	0x1cec <dtof_open+0x20> // nonseekable_open+0x0
+    1cf0: fd 7b c1 a8  	ldp	x29, x30, [sp], #16
+    1cf4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    1cf8: bf 23 03 d5  	hint	#29
+    1cfc: c0 03 5f d6  	ret
+    1d00: 08 00 00 90  	adrp	x8, 0x1000 <dtof_open+0x34> // dtof_ctx+0x58
+    1d04: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    1d08: e0 00 00 b4  	cbz	x0, 0x1d24 <dtof_open+0x58>
+    1d0c: 01 00 00 90  	adrp	x1, 0x1000 <dtof_open+0x40> // '%s %d null pointer!!'
+    1d10: 02 00 00 90  	adrp	x2, 0x1000 <dtof_open+0x44> // 'dtof_open'
+    1d14: 21 00 00 91  	add	x1, x1, #0 // '%s %d null pointer!!'
+    1d18: 42 00 00 91  	add	x2, x2, #0 // 'dtof_open'
+    1d1c: 83 16 80 52  	mov	w3, #180
+    1d20: 00 00 00 94  	bl	0x1d20 <dtof_open+0x54> // ipc_log_string+0x0
+    1d24: 00 00 00 90  	adrp	x0, 0x1000 <dtof_open+0x58> // '\x013[DTOF] %s %d : null pointer!!'
+    1d28: 01 00 00 90  	adrp	x1, 0x1000 <dtof_open+0x5c> // 'dtof_open'
+    1d2c: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : null pointer!!'
+    1d30: 21 00 00 91  	add	x1, x1, #0 // 'dtof_open'
+    1d34: 82 16 80 52  	mov	w2, #180
+    1d38: 00 00 00 94  	bl	0x1d38 <dtof_open+0x6c> // _printk+0x0
+    1d3c: a0 02 80 12  	mov	w0, #-22
+    1d40: ec ff ff 17  	b	0x1cf0 <dtof_open+0x24>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000001d44 <dtof_release>:
+    1d44: 3f 23 03 d5  	hint	#25
+    1d48: e0 03 1f 2a  	mov	w0, wzr
+    1d4c: 3f 6c 00 f9  	str	xzr, [x1, #216]
+    1d50: bf 23 03 d5  	hint	#29
+    1d54: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000008c4 <version_show>:
+     8c4: 3f 23 03 d5  	hint	#25
+     8c8: 5e 86 00 f8  	str	x30, [x18], #8
+     8cc: fd 7b bf a9  	stp	x29, x30, [sp, #-16]!
+     8d0: fd 03 00 91  	mov	x29, sp
+     8d4: e0 03 02 aa  	mov	x0, x2
+     8d8: 02 00 00 90  	adrp	x2, 0x0 <version_show+0x14> // '%s\n'
+     8dc: 03 00 00 90  	adrp	x3, 0x0 <version_show+0x18> // 'Dtof_V2.1_Build20221202a'
+     8e0: 42 00 00 91  	add	x2, x2, #0 // '%s\n'
+     8e4: 63 00 00 91  	add	x3, x3, #0 // 'Dtof_V2.1_Build20221202a'
+     8e8: 01 00 82 52  	mov	w1, #4096
+     8ec: 00 00 00 94  	bl	0x8ec <version_show+0x28> // scnprintf+0x0
+     8f0: 00 7c 40 93  	sxtw	x0, w0
+     8f4: fd 7b c1 a8  	ldp	x29, x30, [sp], #16
+     8f8: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     8fc: bf 23 03 d5  	hint	#29
+     900: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000006b0 <care_gpio_show>:
+     6b0: 3f 23 03 d5  	hint	#25
+     6b4: ff c3 01 d1  	sub	sp, sp, #112
+     6b8: 5e 86 00 f8  	str	x30, [x18], #8
+     6bc: fd 7b 03 a9  	stp	x29, x30, [sp, #48]
+     6c0: fd c3 00 91  	add	x29, sp, #48
+     6c4: f7 23 00 f9  	str	x23, [sp, #64]
+     6c8: f6 57 05 a9  	stp	x22, x21, [sp, #80]
+     6cc: f4 4f 06 a9  	stp	x20, x19, [sp, #96]
+     6d0: 08 41 38 d5  	mrs	x8, SP_EL0
+     6d4: 09 00 00 90  	adrp	x9, 0x0 <care_gpio_show+0x24> // +0x0
+     6d8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     6dc: 0a 00 00 90  	adrp	x10, 0x0 <care_gpio_show+0x2c> // 'Out'
+     6e0: 4a 01 00 91  	add	x10, x10, #0 // 'Out'
+     6e4: f3 03 02 aa  	mov	x19, x2
+     6e8: a8 83 1f f8  	stur	x8, [x29, #-8]
+     6ec: 08 00 00 90  	adrp	x8, 0x0 <care_gpio_show+0x3c> // 'No'
+     6f0: 34 01 40 b9  	ldr	w20, [x9] // +0x0
+     6f4: 08 01 00 91  	add	x8, x8, #0 // 'No'
+     6f8: 4b 01 40 f9  	ldr	x11, [x10]
+     6fc: 4a 11 40 79  	ldrh	w10, [x10, #8]
+     700: 96 b6 04 11  	add	w22, w20, #301
+     704: 09 01 40 f9  	ldr	x9, [x8]
+     708: 08 11 40 79  	ldrh	w8, [x8, #8]
+     70c: e0 03 16 2a  	mov	w0, w22
+     710: eb 0f 00 f9  	str	x11, [sp, #24]
+     714: ea 43 00 79  	strh	w10, [sp, #32]
+     718: e9 07 00 f9  	str	x9, [sp, #8]
+     71c: e8 23 00 79  	strh	w8, [sp, #16]
+     720: 00 00 00 94  	bl	0x720 <care_gpio_show+0x70> // gpio_to_desc+0x0
+     724: 00 04 00 b4  	cbz	x0, 0x7a4 <care_gpio_show+0xf4>
+     728: e0 03 16 2a  	mov	w0, w22
+     72c: 00 00 00 94  	bl	0x72c <care_gpio_show+0x7c> // gpio_to_desc+0x0
+     730: 00 00 00 94  	bl	0x730 <care_gpio_show+0x80> // gpiod_get_raw_value_cansleep+0x0
+     734: f5 03 00 2a  	mov	w21, w0
+     738: e0 03 16 2a  	mov	w0, w22
+     73c: 00 00 00 94  	bl	0x73c <care_gpio_show+0x8c> // gpio_to_desc+0x0
+     740: 00 00 00 94  	bl	0x740 <care_gpio_show+0x90> // gpiod_get_direction+0x0
+     744: f7 03 00 2a  	mov	w23, w0
+     748: e0 03 16 2a  	mov	w0, w22
+     74c: 00 00 00 94  	bl	0x74c <care_gpio_show+0x9c> // gpio_to_desc+0x0
+     750: 00 00 00 94  	bl	0x750 <care_gpio_show+0xa0> // gpiod_is_active_low+0x0
+     754: ff 0a 00 71  	cmp	w23, #2
+     758: 28 04 00 54  	b.hi	0x7dc <care_gpio_show+0x12c>
+     75c: 1f 0c 00 71  	cmp	w0, #3
+     760: e2 03 00 54  	b.hs	0x7dc <care_gpio_show+0x12c>
+     764: e8 03 00 2a  	mov	w8, w0
+     768: e9 03 17 2a  	mov	w9, w23
+     76c: 29 49 37 8b  	add	x9, x9, w23, uxtw #2
+     770: ea 63 00 91  	add	x10, sp, #24
+     774: 08 49 20 8b  	add	x8, x8, w0, uxtw #2
+     778: eb 23 00 91  	add	x11, sp, #8
+     77c: 02 00 00 90  	adrp	x2, 0x0 <care_gpio_show+0xcc> // 'care_gpio:%4d Direction:%s Value:%d activeLow:%s\r\n'
+     780: a5 1e 00 12  	and	w5, w21, #0xff
+     784: 44 01 09 8b  	add	x4, x10, x9
+     788: 66 01 08 8b  	add	x6, x11, x8
+     78c: 42 00 00 91  	add	x2, x2, #0 // 'care_gpio:%4d Direction:%s Value:%d activeLow:%s\r\n'
+     790: e0 03 13 aa  	mov	x0, x19
+     794: 01 00 82 52  	mov	w1, #4096
+     798: e3 03 14 2a  	mov	w3, w20
+     79c: 00 00 00 94  	bl	0x79c <care_gpio_show+0xec> // scnprintf+0x0
+     7a0: 00 7c 40 93  	sxtw	x0, w0
+     7a4: 08 41 38 d5  	mrs	x8, SP_EL0
+     7a8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     7ac: a9 83 5f f8  	ldur	x9, [x29, #-8]
+     7b0: 1f 01 09 eb  	cmp	x8, x9
+     7b4: 21 01 00 54  	b.ne	0x7d8 <care_gpio_show+0x128>
+     7b8: f4 4f 46 a9  	ldp	x20, x19, [sp, #96]
+     7bc: f6 57 45 a9  	ldp	x22, x21, [sp, #80]
+     7c0: fd 7b 43 a9  	ldp	x29, x30, [sp, #48]
+     7c4: f7 23 40 f9  	ldr	x23, [sp, #64]
+     7c8: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     7cc: ff c3 01 91  	add	sp, sp, #112
+     7d0: bf 23 03 d5  	hint	#29
+     7d4: c0 03 5f d6  	ret
+     7d8: 00 00 00 94  	bl	0x7d8 <care_gpio_show+0x128> // __stack_chk_fail+0x0
+     7dc: 40 a2 2a d4  	brk	#0x5512
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000007e0 <care_gpio_store>:
+     7e0: 3f 23 03 d5  	hint	#25
+     7e4: ff 03 01 d1  	sub	sp, sp, #64
+     7e8: 5e 86 00 f8  	str	x30, [x18], #8
+     7ec: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+     7f0: fd 43 00 91  	add	x29, sp, #16
+     7f4: f6 57 02 a9  	stp	x22, x21, [sp, #32]
+     7f8: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+     7fc: 08 41 38 d5  	mrs	x8, SP_EL0
+     800: 01 00 00 90  	adrp	x1, 0x0 <care_gpio_store+0x20> // '%d %d'
+     804: f3 03 03 aa  	mov	x19, x3
+     808: e0 03 02 aa  	mov	x0, x2
+     80c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     810: 21 00 00 91  	add	x1, x1, #0 // '%d %d'
+     814: e2 13 00 91  	add	x2, sp, #4
+     818: e3 03 00 91  	mov	x3, sp
+     81c: e8 07 00 f9  	str	x8, [sp, #8]
+     820: ff 03 00 f9  	str	xzr, [sp]
+     824: 00 00 00 94  	bl	0x824 <care_gpio_store+0x44> // sscanf+0x0
+     828: 1f 04 00 71  	cmp	w0, #1
+     82c: 60 02 00 54  	b.eq	0x878 <care_gpio_store+0x98>
+     830: 1f 08 00 71  	cmp	w0, #2
+     834: a1 02 00 54  	b.ne	0x888 <care_gpio_store+0xa8>
+     838: f5 23 40 29  	ldp	w21, w8, [sp]
+     83c: 09 00 00 90  	adrp	x9, 0x0 <care_gpio_store+0x5c> // +0x0
+     840: 14 b5 04 11  	add	w20, w8, #301
+     844: 28 01 00 b9  	str	w8, [x9] // +0x0
+     848: e0 03 14 2a  	mov	w0, w20
+     84c: 00 00 00 94  	bl	0x84c <care_gpio_store+0x6c> // gpio_to_desc+0x0
+     850: 41 00 80 52  	mov	w1, #2
+     854: 00 00 00 94  	bl	0x854 <care_gpio_store+0x74> // gpiod_direction_output_raw+0x0
+     858: f6 03 00 2a  	mov	w22, w0
+     85c: e0 03 14 2a  	mov	w0, w20
+     860: 00 00 00 94  	bl	0x860 <care_gpio_store+0x80> // gpio_to_desc+0x0
+     864: e1 03 15 2a  	mov	w1, w21
+     868: 00 00 00 94  	bl	0x868 <care_gpio_store+0x88> // gpiod_set_raw_value_cansleep+0x0
+     86c: df 02 00 71  	cmp	w22, #0
+     870: 73 02 9f da  	csinv	x19, x19, xzr, eq
+     874: 06 00 00 14  	b	0x88c <care_gpio_store+0xac>
+     878: e8 07 40 b9  	ldr	w8, [sp, #4]
+     87c: 09 00 00 90  	adrp	x9, 0x0 <care_gpio_store+0x9c> // +0x0
+     880: 28 01 00 b9  	str	w8, [x9] // +0x0
+     884: 02 00 00 14  	b	0x88c <care_gpio_store+0xac>
+     888: b3 02 80 92  	mov	x19, #-22
+     88c: 08 41 38 d5  	mrs	x8, SP_EL0
+     890: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+     894: e9 07 40 f9  	ldr	x9, [sp, #8]
+     898: 1f 01 09 eb  	cmp	x8, x9
+     89c: 21 01 00 54  	b.ne	0x8c0 <care_gpio_store+0xe0>
+     8a0: e0 03 13 aa  	mov	x0, x19
+     8a4: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+     8a8: f6 57 42 a9  	ldp	x22, x21, [sp, #32]
+     8ac: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+     8b0: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+     8b4: ff 03 01 91  	add	sp, sp, #64
+     8b8: bf 23 03 d5  	hint	#29
+     8bc: c0 03 5f d6  	ret
+     8c0: 00 00 00 94  	bl	0x8c0 <care_gpio_store+0xe0> // __stack_chk_fail+0x0

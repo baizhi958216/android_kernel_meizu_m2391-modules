@@ -1,0 +1,817 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000028fc <dtof_i2c_read_word>:
+    28fc: 3f 23 03 d5  	hint	#25
+    2900: ff 43 01 d1  	sub	sp, sp, #80
+    2904: 5e 86 00 f8  	str	x30, [x18], #8
+    2908: fd 7b 03 a9  	stp	x29, x30, [sp, #48]
+    290c: fd c3 00 91  	add	x29, sp, #48
+    2910: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+    2914: 08 41 38 d5  	mrs	x8, SP_EL0
+    2918: ea 13 00 91  	add	x10, sp, #4
+    291c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2920: eb 03 00 91  	mov	x11, sp
+    2924: f4 03 02 aa  	mov	x20, x2
+    2928: 42 00 80 52  	mov	w2, #2
+    292c: a8 83 1f f8  	stur	x8, [x29, #-8]
+    2930: 28 00 80 52  	mov	w8, #1
+    2934: 09 1c 40 f9  	ldr	x9, [x0, #56]
+    2938: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+    293c: ff 07 00 f9  	str	xzr, [sp, #8]
+    2940: e1 13 00 39  	strb	w1, [sp, #4]
+    2944: e1 23 00 91  	add	x1, sp, #8
+    2948: 2c 05 40 79  	ldrh	w12, [x9, #2]
+    294c: e8 1b 00 79  	strh	w8, [sp, #12]
+    2950: ea 0b 00 f9  	str	x10, [sp, #16]
+    2954: 2a 00 80 52  	mov	w10, #1
+    2958: 28 05 40 79  	ldrh	w8, [x9, #2]
+    295c: eb 13 00 f9  	str	x11, [sp, #32]
+    2960: 4a 00 a0 72  	movk	w10, #2, lsl #16
+    2964: 20 0d 40 f9  	ldr	x0, [x9, #24]
+    2968: ec 13 00 79  	strh	w12, [sp, #8]
+    296c: ff 03 00 79  	strh	wzr, [sp]
+    2970: e8 33 00 79  	strh	w8, [sp, #24]
+    2974: ea a3 01 b8  	stur	w10, [sp, #26]
+    2978: 00 00 00 94  	bl	0x2978 <dtof_i2c_read_word+0x7c> // i2c_transfer+0x0
+    297c: 40 02 f8 37  	tbnz	w0, #31, 0x29c4 <dtof_i2c_read_word+0xc8>
+    2980: e8 03 40 79  	ldrh	w8, [sp]
+    2984: f3 03 1f 2a  	mov	w19, wzr
+    2988: 08 09 c0 5a  	rev	w8, w8
+    298c: 08 7d 10 53  	lsr	w8, w8, #16
+    2990: 88 02 00 79  	strh	w8, [x20]
+    2994: 08 41 38 d5  	mrs	x8, SP_EL0
+    2998: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    299c: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    29a0: 1f 01 09 eb  	cmp	x8, x9
+    29a4: a1 03 00 54  	b.ne	0x2a18 <dtof_i2c_read_word+0x11c>
+    29a8: e0 03 13 2a  	mov	w0, w19
+    29ac: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+    29b0: fd 7b 43 a9  	ldp	x29, x30, [sp, #48]
+    29b4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    29b8: ff 43 01 91  	add	sp, sp, #80
+    29bc: bf 23 03 d5  	hint	#29
+    29c0: c0 03 5f d6  	ret
+    29c4: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_read_word+0xc8> // dtof_ctx+0x58
+    29c8: f3 03 00 2a  	mov	w19, w0
+    29cc: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    29d0: 20 01 00 b4  	cbz	x0, 0x29f4 <dtof_i2c_read_word+0xf8>
+    29d4: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_read_word+0xd8> // '%s %d i2c read failed: %d, reg = 0x%02x'
+    29d8: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_read_word+0xdc> // 'dtof_i2c_read_word'
+    29dc: e5 13 40 39  	ldrb	w5, [sp, #4]
+    29e0: 21 00 00 91  	add	x1, x1, #0 // '%s %d i2c read failed: %d, reg = 0x%02x'
+    29e4: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_read_word'
+    29e8: 83 26 80 52  	mov	w3, #308
+    29ec: e4 03 13 2a  	mov	w4, w19
+    29f0: 00 00 00 94  	bl	0x29f0 <dtof_i2c_read_word+0xf4> // ipc_log_string+0x0
+    29f4: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_read_word+0xf8> // '\x013[DTOF] %s %d : i2c read failed: %d, reg = 0x%02x'
+    29f8: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_read_word+0xfc> // 'dtof_i2c_read_word'
+    29fc: e4 13 40 39  	ldrb	w4, [sp, #4]
+    2a00: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : i2c read failed: %d, reg = 0x%02x'
+    2a04: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_read_word'
+    2a08: 82 26 80 52  	mov	w2, #308
+    2a0c: e3 03 13 2a  	mov	w3, w19
+    2a10: 00 00 00 94  	bl	0x2a10 <dtof_i2c_read_word+0x114> // _printk+0x0
+    2a14: e0 ff ff 17  	b	0x2994 <dtof_i2c_read_word+0x98>
+    2a18: 00 00 00 94  	bl	0x2a18 <dtof_i2c_read_word+0x11c> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000025bc <dtof_i2c_write_word>:
+    25bc: 3f 23 03 d5  	hint	#25
+    25c0: ff 03 01 d1  	sub	sp, sp, #64
+    25c4: 5e 86 00 f8  	str	x30, [x18], #8
+    25c8: fd 7b 02 a9  	stp	x29, x30, [sp, #32]
+    25cc: fd 83 00 91  	add	x29, sp, #32
+    25d0: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+    25d4: 08 41 38 d5  	mrs	x8, SP_EL0
+    25d8: 69 00 c0 d2  	mov	x9, #12884901888
+    25dc: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    25e0: f4 03 01 2a  	mov	w20, w1
+    25e4: a8 83 1f f8  	stur	x8, [x29, #-8]
+    25e8: 08 1c 40 f9  	ldr	x8, [x0, #56]
+    25ec: e9 03 00 f9  	str	x9, [sp]
+    25f0: 49 7c 08 53  	lsr	w9, w2, #8
+    25f4: a2 63 1f 38  	sturb	w2, [x29, #-10]
+    25f8: a1 43 1f 38  	sturb	w1, [x29, #-12]
+    25fc: e1 03 00 91  	mov	x1, sp
+    2600: 0a 05 40 79  	ldrh	w10, [x8, #2]
+    2604: 22 00 80 52  	mov	w2, #1
+    2608: a9 53 1f 38  	sturb	w9, [x29, #-11]
+    260c: a9 33 00 d1  	sub	x9, x29, #12
+    2610: 00 0d 40 f9  	ldr	x0, [x8, #24]
+    2614: ea 03 00 79  	strh	w10, [sp]
+    2618: e9 07 00 f9  	str	x9, [sp, #8]
+    261c: 00 00 00 94  	bl	0x261c <dtof_i2c_write_word+0x60> // i2c_transfer+0x0
+    2620: 1f 04 00 71  	cmp	w0, #1
+    2624: a1 01 00 54  	b.ne	0x2658 <dtof_i2c_write_word+0x9c>
+    2628: e0 03 1f 2a  	mov	w0, wzr
+    262c: 08 41 38 d5  	mrs	x8, SP_EL0
+    2630: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2634: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    2638: 1f 01 09 eb  	cmp	x8, x9
+    263c: c1 03 00 54  	b.ne	0x26b4 <dtof_i2c_write_word+0xf8>
+    2640: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+    2644: fd 7b 42 a9  	ldp	x29, x30, [sp, #32]
+    2648: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    264c: ff 03 01 91  	add	sp, sp, #64
+    2650: bf 23 03 d5  	hint	#29
+    2654: c0 03 5f d6  	ret
+    2658: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_write_word+0x9c> // dtof_ctx+0x58
+    265c: f3 03 00 2a  	mov	w19, w0
+    2660: 94 1e 00 12  	and	w20, w20, #0xff
+    2664: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    2668: 20 01 00 b4  	cbz	x0, 0x268c <dtof_i2c_write_word+0xd0>
+    266c: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_write_word+0xb0> // '%s %d i2c write failed: %d, reg = 0x%02x'
+    2670: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_write_word+0xb4> // 'dtof_i2c_write_word'
+    2674: 21 00 00 91  	add	x1, x1, #0 // '%s %d i2c write failed: %d, reg = 0x%02x'
+    2678: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_write_word'
+    267c: 03 32 80 52  	mov	w3, #400
+    2680: e4 03 13 2a  	mov	w4, w19
+    2684: e5 03 14 2a  	mov	w5, w20
+    2688: 00 00 00 94  	bl	0x2688 <dtof_i2c_write_word+0xcc> // ipc_log_string+0x0
+    268c: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_write_word+0xd0> // '\x013[DTOF] %s %d : i2c write failed: %d, reg = 0x%02x'
+    2690: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_write_word+0xd4> // 'dtof_i2c_write_word'
+    2694: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : i2c write failed: %d, reg = 0x%02x'
+    2698: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_write_word'
+    269c: 02 32 80 52  	mov	w2, #400
+    26a0: e3 03 13 2a  	mov	w3, w19
+    26a4: e4 03 14 2a  	mov	w4, w20
+    26a8: 00 00 00 94  	bl	0x26a8 <dtof_i2c_write_word+0xec> // _printk+0x0
+    26ac: 80 00 80 12  	mov	w0, #-5
+    26b0: df ff ff 17  	b	0x262c <dtof_i2c_write_word+0x70>
+    26b4: 00 00 00 94  	bl	0x26b4 <dtof_i2c_write_word+0xf8> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000002a1c <dtof_i2c_read_word_unlock>:
+    2a1c: 3f 23 03 d5  	hint	#25
+    2a20: ff 43 01 d1  	sub	sp, sp, #80
+    2a24: 5e 86 00 f8  	str	x30, [x18], #8
+    2a28: fd 7b 03 a9  	stp	x29, x30, [sp, #48]
+    2a2c: fd c3 00 91  	add	x29, sp, #48
+    2a30: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+    2a34: 08 41 38 d5  	mrs	x8, SP_EL0
+    2a38: ea 13 00 91  	add	x10, sp, #4
+    2a3c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2a40: eb 03 00 91  	mov	x11, sp
+    2a44: f4 03 02 aa  	mov	x20, x2
+    2a48: 42 00 80 52  	mov	w2, #2
+    2a4c: a8 83 1f f8  	stur	x8, [x29, #-8]
+    2a50: 28 00 80 52  	mov	w8, #1
+    2a54: 09 1c 40 f9  	ldr	x9, [x0, #56]
+    2a58: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+    2a5c: ff 07 00 f9  	str	xzr, [sp, #8]
+    2a60: e1 13 00 39  	strb	w1, [sp, #4]
+    2a64: e1 23 00 91  	add	x1, sp, #8
+    2a68: 2c 05 40 79  	ldrh	w12, [x9, #2]
+    2a6c: e8 1b 00 79  	strh	w8, [sp, #12]
+    2a70: ea 0b 00 f9  	str	x10, [sp, #16]
+    2a74: 2a 00 80 52  	mov	w10, #1
+    2a78: 28 05 40 79  	ldrh	w8, [x9, #2]
+    2a7c: eb 13 00 f9  	str	x11, [sp, #32]
+    2a80: 4a 00 a0 72  	movk	w10, #2, lsl #16
+    2a84: 20 0d 40 f9  	ldr	x0, [x9, #24]
+    2a88: ec 13 00 79  	strh	w12, [sp, #8]
+    2a8c: ff 03 00 79  	strh	wzr, [sp]
+    2a90: e8 33 00 79  	strh	w8, [sp, #24]
+    2a94: ea a3 01 b8  	stur	w10, [sp, #26]
+    2a98: 00 00 00 94  	bl	0x2a98 <dtof_i2c_read_word_unlock+0x7c> // __i2c_transfer+0x0
+    2a9c: 40 02 f8 37  	tbnz	w0, #31, 0x2ae4 <dtof_i2c_read_word_unlock+0xc8>
+    2aa0: e8 03 40 79  	ldrh	w8, [sp]
+    2aa4: f3 03 1f 2a  	mov	w19, wzr
+    2aa8: 08 09 c0 5a  	rev	w8, w8
+    2aac: 08 7d 10 53  	lsr	w8, w8, #16
+    2ab0: 88 02 00 79  	strh	w8, [x20]
+    2ab4: 08 41 38 d5  	mrs	x8, SP_EL0
+    2ab8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2abc: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    2ac0: 1f 01 09 eb  	cmp	x8, x9
+    2ac4: a1 03 00 54  	b.ne	0x2b38 <dtof_i2c_read_word_unlock+0x11c>
+    2ac8: e0 03 13 2a  	mov	w0, w19
+    2acc: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+    2ad0: fd 7b 43 a9  	ldp	x29, x30, [sp, #48]
+    2ad4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    2ad8: ff 43 01 91  	add	sp, sp, #80
+    2adc: bf 23 03 d5  	hint	#29
+    2ae0: c0 03 5f d6  	ret
+    2ae4: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_read_word_unlock+0xc8> // dtof_ctx+0x58
+    2ae8: f3 03 00 2a  	mov	w19, w0
+    2aec: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    2af0: 20 01 00 b4  	cbz	x0, 0x2b14 <dtof_i2c_read_word_unlock+0xf8>
+    2af4: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_read_word_unlock+0xd8> // '%s %d i2c read failed: %d, reg = 0x%02x'
+    2af8: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_read_word_unlock+0xdc> // 'dtof_i2c_read_word_unlock'
+    2afc: e5 13 40 39  	ldrb	w5, [sp, #4]
+    2b00: 21 00 00 91  	add	x1, x1, #0 // '%s %d i2c read failed: %d, reg = 0x%02x'
+    2b04: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_read_word_unlock'
+    2b08: e3 0f 80 52  	mov	w3, #127
+    2b0c: e4 03 13 2a  	mov	w4, w19
+    2b10: 00 00 00 94  	bl	0x2b10 <dtof_i2c_read_word_unlock+0xf4> // ipc_log_string+0x0
+    2b14: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_read_word_unlock+0xf8> // '\x013[DTOF] %s %d : i2c read failed: %d, reg = 0x%02x'
+    2b18: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_read_word_unlock+0xfc> // 'dtof_i2c_read_word_unlock'
+    2b1c: e4 13 40 39  	ldrb	w4, [sp, #4]
+    2b20: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : i2c read failed: %d, reg = 0x%02x'
+    2b24: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_read_word_unlock'
+    2b28: e2 0f 80 52  	mov	w2, #127
+    2b2c: e3 03 13 2a  	mov	w3, w19
+    2b30: 00 00 00 94  	bl	0x2b30 <dtof_i2c_read_word_unlock+0x114> // _printk+0x0
+    2b34: e0 ff ff 17  	b	0x2ab4 <dtof_i2c_read_word_unlock+0x98>
+    2b38: 00 00 00 94  	bl	0x2b38 <dtof_i2c_read_word_unlock+0x11c> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000026b8 <dtof_i2c_write_word_unlock>:
+    26b8: 3f 23 03 d5  	hint	#25
+    26bc: ff 03 01 d1  	sub	sp, sp, #64
+    26c0: 5e 86 00 f8  	str	x30, [x18], #8
+    26c4: fd 7b 02 a9  	stp	x29, x30, [sp, #32]
+    26c8: fd 83 00 91  	add	x29, sp, #32
+    26cc: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+    26d0: 08 41 38 d5  	mrs	x8, SP_EL0
+    26d4: 69 00 c0 d2  	mov	x9, #12884901888
+    26d8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    26dc: f4 03 01 2a  	mov	w20, w1
+    26e0: a8 83 1f f8  	stur	x8, [x29, #-8]
+    26e4: 08 1c 40 f9  	ldr	x8, [x0, #56]
+    26e8: e9 03 00 f9  	str	x9, [sp]
+    26ec: 49 7c 08 53  	lsr	w9, w2, #8
+    26f0: a2 63 1f 38  	sturb	w2, [x29, #-10]
+    26f4: a1 43 1f 38  	sturb	w1, [x29, #-12]
+    26f8: e1 03 00 91  	mov	x1, sp
+    26fc: 0a 05 40 79  	ldrh	w10, [x8, #2]
+    2700: 22 00 80 52  	mov	w2, #1
+    2704: a9 53 1f 38  	sturb	w9, [x29, #-11]
+    2708: a9 33 00 d1  	sub	x9, x29, #12
+    270c: 00 0d 40 f9  	ldr	x0, [x8, #24]
+    2710: ea 03 00 79  	strh	w10, [sp]
+    2714: e9 07 00 f9  	str	x9, [sp, #8]
+    2718: 00 00 00 94  	bl	0x2718 <dtof_i2c_write_word_unlock+0x60> // __i2c_transfer+0x0
+    271c: 1f 04 00 71  	cmp	w0, #1
+    2720: a1 01 00 54  	b.ne	0x2754 <dtof_i2c_write_word_unlock+0x9c>
+    2724: e0 03 1f 2a  	mov	w0, wzr
+    2728: 08 41 38 d5  	mrs	x8, SP_EL0
+    272c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2730: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    2734: 1f 01 09 eb  	cmp	x8, x9
+    2738: c1 03 00 54  	b.ne	0x27b0 <dtof_i2c_write_word_unlock+0xf8>
+    273c: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+    2740: fd 7b 42 a9  	ldp	x29, x30, [sp, #32]
+    2744: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    2748: ff 03 01 91  	add	sp, sp, #64
+    274c: bf 23 03 d5  	hint	#29
+    2750: c0 03 5f d6  	ret
+    2754: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_write_word_unlock+0x9c> // dtof_ctx+0x58
+    2758: f3 03 00 2a  	mov	w19, w0
+    275c: 94 1e 00 12  	and	w20, w20, #0xff
+    2760: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    2764: 20 01 00 b4  	cbz	x0, 0x2788 <dtof_i2c_write_word_unlock+0xd0>
+    2768: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_write_word_unlock+0xb0> // '%s %d i2c write failed: %d, reg = 0x%02x'
+    276c: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_write_word_unlock+0xb4> // 'dtof_i2c_write_word_unlock'
+    2770: 21 00 00 91  	add	x1, x1, #0 // '%s %d i2c write failed: %d, reg = 0x%02x'
+    2774: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_write_word_unlock'
+    2778: 43 13 80 52  	mov	w3, #154
+    277c: e4 03 13 2a  	mov	w4, w19
+    2780: e5 03 14 2a  	mov	w5, w20
+    2784: 00 00 00 94  	bl	0x2784 <dtof_i2c_write_word_unlock+0xcc> // ipc_log_string+0x0
+    2788: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_write_word_unlock+0xd0> // '\x013[DTOF] %s %d : i2c write failed: %d, reg = 0x%02x'
+    278c: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_write_word_unlock+0xd4> // 'dtof_i2c_write_word_unlock'
+    2790: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : i2c write failed: %d, reg = 0x%02x'
+    2794: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_write_word_unlock'
+    2798: 42 13 80 52  	mov	w2, #154
+    279c: e3 03 13 2a  	mov	w3, w19
+    27a0: e4 03 14 2a  	mov	w4, w20
+    27a4: 00 00 00 94  	bl	0x27a4 <dtof_i2c_write_word_unlock+0xec> // _printk+0x0
+    27a8: 80 00 80 12  	mov	w0, #-5
+    27ac: df ff ff 17  	b	0x2728 <dtof_i2c_write_word_unlock+0x70>
+    27b0: 00 00 00 94  	bl	0x27b0 <dtof_i2c_write_word_unlock+0xf8> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000002b3c <dtof_i2c_read_block>:
+    2b3c: 3f 23 03 d5  	hint	#25
+    2b40: ff 43 01 d1  	sub	sp, sp, #80
+    2b44: 5e 86 00 f8  	str	x30, [x18], #8
+    2b48: fd 7b 03 a9  	stp	x29, x30, [sp, #48]
+    2b4c: fd c3 00 91  	add	x29, sp, #48
+    2b50: f3 23 00 f9  	str	x19, [sp, #64]
+    2b54: 08 41 38 d5  	mrs	x8, SP_EL0
+    2b58: ea 13 00 91  	add	x10, sp, #4
+    2b5c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2b60: a8 83 1f f8  	stur	x8, [x29, #-8]
+    2b64: 28 00 80 52  	mov	w8, #1
+    2b68: 09 1c 40 f9  	ldr	x9, [x0, #56]
+    2b6c: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+    2b70: ff 07 00 f9  	str	xzr, [sp, #8]
+    2b74: e1 13 00 39  	strb	w1, [sp, #4]
+    2b78: e1 23 00 91  	add	x1, sp, #8
+    2b7c: 2b 05 40 79  	ldrh	w11, [x9, #2]
+    2b80: e8 1b 00 79  	strh	w8, [sp, #12]
+    2b84: ea 0b 00 f9  	str	x10, [sp, #16]
+    2b88: 2a 05 40 79  	ldrh	w10, [x9, #2]
+    2b8c: e2 13 00 f9  	str	x2, [sp, #32]
+    2b90: e8 37 00 79  	strh	w8, [sp, #26]
+    2b94: 68 1c 00 12  	and	w8, w3, #0xff
+    2b98: 20 0d 40 f9  	ldr	x0, [x9, #24]
+    2b9c: 42 00 80 52  	mov	w2, #2
+    2ba0: eb 13 00 79  	strh	w11, [sp, #8]
+    2ba4: ea 33 00 79  	strh	w10, [sp, #24]
+    2ba8: e8 3b 00 79  	strh	w8, [sp, #28]
+    2bac: 00 00 00 94  	bl	0x2bac <dtof_i2c_read_block+0x70> // i2c_transfer+0x0
+    2bb0: c0 01 f8 37  	tbnz	w0, #31, 0x2be8 <dtof_i2c_read_block+0xac>
+    2bb4: f3 03 1f 2a  	mov	w19, wzr
+    2bb8: 08 41 38 d5  	mrs	x8, SP_EL0
+    2bbc: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2bc0: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    2bc4: 1f 01 09 eb  	cmp	x8, x9
+    2bc8: 21 03 00 54  	b.ne	0x2c2c <dtof_i2c_read_block+0xf0>
+    2bcc: fd 7b 43 a9  	ldp	x29, x30, [sp, #48]
+    2bd0: e0 03 13 2a  	mov	w0, w19
+    2bd4: f3 23 40 f9  	ldr	x19, [sp, #64]
+    2bd8: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    2bdc: ff 43 01 91  	add	sp, sp, #80
+    2be0: bf 23 03 d5  	hint	#29
+    2be4: c0 03 5f d6  	ret
+    2be8: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_read_block+0xac> // dtof_ctx+0x58
+    2bec: f3 03 00 2a  	mov	w19, w0
+    2bf0: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    2bf4: e0 00 00 b4  	cbz	x0, 0x2c10 <dtof_i2c_read_block+0xd4>
+    2bf8: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_read_block+0xbc> // '%s %d I2C read failed'
+    2bfc: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_read_block+0xc0> // 'dtof_i2c_read_block'
+    2c00: 21 00 00 91  	add	x1, x1, #0 // '%s %d I2C read failed'
+    2c04: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_read_block'
+    2c08: 83 2a 80 52  	mov	w3, #340
+    2c0c: 00 00 00 94  	bl	0x2c0c <dtof_i2c_read_block+0xd0> // ipc_log_string+0x0
+    2c10: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_read_block+0xd4> // '\x013[DTOF] %s %d : I2C read failed'
+    2c14: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_read_block+0xd8> // 'dtof_i2c_read_block'
+    2c18: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : I2C read failed'
+    2c1c: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_read_block'
+    2c20: 82 2a 80 52  	mov	w2, #340
+    2c24: 00 00 00 94  	bl	0x2c24 <dtof_i2c_read_block+0xe8> // _printk+0x0
+    2c28: e4 ff ff 17  	b	0x2bb8 <dtof_i2c_read_block+0x7c>
+    2c2c: 00 00 00 94  	bl	0x2c2c <dtof_i2c_read_block+0xf0> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000027b4 <dtof_i2c_write_block>:
+    27b4: 3f 23 03 d5  	hint	#25
+    27b8: ff c3 01 d1  	sub	sp, sp, #112
+    27bc: 5e 86 00 f8  	str	x30, [x18], #8
+    27c0: fd 7b 02 a9  	stp	x29, x30, [sp, #32]
+    27c4: fd 83 00 91  	add	x29, sp, #32
+    27c8: f9 1b 00 f9  	str	x25, [sp, #48]
+    27cc: f8 5f 04 a9  	stp	x24, x23, [sp, #64]
+    27d0: f6 57 05 a9  	stp	x22, x21, [sp, #80]
+    27d4: f4 4f 06 a9  	stp	x20, x19, [sp, #96]
+    27d8: 08 41 38 d5  	mrs	x8, SP_EL0
+    27dc: 74 1c 00 12  	and	w20, w3, #0xff
+    27e0: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    27e4: 96 06 00 11  	add	w22, w20, #1
+    27e8: f8 03 01 2a  	mov	w24, w1
+    27ec: 01 98 81 52  	mov	w1, #3264
+    27f0: f7 03 03 2a  	mov	w23, w3
+    27f4: f5 03 02 aa  	mov	x21, x2
+    27f8: a8 83 1f f8  	stur	x8, [x29, #-8]
+    27fc: 19 1c 40 f9  	ldr	x25, [x0, #56]
+    2800: e0 03 16 aa  	mov	x0, x22
+    2804: ff 07 00 f9  	str	xzr, [sp, #8]
+    2808: 00 00 00 94  	bl	0x2808 <dtof_i2c_write_block+0x54> // __kmalloc+0x0
+    280c: a0 02 00 b4  	cbz	x0, 0x2860 <dtof_i2c_write_block+0xac>
+    2810: f3 03 00 aa  	mov	x19, x0
+    2814: 00 04 00 91  	add	x0, x0, #1
+    2818: e2 1e 40 92  	and	x2, x23, #0xff
+    281c: e1 03 15 aa  	mov	x1, x21
+    2820: 78 02 00 39  	strb	w24, [x19]
+    2824: 00 00 00 94  	bl	0x2824 <dtof_i2c_write_block+0x70> // memcpy+0x0
+    2828: 28 07 40 79  	ldrh	w8, [x25, #2]
+    282c: e1 23 00 91  	add	x1, sp, #8
+    2830: 20 0f 40 f9  	ldr	x0, [x25, #24]
+    2834: 22 00 80 52  	mov	w2, #1
+    2838: f3 0b 00 f9  	str	x19, [sp, #16]
+    283c: e8 13 00 79  	strh	w8, [sp, #8]
+    2840: f6 1b 00 79  	strh	w22, [sp, #12]
+    2844: 00 00 00 94  	bl	0x2844 <dtof_i2c_write_block+0x90> // i2c_transfer+0x0
+    2848: 1f 04 00 71  	cmp	w0, #1
+    284c: a1 02 00 54  	b.ne	0x28a0 <dtof_i2c_write_block+0xec>
+    2850: f4 03 1f 2a  	mov	w20, wzr
+    2854: e0 03 13 aa  	mov	x0, x19
+    2858: 00 00 00 94  	bl	0x2858 <dtof_i2c_write_block+0xa4> // kfree+0x0
+    285c: 02 00 00 14  	b	0x2864 <dtof_i2c_write_block+0xb0>
+    2860: 74 01 80 12  	mov	w20, #-12
+    2864: 08 41 38 d5  	mrs	x8, SP_EL0
+    2868: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    286c: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    2870: 1f 01 09 eb  	cmp	x8, x9
+    2874: 21 04 00 54  	b.ne	0x28f8 <dtof_i2c_write_block+0x144>
+    2878: e0 03 14 2a  	mov	w0, w20
+    287c: f9 1b 40 f9  	ldr	x25, [sp, #48]
+    2880: f4 4f 46 a9  	ldp	x20, x19, [sp, #96]
+    2884: f6 57 45 a9  	ldp	x22, x21, [sp, #80]
+    2888: f8 5f 44 a9  	ldp	x24, x23, [sp, #64]
+    288c: fd 7b 42 a9  	ldp	x29, x30, [sp, #32]
+    2890: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    2894: ff c3 01 91  	add	sp, sp, #112
+    2898: bf 23 03 d5  	hint	#29
+    289c: c0 03 5f d6  	ret
+    28a0: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_write_block+0xec> // dtof_ctx+0x58
+    28a4: f5 03 00 2a  	mov	w21, w0
+    28a8: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    28ac: 20 01 00 b4  	cbz	x0, 0x28d0 <dtof_i2c_write_block+0x11c>
+    28b0: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_write_block+0xfc> // '%s %d i2c_transfer failed: %d msg_len: %u'
+    28b4: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_write_block+0x100> // 'dtof_i2c_write_block'
+    28b8: 21 00 00 91  	add	x1, x1, #0 // '%s %d i2c_transfer failed: %d msg_len: %u'
+    28bc: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_write_block'
+    28c0: 63 2e 80 52  	mov	w3, #371
+    28c4: e4 03 15 2a  	mov	w4, w21
+    28c8: e5 03 14 2a  	mov	w5, w20
+    28cc: 00 00 00 94  	bl	0x28cc <dtof_i2c_write_block+0x118> // ipc_log_string+0x0
+    28d0: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_write_block+0x11c> // '\x013[DTOF] %s %d : i2c_transfer failed: %d msg_len: %u'
+    28d4: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_write_block+0x120> // 'dtof_i2c_write_block'
+    28d8: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : i2c_transfer failed: %d msg_len: %u'
+    28dc: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_write_block'
+    28e0: 62 2e 80 52  	mov	w2, #371
+    28e4: e3 03 15 2a  	mov	w3, w21
+    28e8: e4 03 14 2a  	mov	w4, w20
+    28ec: 00 00 00 94  	bl	0x28ec <dtof_i2c_write_block+0x138> // _printk+0x0
+    28f0: 94 00 80 12  	mov	w20, #-5
+    28f4: d8 ff ff 17  	b	0x2854 <dtof_i2c_write_block+0xa0>
+    28f8: 00 00 00 94  	bl	0x28f8 <dtof_i2c_write_block+0x144> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000002c30 <dtof_i2c_read_ram_burst>:
+    2c30: 3f 23 03 d5  	hint	#25
+    2c34: ff c3 01 d1  	sub	sp, sp, #112
+    2c38: 5e 86 00 f8  	str	x30, [x18], #8
+    2c3c: fd 7b 04 a9  	stp	x29, x30, [sp, #64]
+    2c40: fd 03 01 91  	add	x29, sp, #64
+    2c44: f6 57 05 a9  	stp	x22, x21, [sp, #80]
+    2c48: f4 4f 06 a9  	stp	x20, x19, [sp, #96]
+    2c4c: 08 41 38 d5  	mrs	x8, SP_EL0
+    2c50: e9 13 00 91  	add	x9, sp, #4
+    2c54: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2c58: 6a 00 80 52  	mov	w10, #3
+    2c5c: eb 03 00 91  	mov	x11, sp
+    2c60: f6 03 02 2a  	mov	w22, w2
+    2c64: f3 03 01 aa  	mov	x19, x1
+    2c68: f4 03 03 2a  	mov	w20, w3
+    2c6c: a8 83 1f f8  	stur	x8, [x29, #-8]
+    2c70: 08 1c 40 f9  	ldr	x8, [x0, #56]
+    2c74: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+    2c78: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+    2c7c: ff 07 00 f9  	str	xzr, [sp, #8]
+    2c80: e2 1b 00 39  	strb	w2, [sp, #6]
+    2c84: 0c 05 40 79  	ldrh	w12, [x8, #2]
+    2c88: e9 0b 00 f9  	str	x9, [sp, #16]
+    2c8c: ea 1b 00 79  	strh	w10, [sp, #12]
+    2c90: 29 00 80 52  	mov	w9, #1
+    2c94: 0a 05 40 79  	ldrh	w10, [x8, #2]
+    2c98: eb 13 00 f9  	str	x11, [sp, #32]
+    2c9c: eb 1f 80 52  	mov	w11, #255
+    2ca0: ec 13 00 79  	strh	w12, [sp, #8]
+    2ca4: e9 3b 00 79  	strh	w9, [sp, #28]
+    2ca8: e9 57 00 79  	strh	w9, [sp, #42]
+    2cac: 69 78 1f 53  	lsl	w9, w3, #1
+    2cb0: ea 33 00 79  	strh	w10, [sp, #24]
+    2cb4: 0a 05 40 79  	ldrh	w10, [x8, #2]
+    2cb8: e1 1b 00 f9  	str	x1, [sp, #48]
+    2cbc: e9 5b 00 79  	strh	w9, [sp, #44]
+    2cc0: c9 1f 80 52  	mov	w9, #254
+    2cc4: e1 23 00 91  	add	x1, sp, #8
+    2cc8: eb 03 00 39  	strb	w11, [sp]
+    2ccc: ea 53 00 79  	strh	w10, [sp, #40]
+    2cd0: 4a 7c 08 53  	lsr	w10, w2, #8
+    2cd4: 00 0d 40 f9  	ldr	x0, [x8, #24]
+    2cd8: 62 00 80 52  	mov	w2, #3
+    2cdc: e9 13 00 39  	strb	w9, [sp, #4]
+    2ce0: ea 17 00 39  	strb	w10, [sp, #5]
+    2ce4: 00 00 00 94  	bl	0x2ce4 <dtof_i2c_read_ram_burst+0xb4> // i2c_transfer+0x0
+    2ce8: e0 05 f8 37  	tbnz	w0, #31, 0x2da4 <dtof_i2c_read_ram_burst+0x174>
+    2cec: 9f 3e 00 72  	tst	w20, #0xffff
+    2cf0: e0 03 00 54  	b.eq	0x2d6c <dtof_i2c_read_ram_burst+0x13c>
+    2cf4: 88 3e 40 92  	and	x8, x20, #0xffff
+    2cf8: 89 3e 00 12  	and	w9, w20, #0xffff
+    2cfc: 3f 05 00 71  	cmp	w9, #1
+    2d00: 61 00 00 54  	b.ne	0x2d0c <dtof_i2c_read_ram_burst+0xdc>
+    2d04: e9 03 1f aa  	mov	x9, xzr
+    2d08: 10 00 00 14  	b	0x2d48 <dtof_i2c_read_ram_burst+0x118>
+    2d0c: 09 39 7f 92  	and	x9, x8, #0xfffe
+    2d10: 6a 0e 00 91  	add	x10, x19, #3
+    2d14: eb 03 09 aa  	mov	x11, x9
+    2d18: 4c e1 5f 38  	ldurb	w12, [x10, #-2]
+    2d1c: 6b 09 00 f1  	subs	x11, x11, #2
+    2d20: 4d 01 40 39  	ldrb	w13, [x10]
+    2d24: 4e d1 5f 38  	ldurb	w14, [x10, #-3]
+    2d28: 4f f1 5f 38  	ldurb	w15, [x10, #-1]
+    2d2c: 4c d1 1f 38  	sturb	w12, [x10, #-3]
+    2d30: 4d f1 1f 38  	sturb	w13, [x10, #-1]
+    2d34: 4e e1 1f 38  	sturb	w14, [x10, #-2]
+    2d38: 4f 45 00 38  	strb	w15, [x10], #4
+    2d3c: e1 fe ff 54  	b.ne	0x2d18 <dtof_i2c_read_ram_burst+0xe8>
+    2d40: 3f 01 08 eb  	cmp	x9, x8
+    2d44: 40 01 00 54  	b.eq	0x2d6c <dtof_i2c_read_ram_burst+0x13c>
+    2d48: 6a 06 09 8b  	add	x10, x19, x9, lsl #1
+    2d4c: 08 01 09 cb  	sub	x8, x8, x9
+    2d50: 49 05 00 91  	add	x9, x10, #1
+    2d54: 2a 01 40 39  	ldrb	w10, [x9]
+    2d58: 08 05 00 f1  	subs	x8, x8, #1
+    2d5c: 2b f1 5f 38  	ldurb	w11, [x9, #-1]
+    2d60: 2a f1 1f 38  	sturb	w10, [x9, #-1]
+    2d64: 2b 25 00 38  	strb	w11, [x9], #2
+    2d68: 61 ff ff 54  	b.ne	0x2d54 <dtof_i2c_read_ram_burst+0x124>
+    2d6c: f5 03 1f 2a  	mov	w21, wzr
+    2d70: 08 41 38 d5  	mrs	x8, SP_EL0
+    2d74: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2d78: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    2d7c: 1f 01 09 eb  	cmp	x8, x9
+    2d80: 41 04 00 54  	b.ne	0x2e08 <dtof_i2c_read_ram_burst+0x1d8>
+    2d84: e0 03 15 2a  	mov	w0, w21
+    2d88: f4 4f 46 a9  	ldp	x20, x19, [sp, #96]
+    2d8c: f6 57 45 a9  	ldp	x22, x21, [sp, #80]
+    2d90: fd 7b 44 a9  	ldp	x29, x30, [sp, #64]
+    2d94: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    2d98: ff c3 01 91  	add	sp, sp, #112
+    2d9c: bf 23 03 d5  	hint	#29
+    2da0: c0 03 5f d6  	ret
+    2da4: 08 00 00 90  	adrp	x8, 0x2000 <dtof_i2c_read_ram_burst+0x174> // dtof_ctx+0x58
+    2da8: f5 03 00 2a  	mov	w21, w0
+    2dac: d6 3e 00 12  	and	w22, w22, #0xffff
+    2db0: 93 3e 00 12  	and	w19, w20, #0xffff
+    2db4: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    2db8: 40 01 00 b4  	cbz	x0, 0x2de0 <dtof_i2c_read_ram_burst+0x1b0>
+    2dbc: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_read_ram_burst+0x18c> // '%s %d i2c read ram burst failed: %d, offset = 0x%d, len = %d'
+    2dc0: 02 00 00 90  	adrp	x2, 0x2000 <dtof_i2c_read_ram_burst+0x190> // 'dtof_i2c_read_ram_burst'
+    2dc4: 21 00 00 91  	add	x1, x1, #0 // '%s %d i2c read ram burst failed: %d, offset = 0x%d, len = %d'
+    2dc8: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_read_ram_burst'
+    2dcc: 83 21 80 52  	mov	w3, #268
+    2dd0: e4 03 15 2a  	mov	w4, w21
+    2dd4: e5 03 16 2a  	mov	w5, w22
+    2dd8: e6 03 13 2a  	mov	w6, w19
+    2ddc: 00 00 00 94  	bl	0x2ddc <dtof_i2c_read_ram_burst+0x1ac> // ipc_log_string+0x0
+    2de0: 00 00 00 90  	adrp	x0, 0x2000 <dtof_i2c_read_ram_burst+0x1b0> // '\x013[DTOF] %s %d : i2c read ram burst failed: %d, offset = 0x%d, len = %d'
+    2de4: 01 00 00 90  	adrp	x1, 0x2000 <dtof_i2c_read_ram_burst+0x1b4> // 'dtof_i2c_read_ram_burst'
+    2de8: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : i2c read ram burst failed: %d, offset = 0x%d, len = %d'
+    2dec: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_read_ram_burst'
+    2df0: 82 21 80 52  	mov	w2, #268
+    2df4: e3 03 15 2a  	mov	w3, w21
+    2df8: e4 03 16 2a  	mov	w4, w22
+    2dfc: e5 03 13 2a  	mov	w5, w19
+    2e00: 00 00 00 94  	bl	0x2e00 <dtof_i2c_read_ram_burst+0x1d0> // _printk+0x0
+    2e04: db ff ff 17  	b	0x2d70 <dtof_i2c_read_ram_burst+0x140>
+    2e08: 00 00 00 94  	bl	0x2e08 <dtof_i2c_read_ram_burst+0x1d8> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/ai11ba.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000002e0c <dtof_i2c_rw_batch>:
+    2e0c: 3f 23 03 d5  	hint	#25
+    2e10: 5e 86 00 f8  	str	x30, [x18], #8
+    2e14: fd 7b bb a9  	stp	x29, x30, [sp, #-80]!
+    2e18: fc 0b 00 f9  	str	x28, [sp, #16]
+    2e1c: fd 03 00 91  	mov	x29, sp
+    2e20: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+    2e24: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+    2e28: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+    2e2c: ff 83 28 d1  	sub	sp, sp, #2592
+    2e30: 08 41 38 d5  	mrs	x8, SP_EL0
+    2e34: f3 03 01 aa  	mov	x19, x1
+    2e38: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2e3c: e1 03 1f 2a  	mov	w1, wzr
+    2e40: 02 40 80 52  	mov	w2, #512
+    2e44: f6 63 20 91  	add	x22, sp, #2072
+    2e48: a8 83 1f f8  	stur	x8, [x29, #-8]
+    2e4c: 15 1c 40 f9  	ldr	x21, [x0, #56]
+    2e50: e0 63 20 91  	add	x0, sp, #2072
+    2e54: 00 00 00 94  	bl	0x2e54 <dtof_i2c_rw_batch+0x48> // memset+0x0
+    2e58: e0 23 00 91  	add	x0, sp, #8
+    2e5c: e1 03 1f 2a  	mov	w1, wzr
+    2e60: 02 02 81 52  	mov	w2, #2064
+    2e64: f7 23 00 91  	add	x23, sp, #8
+    2e68: 00 00 00 94  	bl	0x2e68 <dtof_i2c_rw_batch+0x5c> // memset+0x0
+    2e6c: 68 02 40 39  	ldrb	w8, [x19]
+    2e70: 68 0e 00 b4  	cbz	x8, 0x303c <dtof_i2c_rw_batch+0x230>
+    2e74: e9 03 1f aa  	mov	x9, xzr
+    2e78: ea 03 1f aa  	mov	x10, xzr
+    2e7c: f4 03 1f 2a  	mov	w20, wzr
+    2e80: 6b 36 00 91  	add	x11, x19, #13
+    2e84: ec 02 40 b2  	orr	x12, x23, #0x1
+    2e88: 0d 02 81 52  	mov	w13, #2064
+    2e8c: 0e 11 80 52  	mov	w14, #136
+    2e90: 2f 00 80 52  	mov	w15, #1
+    2e94: 10 08 80 52  	mov	w16, #64
+    2e98: 08 00 00 14  	b	0x2eb8 <dtof_i2c_rw_batch+0xac>
+    2e9c: 94 02 00 0b  	add	w20, w20, w0
+    2ea0: 4a 05 00 91  	add	x10, x10, #1
+    2ea4: ad 05 02 d1  	sub	x13, x13, #129
+    2ea8: 6b 21 02 91  	add	x11, x11, #136
+    2eac: 29 05 02 91  	add	x9, x9, #129
+    2eb0: 5f 01 08 eb  	cmp	x10, x8
+    2eb4: 60 0c 00 54  	b.eq	0x3040 <dtof_i2c_rw_batch+0x234>
+    2eb8: 9f 86 00 71  	cmp	w20, #33
+    2ebc: e2 17 00 54  	b.hs	0x31b8 <dtof_i2c_rw_batch+0x3ac>
+    2ec0: 5f 45 00 f1  	cmp	x10, #17
+    2ec4: a0 17 00 54  	b.eq	0x31b8 <dtof_i2c_rw_batch+0x3ac>
+    2ec8: 51 4d 0e 9b  	madd	x17, x10, x14, x19
+    2ecc: e0 03 14 2a  	mov	w0, w20
+    2ed0: 21 12 40 39  	ldrb	w1, [x17, #4]
+    2ed4: d1 52 34 8b  	add	x17, x22, w20, uxtw #4
+    2ed8: c1 06 00 34  	cbz	w1, 0x2fb0 <dtof_i2c_rw_batch+0x1a4>
+    2edc: 41 1d 0a 8b  	add	x1, x10, x10, lsl #7
+    2ee0: 3f 3c 20 f1  	cmp	x1, #2063
+    2ee4: 88 16 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2ee8: 43 4d 0e 9b  	madd	x3, x10, x14, x19
+    2eec: e2 02 01 8b  	add	x2, x23, x1
+    2ef0: 64 0c 40 79  	ldrh	w4, [x3, #6]
+    2ef4: 63 14 40 39  	ldrb	w3, [x3, #5]
+    2ef8: 9f 00 01 71  	cmp	w4, #64
+    2efc: 81 30 90 1a  	csel	w1, w4, w16, lo
+    2f00: 43 00 00 39  	strb	w3, [x2]
+    2f04: 61 02 00 34  	cbz	w1, 0x2f50 <dtof_i2c_rw_batch+0x144>
+    2f08: a3 fd 41 d3  	lsr	x3, x13, #1
+    2f0c: e4 03 09 aa  	mov	x4, x9
+    2f10: e5 03 0b aa  	mov	x5, x11
+    2f14: e6 03 01 aa  	mov	x6, x1
+    2f18: e3 14 00 b4  	cbz	x3, 0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2f1c: a7 00 40 39  	ldrb	w7, [x5]
+    2f20: 98 38 20 d1  	sub	x24, x4, #2062
+    2f24: 1f 43 20 b1  	cmn	x24, #2064
+    2f28: 87 69 24 38  	strb	w7, [x12, x4]
+    2f2c: 43 14 00 54  	b.lo	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2f30: 87 01 04 8b  	add	x7, x12, x4
+    2f34: b8 f0 5f 38  	ldurb	w24, [x5, #-1]
+    2f38: 63 04 00 d1  	sub	x3, x3, #1
+    2f3c: c6 04 00 f1  	subs	x6, x6, #1
+    2f40: a5 08 00 91  	add	x5, x5, #2
+    2f44: 84 08 00 91  	add	x4, x4, #2
+    2f48: f8 04 00 39  	strb	w24, [x7, #1]
+    2f4c: 61 fe ff 54  	b.ne	0x2f18 <dtof_i2c_rw_batch+0x10c>
+    2f50: 43 00 80 52  	mov	w3, #2
+    2f54: 03 7c 7c b3  	bfi	x3, x0, #4, #32
+    2f58: 7f 00 08 f1  	cmp	x3, #512
+    2f5c: c8 12 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2f60: c3 12 00 8b  	add	x3, x22, x0, lsl #4
+    2f64: 9f 7e 00 71  	cmp	w20, #31
+    2f68: 7f 04 00 79  	strh	wzr, [x3, #2]
+    2f6c: 48 12 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2f70: 03 ec 7c d3  	lsl	x3, x0, #4
+    2f74: a4 06 40 79  	ldrh	w4, [x21, #2]
+    2f78: 65 00 7d b2  	orr	x5, x3, #0x8
+    2f7c: bf 00 08 f1  	cmp	x5, #512
+    2f80: 24 02 00 79  	strh	w4, [x17]
+    2f84: 88 11 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2f88: d1 12 00 8b  	add	x17, x22, x0, lsl #4
+    2f8c: 60 00 7e b2  	orr	x0, x3, #0x4
+    2f90: 1f 00 08 f1  	cmp	x0, #512
+    2f94: 22 06 00 f9  	str	x2, [x17, #8]
+    2f98: e8 10 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2f9c: 22 00 80 52  	mov	w2, #1
+    2fa0: 20 00 80 52  	mov	w0, #1
+    2fa4: 22 3c 1f 33  	bfi	w2, w1, #1, #16
+    2fa8: 22 0a 00 79  	strh	w2, [x17, #4]
+    2fac: bc ff ff 17  	b	0x2e9c <dtof_i2c_rw_batch+0x90>
+    2fb0: 9f 7e 00 71  	cmp	w20, #31
+    2fb4: 08 10 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2fb8: a1 06 40 79  	ldrh	w1, [x21, #2]
+    2fbc: 42 00 80 52  	mov	w2, #2
+    2fc0: 02 7c 7c b3  	bfi	x2, x0, #4, #32
+    2fc4: 5f 00 08 f1  	cmp	x2, #512
+    2fc8: 21 02 00 79  	strh	w1, [x17]
+    2fcc: 48 0f 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2fd0: 02 ec 7c d3  	lsl	x2, x0, #4
+    2fd4: c1 12 00 8b  	add	x1, x22, x0, lsl #4
+    2fd8: 43 00 7e b2  	orr	x3, x2, #0x4
+    2fdc: 7f 00 08 f1  	cmp	x3, #512
+    2fe0: 3f 04 00 79  	strh	wzr, [x1, #2]
+    2fe4: 88 0e 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2fe8: 42 00 7d b2  	orr	x2, x2, #0x8
+    2fec: 2f 08 00 79  	strh	w15, [x1, #4]
+    2ff0: 5f 00 08 f1  	cmp	x2, #512
+    2ff4: 08 0e 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    2ff8: 41 4d 0e 9b  	madd	x1, x10, x14, x19
+    2ffc: c0 12 00 8b  	add	x0, x22, x0, lsl #4
+    3000: 9f 7a 00 71  	cmp	w20, #30
+    3004: 21 14 00 91  	add	x1, x1, #5
+    3008: 01 04 00 f9  	str	x1, [x0, #8]
+    300c: 48 0d 00 54  	b.hi	0x31b4 <dtof_i2c_rw_batch+0x3a8>
+    3010: 40 4d 0e 9b  	madd	x0, x10, x14, x19
+    3014: a2 06 40 79  	ldrh	w2, [x21, #2]
+    3018: 2f 26 00 79  	strh	w15, [x17, #18]
+    301c: 03 30 00 91  	add	x3, x0, #12
+    3020: 22 22 00 79  	strh	w2, [x17, #16]
+    3024: 01 0c 40 79  	ldrh	w1, [x0, #6]
+    3028: 40 00 80 52  	mov	w0, #2
+    302c: 23 0e 00 f9  	str	x3, [x17, #24]
+    3030: 21 78 1f 53  	lsl	w1, w1, #1
+    3034: 21 2a 00 79  	strh	w1, [x17, #20]
+    3038: 99 ff ff 17  	b	0x2e9c <dtof_i2c_rw_batch+0x90>
+    303c: f4 03 1f 2a  	mov	w20, wzr
+    3040: a0 0e 40 f9  	ldr	x0, [x21, #24]
+    3044: e1 63 20 91  	add	x1, sp, #2072
+    3048: e2 03 14 2a  	mov	w2, w20
+    304c: 00 00 00 94  	bl	0x304c <dtof_i2c_rw_batch+0x240> // i2c_transfer+0x0
+    3050: 60 08 f8 37  	tbnz	w0, #31, 0x315c <dtof_i2c_rw_batch+0x350>
+    3054: 6c 02 40 39  	ldrb	w12, [x19]
+    3058: 4c 06 00 34  	cbz	w12, 0x3120 <dtof_i2c_rw_batch+0x314>
+    305c: e8 03 1f aa  	mov	x8, xzr
+    3060: 69 3e 00 91  	add	x9, x19, #15
+    3064: 0a 11 80 52  	mov	w10, #136
+    3068: eb 03 13 aa  	mov	x11, x19
+    306c: 07 00 00 14  	b	0x3088 <dtof_i2c_rw_batch+0x27c>
+    3070: 6c 02 40 39  	ldrb	w12, [x19]
+    3074: 08 05 00 91  	add	x8, x8, #1
+    3078: 29 21 02 91  	add	x9, x9, #136
+    307c: 6b 21 02 91  	add	x11, x11, #136
+    3080: 1f 01 2c eb  	cmp	x8, w12, uxtb
+    3084: e2 04 00 54  	b.hs	0x3120 <dtof_i2c_rw_batch+0x314>
+    3088: 1f 45 00 f1  	cmp	x8, #17
+    308c: 60 09 00 54  	b.eq	0x31b8 <dtof_i2c_rw_batch+0x3ac>
+    3090: 0d 4d 0a 9b  	madd	x13, x8, x10, x19
+    3094: ad 11 40 39  	ldrb	w13, [x13, #4]
+    3098: ed fe ff 35  	cbnz	w13, 0x3074 <dtof_i2c_rw_batch+0x268>
+    309c: 0d 4d 0a 9b  	madd	x13, x8, x10, x19
+    30a0: ad 0d 40 79  	ldrh	w13, [x13, #6]
+    30a4: 8d fe ff 34  	cbz	w13, 0x3074 <dtof_i2c_rw_batch+0x268>
+    30a8: bf 05 00 71  	cmp	w13, #1
+    30ac: 61 00 00 54  	b.ne	0x30b8 <dtof_i2c_rw_batch+0x2ac>
+    30b0: ec 03 1f aa  	mov	x12, xzr
+    30b4: 10 00 00 14  	b	0x30f4 <dtof_i2c_rw_batch+0x2e8>
+    30b8: ac 39 7f 92  	and	x12, x13, #0xfffe
+    30bc: ee 03 09 aa  	mov	x14, x9
+    30c0: ef 03 0c aa  	mov	x15, x12
+    30c4: d0 e1 5f 38  	ldurb	w16, [x14, #-2]
+    30c8: ef 09 00 f1  	subs	x15, x15, #2
+    30cc: d1 01 40 39  	ldrb	w17, [x14]
+    30d0: c0 d1 5f 38  	ldurb	w0, [x14, #-3]
+    30d4: c1 f1 5f 38  	ldurb	w1, [x14, #-1]
+    30d8: d0 d1 1f 38  	sturb	w16, [x14, #-3]
+    30dc: d1 f1 1f 38  	sturb	w17, [x14, #-1]
+    30e0: c0 e1 1f 38  	sturb	w0, [x14, #-2]
+    30e4: c1 45 00 38  	strb	w1, [x14], #4
+    30e8: e1 fe ff 54  	b.ne	0x30c4 <dtof_i2c_rw_batch+0x2b8>
+    30ec: 9f 01 0d eb  	cmp	x12, x13
+    30f0: 00 fc ff 54  	b.eq	0x3070 <dtof_i2c_rw_batch+0x264>
+    30f4: ad 01 0c cb  	sub	x13, x13, x12
+    30f8: 8c f9 7f d3  	lsl	x12, x12, #1
+    30fc: 6e 01 0c 8b  	add	x14, x11, x12
+    3100: ad 05 00 f1  	subs	x13, x13, #1
+    3104: 8c 09 00 91  	add	x12, x12, #2
+    3108: cf 35 40 39  	ldrb	w15, [x14, #13]
+    310c: d0 31 40 39  	ldrb	w16, [x14, #12]
+    3110: cf 31 00 39  	strb	w15, [x14, #12]
+    3114: d0 35 00 39  	strb	w16, [x14, #13]
+    3118: 21 ff ff 54  	b.ne	0x30fc <dtof_i2c_rw_batch+0x2f0>
+    311c: d5 ff ff 17  	b	0x3070 <dtof_i2c_rw_batch+0x264>
+    3120: e0 03 1f 2a  	mov	w0, wzr
+    3124: 08 41 38 d5  	mrs	x8, SP_EL0
+    3128: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    312c: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    3130: 1f 01 09 eb  	cmp	x8, x9
+    3134: 41 04 00 54  	b.ne	0x31bc <dtof_i2c_rw_batch+0x3b0>
+    3138: ff 83 28 91  	add	sp, sp, #2592
+    313c: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+    3140: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+    3144: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+    3148: fc 0b 40 f9  	ldr	x28, [sp, #16]
+    314c: fd 7b c5 a8  	ldp	x29, x30, [sp], #80
+    3150: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    3154: bf 23 03 d5  	hint	#29
+    3158: c0 03 5f d6  	ret
+    315c: 08 00 00 90  	adrp	x8, 0x3000 <dtof_i2c_rw_batch+0x350> // dtof_ctx+0x58
+    3160: f5 03 00 2a  	mov	w21, w0
+    3164: 00 01 40 f9  	ldr	x0, [x8] // dtof_ctx+0x58
+    3168: 20 01 00 b4  	cbz	x0, 0x318c <dtof_i2c_rw_batch+0x380>
+    316c: 01 00 00 90  	adrp	x1, 0x3000 <dtof_i2c_rw_batch+0x360> // '%s %d i2c_transfer failed: %d msg cnt: %u'
+    3170: 02 00 00 90  	adrp	x2, 0x3000 <dtof_i2c_rw_batch+0x364> // 'dtof_i2c_rw_batch'
+    3174: 21 00 00 91  	add	x1, x1, #0 // '%s %d i2c_transfer failed: %d msg cnt: %u'
+    3178: 42 00 00 91  	add	x2, x2, #0 // 'dtof_i2c_rw_batch'
+    317c: a3 1a 80 52  	mov	w3, #213
+    3180: e4 03 15 2a  	mov	w4, w21
+    3184: e5 03 14 2a  	mov	w5, w20
+    3188: 00 00 00 94  	bl	0x3188 <dtof_i2c_rw_batch+0x37c> // ipc_log_string+0x0
+    318c: 00 00 00 90  	adrp	x0, 0x3000 <dtof_i2c_rw_batch+0x380> // '\x013[DTOF] %s %d : i2c_transfer failed: %d msg cnt: %u'
+    3190: 01 00 00 90  	adrp	x1, 0x3000 <dtof_i2c_rw_batch+0x384> // 'dtof_i2c_rw_batch'
+    3194: 00 00 00 91  	add	x0, x0, #0 // '\x013[DTOF] %s %d : i2c_transfer failed: %d msg cnt: %u'
+    3198: 21 00 00 91  	add	x1, x1, #0 // 'dtof_i2c_rw_batch'
+    319c: a2 1a 80 52  	mov	w2, #213
+    31a0: e3 03 15 2a  	mov	w3, w21
+    31a4: e4 03 14 2a  	mov	w4, w20
+    31a8: 00 00 00 94  	bl	0x31a8 <dtof_i2c_rw_batch+0x39c> // _printk+0x0
+    31ac: 80 00 80 12  	mov	w0, #-5
+    31b0: dd ff ff 17  	b	0x3124 <dtof_i2c_rw_batch+0x318>
+    31b4: 20 00 20 d4  	brk	#0x1
+    31b8: 40 a2 2a d4  	brk	#0x5512
+    31bc: 00 00 00 94  	bl	0x31bc <dtof_i2c_rw_batch+0x3b0> // __stack_chk_fail+0x0

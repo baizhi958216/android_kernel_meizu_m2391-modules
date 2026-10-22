@@ -1,0 +1,42 @@
+AI11BA independent M2391 source recovery (source selected)
+======================================================
+The original driver identifies itself Dtof_V2.1_Build20221202a, exposes /dev/dtof,
+and exports int s_module_load_state, whose natural CRC is df9df228. State starts
+at0, successful probe publishes1 and failed common probe publishes2. Original
+ST VL53L1 probe defers while this value is0.
+
+Original ai11ba OF table is dtof,ai11ba_i2c; its I2C table is dtof. Local M2391
+DTS uses adaps,ai11ba_i2c (EVB has a space). This mismatch is documented rather
+than expanding hardware binding without evidence. The two alternate devices
+share reset GPIO46 and IRQ GPIO165 on the board. Their register protocols are
+different and must never be substituted for each other.
+
+Recovered real transport: 8-bit register/16-bit big-endian words, locked and
+caller-bus-locked variants, byte blocks, RAM offset command0xfe followed by
+read command0xff, and batch ioctl0x8884410a. Batch request is2180bytes: count u8
+plus3 reserved bytes and16 operations of136 bytes, with op/reg/length at0/1/2,
+reserved32 at4 and64 native-endian16-bit words at8. Write words are serialized
+big-endian, read words converted back; all message groups use one transfer.
+Original write requests cap at64 words. Invalid read lengths/counts are rejected
+instead of the original buffer overflow/trap; partial I2C completion is treated
+as failure rather than exposing uninitialized data. Valid hardware packets are
+unchanged. All ten transport routines codegen successfully on prepared5.15.
+
+Recovered probe/reset: original accepted chip IDs a118/a11b, reset GPIO timing,
+10-attempt locked A2=37d3 then D0=0008 verified writes and final B1=8141 write.
+All original misc ioctl commands, RAM/batch transfers, version and care_gpio
+sysfs, dtof Meizu link, and shared load-state publication are implemented.
+The original power configuration command consumes its four-byte argument;
+the stock regulator branch is disabled, so no unrelated supply/IRQ writes
+are introduced. Batch scratch now uses checked heap storage instead of a
+2656-byte stack frame. Open descriptors retain a kref; remove and exposed
+probe failure mark removing under the operation mutex, drain sysfs/misc,
+then free hardware resources. Old descriptors subsequently return ENODEV.
+
+Full actual Kbuild ai11ba.o PASS; actual dtof_core.o.symversions plus normal
+LD -T export ELF verifies GPL export s_module_load_state CRC df9df228.
+Independent GPU agent lifetime, buffer bounds and probe-unwind review PASS.
+AI and ST are selected together in dependency order. Both original vendor_dlkm
+blobs were SHA256-verified into out/m2391-515-analysis/removed-stock-modules
+before removal; the source ABI group protects s_module_load_state.
+No hardware IO performed.
