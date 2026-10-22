@@ -1,0 +1,2 @@
+obj-m += dummy_dlkm.o
+dummy_dlkm-y := meizu-dummy.o
