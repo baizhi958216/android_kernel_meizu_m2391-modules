@@ -5,6 +5,8 @@
  *
  */
 
+#include "cam_flash_meizu.h"
+#include "cam_flash_meizu_provider.h"
 #include <linux/module.h>
 #include "cam_flash_dev.h"
 #include "cam_flash_soc.h"
@@ -296,6 +298,7 @@ static int cam_flash_subdev_close_internal(struct v4l2_subdev *sd,
 		return -EINVAL;
 	}
 
+	cam_flash_meizu_sysfs_unregister(fctrl);
 	mutex_lock(&fctrl->flash_mutex);
 	cam_flash_shutdown(fctrl);
 	mutex_unlock(&fctrl->flash_mutex);
@@ -591,6 +594,12 @@ static int cam_flash_component_bind(struct device *dev,
 	mutex_init(&(fctrl->flash_mutex));
 
 	fctrl->flash_state = CAM_FLASH_STATE_INIT;
+	rc = cam_flash_meizu_sysfs_register(fctrl);
+	if (rc) {
+		CAM_ERR(CAM_FLASH, "Meizu flash sysfs registration failed %d", rc);
+		cam_unregister_subdev(&fctrl->v4l2_dev_str);
+		goto free_resource;
+	}
 	CAM_DBG(CAM_FLASH, "Component bound successfully");
 	return rc;
 
@@ -625,6 +634,7 @@ static void cam_flash_component_unbind(struct device *dev,
 		return;
 	}
 
+	cam_flash_meizu_sysfs_unregister(fctrl);
 	mutex_lock(&fctrl->flash_mutex);
 	cam_flash_shutdown(fctrl);
 	mutex_unlock(&fctrl->flash_mutex);
@@ -845,9 +855,25 @@ static int32_t cam_flash_i2c_driver_remove(struct i2c_client *client)
 
 MODULE_DEVICE_TABLE(of, cam_flash_dt_match);
 
+/* Original M2391 platform shutdown stops the factory pattern and shuts all
+ * SY7808 providers down before attempting to release GPIO power. */
+static void cam_flash_meizu_platform_shutdown(struct platform_device *pdev)
+{
+	struct cam_flash_ctrl *ctrl = platform_get_drvdata(pdev);
+	int i;
+
+	if (!cam_flash_meizu_matches(ctrl)) return;
+	cam_flash_meizu_sysfs_unregister(ctrl);
+	mutex_lock(&ctrl->flash_mutex);
+	for (i = 0; i < 3; i++) cam_meizu_flash_provider_shutdown(i);
+	if (ctrl->is_regulator_enabled) cam_flash_meizu_prepare(ctrl, false);
+	mutex_unlock(&ctrl->flash_mutex);
+}
+
 struct platform_driver cam_flash_platform_driver = {
 	.probe = cam_flash_platform_probe,
 	.remove = cam_flash_platform_remove,
+	.shutdown = cam_flash_meizu_platform_shutdown,
 	.driver = {
 		.name = "CAM-FLASH-DRIVER",
 		.owner = THIS_MODULE,
@@ -881,18 +907,18 @@ struct i2c_driver cam_flash_i2c_driver = {
 
 int32_t cam_flash_init_module(void)
 {
-	int32_t rc = 0;
+	int32_t rc;
 
+	/* Providers must exist before binding the camera factory/HAL consumers. */
+	rc = cam_meizu_flash_register();
+	if (rc) return rc;
 	rc = platform_driver_register(&cam_flash_platform_driver);
-	if (rc < 0) {
-		CAM_ERR(CAM_FLASH, "platform probe failed rc: %d", rc);
-		return rc;
-	}
-
+	if (rc) goto remove_meizu;
 	rc = i2c_add_driver(&cam_flash_i2c_driver);
-	if (rc < 0)
-		CAM_ERR(CAM_FLASH, "i2c_add_driver failed rc: %d", rc);
-
+	if (!rc) return 0;
+	platform_driver_unregister(&cam_flash_platform_driver);
+remove_meizu:
+	cam_meizu_flash_unregister();
 	return rc;
 }
 
@@ -900,6 +926,7 @@ void cam_flash_exit_module(void)
 {
 	platform_driver_unregister(&cam_flash_platform_driver);
 	i2c_del_driver(&cam_flash_i2c_driver);
+	cam_meizu_flash_unregister();
 }
 
 MODULE_DESCRIPTION("CAM FLASH");
