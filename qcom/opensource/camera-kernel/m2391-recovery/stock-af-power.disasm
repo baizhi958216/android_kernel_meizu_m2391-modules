@@ -1,0 +1,47 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000014f39c <meizu_actuator_enable>:
+  14f39c: 3f 23 03 d5  	hint	#25
+  14f3a0: 5e 86 00 f8  	str	x30, [x18], #8
+  14f3a4: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  14f3a8: f3 0b 00 f9  	str	x19, [sp, #16]
+  14f3ac: fd 03 00 91  	mov	x29, sp
+  14f3b0: e1 01 00 34  	cbz	w1, 0x14f3ec <meizu_actuator_enable+0x50>
+  14f3b4: 00 00 00 94  	bl	0x14f3b4 <meizu_actuator_enable+0x18>
+  14f3b8: f3 03 00 2a  	mov	w19, w0
+  14f3bc: 60 03 f8 36  	tbz	w0, #31, 0x14f428 <meizu_actuator_enable+0x8c>
+  14f3c0: 01 00 00 90  	adrp	x1, 0x14f000 <meizu_actuator_enable+0x24>
+  14f3c4: 02 00 00 90  	adrp	x2, 0x14f000 <meizu_actuator_enable+0x28>
+  14f3c8: 03 00 00 90  	adrp	x3, 0x14f000 <meizu_actuator_enable+0x2c>
+  14f3cc: 04 00 00 90  	adrp	x4, 0x14f000 <meizu_actuator_enable+0x30>
+  14f3d0: 21 00 00 91  	add	x1, x1, #0
+  14f3d4: 42 00 00 91  	add	x2, x2, #0
+  14f3d8: 63 00 00 91  	add	x3, x3, #0
+  14f3dc: 84 00 00 91  	add	x4, x4, #0
+  14f3e0: 60 00 80 52  	mov	w0, #3
+  14f3e4: e5 8f 80 52  	mov	w5, #1151
+  14f3e8: 0e 00 00 14  	b	0x14f420 <meizu_actuator_enable+0x84>
+  14f3ec: 00 00 00 94  	bl	0x14f3ec <meizu_actuator_enable+0x50>
+  14f3f0: f3 03 00 2a  	mov	w19, w0
+  14f3f4: a0 01 f8 36  	tbz	w0, #31, 0x14f428 <meizu_actuator_enable+0x8c>
+  14f3f8: 01 00 00 90  	adrp	x1, 0x14f000 <meizu_actuator_enable+0x5c>
+  14f3fc: 02 00 00 90  	adrp	x2, 0x14f000 <meizu_actuator_enable+0x60>
+  14f400: 03 00 00 90  	adrp	x3, 0x14f000 <meizu_actuator_enable+0x64>
+  14f404: 04 00 00 90  	adrp	x4, 0x14f000 <meizu_actuator_enable+0x68>
+  14f408: 21 00 00 91  	add	x1, x1, #0
+  14f40c: 42 00 00 91  	add	x2, x2, #0
+  14f410: 63 00 00 91  	add	x3, x3, #0
+  14f414: 84 00 00 91  	add	x4, x4, #0
+  14f418: 60 00 80 52  	mov	w0, #3
+  14f41c: a5 90 80 52  	mov	w5, #1157
+  14f420: e6 03 04 aa  	mov	x6, x4
+  14f424: 00 00 00 94  	bl	0x14f424 <meizu_actuator_enable+0x88>
+  14f428: e0 03 13 2a  	mov	w0, w19
+  14f42c: f3 0b 40 f9  	ldr	x19, [sp, #16]
+  14f430: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  14f434: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  14f438: bf 23 03 d5  	hint	#29
+  14f43c: c0 03 5f d6  	ret

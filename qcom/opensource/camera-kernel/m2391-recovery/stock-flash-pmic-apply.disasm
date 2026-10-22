@@ -1,0 +1,804 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001936d4 <cam_flash_pmic_apply_setting>:
+  1936d4: 3f 23 03 d5  	hint	#25
+  1936d8: 5e 86 00 f8  	str	x30, [x18], #8
+  1936dc: fd 7b ba a9  	stp	x29, x30, [sp, #-96]!
+  1936e0: fc 6f 01 a9  	stp	x28, x27, [sp, #16]
+  1936e4: fd 03 00 91  	mov	x29, sp
+  1936e8: fa 67 02 a9  	stp	x26, x25, [sp, #32]
+  1936ec: f8 5f 03 a9  	stp	x24, x23, [sp, #48]
+  1936f0: f6 57 04 a9  	stp	x22, x21, [sp, #64]
+  1936f4: f4 4f 05 a9  	stp	x20, x19, [sp, #80]
+  1936f8: f3 03 00 aa  	mov	x19, x0
+  1936fc: e1 05 00 b4  	cbz	x1, 0x1937b8 <cam_flash_pmic_apply_setting+0xe4>
+  193700: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x2c> // debug_mdl+0x3
+  193704: f5 03 01 aa  	mov	x21, x1
+  193708: 34 10 40 92  	and	x20, x1, #0x1f
+  19370c: 16 00 00 90  	adrp	x22, 0x193000 <cam_flash_pmic_apply_setting+0x38> // debug_priority+0x0
+  193710: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x3
+  193714: 68 00 00 36  	tbz	w8, #0, 0x193720 <cam_flash_pmic_apply_setting+0x4c>
+  193718: c8 02 40 b9  	ldr	w8, [x22] // debug_priority+0x0
+  19371c: e8 50 00 34  	cbz	w8, 0x194138 <cam_flash_pmic_apply_setting+0xa64>
+  193720: 08 06 80 52  	mov	w8, #48
+  193724: 88 4e 08 9b  	madd	x8, x20, x8, x19
+  193728: 08 99 72 39  	ldrb	w8, [x8, #3238]
+  19372c: 09 05 00 51  	sub	w9, w8, #1
+  193730: 3f 0d 00 71  	cmp	w9, #3
+  193734: 68 08 00 54  	b.hi	0x193840 <cam_flash_pmic_apply_setting+0x16c>
+  193738: 0a 06 80 52  	mov	w10, #48
+  19373c: 8a 4e 0a 9b  	madd	x10, x20, x10, x19
+  193740: 41 21 32 91  	add	x1, x10, #3208
+  193744: 0a 00 00 90  	adrp	x10, 0x193000 <cam_flash_pmic_apply_setting+0x70> // ''
+  193748: 4a 01 00 91  	add	x10, x10, #0 // ''
+  19374c: 8b 00 00 10  	adr	x11, #16
+  193750: 4c 69 69 38  	ldrb	w12, [x10, x9]
+  193754: 6b 09 0c 8b  	add	x11, x11, x12, lsl #2
+  193758: 60 01 1f d6  	br	x11
+  19375c: 9f 24 03 d5  	hint	#36
+  193760: 29 00 40 39  	ldrb	w9, [x1]
+  193764: 89 14 00 34  	cbz	w9, 0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  193768: 09 06 80 52  	mov	w9, #48
+  19376c: 89 4e 09 9b  	madd	x9, x20, x9, x19
+  193770: 29 49 46 f9  	ldr	x9, [x9, #3216]
+  193774: 3f 01 15 eb  	cmp	x9, x21
+  193778: e1 13 00 54  	b.ne	0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  19377c: e0 03 13 aa  	mov	x0, x19
+  193780: 00 00 00 94  	bl	0x193780 <cam_flash_pmic_apply_setting+0xac> // cam_flash_off+0x0
+  193784: 60 15 00 34  	cbz	w0, 0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  193788: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0xb4> // '\x016%s: %s: %s: %d Flash off failed %d'
+  19378c: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0xb8> // 'CAM_ERR'
+  193790: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0xbc> // 'CAM-FLASH'
+  193794: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0xc0> // 'cam_flash_pmic_apply_setting'
+  193798: f4 03 00 2a  	mov	w20, w0
+  19379c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Flash off failed %d'
+  1937a0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1937a4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1937a8: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  1937ac: 60 00 80 52  	mov	w0, #3
+  1937b0: 85 97 80 52  	mov	w5, #1212
+  1937b4: 45 02 00 14  	b	0x1940c8 <cam_flash_pmic_apply_setting+0x9f4>
+  1937b8: 88 53 82 52  	mov	w8, #4764
+  1937bc: 09 51 82 52  	mov	w9, #4744
+  1937c0: 76 02 08 8b  	add	x22, x19, x8
+  1937c4: 75 02 09 8b  	add	x21, x19, x9
+  1937c8: c8 02 40 39  	ldrb	w8, [x22]
+  1937cc: 1f 31 00 71  	cmp	w8, #12
+  1937d0: c0 18 00 54  	b.eq	0x193ae8 <cam_flash_pmic_apply_setting+0x414>
+  1937d4: 1f 39 00 71  	cmp	w8, #14
+  1937d8: c0 1a 00 54  	b.eq	0x193b30 <cam_flash_pmic_apply_setting+0x45c>
+  1937dc: 1f 41 00 71  	cmp	w8, #16
+  1937e0: 01 52 00 54  	b.ne	0x194220 <cam_flash_pmic_apply_setting+0xb4c>
+  1937e4: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x110> // debug_mdl+0x3
+  1937e8: 17 00 00 90  	adrp	x23, 0x193000 <cam_flash_pmic_apply_setting+0x114> // debug_priority+0x0
+  1937ec: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x3
+  1937f0: 68 00 00 36  	tbz	w8, #0, 0x1937fc <cam_flash_pmic_apply_setting+0x128>
+  1937f4: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  1937f8: 08 4c 00 34  	cbz	w8, 0x194178 <cam_flash_pmic_apply_setting+0xaa4>
+  1937fc: c8 2a 40 39  	ldrb	w8, [x22, #10]
+  193800: 1f 0d 00 71  	cmp	w8, #3
+  193804: 41 24 00 54  	b.ne	0x193c8c <cam_flash_pmic_apply_setting+0x5b8>
+  193808: 68 6a 55 b9  	ldr	w8, [x19, #5480]
+  19380c: 1f 0d 00 71  	cmp	w8, #3
+  193810: 81 28 00 54  	b.ne	0x193d20 <cam_flash_pmic_apply_setting+0x64c>
+  193814: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x140> // '\x016%s: %s: %s: %d Wrong state :Prev state: %d'
+  193818: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x144> // 'CAM_WARN'
+  19381c: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x148> // 'CAM-FLASH'
+  193820: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x14c> // 'cam_flash_pmic_apply_setting'
+  193824: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Wrong state :Prev state: %d'
+  193828: 42 00 00 91  	add	x2, x2, #0 // 'CAM_WARN'
+  19382c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193830: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193834: 60 00 80 52  	mov	w0, #3
+  193838: e5 81 80 52  	mov	w5, #1039
+  19383c: 24 01 00 14  	b	0x193ccc <cam_flash_pmic_apply_setting+0x5f8>
+  193840: 1f fd 01 71  	cmp	w8, #127
+  193844: 81 0d 00 54  	b.ne	0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  193848: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x174> // debug_mdl+0x1
+  19384c: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x1
+  193850: 08 0f 20 36  	tbz	w8, #4, 0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  193854: c8 02 40 b9  	ldr	w8, [x22] // debug_priority+0x0
+  193858: c8 0e 00 35  	cbnz	w8, 0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  19385c: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x188> // '\x016%s: %s: %s: %d NOP Packet'
+  193860: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x18c> // 'CAM_DBG'
+  193864: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x190> // 'CAM-FLASH'
+  193868: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x194> // 'cam_flash_pmic_apply_setting'
+  19386c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d NOP Packet'
+  193870: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  193874: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193878: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  19387c: 60 00 80 52  	mov	w0, #3
+  193880: a5 99 80 52  	mov	w5, #1229
+  193884: 00 00 00 94  	bl	0x193884 <cam_flash_pmic_apply_setting+0x1b0> // cam_print_log+0x0
+  193888: 6a 00 00 14  	b	0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  19388c: 9f 24 03 d5  	hint	#36
+  193890: 29 00 40 39  	ldrb	w9, [x1]
+  193894: 09 0b 00 34  	cbz	w9, 0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  193898: 09 06 80 52  	mov	w9, #48
+  19389c: 89 4e 09 9b  	madd	x9, x20, x9, x19
+  1938a0: 29 49 46 f9  	ldr	x9, [x9, #3216]
+  1938a4: 3f 01 15 eb  	cmp	x9, x21
+  1938a8: 61 0a 00 54  	b.ne	0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  1938ac: 68 6a 55 b9  	ldr	w8, [x19, #5480]
+  1938b0: 1f 0d 00 71  	cmp	w8, #3
+  1938b4: e1 0b 00 54  	b.ne	0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  1938b8: 01 33 00 b4  	cbz	x1, 0x193f18 <cam_flash_pmic_apply_setting+0x844>
+  1938bc: e0 03 13 aa  	mov	x0, x19
+  1938c0: 42 00 80 52  	mov	w2, #2
+  1938c4: 00 00 00 94  	bl	0x1938c4 <cam_flash_pmic_apply_setting+0x1f0> // +0x194494
+  1938c8: 40 0b 00 34  	cbz	w0, 0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  1938cc: f4 03 00 2a  	mov	w20, w0
+  1938d0: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x1fc> // '\x016%s: %s: %s: %d Fire Torch failed: %d'
+  1938d4: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x200> // 'CAM_ERR'
+  1938d8: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x204> // 'CAM-FLASH'
+  1938dc: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x208> // 'cam_flash_low'
+  1938e0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Fire Torch failed: %d'
+  1938e4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1938e8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1938ec: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_low'
+  1938f0: 60 00 80 52  	mov	w0, #3
+  1938f4: 85 60 80 52  	mov	w5, #772
+  1938f8: e6 03 14 2a  	mov	w6, w20
+  1938fc: 00 00 00 94  	bl	0x1938fc <cam_flash_pmic_apply_setting+0x228> // cam_print_log+0x0
+  193900: 92 01 00 14  	b	0x193f48 <cam_flash_pmic_apply_setting+0x874>
+  193904: 9f 24 03 d5  	hint	#36
+  193908: 29 00 40 39  	ldrb	w9, [x1]
+  19390c: 49 07 00 34  	cbz	w9, 0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  193910: 09 06 80 52  	mov	w9, #48
+  193914: 89 4e 09 9b  	madd	x9, x20, x9, x19
+  193918: 29 49 46 f9  	ldr	x9, [x9, #3216]
+  19391c: 3f 01 15 eb  	cmp	x9, x21
+  193920: a1 06 00 54  	b.ne	0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  193924: 68 6a 55 b9  	ldr	w8, [x19, #5480]
+  193928: 1f 0d 00 71  	cmp	w8, #3
+  19392c: 21 08 00 54  	b.ne	0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  193930: 21 32 00 b4  	cbz	x1, 0x193f74 <cam_flash_pmic_apply_setting+0x8a0>
+  193934: e0 03 13 aa  	mov	x0, x19
+  193938: 62 00 80 52  	mov	w2, #3
+  19393c: 00 00 00 94  	bl	0x19393c <cam_flash_pmic_apply_setting+0x268> // +0x194494
+  193940: 80 07 00 34  	cbz	w0, 0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  193944: f4 03 00 2a  	mov	w20, w0
+  193948: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x274> // '\x016%s: %s: %s: %d Fire Flash Failed: %d'
+  19394c: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x278> // 'CAM_ERR'
+  193950: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x27c> // 'CAM-FLASH'
+  193954: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x280> // 'cam_flash_high'
+  193958: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Fire Flash Failed: %d'
+  19395c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193960: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193964: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_high'
+  193968: 60 00 80 52  	mov	w0, #3
+  19396c: e5 62 80 52  	mov	w5, #791
+  193970: e6 03 14 2a  	mov	w6, w20
+  193974: 00 00 00 94  	bl	0x193974 <cam_flash_pmic_apply_setting+0x2a0> // cam_print_log+0x0
+  193978: 8b 01 00 14  	b	0x193fa4 <cam_flash_pmic_apply_setting+0x8d0>
+  19397c: 9f 24 03 d5  	hint	#36
+  193980: 29 00 40 39  	ldrb	w9, [x1]
+  193984: 89 03 00 34  	cbz	w9, 0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  193988: 09 06 80 52  	mov	w9, #48
+  19398c: 89 4e 09 9b  	madd	x9, x20, x9, x19
+  193990: 29 49 46 f9  	ldr	x9, [x9, #3216]
+  193994: 3f 01 15 eb  	cmp	x9, x21
+  193998: e1 02 00 54  	b.ne	0x1939f4 <cam_flash_pmic_apply_setting+0x320>
+  19399c: 68 6a 55 b9  	ldr	w8, [x19, #5480]
+  1939a0: 1f 0d 00 71  	cmp	w8, #3
+  1939a4: 61 04 00 54  	b.ne	0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  1939a8: 41 31 00 b4  	cbz	x1, 0x193fd0 <cam_flash_pmic_apply_setting+0x8fc>
+  1939ac: e0 03 13 aa  	mov	x0, x19
+  1939b0: 82 00 80 52  	mov	w2, #4
+  1939b4: 00 00 00 94  	bl	0x1939b4 <cam_flash_pmic_apply_setting+0x2e0> // +0x194494
+  1939b8: c0 03 00 34  	cbz	w0, 0x193a30 <cam_flash_pmic_apply_setting+0x35c>
+  1939bc: f4 03 00 2a  	mov	w20, w0
+  1939c0: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x2ec> // '\x016%s: %s: %s: %d Fire PreciseFlash Failed: %d'
+  1939c4: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x2f0> // 'CAM_ERR'
+  1939c8: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x2f4> // 'CAM-FLASH'
+  1939cc: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x2f8> // 'cam_flash_duration'
+  1939d0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Fire PreciseFlash Failed: %d'
+  1939d4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1939d8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1939dc: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_duration'
+  1939e0: 60 00 80 52  	mov	w0, #3
+  1939e4: e5 65 80 52  	mov	w5, #815
+  1939e8: e6 03 14 2a  	mov	w6, w20
+  1939ec: 00 00 00 94  	bl	0x1939ec <cam_flash_pmic_apply_setting+0x318> // cam_print_log+0x0
+  1939f0: 84 01 00 14  	b	0x194000 <cam_flash_pmic_apply_setting+0x92c>
+  1939f4: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x320> // '\x016%s: %s: %s: %d Invalid opcode: %d req_id: %llu'
+  1939f8: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x324> // 'CAM_ERR'
+  1939fc: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x328> // 'CAM-FLASH'
+  193a00: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x32c> // 'cam_flash_pmic_apply_setting'
+  193a04: 06 1d 00 13  	sxtb	w6, w8
+  193a08: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Invalid opcode: %d req_id: %llu'
+  193a0c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193a10: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193a14: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193a18: 60 00 80 52  	mov	w0, #3
+  193a1c: 25 9a 80 52  	mov	w5, #1233
+  193a20: e7 03 15 aa  	mov	x7, x21
+  193a24: 00 00 00 94  	bl	0x193a24 <cam_flash_pmic_apply_setting+0x350> // cam_print_log+0x0
+  193a28: b4 02 80 12  	mov	w20, #-22
+  193a2c: 06 02 00 14  	b	0x194244 <cam_flash_pmic_apply_setting+0xb70>
+  193a30: e9 03 1f aa  	mov	x9, xzr
+  193a34: e8 03 1f aa  	mov	x8, xzr
+  193a38: e6 03 1f aa  	mov	x6, xzr
+  193a3c: 08 00 00 14  	b	0x193a5c <cam_flash_pmic_apply_setting+0x388>
+  193a40: 1f 01 06 eb  	cmp	x8, x6
+  193a44: 40 31 46 fa  	ccmp	x10, x6, #0, lo
+  193a48: c8 80 88 9a  	csel	x8, x6, x8, hi
+  193a4c: e6 03 0a aa  	mov	x6, x10
+  193a50: 29 c1 00 91  	add	x9, x9, #48
+  193a54: 3f 01 18 f1  	cmp	x9, #1536
+  193a58: 80 01 00 54  	b.eq	0x193a88 <cam_flash_pmic_apply_setting+0x3b4>
+  193a5c: 6b 02 09 8b  	add	x11, x19, x9
+  193a60: ea 03 06 aa  	mov	x10, x6
+  193a64: 66 49 46 f9  	ldr	x6, [x11, #3216]
+  193a68: df 00 15 eb  	cmp	x6, x21
+  193a6c: 08 ff ff 54  	b.hi	0x193a4c <cam_flash_pmic_apply_setting+0x378>
+  193a70: 6b 21 72 39  	ldrb	w11, [x11, #3208]
+  193a74: cb fe ff 34  	cbz	w11, 0x193a4c <cam_flash_pmic_apply_setting+0x378>
+  193a78: 5f 01 06 eb  	cmp	x10, x6
+  193a7c: 22 fe ff 54  	b.hs	0x193a40 <cam_flash_pmic_apply_setting+0x36c>
+  193a80: e8 03 0a aa  	mov	x8, x10
+  193a84: f3 ff ff 17  	b	0x193a50 <cam_flash_pmic_apply_setting+0x37c>
+  193a88: df 00 15 eb  	cmp	x6, x21
+  193a8c: 63 00 00 54  	b.lo	0x193a98 <cam_flash_pmic_apply_setting+0x3c4>
+  193a90: f5 03 08 aa  	mov	x21, x8
+  193a94: 48 12 00 b4  	cbz	x8, 0x193cdc <cam_flash_pmic_apply_setting+0x608>
+  193a98: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x3c4> // debug_mdl+0x1
+  193a9c: f4 03 1f 2a  	mov	w20, wzr
+  193aa0: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x1
+  193aa4: 28 3c 20 36  	tbz	w8, #4, 0x194228 <cam_flash_pmic_apply_setting+0xb54>
+  193aa8: c8 02 40 b9  	ldr	w8, [x22] // debug_priority+0x0
+  193aac: e8 3b 00 35  	cbnz	w8, 0x194228 <cam_flash_pmic_apply_setting+0xb54>
+  193ab0: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x3dc> // '\x016%s: %s: %s: %d top: %llu, del_req_id:%llu'
+  193ab4: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x3e0> // 'CAM_DBG'
+  193ab8: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x3e4> // 'CAM-FLASH'
+  193abc: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x3e8> // 'cam_flash_pmic_delete_req'
+  193ac0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d top: %llu, del_req_id:%llu'
+  193ac4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  193ac8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193acc: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_delete_req'
+  193ad0: 60 00 80 52  	mov	w0, #3
+  193ad4: 45 70 80 52  	mov	w5, #898
+  193ad8: e7 03 15 aa  	mov	x7, x21
+  193adc: 00 00 00 94  	bl	0x193adc <cam_flash_pmic_apply_setting+0x408> // cam_print_log+0x0
+  193ae0: f4 03 1f 2a  	mov	w20, wzr
+  193ae4: d1 01 00 14  	b	0x194228 <cam_flash_pmic_apply_setting+0xb54>
+  193ae8: 68 6a 55 b9  	ldr	w8, [x19, #5480]
+  193aec: 1f 0d 00 71  	cmp	w8, #3
+  193af0: e0 05 00 54  	b.eq	0x193bac <cam_flash_pmic_apply_setting+0x4d8>
+  193af4: e0 03 13 aa  	mov	x0, x19
+  193af8: 00 00 00 94  	bl	0x193af8 <cam_flash_pmic_apply_setting+0x424> // cam_flash_off+0x0
+  193afc: 80 05 00 34  	cbz	w0, 0x193bac <cam_flash_pmic_apply_setting+0x4d8>
+  193b00: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x42c> // '\x016%s: %s: %s: %d Flash off failed: %d'
+  193b04: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x430> // 'CAM_ERR'
+  193b08: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x434> // 'CAM-FLASH'
+  193b0c: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x438> // 'cam_flash_pmic_apply_setting'
+  193b10: f4 03 00 2a  	mov	w20, w0
+  193b14: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Flash off failed: %d'
+  193b18: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193b1c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193b20: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193b24: 60 00 80 52  	mov	w0, #3
+  193b28: 25 8e 80 52  	mov	w5, #1137
+  193b2c: bd 00 00 14  	b	0x193e20 <cam_flash_pmic_apply_setting+0x74c>
+  193b30: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x45c> // debug_mdl+0x3
+  193b34: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x3
+  193b38: 88 00 00 36  	tbz	w8, #0, 0x193b48 <cam_flash_pmic_apply_setting+0x474>
+  193b3c: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x468> // debug_priority+0x0
+  193b40: 08 01 40 b9  	ldr	w8, [x8] // debug_priority+0x0
+  193b44: 68 33 00 34  	cbz	w8, 0x1941b0 <cam_flash_pmic_apply_setting+0xadc>
+  193b48: c8 2a 40 39  	ldrb	w8, [x22, #10]
+  193b4c: 1f 05 00 71  	cmp	w8, #1
+  193b50: a0 0c 00 54  	b.eq	0x193ce4 <cam_flash_pmic_apply_setting+0x610>
+  193b54: 1f 09 00 71  	cmp	w8, #2
+  193b58: 41 36 00 54  	b.ne	0x194220 <cam_flash_pmic_apply_setting+0xb4c>
+  193b5c: 75 13 00 b4  	cbz	x21, 0x193dc8 <cam_flash_pmic_apply_setting+0x6f4>
+  193b60: e0 03 13 aa  	mov	x0, x19
+  193b64: e1 03 15 aa  	mov	x1, x21
+  193b68: 42 00 80 52  	mov	w2, #2
+  193b6c: 00 00 00 94  	bl	0x193b6c <cam_flash_pmic_apply_setting+0x498> // +0x194494
+  193b70: f4 03 00 2a  	mov	w20, w0
+  193b74: 80 35 00 34  	cbz	w0, 0x194224 <cam_flash_pmic_apply_setting+0xb50>
+  193b78: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x4a4> // '\x016%s: %s: %s: %d Fire Torch failed: %d'
+  193b7c: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x4a8> // 'CAM_ERR'
+  193b80: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x4ac> // 'CAM-FLASH'
+  193b84: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x4b0> // 'cam_flash_low'
+  193b88: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Fire Torch failed: %d'
+  193b8c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193b90: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193b94: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_low'
+  193b98: 60 00 80 52  	mov	w0, #3
+  193b9c: 85 60 80 52  	mov	w5, #772
+  193ba0: e6 03 14 2a  	mov	w6, w20
+  193ba4: 00 00 00 94  	bl	0x193ba4 <cam_flash_pmic_apply_setting+0x4d0> // cam_print_log+0x0
+  193ba8: 94 00 00 14  	b	0x193df8 <cam_flash_pmic_apply_setting+0x724>
+  193bac: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x4d8> // debug_mdl+0x3
+  193bb0: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x3
+  193bb4: 88 00 00 36  	tbz	w8, #0, 0x193bc4 <cam_flash_pmic_apply_setting+0x4f0>
+  193bb8: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x4e4> // debug_priority+0x0
+  193bbc: 08 01 40 b9  	ldr	w8, [x8] // debug_priority+0x0
+  193bc0: 48 31 00 34  	cbz	w8, 0x1941e8 <cam_flash_pmic_apply_setting+0xb14>
+  193bc4: 7a 42 65 79  	ldrh	w26, [x19, #4768]
+  193bc8: da 32 00 34  	cbz	w26, 0x194220 <cam_flash_pmic_apply_setting+0xb4c>
+  193bcc: 16 00 00 90  	adrp	x22, 0x193000 <cam_flash_pmic_apply_setting+0x4f8> // '\x016%s: %s: %s: %d Flash off failed: %d'
+  193bd0: 17 00 00 90  	adrp	x23, 0x193000 <cam_flash_pmic_apply_setting+0x4fc> // 'CAM_ERR'
+  193bd4: 18 00 00 90  	adrp	x24, 0x193000 <cam_flash_pmic_apply_setting+0x500> // 'CAM-FLASH'
+  193bd8: 19 00 00 90  	adrp	x25, 0x193000 <cam_flash_pmic_apply_setting+0x504> // 'cam_flash_pmic_apply_setting'
+  193bdc: 1b 7d 80 52  	mov	w27, #1000
+  193be0: 7c 00 80 52  	mov	w28, #3
+  193be4: d6 02 00 91  	add	x22, x22, #0 // '\x016%s: %s: %s: %d Flash off failed: %d'
+  193be8: f7 02 00 91  	add	x23, x23, #0 // 'CAM_ERR'
+  193bec: 18 03 00 91  	add	x24, x24, #0 // 'CAM-FLASH'
+  193bf0: 39 03 00 91  	add	x25, x25, #0 // 'cam_flash_pmic_apply_setting'
+  193bf4: 09 00 00 14  	b	0x193c18 <cam_flash_pmic_apply_setting+0x544>
+  193bf8: 68 4a 65 79  	ldrh	w8, [x19, #4772]
+  193bfc: 42 00 80 52  	mov	w2, #2
+  193c00: 7c 6a 15 b9  	str	w28, [x19, #5480]
+  193c04: 00 7d 1b 9b  	mul	x0, x8, x27
+  193c08: 01 90 01 11  	add	w1, w0, #100
+  193c0c: 00 00 00 94  	bl	0x193c0c <cam_flash_pmic_apply_setting+0x538> // usleep_range_state+0x0
+  193c10: 5a 07 00 71  	subs	w26, w26, #1
+  193c14: 80 30 00 54  	b.eq	0x194224 <cam_flash_pmic_apply_setting+0xb50>
+  193c18: 68 6a 55 b9  	ldr	w8, [x19, #5480]
+  193c1c: 1f 0d 00 71  	cmp	w8, #3
+  193c20: 81 01 00 54  	b.ne	0x193c50 <cam_flash_pmic_apply_setting+0x57c>
+  193c24: 55 10 00 b4  	cbz	x21, 0x193e2c <cam_flash_pmic_apply_setting+0x758>
+  193c28: e0 03 13 aa  	mov	x0, x19
+  193c2c: e1 03 15 aa  	mov	x1, x21
+  193c30: 42 00 80 52  	mov	w2, #2
+  193c34: 00 00 00 94  	bl	0x193c34 <cam_flash_pmic_apply_setting+0x560> // +0x194494
+  193c38: 40 11 00 35  	cbnz	w0, 0x193e60 <cam_flash_pmic_apply_setting+0x78c>
+  193c3c: 68 46 65 79  	ldrh	w8, [x19, #4770]
+  193c40: 42 00 80 52  	mov	w2, #2
+  193c44: 00 7d 1b 9b  	mul	x0, x8, x27
+  193c48: 01 90 01 11  	add	w1, w0, #100
+  193c4c: 00 00 00 94  	bl	0x193c4c <cam_flash_pmic_apply_setting+0x578> // usleep_range_state+0x0
+  193c50: e0 03 13 aa  	mov	x0, x19
+  193c54: 00 00 00 94  	bl	0x193c54 <cam_flash_pmic_apply_setting+0x580> // cam_flash_off+0x0
+  193c58: f4 03 00 2a  	mov	w20, w0
+  193c5c: e0 fc ff 34  	cbz	w0, 0x193bf8 <cam_flash_pmic_apply_setting+0x524>
+  193c60: 60 00 80 52  	mov	w0, #3
+  193c64: e1 03 16 aa  	mov	x1, x22
+  193c68: e2 03 17 aa  	mov	x2, x23
+  193c6c: e3 03 18 aa  	mov	x3, x24
+  193c70: e4 03 19 aa  	mov	x4, x25
+  193c74: 85 91 80 52  	mov	w5, #1164
+  193c78: e6 03 14 2a  	mov	w6, w20
+  193c7c: 00 00 00 94  	bl	0x193c7c <cam_flash_pmic_apply_setting+0x5a8> // cam_print_log+0x0
+  193c80: 5a 07 00 71  	subs	w26, w26, #1
+  193c84: a1 fc ff 54  	b.ne	0x193c18 <cam_flash_pmic_apply_setting+0x544>
+  193c88: 67 01 00 14  	b	0x194224 <cam_flash_pmic_apply_setting+0xb50>
+  193c8c: f4 03 1f 2a  	mov	w20, wzr
+  193c90: 1f 09 00 71  	cmp	w8, #2
+  193c94: e1 1e 00 54  	b.ne	0x194070 <cam_flash_pmic_apply_setting+0x99c>
+  193c98: 68 6a 55 b9  	ldr	w8, [x19, #5480]
+  193c9c: 1f 0d 00 71  	cmp	w8, #3
+  193ca0: a1 06 00 54  	b.ne	0x193d74 <cam_flash_pmic_apply_setting+0x6a0>
+  193ca4: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x5d0> // '\x016%s: %s: %s: %d Wrong state :Prev state: %d'
+  193ca8: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x5d4> // 'CAM_WARN'
+  193cac: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x5d8> // 'CAM-FLASH'
+  193cb0: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x5dc> // 'cam_flash_pmic_apply_setting'
+  193cb4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Wrong state :Prev state: %d'
+  193cb8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_WARN'
+  193cbc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193cc0: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193cc4: 60 00 80 52  	mov	w0, #3
+  193cc8: e5 84 80 52  	mov	w5, #1063
+  193ccc: 66 00 80 52  	mov	w6, #3
+  193cd0: 00 00 00 94  	bl	0x193cd0 <cam_flash_pmic_apply_setting+0x5fc> // cam_print_log+0x0
+  193cd4: b4 02 80 12  	mov	w20, #-22
+  193cd8: 5b 01 00 14  	b	0x194244 <cam_flash_pmic_apply_setting+0xb70>
+  193cdc: f4 03 1f 2a  	mov	w20, wzr
+  193ce0: 59 01 00 14  	b	0x194244 <cam_flash_pmic_apply_setting+0xb70>
+  193ce4: e0 03 13 aa  	mov	x0, x19
+  193ce8: 00 00 00 94  	bl	0x193ce8 <cam_flash_pmic_apply_setting+0x614> // cam_flash_off+0x0
+  193cec: f4 03 00 2a  	mov	w20, w0
+  193cf0: a0 29 00 34  	cbz	w0, 0x194224 <cam_flash_pmic_apply_setting+0xb50>
+  193cf4: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x620> // '\x016%s: %s: %s: %d LED off failed: %d'
+  193cf8: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x624> // 'CAM_ERR'
+  193cfc: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x628> // 'CAM-FLASH'
+  193d00: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x62c> // 'cam_flash_pmic_apply_setting'
+  193d04: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d LED off failed: %d'
+  193d08: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193d0c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193d10: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193d14: 60 00 80 52  	mov	w0, #3
+  193d18: e5 8c 80 52  	mov	w5, #1127
+  193d1c: 41 00 00 14  	b	0x193e20 <cam_flash_pmic_apply_setting+0x74c>
+  193d20: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x64c> // debug_mdl+0x1
+  193d24: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x1
+  193d28: 68 00 20 36  	tbz	w8, #4, 0x193d34 <cam_flash_pmic_apply_setting+0x660>
+  193d2c: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  193d30: e8 29 00 34  	cbz	w8, 0x19426c <cam_flash_pmic_apply_setting+0xb98>
+  193d34: e0 03 13 aa  	mov	x0, x19
+  193d38: 21 00 80 52  	mov	w1, #1
+  193d3c: 00 00 00 94  	bl	0x193d3c <cam_flash_pmic_apply_setting+0x668> // cam_flash_apply_setting+0x0
+  193d40: 20 0c 00 34  	cbz	w0, 0x193ec4 <cam_flash_pmic_apply_setting+0x7f0>
+  193d44: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x670> // '\x016%s: %s: %s: %d Enable Regulator Failed rc = %d'
+  193d48: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x674> // 'CAM_ERR'
+  193d4c: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x678> // 'CAM-FLASH'
+  193d50: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x67c> // 'cam_flash_pmic_apply_setting'
+  193d54: f4 03 00 2a  	mov	w20, w0
+  193d58: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Enable Regulator Failed rc = %d'
+  193d5c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193d60: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193d64: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193d68: 60 00 80 52  	mov	w0, #3
+  193d6c: 25 83 80 52  	mov	w5, #1049
+  193d70: d6 00 00 14  	b	0x1940c8 <cam_flash_pmic_apply_setting+0x9f4>
+  193d74: 08 00 00 90  	adrp	x8, 0x193000 <cam_flash_pmic_apply_setting+0x6a0> // debug_mdl+0x1
+  193d78: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x1
+  193d7c: 68 00 20 36  	tbz	w8, #4, 0x193d88 <cam_flash_pmic_apply_setting+0x6b4>
+  193d80: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  193d84: c8 2a 00 34  	cbz	w8, 0x1942dc <cam_flash_pmic_apply_setting+0xc08>
+  193d88: e0 03 13 aa  	mov	x0, x19
+  193d8c: 21 00 80 52  	mov	w1, #1
+  193d90: 00 00 00 94  	bl	0x193d90 <cam_flash_pmic_apply_setting+0x6bc> // cam_flash_apply_setting+0x0
+  193d94: c0 14 00 34  	cbz	w0, 0x19402c <cam_flash_pmic_apply_setting+0x958>
+  193d98: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x6c4> // '\x016%s: %s: %s: %d Enable Regulator Failed rc = %d'
+  193d9c: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x6c8> // 'CAM_ERR'
+  193da0: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x6cc> // 'CAM-FLASH'
+  193da4: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x6d0> // 'cam_flash_pmic_apply_setting'
+  193da8: f4 03 00 2a  	mov	w20, w0
+  193dac: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Enable Regulator Failed rc = %d'
+  193db0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193db4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193db8: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193dbc: 60 00 80 52  	mov	w0, #3
+  193dc0: 05 86 80 52  	mov	w5, #1072
+  193dc4: c1 00 00 14  	b	0x1940c8 <cam_flash_pmic_apply_setting+0x9f4>
+  193dc8: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x6f4> // '\x016%s: %s: %s: %d Flash Data Null'
+  193dcc: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x6f8> // 'CAM_ERR'
+  193dd0: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x6fc> // 'CAM-FLASH'
+  193dd4: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x700> // 'cam_flash_low'
+  193dd8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Flash Data Null'
+  193ddc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193de0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193de4: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_low'
+  193de8: 60 00 80 52  	mov	w0, #3
+  193dec: a5 5f 80 52  	mov	w5, #765
+  193df0: 00 00 00 94  	bl	0x193df0 <cam_flash_pmic_apply_setting+0x71c> // cam_print_log+0x0
+  193df4: b4 02 80 12  	mov	w20, #-22
+  193df8: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x724> // '\x016%s: %s: %s: %d Torch ON failed : %d'
+  193dfc: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x728> // 'CAM_ERR'
+  193e00: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x72c> // 'CAM-FLASH'
+  193e04: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x730> // 'cam_flash_pmic_apply_setting'
+  193e08: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Torch ON failed : %d'
+  193e0c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193e10: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193e14: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193e18: 60 00 80 52  	mov	w0, #3
+  193e1c: c5 8b 80 52  	mov	w5, #1118
+  193e20: e6 03 14 2a  	mov	w6, w20
+  193e24: 00 00 00 94  	bl	0x193e24 <cam_flash_pmic_apply_setting+0x750> // cam_print_log+0x0
+  193e28: ff 00 00 14  	b	0x194224 <cam_flash_pmic_apply_setting+0xb50>
+  193e2c: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x758> // '\x016%s: %s: %s: %d Flash Data Null'
+  193e30: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x75c> // 'CAM_ERR'
+  193e34: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x760> // 'CAM-FLASH'
+  193e38: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x764> // 'cam_flash_low'
+  193e3c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Flash Data Null'
+  193e40: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193e44: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193e48: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_low'
+  193e4c: 60 00 80 52  	mov	w0, #3
+  193e50: a5 5f 80 52  	mov	w5, #765
+  193e54: 00 00 00 94  	bl	0x193e54 <cam_flash_pmic_apply_setting+0x780> // cam_print_log+0x0
+  193e58: b4 02 80 12  	mov	w20, #-22
+  193e5c: 0e 00 00 14  	b	0x193e94 <cam_flash_pmic_apply_setting+0x7c0>
+  193e60: f4 03 00 2a  	mov	w20, w0
+  193e64: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x790> // '\x016%s: %s: %s: %d Fire Torch failed: %d'
+  193e68: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x794> // 'CAM_ERR'
+  193e6c: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x798> // 'CAM-FLASH'
+  193e70: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x79c> // 'cam_flash_low'
+  193e74: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Fire Torch failed: %d'
+  193e78: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193e7c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193e80: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_low'
+  193e84: 60 00 80 52  	mov	w0, #3
+  193e88: 85 60 80 52  	mov	w5, #772
+  193e8c: e6 03 14 2a  	mov	w6, w20
+  193e90: 00 00 00 94  	bl	0x193e90 <cam_flash_pmic_apply_setting+0x7bc> // cam_print_log+0x0
+  193e94: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x7c0> // '\x016%s: %s: %s: %d Fire Torch Failed'
+  193e98: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x7c4> // 'CAM_ERR'
+  193e9c: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x7c8> // 'CAM-FLASH'
+  193ea0: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x7cc> // 'cam_flash_pmic_apply_setting'
+  193ea4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Fire Torch Failed'
+  193ea8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193eac: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193eb0: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193eb4: 60 00 80 52  	mov	w0, #3
+  193eb8: e5 8f 80 52  	mov	w5, #1151
+  193ebc: 00 00 00 94  	bl	0x193ebc <cam_flash_pmic_apply_setting+0x7e8> // cam_print_log+0x0
+  193ec0: d9 00 00 14  	b	0x194224 <cam_flash_pmic_apply_setting+0xb50>
+  193ec4: e0 03 13 aa  	mov	x0, x19
+  193ec8: e1 03 15 aa  	mov	x1, x21
+  193ecc: 00 00 00 94  	bl	0x193ecc <cam_flash_pmic_apply_setting+0x7f8> // +0x19434c
+  193ed0: f4 03 00 2a  	mov	w20, w0
+  193ed4: a0 01 00 34  	cbz	w0, 0x193f08 <cam_flash_pmic_apply_setting+0x834>
+  193ed8: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x804> // '\x016%s: %s: %s: %d FLASH ON failed : %d'
+  193edc: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x808> // 'CAM_ERR'
+  193ee0: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x80c> // 'CAM-FLASH'
+  193ee4: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x810> // 'cam_flash_pmic_apply_setting'
+  193ee8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d FLASH ON failed : %d'
+  193eec: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193ef0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193ef4: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193ef8: 60 00 80 52  	mov	w0, #3
+  193efc: e5 83 80 52  	mov	w5, #1055
+  193f00: e6 03 14 2a  	mov	w6, w20
+  193f04: 00 00 00 94  	bl	0x193f04 <cam_flash_pmic_apply_setting+0x830> // cam_print_log+0x0
+  193f08: c8 2a 40 39  	ldrb	w8, [x22, #10]
+  193f0c: 1f 09 00 71  	cmp	w8, #2
+  193f10: 40 ec ff 54  	b.eq	0x193c98 <cam_flash_pmic_apply_setting+0x5c4>
+  193f14: 57 00 00 14  	b	0x194070 <cam_flash_pmic_apply_setting+0x99c>
+  193f18: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x844> // '\x016%s: %s: %s: %d Flash Data Null'
+  193f1c: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x848> // 'CAM_ERR'
+  193f20: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x84c> // 'CAM-FLASH'
+  193f24: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x850> // 'cam_flash_low'
+  193f28: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Flash Data Null'
+  193f2c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193f30: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193f34: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_low'
+  193f38: 60 00 80 52  	mov	w0, #3
+  193f3c: a5 5f 80 52  	mov	w5, #765
+  193f40: 00 00 00 94  	bl	0x193f40 <cam_flash_pmic_apply_setting+0x86c> // cam_print_log+0x0
+  193f44: b4 02 80 12  	mov	w20, #-22
+  193f48: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x874> // '\x016%s: %s: %s: %d Torch ON failed: rc= %d'
+  193f4c: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x878> // 'CAM_ERR'
+  193f50: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x87c> // 'CAM-FLASH'
+  193f54: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x880> // 'cam_flash_pmic_apply_setting'
+  193f58: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Torch ON failed: rc= %d'
+  193f5c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193f60: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193f64: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193f68: 60 00 80 52  	mov	w0, #3
+  193f6c: 45 96 80 52  	mov	w5, #1202
+  193f70: 56 00 00 14  	b	0x1940c8 <cam_flash_pmic_apply_setting+0x9f4>
+  193f74: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x8a0> // '\x016%s: %s: %s: %d Flash Data Null'
+  193f78: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x8a4> // 'CAM_ERR'
+  193f7c: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x8a8> // 'CAM-FLASH'
+  193f80: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x8ac> // 'cam_flash_high'
+  193f84: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Flash Data Null'
+  193f88: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193f8c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193f90: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_high'
+  193f94: 60 00 80 52  	mov	w0, #3
+  193f98: 05 62 80 52  	mov	w5, #784
+  193f9c: 00 00 00 94  	bl	0x193f9c <cam_flash_pmic_apply_setting+0x8c8> // cam_print_log+0x0
+  193fa0: b4 02 80 12  	mov	w20, #-22
+  193fa4: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x8d0> // '\x016%s: %s: %s: %d Flash ON failed: rc= %d'
+  193fa8: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x8d4> // 'CAM_ERR'
+  193fac: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x8d8> // 'CAM-FLASH'
+  193fb0: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x8dc> // 'cam_flash_pmic_apply_setting'
+  193fb4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Flash ON failed: rc= %d'
+  193fb8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193fbc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193fc0: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  193fc4: 60 00 80 52  	mov	w0, #3
+  193fc8: 85 94 80 52  	mov	w5, #1188
+  193fcc: 3f 00 00 14  	b	0x1940c8 <cam_flash_pmic_apply_setting+0x9f4>
+  193fd0: 01 00 00 90  	adrp	x1, 0x193000 <cam_flash_pmic_apply_setting+0x8fc> // '\x016%s: %s: %s: %d Flash Data NULL'
+  193fd4: 02 00 00 90  	adrp	x2, 0x193000 <cam_flash_pmic_apply_setting+0x900> // 'CAM_ERR'
+  193fd8: 03 00 00 90  	adrp	x3, 0x193000 <cam_flash_pmic_apply_setting+0x904> // 'CAM-FLASH'
+  193fdc: 04 00 00 90  	adrp	x4, 0x193000 <cam_flash_pmic_apply_setting+0x908> // 'cam_flash_duration'
+  193fe0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Flash Data NULL'
+  193fe4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  193fe8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  193fec: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_duration'
+  193ff0: 60 00 80 52  	mov	w0, #3
+  193ff4: 45 64 80 52  	mov	w5, #802
+  193ff8: 00 00 00 94  	bl	0x193ff8 <cam_flash_pmic_apply_setting+0x924> // cam_print_log+0x0
+  193ffc: b4 02 80 12  	mov	w20, #-22
+  194000: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0x92c> // '\x016%s: %s: %s: %d PreciaseFlash op failed:%d'
+  194004: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0x930> // 'CAM_ERR'
+  194008: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0x934> // 'CAM-FLASH'
+  19400c: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0x938> // 'cam_flash_pmic_apply_setting'
+  194010: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d PreciaseFlash op failed:%d'
+  194014: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  194018: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  19401c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  194020: 60 00 80 52  	mov	w0, #3
+  194024: 05 99 80 52  	mov	w5, #1224
+  194028: 28 00 00 14  	b	0x1940c8 <cam_flash_pmic_apply_setting+0x9f4>
+  19402c: e0 03 13 aa  	mov	x0, x19
+  194030: e1 03 15 aa  	mov	x1, x21
+  194034: 00 00 00 94  	bl	0x194034 <cam_flash_pmic_apply_setting+0x960> // +0x1943f0
+  194038: f4 03 00 2a  	mov	w20, w0
+  19403c: a0 01 00 34  	cbz	w0, 0x194070 <cam_flash_pmic_apply_setting+0x99c>
+  194040: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0x96c> // '\x016%s: %s: %s: %d TORCH ON failed : %d'
+  194044: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0x970> // 'CAM_ERR'
+  194048: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0x974> // 'CAM-FLASH'
+  19404c: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0x978> // 'cam_flash_pmic_apply_setting'
+  194050: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d TORCH ON failed : %d'
+  194054: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  194058: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  19405c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  194060: 60 00 80 52  	mov	w0, #3
+  194064: c5 86 80 52  	mov	w5, #1078
+  194068: e6 03 14 2a  	mov	w6, w20
+  19406c: 00 00 00 94  	bl	0x19406c <cam_flash_pmic_apply_setting+0x998> // cam_print_log+0x0
+  194070: c8 2a 40 39  	ldrb	w8, [x22, #10]
+  194074: 1f 05 00 71  	cmp	w8, #1
+  194078: 61 0d 00 54  	b.ne	0x194224 <cam_flash_pmic_apply_setting+0xb50>
+  19407c: 15 00 00 90  	adrp	x21, 0x194000 <cam_flash_pmic_apply_setting+0x9a8> // debug_mdl+0x1
+  194080: a8 02 40 39  	ldrb	w8, [x21] // debug_mdl+0x1
+  194084: 68 00 20 36  	tbz	w8, #4, 0x194090 <cam_flash_pmic_apply_setting+0x9bc>
+  194088: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  19408c: c8 10 00 34  	cbz	w8, 0x1942a4 <cam_flash_pmic_apply_setting+0xbd0>
+  194090: e0 03 13 aa  	mov	x0, x19
+  194094: 00 00 00 94  	bl	0x194094 <cam_flash_pmic_apply_setting+0x9c0> // cam_flash_off+0x0
+  194098: e0 01 00 34  	cbz	w0, 0x1940d4 <cam_flash_pmic_apply_setting+0xa00>
+  19409c: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0x9c8> // '\x016%s: %s: %s: %d LED OFF FAILED: %d'
+  1940a0: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0x9cc> // 'CAM_ERR'
+  1940a4: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0x9d0> // 'CAM-FLASH'
+  1940a8: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0x9d4> // 'cam_flash_pmic_apply_setting'
+  1940ac: f4 03 00 2a  	mov	w20, w0
+  1940b0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d LED OFF FAILED: %d'
+  1940b4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1940b8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1940bc: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  1940c0: 60 00 80 52  	mov	w0, #3
+  1940c4: 25 88 80 52  	mov	w5, #1089
+  1940c8: e6 03 14 2a  	mov	w6, w20
+  1940cc: 00 00 00 94  	bl	0x1940cc <cam_flash_pmic_apply_setting+0x9f8> // cam_print_log+0x0
+  1940d0: 5d 00 00 14  	b	0x194244 <cam_flash_pmic_apply_setting+0xb70>
+  1940d4: 68 6a 55 b9  	ldr	w8, [x19, #5480]
+  1940d8: 1f 0d 00 71  	cmp	w8, #3
+  1940dc: 21 0a 00 54  	b.ne	0x194220 <cam_flash_pmic_apply_setting+0xb4c>
+  1940e0: c8 46 4b 39  	ldrb	w8, [x22, #721]
+  1940e4: e8 09 00 34  	cbz	w8, 0x194220 <cam_flash_pmic_apply_setting+0xb4c>
+  1940e8: a8 02 40 39  	ldrb	w8, [x21] // debug_mdl+0x1
+  1940ec: 68 00 20 36  	tbz	w8, #4, 0x1940f8 <cam_flash_pmic_apply_setting+0xa24>
+  1940f0: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  1940f4: 08 11 00 34  	cbz	w8, 0x194314 <cam_flash_pmic_apply_setting+0xc40>
+  1940f8: e0 03 13 aa  	mov	x0, x19
+  1940fc: e1 03 1f 2a  	mov	w1, wzr
+  194100: 00 00 00 94  	bl	0x194100 <cam_flash_pmic_apply_setting+0xa2c> // cam_flash_apply_setting+0x0
+  194104: f4 03 00 2a  	mov	w20, w0
+  194108: e0 08 00 34  	cbz	w0, 0x194224 <cam_flash_pmic_apply_setting+0xb50>
+  19410c: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xa38> // '\x016%s: %s: %s: %d Disable Regulator failed: %d'
+  194110: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xa3c> // 'CAM_ERR'
+  194114: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xa40> // 'CAM-FLASH'
+  194118: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xa44> // 'cam_flash_pmic_apply_setting'
+  19411c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Disable Regulator failed: %d'
+  194120: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  194124: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  194128: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  19412c: 60 00 80 52  	mov	w0, #3
+  194130: c5 89 80 52  	mov	w5, #1102
+  194134: 3b ff ff 17  	b	0x193e20 <cam_flash_pmic_apply_setting+0x74c>
+  194138: 08 06 80 52  	mov	w8, #48
+  19413c: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xa68> // '\x016%s: %s: %s: %d FLASH_RT req_id: %u flash_opcode: %d'
+  194140: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xa6c> // 'CAM_DBG'
+  194144: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xa70> // 'CAM-REQ'
+  194148: 88 4e 08 9b  	madd	x8, x20, x8, x19
+  19414c: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xa78> // 'cam_flash_pmic_apply_setting'
+  194150: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d FLASH_RT req_id: %u flash_opcode: %d'
+  194154: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  194158: 63 00 00 91  	add	x3, x3, #0 // 'CAM-REQ'
+  19415c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  194160: 60 00 80 52  	mov	w0, #3
+  194164: 25 93 80 52  	mov	w5, #1177
+  194168: 07 99 f2 39  	ldrsb	w7, [x8, #3238]
+  19416c: e6 03 15 aa  	mov	x6, x21
+  194170: 00 00 00 94  	bl	0x194170 <cam_flash_pmic_apply_setting+0xa9c> // cam_print_log+0x0
+  194174: 6b fd ff 17  	b	0x193720 <cam_flash_pmic_apply_setting+0x4c>
+  194178: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xaa4> // '\x016%s: %s: %s: %d FLASH_INIT_FIRE req_id: %u flash_opcode: %d'
+  19417c: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xaa8> // 'CAM_DBG'
+  194180: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xaac> // 'CAM-REQ'
+  194184: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xab0> // 'cam_flash_pmic_apply_setting'
+  194188: c7 2a c0 39  	ldrsb	w7, [x22, #10]
+  19418c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d FLASH_INIT_FIRE req_id: %u flash_opcode: %d'
+  194190: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  194194: 63 00 00 91  	add	x3, x3, #0 // 'CAM-REQ'
+  194198: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  19419c: 60 00 80 52  	mov	w0, #3
+  1941a0: e5 80 80 52  	mov	w5, #1031
+  1941a4: e6 03 1f aa  	mov	x6, xzr
+  1941a8: 00 00 00 94  	bl	0x1941a8 <cam_flash_pmic_apply_setting+0xad4> // cam_print_log+0x0
+  1941ac: 94 fd ff 17  	b	0x1937fc <cam_flash_pmic_apply_setting+0x128>
+  1941b0: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xadc> // '\x016%s: %s: %s: %d FLASH_WIDGET req_id: %u flash_opcode: %d'
+  1941b4: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xae0> // 'CAM_DBG'
+  1941b8: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xae4> // 'CAM-REQ'
+  1941bc: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xae8> // 'cam_flash_pmic_apply_setting'
+  1941c0: c7 2a c0 39  	ldrsb	w7, [x22, #10]
+  1941c4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d FLASH_WIDGET req_id: %u flash_opcode: %d'
+  1941c8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  1941cc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-REQ'
+  1941d0: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  1941d4: 60 00 80 52  	mov	w0, #3
+  1941d8: c5 8a 80 52  	mov	w5, #1110
+  1941dc: e6 03 1f aa  	mov	x6, xzr
+  1941e0: 00 00 00 94  	bl	0x1941e0 <cam_flash_pmic_apply_setting+0xb0c> // cam_print_log+0x0
+  1941e4: 59 fe ff 17  	b	0x193b48 <cam_flash_pmic_apply_setting+0x474>
+  1941e8: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xb14> // '\x016%s: %s: %s: %d FLASH_RER req_id: %u'
+  1941ec: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xb18> // 'CAM_DBG'
+  1941f0: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xb1c> // 'CAM-REQ'
+  1941f4: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xb20> // 'cam_flash_pmic_apply_setting'
+  1941f8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d FLASH_RER req_id: %u'
+  1941fc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  194200: 63 00 00 91  	add	x3, x3, #0 // 'CAM-REQ'
+  194204: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  194208: 60 00 80 52  	mov	w0, #3
+  19420c: a5 8e 80 52  	mov	w5, #1141
+  194210: e6 03 1f aa  	mov	x6, xzr
+  194214: 00 00 00 94  	bl	0x194214 <cam_flash_pmic_apply_setting+0xb40> // cam_print_log+0x0
+  194218: 7a 42 65 79  	ldrh	w26, [x19, #4768]
+  19421c: 9a cd ff 35  	cbnz	w26, 0x193bcc <cam_flash_pmic_apply_setting+0x4f8>
+  194220: f4 03 1f 2a  	mov	w20, wzr
+  194224: f5 03 1f aa  	mov	x21, xzr
+  194228: a8 12 40 92  	and	x8, x21, #0x1f
+  19422c: 09 06 80 52  	mov	w9, #48
+  194230: 08 4d 09 9b  	madd	x8, x8, x9, x19
+  194234: 1f 49 06 f9  	str	xzr, [x8, #3216]
+  194238: 1f 21 32 39  	strb	wzr, [x8, #3208]
+  19423c: 1f 99 0c b9  	str	wzr, [x8, #3224]
+  194240: 1f 55 06 f9  	str	xzr, [x8, #3240]
+  194244: e0 03 14 2a  	mov	w0, w20
+  194248: f4 4f 45 a9  	ldp	x20, x19, [sp, #80]
+  19424c: f6 57 44 a9  	ldp	x22, x21, [sp, #64]
+  194250: f8 5f 43 a9  	ldp	x24, x23, [sp, #48]
+  194254: fa 67 42 a9  	ldp	x26, x25, [sp, #32]
+  194258: fc 6f 41 a9  	ldp	x28, x27, [sp, #16]
+  19425c: fd 7b c6 a8  	ldp	x29, x30, [sp], #96
+  194260: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  194264: bf 23 03 d5  	hint	#29
+  194268: c0 03 5f d6  	ret
+  19426c: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xb98> // '\x016%s: %s: %s: %d Enable Regulator here, flash_opcoe %d, is_regulator_enabled %d'
+  194270: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xb9c> // 'CAM_DBG'
+  194274: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xba0> // 'CAM-FLASH'
+  194278: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xba4> // 'cam_flash_pmic_apply_setting'
+  19427c: c7 46 4b 39  	ldrb	w7, [x22, #721]
+  194280: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Enable Regulator here, flash_opcoe %d, is_regulator_enabled %d'
+  194284: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  194288: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  19428c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  194290: 60 00 80 52  	mov	w0, #3
+  194294: 85 82 80 52  	mov	w5, #1044
+  194298: 66 00 80 52  	mov	w6, #3
+  19429c: 00 00 00 94  	bl	0x19429c <cam_flash_pmic_apply_setting+0xbc8> // cam_print_log+0x0
+  1942a0: a5 fe ff 17  	b	0x193d34 <cam_flash_pmic_apply_setting+0x660>
+  1942a4: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xbd0> // '\x016%s: %s: %s: %d Ready to Turn-off Flash here, fglash_opcode %d, is_regulator_enabled %d'
+  1942a8: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xbd4> // 'CAM_DBG'
+  1942ac: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xbd8> // 'CAM-FLASH'
+  1942b0: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xbdc> // 'cam_flash_pmic_apply_setting'
+  1942b4: c7 46 4b 39  	ldrb	w7, [x22, #721]
+  1942b8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Ready to Turn-off Flash here, fglash_opcode %d, is_regulator_enabled %d'
+  1942bc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  1942c0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1942c4: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  1942c8: 60 00 80 52  	mov	w0, #3
+  1942cc: 85 87 80 52  	mov	w5, #1084
+  1942d0: 26 00 80 52  	mov	w6, #1
+  1942d4: 00 00 00 94  	bl	0x1942d4 <cam_flash_pmic_apply_setting+0xc00> // cam_print_log+0x0
+  1942d8: 6e ff ff 17  	b	0x194090 <cam_flash_pmic_apply_setting+0x9bc>
+  1942dc: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xc08> // '\x016%s: %s: %s: %d Enable Regulator here, flash_opcoe %d, is_regulator_enabled %d'
+  1942e0: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xc0c> // 'CAM_DBG'
+  1942e4: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xc10> // 'CAM-FLASH'
+  1942e8: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xc14> // 'cam_flash_pmic_apply_setting'
+  1942ec: c7 46 4b 39  	ldrb	w7, [x22, #721]
+  1942f0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Enable Regulator here, flash_opcoe %d, is_regulator_enabled %d'
+  1942f4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  1942f8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1942fc: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  194300: 60 00 80 52  	mov	w0, #3
+  194304: 85 85 80 52  	mov	w5, #1068
+  194308: 46 00 80 52  	mov	w6, #2
+  19430c: 00 00 00 94  	bl	0x19430c <cam_flash_pmic_apply_setting+0xc38> // cam_print_log+0x0
+  194310: 9e fe ff 17  	b	0x193d88 <cam_flash_pmic_apply_setting+0x6b4>
+  194314: 01 00 00 90  	adrp	x1, 0x194000 <cam_flash_pmic_apply_setting+0xc40> // '\x016%s: %s: %s: %d Disable Regulator here, f-lash_opcode %d, is_regulator_enabled %d'
+  194318: 02 00 00 90  	adrp	x2, 0x194000 <cam_flash_pmic_apply_setting+0xc44> // 'CAM_DBG'
+  19431c: 03 00 00 90  	adrp	x3, 0x194000 <cam_flash_pmic_apply_setting+0xc48> // 'CAM-FLASH'
+  194320: 04 00 00 90  	adrp	x4, 0x194000 <cam_flash_pmic_apply_setting+0xc4c> // 'cam_flash_pmic_apply_setting'
+  194324: c6 2a c0 39  	ldrsb	w6, [x22, #10]
+  194328: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Disable Regulator here, f-lash_opcode %d, is_regulator_enabled %d'
+  19432c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  194330: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  194334: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_pmic_apply_setting'
+  194338: 60 00 80 52  	mov	w0, #3
+  19433c: 25 89 80 52  	mov	w5, #1097
+  194340: 27 00 80 52  	mov	w7, #1
+  194344: 00 00 00 94  	bl	0x194344 <cam_flash_pmic_apply_setting+0xc70> // cam_print_log+0x0
+  194348: 6c ff ff 17  	b	0x1940f8 <cam_flash_pmic_apply_setting+0xa24>

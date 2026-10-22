@@ -1,0 +1,200 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000175ac0 <ois_cali_show>:
+  175ac0: 3f 23 03 d5  	hint	#25
+  175ac4: 5e 86 00 f8  	str	x30, [x18], #8
+  175ac8: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+  175acc: f5 0b 00 f9  	str	x21, [sp, #16]
+  175ad0: fd 03 00 91  	mov	x29, sp
+  175ad4: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  175ad8: 08 00 00 90  	adrp	x8, 0x175000 <ois_cali_show+0x18> // debug_mdl+0x2
+  175adc: f3 03 02 aa  	mov	x19, x2
+  175ae0: 14 4c 40 f9  	ldr	x20, [x0, #152]
+  175ae4: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x2
+  175ae8: 88 00 20 36  	tbz	w8, #4, 0x175af8 <ois_cali_show+0x38>
+  175aec: 08 00 00 90  	adrp	x8, 0x175000 <ois_cali_show+0x2c> // debug_priority+0x0
+  175af0: 08 01 40 b9  	ldr	w8, [x8] // debug_priority+0x0
+  175af4: 08 07 00 34  	cbz	w8, 0x175bd4 <ois_cali_show+0x114>
+  175af8: 94 08 00 b4  	cbz	x20, 0x175c08 <ois_cali_show+0x148>
+  175afc: 9f fe 3f b1  	cmn	x20, #4095
+  175b00: 42 08 00 54  	b.hs	0x175c08 <ois_cali_show+0x148>
+  175b04: 20 40 80 52  	mov	w0, #513
+  175b08: 00 00 00 94  	bl	0x175b08 <ois_cali_show+0x48> // vzalloc+0x0
+  175b0c: 15 00 00 90  	adrp	x21, 0x175000 <ois_cali_show+0x4c> // cali_exec_result+0x0
+  175b10: c0 01 00 b4  	cbz	x0, 0x175b48 <ois_cali_show+0x88>
+  175b14: f4 03 00 aa  	mov	x20, x0
+  175b18: 00 00 00 90  	adrp	x0, 0x175000 <ois_cali_show+0x58> // 'camera'
+  175b1c: 02 00 9d 52  	mov	w2, #59392
+  175b20: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  175b24: e1 03 1f 2a  	mov	w1, wzr
+  175b28: 62 00 a0 72  	movk	w2, #3, lsl #16
+  175b2c: e3 03 14 aa  	mov	x3, x20
+  175b30: 04 40 80 52  	mov	w4, #512
+  175b34: 00 00 00 94  	bl	0x175b34 <ois_cali_show+0x74> // sd_partition_rw+0x0
+  175b38: 88 b2 40 39  	ldrb	w8, [x20, #44]
+  175b3c: e0 03 14 aa  	mov	x0, x20
+  175b40: a8 02 00 b9  	str	w8, [x21] // cali_exec_result+0x0
+  175b44: 00 00 00 94  	bl	0x175b44 <ois_cali_show+0x84> // vfree+0x0
+  175b48: 04 00 00 90  	adrp	x4, 0x175000 <ois_cali_show+0x88> // 'meizu_ois_cali_check'
+  175b4c: 01 00 00 90  	adrp	x1, 0x175000 <ois_cali_show+0x8c> // '\x016%s: %s: %s: %d %s(), cali_exec_result: %d\n'
+  175b50: 02 00 00 90  	adrp	x2, 0x175000 <ois_cali_show+0x90> // 'CAM_INFO'
+  175b54: 03 00 00 90  	adrp	x3, 0x175000 <ois_cali_show+0x94> // 'CAM-OIS'
+  175b58: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_cali_check'
+  175b5c: a7 02 40 b9  	ldr	w7, [x21] // cali_exec_result+0x0
+  175b60: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s(), cali_exec_result: %d\n'
+  175b64: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  175b68: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  175b6c: 60 00 80 52  	mov	w0, #3
+  175b70: 45 09 80 52  	mov	w5, #74
+  175b74: e6 03 04 aa  	mov	x6, x4
+  175b78: 00 00 00 94  	bl	0x175b78 <ois_cali_show+0xb8> // cam_print_log+0x0
+  175b7c: b4 02 40 b9  	ldr	w20, [x21] // cali_exec_result+0x0
+  175b80: d4 01 00 34  	cbz	w20, 0x175bb8 <ois_cali_show+0xf8>
+  175b84: 04 00 00 90  	adrp	x4, 0x175000 <ois_cali_show+0xc4> // 'ois_cali_show'
+  175b88: 01 00 00 90  	adrp	x1, 0x175000 <ois_cali_show+0xc8> // '\x016%s: %s: %s: %d %s(), check cali falid:%d\n'
+  175b8c: 02 00 00 90  	adrp	x2, 0x175000 <ois_cali_show+0xcc> // 'CAM_ERR'
+  175b90: 03 00 00 90  	adrp	x3, 0x175000 <ois_cali_show+0xd0> // 'CAM-OIS'
+  175b94: 84 00 00 91  	add	x4, x4, #0 // 'ois_cali_show'
+  175b98: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s(), check cali falid:%d\n'
+  175b9c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  175ba0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  175ba4: 60 00 80 52  	mov	w0, #3
+  175ba8: 85 99 80 52  	mov	w5, #1228
+  175bac: e6 03 04 aa  	mov	x6, x4
+  175bb0: e7 03 14 2a  	mov	w7, w20
+  175bb4: 00 00 00 94  	bl	0x175bb4 <ois_cali_show+0xf4> // cam_print_log+0x0
+  175bb8: 01 00 00 90  	adrp	x1, 0x175000 <ois_cali_show+0xf8> // '%d\n'
+  175bbc: e0 03 13 aa  	mov	x0, x19
+  175bc0: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  175bc4: e2 03 14 2a  	mov	w2, w20
+  175bc8: 00 00 00 94  	bl	0x175bc8 <ois_cali_show+0x108> // sprintf+0x0
+  175bcc: 00 7c 40 93  	sxtw	x0, w0
+  175bd0: 1b 00 00 14  	b	0x175c3c <ois_cali_show+0x17c>
+  175bd4: 01 00 00 90  	adrp	x1, 0x175000 <ois_cali_show+0x114> // '\x016%s: %s: %s: %d instance struct msm_ois_ctrl_t: 0x%p\n'
+  175bd8: 02 00 00 90  	adrp	x2, 0x175000 <ois_cali_show+0x118> // 'CAM_DBG'
+  175bdc: 03 00 00 90  	adrp	x3, 0x175000 <ois_cali_show+0x11c> // 'CAM-OIS'
+  175be0: 04 00 00 90  	adrp	x4, 0x175000 <ois_cali_show+0x120> // 'ois_cali_show'
+  175be4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d instance struct msm_ois_ctrl_t: 0x%p\n'
+  175be8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  175bec: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  175bf0: 84 00 00 91  	add	x4, x4, #0 // 'ois_cali_show'
+  175bf4: 60 00 80 52  	mov	w0, #3
+  175bf8: 85 98 80 52  	mov	w5, #1220
+  175bfc: e6 03 14 aa  	mov	x6, x20
+  175c00: 00 00 00 94  	bl	0x175c00 <ois_cali_show+0x140> // cam_print_log+0x0
+  175c04: d4 f7 ff b5  	cbnz	x20, 0x175afc <ois_cali_show+0x3c>
+  175c08: 01 00 00 90  	adrp	x1, 0x175000 <ois_cali_show+0x148> // '\x016%s: %s: %s: %d o_ctrl: 0x%p is err!\n'
+  175c0c: 02 00 00 90  	adrp	x2, 0x175000 <ois_cali_show+0x14c> // 'CAM_ERR'
+  175c10: 03 00 00 90  	adrp	x3, 0x175000 <ois_cali_show+0x150> // 'CAM-OIS'
+  175c14: 04 00 00 90  	adrp	x4, 0x175000 <ois_cali_show+0x154> // 'ois_cali_show'
+  175c18: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d o_ctrl: 0x%p is err!\n'
+  175c1c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  175c20: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  175c24: 84 00 00 91  	add	x4, x4, #0 // 'ois_cali_show'
+  175c28: 60 00 80 52  	mov	w0, #3
+  175c2c: c5 98 80 52  	mov	w5, #1222
+  175c30: e6 03 14 aa  	mov	x6, x20
+  175c34: 00 00 00 94  	bl	0x175c34 <ois_cali_show+0x174> // cam_print_log+0x0
+  175c38: a0 02 80 92  	mov	x0, #-22
+  175c3c: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  175c40: f5 0b 40 f9  	ldr	x21, [sp, #16]
+  175c44: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+  175c48: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  175c4c: bf 23 03 d5  	hint	#29
+  175c50: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000017679c <ois_cali_data_show>:
+  17679c: 3f 23 03 d5  	hint	#25
+  1767a0: 5e 86 00 f8  	str	x30, [x18], #8
+  1767a4: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  1767a8: f3 0b 00 f9  	str	x19, [sp, #16]
+  1767ac: fd 03 00 91  	mov	x29, sp
+  1767b0: 08 00 00 90  	adrp	x8, 0x176000 <ois_cali_data_show+0x14> // debug_mdl+0x2
+  1767b4: f3 03 02 aa  	mov	x19, x2
+  1767b8: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x2
+  1767bc: 88 00 20 36  	tbz	w8, #4, 0x1767cc <ois_cali_data_show+0x30>
+  1767c0: 08 00 00 90  	adrp	x8, 0x176000 <ois_cali_data_show+0x24> // debug_priority+0x0
+  1767c4: 08 01 40 b9  	ldr	w8, [x8] // debug_priority+0x0
+  1767c8: a8 01 00 34  	cbz	w8, 0x1767fc <ois_cali_data_show+0x60>
+  1767cc: 08 00 00 90  	adrp	x8, 0x176000 <ois_cali_data_show+0x30> // eeprom_result+0x0
+  1767d0: 01 00 00 90  	adrp	x1, 0x176000 <ois_cali_data_show+0x34> // '%d\n'
+  1767d4: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  1767d8: e0 03 13 aa  	mov	x0, x19
+  1767dc: 02 01 40 b9  	ldr	w2, [x8] // eeprom_result+0x0
+  1767e0: 00 00 00 94  	bl	0x1767e0 <ois_cali_data_show+0x44> // sprintf+0x0
+  1767e4: f3 0b 40 f9  	ldr	x19, [sp, #16]
+  1767e8: 00 7c 40 93  	sxtw	x0, w0
+  1767ec: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  1767f0: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1767f4: bf 23 03 d5  	hint	#29
+  1767f8: c0 03 5f d6  	ret
+  1767fc: 08 00 00 90  	adrp	x8, 0x176000 <ois_cali_data_show+0x60> // gyro_cali_result_x+0x0
+  176800: 09 00 00 90  	adrp	x9, 0x176000 <ois_cali_data_show+0x64> // gyro_cali_result_y+0x0
+  176804: 01 00 00 90  	adrp	x1, 0x176000 <ois_cali_data_show+0x68> // '\x016%s: %s: %s: %d GX_OFS 0x%04x, GY_OFS: 0x%04x\n'
+  176808: 02 00 00 90  	adrp	x2, 0x176000 <ois_cali_data_show+0x6c> // 'CAM_DBG'
+  17680c: 03 00 00 90  	adrp	x3, 0x176000 <ois_cali_data_show+0x70> // 'CAM-OIS'
+  176810: 04 00 00 90  	adrp	x4, 0x176000 <ois_cali_data_show+0x74> // 'ois_cali_data_show'
+  176814: 06 01 c0 79  	ldrsh	w6, [x8] // gyro_cali_result_x+0x0
+  176818: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d GX_OFS 0x%04x, GY_OFS: 0x%04x\n'
+  17681c: 27 01 c0 79  	ldrsh	w7, [x9] // gyro_cali_result_y+0x0
+  176820: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  176824: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  176828: 84 00 00 91  	add	x4, x4, #0 // 'ois_cali_data_show'
+  17682c: 60 00 80 52  	mov	w0, #3
+  176830: 05 25 80 52  	mov	w5, #296
+  176834: 00 00 00 94  	bl	0x176834 <ois_cali_data_show+0x98> // cam_print_log+0x0
+  176838: e5 ff ff 17  	b	0x1767cc <ois_cali_data_show+0x30>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000017683c <ois_cali_data_store>:
+  17683c: 3f 23 03 d5  	hint	#25
+  176840: ff c3 00 d1  	sub	sp, sp, #48
+  176844: 5e 86 00 f8  	str	x30, [x18], #8
+  176848: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  17684c: fd 43 00 91  	add	x29, sp, #16
+  176850: f3 13 00 f9  	str	x19, [sp, #32]
+  176854: 08 41 38 d5  	mrs	x8, SP_EL0
+  176858: f3 03 02 aa  	mov	x19, x2
+  17685c: 01 00 00 90  	adrp	x1, 0x176000 <ois_cali_data_store+0x20> // '%d\n'
+  176860: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  176864: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  176868: e2 13 00 91  	add	x2, sp, #4
+  17686c: e0 03 13 aa  	mov	x0, x19
+  176870: e8 07 00 f9  	str	x8, [sp, #8]
+  176874: ff 07 00 b9  	str	wzr, [sp, #4]
+  176878: 00 00 00 94  	bl	0x176878 <ois_cali_data_store+0x3c> // sscanf+0x0
+  17687c: 01 00 00 90  	adrp	x1, 0x176000 <ois_cali_data_store+0x40> // '\x016%s: %s: %s: %d input %s err!'
+  176880: 02 00 00 90  	adrp	x2, 0x176000 <ois_cali_data_store+0x44> // 'CAM_ERR'
+  176884: 03 00 00 90  	adrp	x3, 0x176000 <ois_cali_data_store+0x48> // 'CAM-OIS'
+  176888: 04 00 00 90  	adrp	x4, 0x176000 <ois_cali_data_store+0x4c> // 'ois_cali_data_store'
+  17688c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d input %s err!'
+  176890: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  176894: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  176898: 84 00 00 91  	add	x4, x4, #0 // 'ois_cali_data_store'
+  17689c: 60 00 80 52  	mov	w0, #3
+  1768a0: 85 27 80 52  	mov	w5, #316
+  1768a4: e6 03 13 aa  	mov	x6, x19
+  1768a8: 00 00 00 94  	bl	0x1768a8 <ois_cali_data_store+0x6c> // cam_print_log+0x0
+  1768ac: 08 41 38 d5  	mrs	x8, SP_EL0
+  1768b0: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  1768b4: e9 07 40 f9  	ldr	x9, [sp, #8]
+  1768b8: 1f 01 09 eb  	cmp	x8, x9
+  1768bc: 01 01 00 54  	b.ne	0x1768dc <ois_cali_data_store+0xa0>
+  1768c0: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  1768c4: a0 02 80 92  	mov	x0, #-22
+  1768c8: f3 13 40 f9  	ldr	x19, [sp, #32]
+  1768cc: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1768d0: ff c3 00 91  	add	sp, sp, #48
+  1768d4: bf 23 03 d5  	hint	#29
+  1768d8: c0 03 5f d6  	ret
+  1768dc: 00 00 00 94  	bl	0x1768dc <ois_cali_data_store+0xa0> // __stack_chk_fail+0x0

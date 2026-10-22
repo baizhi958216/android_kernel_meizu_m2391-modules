@@ -1,0 +1,433 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000198c38 <cam_flash_component_bind>:
+  198c38: 3f 23 03 d5  	hint	#25
+  198c3c: 5e 86 00 f8  	str	x30, [x18], #8
+  198c40: fd 7b ba a9  	stp	x29, x30, [sp, #-96]!
+  198c44: fb 0b 00 f9  	str	x27, [sp, #16]
+  198c48: fd 03 00 91  	mov	x29, sp
+  198c4c: fa 67 02 a9  	stp	x26, x25, [sp, #32]
+  198c50: f8 5f 03 a9  	stp	x24, x23, [sp, #48]
+  198c54: f6 57 04 a9  	stp	x22, x21, [sp, #64]
+  198c58: f4 4f 05 a9  	stp	x20, x19, [sp, #80]
+  198c5c: 1a 00 00 90  	adrp	x26, 0x198000 <cam_flash_component_bind+0x24> // debug_mdl+0x1
+  198c60: 1b 40 00 d1  	sub	x27, x0, #16
+  198c64: 17 00 00 90  	adrp	x23, 0x198000 <cam_flash_component_bind+0x2c> // debug_priority+0x0
+  198c68: 48 03 40 39  	ldrb	w8, [x26] // debug_mdl+0x1
+  198c6c: 68 00 20 36  	tbz	w8, #4, 0x198c78 <cam_flash_component_bind+0x40>
+  198c70: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  198c74: 88 24 00 34  	cbz	w8, 0x199104 <cam_flash_component_bind+0x4cc>
+  198c78: 60 83 41 f9  	ldr	x0, [x27, #768]
+  198c7c: e0 25 00 b4  	cbz	x0, 0x199138 <cam_flash_component_bind+0x500>
+  198c80: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0x48> // 'i3c-i2c-target'
+  198c84: e2 03 1f aa  	mov	x2, xzr
+  198c88: 21 00 00 91  	add	x1, x1, #0 // 'i3c-i2c-target'
+  198c8c: 00 00 00 94  	bl	0x198c8c <cam_flash_component_bind+0x54> // of_find_property+0x0
+  198c90: 60 00 00 b4  	cbz	x0, 0x198c9c <cam_flash_component_bind+0x64>
+  198c94: f6 03 1f 2a  	mov	w22, wzr
+  198c98: 34 01 00 14  	b	0x199168 <cam_flash_component_bind+0x530>
+  198c9c: 08 00 00 90  	adrp	x8, 0x198000 <cam_flash_component_bind+0x64> // kmalloc_caches+0x68
+  198ca0: 01 b8 81 52  	mov	w1, #3520
+  198ca4: 02 ea 82 52  	mov	w2, #5968
+  198ca8: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x68
+  198cac: 00 00 00 94  	bl	0x198cac <cam_flash_component_bind+0x74> // kmem_cache_alloc_trace+0x0
+  198cb0: c0 03 00 b4  	cbz	x0, 0x198d28 <cam_flash_component_bind+0xf0>
+  198cb4: f5 03 00 aa  	mov	x21, x0
+  198cb8: 68 83 41 f9  	ldr	x8, [x27, #768]
+  198cbc: 74 43 00 91  	add	x20, x27, #16
+  198cc0: 69 03 40 f9  	ldr	x9, [x27]
+  198cc4: f3 03 00 aa  	mov	x19, x0
+  198cc8: 1b 14 06 f9  	str	x27, [x0, #3112]
+  198ccc: bb 8e 01 f8  	str	x27, [x21, #24]!
+  198cd0: e1 03 15 aa  	mov	x1, x21
+  198cd4: 08 5c 09 f9  	str	x8, [x0, #4792]
+  198cd8: 14 10 00 f9  	str	x20, [x0, #32]
+  198cdc: 09 18 00 f9  	str	x9, [x0, #48]
+  198ce0: 60 57 00 f9  	str	x0, [x27, #168]
+  198ce4: 00 00 00 94  	bl	0x198ce4 <cam_flash_component_bind+0xac> // cam_flash_get_dt_data+0x0
+  198ce8: 40 02 00 34  	cbz	w0, 0x198d30 <cam_flash_component_bind+0xf8>
+  198cec: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0xb4> // '\x016%s: %s: %s: %d cam_flash_get_dt_data failed with %d'
+  198cf0: 02 00 00 90  	adrp	x2, 0x198000 <cam_flash_component_bind+0xb8> // 'CAM_ERR'
+  198cf4: 03 00 00 90  	adrp	x3, 0x198000 <cam_flash_component_bind+0xbc> // 'CAM-FLASH'
+  198cf8: 04 00 00 90  	adrp	x4, 0x198000 <cam_flash_component_bind+0xc0> // 'cam_flash_component_bind'
+  198cfc: e6 03 00 2a  	mov	w6, w0
+  198d00: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d cam_flash_get_dt_data failed with %d'
+  198d04: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  198d08: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  198d0c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  198d10: 60 00 80 52  	mov	w0, #3
+  198d14: 65 92 80 52  	mov	w5, #1171
+  198d18: 00 00 00 94  	bl	0x198d18 <cam_flash_component_bind+0xe0> // cam_print_log+0x0
+  198d1c: e0 03 13 aa  	mov	x0, x19
+  198d20: 00 00 00 94  	bl	0x198d20 <cam_flash_component_bind+0xe8> // kfree+0x0
+  198d24: 10 01 00 14  	b	0x199164 <cam_flash_component_bind+0x52c>
+  198d28: 76 01 80 12  	mov	w22, #-12
+  198d2c: 0f 01 00 14  	b	0x199168 <cam_flash_component_bind+0x530>
+  198d30: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0xf8> // 'cci-master'
+  198d34: 60 83 41 f9  	ldr	x0, [x27, #768]
+  198d38: 21 00 00 91  	add	x1, x1, #0 // 'cci-master'
+  198d3c: e2 03 1f aa  	mov	x2, xzr
+  198d40: 00 00 00 94  	bl	0x198d40 <cam_flash_component_bind+0x108> // of_find_property+0x0
+  198d44: 18 00 00 90  	adrp	x24, 0x198000 <cam_flash_component_bind+0x10c> // +0x1adb40
+  198d48: 19 00 00 90  	adrp	x25, 0x198000 <cam_flash_component_bind+0x110> // +0x1adb30
+  198d4c: 18 03 00 91  	add	x24, x24, #0 // +0x1adb40
+  198d50: 39 03 00 91  	add	x25, x25, #0 // +0x1adb30
+  198d54: 60 04 00 b4  	cbz	x0, 0x198de0 <cam_flash_component_bind+0x1a8>
+  198d58: 08 c5 82 52  	mov	w8, #5672
+  198d5c: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0x124> // 'cci-master'
+  198d60: 76 02 08 8b  	add	x22, x19, x8
+  198d64: 60 83 41 f9  	ldr	x0, [x27, #768]
+  198d68: 21 00 00 91  	add	x1, x1, #0 // 'cci-master'
+  198d6c: e2 03 16 aa  	mov	x2, x22
+  198d70: 23 00 80 52  	mov	w3, #1
+  198d74: e4 03 1f aa  	mov	x4, xzr
+  198d78: 00 00 00 94  	bl	0x198d78 <cam_flash_component_bind+0x140> // of_property_read_variable_u32_array+0x0
+  198d7c: 48 03 40 39  	ldrb	w8, [x26] // debug_mdl+0x1
+  198d80: 68 00 20 36  	tbz	w8, #4, 0x198d8c <cam_flash_component_bind+0x154>
+  198d84: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  198d88: 68 23 00 34  	cbz	w8, 0x1991f4 <cam_flash_component_bind+0x5bc>
+  198d8c: 40 00 f8 36  	tbz	w0, #31, 0x198d94 <cam_flash_component_bind+0x15c>
+  198d90: df 02 00 b9  	str	wzr, [x22]
+  198d94: 28 00 80 52  	mov	w8, #1
+  198d98: e0 03 13 aa  	mov	x0, x19
+  198d9c: 68 32 16 b9  	str	w8, [x19, #5680]
+  198da0: 00 00 00 94  	bl	0x198da0 <cam_flash_component_bind+0x168> // +0x1975bc
+  198da4: c0 02 00 34  	cbz	w0, 0x198dfc <cam_flash_component_bind+0x1c4>
+  198da8: f6 03 00 2a  	mov	w22, w0
+  198dac: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0x174> // '\x016%s: %s: %s: %d failed: cam_flash_init_default_params rc %d'
+  198db0: 02 00 00 90  	adrp	x2, 0x198000 <cam_flash_component_bind+0x178> // 'CAM_ERR'
+  198db4: 03 00 00 90  	adrp	x3, 0x198000 <cam_flash_component_bind+0x17c> // 'CAM-FLASH'
+  198db8: 04 00 00 90  	adrp	x4, 0x198000 <cam_flash_component_bind+0x180> // 'cam_flash_component_bind'
+  198dbc: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d failed: cam_flash_init_default_params rc %d'
+  198dc0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  198dc4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  198dc8: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  198dcc: 60 00 80 52  	mov	w0, #3
+  198dd0: 25 95 80 52  	mov	w5, #1193
+  198dd4: e6 03 16 2a  	mov	w6, w22
+  198dd8: 00 00 00 94  	bl	0x198dd8 <cam_flash_component_bind+0x1a0> // cam_print_log+0x0
+  198ddc: e3 00 00 14  	b	0x199168 <cam_flash_component_bind+0x530>
+  198de0: 08 00 00 90  	adrp	x8, 0x198000 <cam_flash_component_bind+0x1a8> // +0x1adb78
+  198de4: 09 00 00 90  	adrp	x9, 0x198000 <cam_flash_component_bind+0x1ac> // +0x1adb88
+  198de8: 08 01 00 91  	add	x8, x8, #0 // +0x1adb78
+  198dec: 29 01 00 91  	add	x9, x9, #0 // +0x1adb88
+  198df0: 08 21 00 91  	add	x8, x8, #8
+  198df4: 29 21 00 91  	add	x9, x9, #8
+  198df8: 37 00 00 14  	b	0x198ed4 <cam_flash_component_bind+0x29c>
+  198dfc: 60 83 41 f9  	ldr	x0, [x27, #768]
+  198e00: 00 00 00 94  	bl	0x198e00 <cam_flash_component_bind+0x1c8> // of_get_parent+0x0
+  198e04: 88 c5 82 52  	mov	w8, #5676
+  198e08: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0x1d0> // 'cell-index'
+  198e0c: 76 02 08 8b  	add	x22, x19, x8
+  198e10: 21 00 00 91  	add	x1, x1, #0 // 'cell-index'
+  198e14: e2 03 16 aa  	mov	x2, x22
+  198e18: 23 00 80 52  	mov	w3, #1
+  198e1c: e4 03 1f aa  	mov	x4, xzr
+  198e20: 00 00 00 94  	bl	0x198e20 <cam_flash_component_bind+0x1e8> // of_property_read_variable_u32_array+0x0
+  198e24: 60 00 f8 37  	tbnz	w0, #31, 0x198e30 <cam_flash_component_bind+0x1f8>
+  198e28: c8 02 40 b9  	ldr	w8, [x22]
+  198e2c: 03 00 00 14  	b	0x198e38 <cam_flash_component_bind+0x200>
+  198e30: e8 03 1f 2a  	mov	w8, wzr
+  198e34: df 02 00 b9  	str	wzr, [x22]
+  198e38: 69 26 4b f9  	ldr	x9, [x19, #5704]
+  198e3c: 4a 03 40 39  	ldrb	w10, [x26] // debug_mdl+0x1
+  198e40: 28 41 00 79  	strh	w8, [x9, #32]
+  198e44: 6a 00 20 36  	tbz	w10, #4, 0x198e50 <cam_flash_component_bind+0x218>
+  198e48: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  198e4c: 68 1f 00 34  	cbz	w8, 0x199238 <cam_flash_component_bind+0x600>
+  198e50: 08 00 00 90  	adrp	x8, 0x198000 <cam_flash_component_bind+0x218> // kmalloc_caches+0x50
+  198e54: 01 b8 81 52  	mov	w1, #3520
+  198e58: 02 80 80 52  	mov	w2, #1024
+  198e5c: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x50
+  198e60: 00 00 00 94  	bl	0x198e60 <cam_flash_component_bind+0x228> // kmem_cache_alloc_trace+0x0
+  198e64: 60 7e 0b f9  	str	x0, [x19, #5880]
+  198e68: 60 11 00 b4  	cbz	x0, 0x199094 <cam_flash_component_bind+0x45c>
+  198e6c: 08 cb 82 52  	mov	w8, #5720
+  198e70: 09 cf 82 52  	mov	w9, #5752
+  198e74: 68 02 08 8b  	add	x8, x19, x8
+  198e78: 69 02 09 8b  	add	x9, x19, x9
+  198e7c: ea 03 1f aa  	mov	x10, xzr
+  198e80: 68 2e 0b f9  	str	x8, [x19, #5720]
+  198e84: 68 32 0b f9  	str	x8, [x19, #5728]
+  198e88: 08 00 00 90  	adrp	x8, 0x198000 <cam_flash_component_bind+0x250> // +0x1adb78
+  198e8c: 69 3e 0b f9  	str	x9, [x19, #5752]
+  198e90: 08 01 00 91  	add	x8, x8, #0 // +0x1adb78
+  198e94: 69 42 0b f9  	str	x9, [x19, #5760]
+  198e98: 09 00 00 90  	adrp	x9, 0x198000 <cam_flash_component_bind+0x260> // +0x1adb88
+  198e9c: 29 01 00 91  	add	x9, x9, #0 // +0x1adb88
+  198ea0: 00 00 00 f9  	str	x0, [x0]
+  198ea4: 00 04 00 f9  	str	x0, [x0, #8]
+  198ea8: 0b 00 0a 8b  	add	x11, x0, x10
+  198eac: 5f 01 0f f1  	cmp	x10, #960
+  198eb0: 6c 81 00 91  	add	x12, x11, #32
+  198eb4: 6c 11 00 f9  	str	x12, [x11, #32]
+  198eb8: 6c 15 00 f9  	str	x12, [x11, #40]
+  198ebc: 80 00 00 54  	b.eq	0x198ecc <cam_flash_component_bind+0x294>
+  198ec0: 60 7e 4b f9  	ldr	x0, [x19, #5880]
+  198ec4: 4a 81 00 91  	add	x10, x10, #32
+  198ec8: f8 ff ff 17  	b	0x198ea8 <cam_flash_component_bind+0x270>
+  198ecc: 18 23 00 91  	add	x24, x24, #8
+  198ed0: 39 23 00 91  	add	x25, x25, #8
+  198ed4: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0x29c> // 'cam-flash'
+  198ed8: e0 03 13 aa  	mov	x0, x19
+  198edc: 21 00 00 91  	add	x1, x1, #0 // 'cam-flash'
+  198ee0: 82 02 80 52  	mov	w2, #20
+  198ee4: 69 ba 0a f9  	str	x9, [x19, #5488]
+  198ee8: 68 be 0a f9  	str	x8, [x19, #5496]
+  198eec: 79 c2 0a f9  	str	x25, [x19, #5504]
+  198ef0: 78 c6 0a f9  	str	x24, [x19, #5512]
+  198ef4: 00 00 00 94  	bl	0x198ef4 <cam_flash_component_bind+0x2bc> // strlcpy+0x0
+  198ef8: 08 00 00 90  	adrp	x8, 0x198000 <cam_flash_component_bind+0x2c0> // ''
+  198efc: 09 00 00 90  	adrp	x9, 0x198000 <cam_flash_component_bind+0x2c4> // +0x64798
+  198f00: 08 01 00 91  	add	x8, x8, #0 // ''
+  198f04: 0a 00 00 90  	adrp	x10, 0x198000 <cam_flash_component_bind+0x2cc> // 'cam-flash-dev'
+  198f08: 29 01 00 91  	add	x9, x9, #0 // +0x64798
+  198f0c: 4a 01 00 91  	add	x10, x10, #0 // 'cam-flash-dev'
+  198f10: 73 16 0a f9  	str	x19, [x19, #5160]
+  198f14: 68 0a 0a f9  	str	x8, [x19, #5136]
+  198f18: 88 01 80 52  	mov	w8, #12
+  198f1c: 69 06 0a f9  	str	x9, [x19, #5128]
+  198f20: 69 01 80 52  	mov	w9, #11
+  198f24: 6a 0e 0a f9  	str	x10, [x19, #5144]
+  198f28: 0a 58 82 52  	mov	w10, #4800
+  198f2c: 29 00 a0 72  	movk	w9, #1, lsl #16
+  198f30: 68 22 14 b9  	str	w8, [x19, #5152]
+  198f34: 28 00 80 52  	mov	w8, #1
+  198f38: 60 02 0a 8b  	add	x0, x19, x10
+  198f3c: 69 32 14 b9  	str	w9, [x19, #5168]
+  198f40: 68 52 14 b9  	str	w8, [x19, #5200]
+  198f44: 00 00 00 94  	bl	0x198f44 <cam_flash_component_bind+0x30c> // cam_register_subdev+0x0
+  198f48: 60 02 00 34  	cbz	w0, 0x198f94 <cam_flash_component_bind+0x35c>
+  198f4c: f6 03 00 2a  	mov	w22, w0
+  198f50: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0x318> // '\x016%s: %s: %s: %d Fail to create subdev with %d'
+  198f54: 02 00 00 90  	adrp	x2, 0x198000 <cam_flash_component_bind+0x31c> // 'CAM_ERR'
+  198f58: 03 00 00 90  	adrp	x3, 0x198000 <cam_flash_component_bind+0x320> // 'CAM-FLASH'
+  198f5c: 04 00 00 90  	adrp	x4, 0x198000 <cam_flash_component_bind+0x324> // 'cam_flash_init_subdev'
+  198f60: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Fail to create subdev with %d'
+  198f64: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  198f68: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  198f6c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_init_subdev'
+  198f70: 60 00 80 52  	mov	w0, #3
+  198f74: a5 8d 80 52  	mov	w5, #1133
+  198f78: e6 03 16 2a  	mov	w6, w22
+  198f7c: 00 00 00 94  	bl	0x198f7c <cam_flash_component_bind+0x344> // cam_print_log+0x0
+  198f80: 60 26 4b f9  	ldr	x0, [x19, #5704]
+  198f84: a0 0a 00 b4  	cbz	x0, 0x1990d8 <cam_flash_component_bind+0x4a0>
+  198f88: 08 c9 82 52  	mov	w8, #5704
+  198f8c: 74 02 08 8b  	add	x20, x19, x8
+  198f90: 50 00 00 14  	b	0x1990d0 <cam_flash_component_bind+0x498>
+  198f94: 0a 00 00 90  	adrp	x10, 0x198000 <cam_flash_component_bind+0x35c> // +0x1adbc0
+  198f98: 08 00 80 12  	mov	w8, #-1
+  198f9c: 09 00 00 90  	adrp	x9, 0x198000 <cam_flash_component_bind+0x364> // +0x1adb98
+  198fa0: 4a 01 00 91  	add	x10, x10, #0 // +0x1adbc0
+  198fa4: 29 01 00 91  	add	x9, x9, #0 // +0x1adb98
+  198fa8: 4a 81 00 91  	add	x10, x10, #32
+  198fac: 29 81 00 91  	add	x9, x9, #32
+  198fb0: 68 5a 14 b9  	str	w8, [x19, #5208]
+  198fb4: 68 62 14 b9  	str	w8, [x19, #5216]
+  198fb8: 08 00 00 90  	adrp	x8, 0x198000 <cam_flash_component_bind+0x380> // +0x1adbe8
+  198fbc: 0b 00 00 90  	adrp	x11, 0x198000 <cam_flash_component_bind+0x384> // +0x1adb50
+  198fc0: 08 01 00 91  	add	x8, x8, #0 // +0x1adbe8
+  198fc4: 6b 01 00 91  	add	x11, x11, #0 // +0x1adb50
+  198fc8: 6a 3a 0a f9  	str	x10, [x19, #5232]
+  198fcc: 0a 9b 82 52  	mov	w10, #5336
+  198fd0: 01 00 00 90  	adrp	x1, 0x198000 <cam_flash_component_bind+0x398> // '&(fctrl->flash_mutex)'
+  198fd4: 02 00 00 90  	adrp	x2, 0x198000 <cam_flash_component_bind+0x39c> // +0x24a608
+  198fd8: 08 e1 00 91  	add	x8, x8, #56
+  198fdc: 69 36 0a f9  	str	x9, [x19, #5224]
+  198fe0: 69 81 00 91  	add	x9, x11, #32
+  198fe4: 60 02 0a 8b  	add	x0, x19, x10
+  198fe8: 21 00 00 91  	add	x1, x1, #0 // '&(fctrl->flash_mutex)'
+  198fec: 42 00 00 91  	add	x2, x2, #0 // +0x24a608
+  198ff0: 68 3e 0a f9  	str	x8, [x19, #5240]
+  198ff4: 69 46 0a f9  	str	x9, [x19, #5256]
+  198ff8: 7f 4a 17 b9  	str	wzr, [x19, #5960]
+  198ffc: 00 00 00 94  	bl	0x198ffc <cam_flash_component_bind+0x3c4> // __mutex_init+0x0
+  199000: 15 00 00 90  	adrp	x21, 0x199000 <cam_flash_component_bind+0x3c8> // debug_mdl+0x0
+  199004: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  199008: 7f 6a 15 b9  	str	wzr, [x19, #5480]
+  19900c: aa 02 40 f9  	ldr	x10, [x21] // debug_mdl+0x0
+  199010: 49 01 74 92  	and	x9, x10, #0x1000
+  199014: 4a 00 60 36  	tbz	w10, #12, 0x19901c <cam_flash_component_bind+0x3e4>
+  199018: c8 12 00 34  	cbz	w8, 0x199270 <cam_flash_component_bind+0x638>
+  19901c: 49 00 00 b4  	cbz	x9, 0x199024 <cam_flash_component_bind+0x3ec>
+  199020: 88 14 00 34  	cbz	w8, 0x1992b0 <cam_flash_component_bind+0x678>
+  199024: 68 2e 40 b9  	ldr	w8, [x19, #44]
+  199028: 68 e3 ff 35  	cbnz	w8, 0x198c94 <cam_flash_component_bind+0x5c>
+  19902c: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x3f4> // +0x64718
+  199030: e0 03 14 aa  	mov	x0, x20
+  199034: 21 00 00 91  	add	x1, x1, #0 // +0x64718
+  199038: 00 00 00 94  	bl	0x199038 <cam_flash_component_bind+0x400> // device_create_file+0x0
+  19903c: a0 0a f8 37  	tbnz	w0, #31, 0x199190 <cam_flash_component_bind+0x558>
+  199040: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x408> // +0x64738
+  199044: e0 03 14 aa  	mov	x0, x20
+  199048: 21 00 00 91  	add	x1, x1, #0 // +0x64738
+  19904c: 00 00 00 94  	bl	0x19904c <cam_flash_component_bind+0x414> // device_create_file+0x0
+  199050: e0 0a f8 37  	tbnz	w0, #31, 0x1991ac <cam_flash_component_bind+0x574>
+  199054: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x41c> // +0x64758
+  199058: e0 03 14 aa  	mov	x0, x20
+  19905c: 21 00 00 91  	add	x1, x1, #0 // +0x64758
+  199060: 00 00 00 94  	bl	0x199060 <cam_flash_component_bind+0x428> // device_create_file+0x0
+  199064: 20 0b f8 37  	tbnz	w0, #31, 0x1991c8 <cam_flash_component_bind+0x590>
+  199068: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x430> // +0x64778
+  19906c: e0 03 14 aa  	mov	x0, x20
+  199070: 21 00 00 91  	add	x1, x1, #0 // +0x64778
+  199074: 00 00 00 94  	bl	0x199074 <cam_flash_component_bind+0x43c> // device_create_file+0x0
+  199078: f6 03 00 2a  	mov	w22, w0
+  19907c: e0 0a f8 37  	tbnz	w0, #31, 0x1991d8 <cam_flash_component_bind+0x5a0>
+  199080: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x448> // 'flash'
+  199084: e0 03 14 aa  	mov	x0, x20
+  199088: 21 00 00 91  	add	x1, x1, #0 // 'flash'
+  19908c: 00 00 00 94  	bl	0x19908c <cam_flash_component_bind+0x454> // meizu_sysfslink_register_name+0x0
+  199090: 36 00 00 14  	b	0x199168 <cam_flash_component_bind+0x530>
+  199094: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x45c> // '\x016%s: %s: %s: %d No Memory'
+  199098: 02 00 00 90  	adrp	x2, 0x199000 <cam_flash_component_bind+0x460> // 'CAM_ERR'
+  19909c: 03 00 00 90  	adrp	x3, 0x199000 <cam_flash_component_bind+0x464> // 'CAM-FLASH'
+  1990a0: 04 00 00 90  	adrp	x4, 0x199000 <cam_flash_component_bind+0x468> // 'cam_flash_component_bind'
+  1990a4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d No Memory'
+  1990a8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1990ac: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1990b0: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  1990b4: 60 00 80 52  	mov	w0, #3
+  1990b8: 45 97 80 52  	mov	w5, #1210
+  1990bc: 08 c9 82 52  	mov	w8, #5704
+  1990c0: 74 02 08 8b  	add	x20, x19, x8
+  1990c4: 00 00 00 94  	bl	0x1990c4 <cam_flash_component_bind+0x48c> // cam_print_log+0x0
+  1990c8: 80 02 40 f9  	ldr	x0, [x20]
+  1990cc: 76 01 80 12  	mov	w22, #-12
+  1990d0: 00 00 00 94  	bl	0x1990d0 <cam_flash_component_bind+0x498> // kfree+0x0
+  1990d4: 9f 02 00 f9  	str	xzr, [x20]
+  1990d8: 60 7e 4b f9  	ldr	x0, [x19, #5880]
+  1990dc: 00 00 00 94  	bl	0x1990dc <cam_flash_component_bind+0x4a4> // kfree+0x0
+  1990e0: 60 8e 45 f9  	ldr	x0, [x19, #2840]
+  1990e4: 00 00 00 94  	bl	0x1990e4 <cam_flash_component_bind+0x4ac> // kfree+0x0
+  1990e8: e0 03 15 aa  	mov	x0, x21
+  1990ec: 00 00 00 94  	bl	0x1990ec <cam_flash_component_bind+0x4b4> // cam_soc_util_release_platform_resource+0x0
+  1990f0: e0 03 13 aa  	mov	x0, x19
+  1990f4: 7f 7e 0b f9  	str	xzr, [x19, #5880]
+  1990f8: 7f 8e 05 f9  	str	xzr, [x19, #2840]
+  1990fc: 00 00 00 94  	bl	0x1990fc <cam_flash_component_bind+0x4c4> // kfree+0x0
+  199100: 1a 00 00 14  	b	0x199168 <cam_flash_component_bind+0x530>
+  199104: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x4cc> // '\x016%s: %s: %s: %d Binding flash component'
+  199108: 02 00 00 90  	adrp	x2, 0x199000 <cam_flash_component_bind+0x4d0> // 'CAM_DBG'
+  19910c: 03 00 00 90  	adrp	x3, 0x199000 <cam_flash_component_bind+0x4d4> // 'CAM-FLASH'
+  199110: 04 00 00 90  	adrp	x4, 0x199000 <cam_flash_component_bind+0x4d8> // 'cam_flash_component_bind'
+  199114: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Binding flash component'
+  199118: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  19911c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  199120: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  199124: 60 00 80 52  	mov	w0, #3
+  199128: 65 8f 80 52  	mov	w5, #1147
+  19912c: 00 00 00 94  	bl	0x19912c <cam_flash_component_bind+0x4f4> // cam_print_log+0x0
+  199130: 60 83 41 f9  	ldr	x0, [x27, #768]
+  199134: 60 da ff b5  	cbnz	x0, 0x198c80 <cam_flash_component_bind+0x48>
+  199138: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x500> // '\x016%s: %s: %s: %d of_node NULL'
+  19913c: 02 00 00 90  	adrp	x2, 0x199000 <cam_flash_component_bind+0x504> // 'CAM_ERR'
+  199140: 03 00 00 90  	adrp	x3, 0x199000 <cam_flash_component_bind+0x508> // 'CAM-FLASH'
+  199144: 04 00 00 90  	adrp	x4, 0x199000 <cam_flash_component_bind+0x50c> // 'cam_flash_component_bind'
+  199148: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d of_node NULL'
+  19914c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  199150: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  199154: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  199158: 60 00 80 52  	mov	w0, #3
+  19915c: a5 8f 80 52  	mov	w5, #1149
+  199160: 00 00 00 94  	bl	0x199160 <cam_flash_component_bind+0x528> // cam_print_log+0x0
+  199164: b6 02 80 12  	mov	w22, #-22
+  199168: e0 03 16 2a  	mov	w0, w22
+  19916c: fb 0b 40 f9  	ldr	x27, [sp, #16]
+  199170: f4 4f 45 a9  	ldp	x20, x19, [sp, #80]
+  199174: f6 57 44 a9  	ldp	x22, x21, [sp, #64]
+  199178: f8 5f 43 a9  	ldp	x24, x23, [sp, #48]
+  19917c: fa 67 42 a9  	ldp	x26, x25, [sp, #32]
+  199180: fd 7b c6 a8  	ldp	x29, x30, [sp], #96
+  199184: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  199188: bf 23 03 d5  	hint	#29
+  19918c: c0 03 5f d6  	ret
+  199190: 00 00 00 90  	adrp	x0, 0x199000 <cam_flash_component_bind+0x558> // '\x013[ERROR]%s:device_create_file fail, line:%d.'
+  199194: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x55c> // 'cam_flash_component_bind'
+  199198: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:device_create_file fail, line:%d.'
+  19919c: 21 00 00 91  	add	x1, x1, #0 // 'cam_flash_component_bind'
+  1991a0: 42 9d 80 52  	mov	w2, #1258
+  1991a4: 00 00 00 94  	bl	0x1991a4 <cam_flash_component_bind+0x56c> // _printk+0x0
+  1991a8: a6 ff ff 17  	b	0x199040 <cam_flash_component_bind+0x408>
+  1991ac: 00 00 00 90  	adrp	x0, 0x199000 <cam_flash_component_bind+0x574> // '\x013[ERROR]%s:device_create_file fail, line:%d.'
+  1991b0: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x578> // 'cam_flash_component_bind'
+  1991b4: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:device_create_file fail, line:%d.'
+  1991b8: 21 00 00 91  	add	x1, x1, #0 // 'cam_flash_component_bind'
+  1991bc: c2 9d 80 52  	mov	w2, #1262
+  1991c0: 00 00 00 94  	bl	0x1991c0 <cam_flash_component_bind+0x588> // _printk+0x0
+  1991c4: a4 ff ff 17  	b	0x199054 <cam_flash_component_bind+0x41c>
+  1991c8: 00 00 00 90  	adrp	x0, 0x199000 <cam_flash_component_bind+0x590> // '\x013[flashlight_probe]device_create_file flash4 fail!\n'
+  1991cc: 00 00 00 91  	add	x0, x0, #0 // '\x013[flashlight_probe]device_create_file flash4 fail!\n'
+  1991d0: 00 00 00 94  	bl	0x1991d0 <cam_flash_component_bind+0x598> // _printk+0x0
+  1991d4: a5 ff ff 17  	b	0x199068 <cam_flash_component_bind+0x430>
+  1991d8: 00 00 00 90  	adrp	x0, 0x199000 <cam_flash_component_bind+0x5a0> // '\x013[ERROR]%s:device_create_file fail, line:%d.'
+  1991dc: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x5a4> // 'cam_flash_component_bind'
+  1991e0: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:device_create_file fail, line:%d.'
+  1991e4: 21 00 00 91  	add	x1, x1, #0 // 'cam_flash_component_bind'
+  1991e8: c2 9e 80 52  	mov	w2, #1270
+  1991ec: 00 00 00 94  	bl	0x1991ec <cam_flash_component_bind+0x5b4> // _printk+0x0
+  1991f0: a4 ff ff 17  	b	0x199080 <cam_flash_component_bind+0x448>
+  1991f4: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x5bc> // '\x016%s: %s: %s: %d cci-master %d, rc %d'
+  1991f8: 02 00 00 90  	adrp	x2, 0x199000 <cam_flash_component_bind+0x5c0> // 'CAM_DBG'
+  1991fc: 03 00 00 90  	adrp	x3, 0x199000 <cam_flash_component_bind+0x5c4> // 'CAM-FLASH'
+  199200: 04 00 00 90  	adrp	x4, 0x199000 <cam_flash_component_bind+0x5c8> // 'cam_flash_component_bind'
+  199204: 07 7c 80 0a  	and	w7, w0, w0, asr #31
+  199208: c6 02 40 b9  	ldr	w6, [x22]
+  19920c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d cci-master %d, rc %d'
+  199210: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  199214: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  199218: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  19921c: a0 1f 00 b9  	str	w0, [x29, #28]
+  199220: 60 00 80 52  	mov	w0, #3
+  199224: a5 93 80 52  	mov	w5, #1181
+  199228: 00 00 00 94  	bl	0x199228 <cam_flash_component_bind+0x5f0> // cam_print_log+0x0
+  19922c: a0 1f 40 b9  	ldr	w0, [x29, #28]
+  199230: 20 db ff 36  	tbz	w0, #31, 0x198d94 <cam_flash_component_bind+0x15c>
+  199234: d7 fe ff 17  	b	0x198d90 <cam_flash_component_bind+0x158>
+  199238: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x600> // '\x016%s: %s: %s: %d cci-index %d'
+  19923c: 02 00 00 90  	adrp	x2, 0x199000 <cam_flash_component_bind+0x604> // 'CAM_DBG'
+  199240: 03 00 00 90  	adrp	x3, 0x199000 <cam_flash_component_bind+0x608> // 'CAM-FLASH'
+  199244: 04 00 00 90  	adrp	x4, 0x199000 <cam_flash_component_bind+0x60c> // 'cam_flash_component_bind'
+  199248: c6 02 40 b9  	ldr	w6, [x22]
+  19924c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d cci-index %d'
+  199250: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  199254: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  199258: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  19925c: 60 00 80 52  	mov	w0, #3
+  199260: 85 96 80 52  	mov	w5, #1204
+  199264: e7 03 1f 2a  	mov	w7, wzr
+  199268: 00 00 00 94  	bl	0x199268 <cam_flash_component_bind+0x630> // cam_print_log+0x0
+  19926c: f9 fe ff 17  	b	0x198e50 <cam_flash_component_bind+0x218>
+  199270: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x638> // '\x016%s: %s: %s: %d Component bound successfully'
+  199274: 02 00 00 90  	adrp	x2, 0x199000 <cam_flash_component_bind+0x63c> // 'CAM_DBG'
+  199278: 03 00 00 90  	adrp	x3, 0x199000 <cam_flash_component_bind+0x640> // 'CAM-FLASH'
+  19927c: 04 00 00 90  	adrp	x4, 0x199000 <cam_flash_component_bind+0x644> // 'cam_flash_component_bind'
+  199280: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Component bound successfully'
+  199284: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  199288: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  19928c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  199290: 60 00 80 52  	mov	w0, #3
+  199294: 85 9c 80 52  	mov	w5, #1252
+  199298: 00 00 00 94  	bl	0x199298 <cam_flash_component_bind+0x660> // cam_print_log+0x0
+  19929c: a9 02 40 f9  	ldr	x9, [x21] // debug_mdl+0x0
+  1992a0: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  1992a4: 29 01 74 92  	and	x9, x9, #0x1000
+  1992a8: c9 eb ff b5  	cbnz	x9, 0x199020 <cam_flash_component_bind+0x3e8>
+  1992ac: 5e ff ff 17  	b	0x199024 <cam_flash_component_bind+0x3ec>
+  1992b0: 01 00 00 90  	adrp	x1, 0x199000 <cam_flash_component_bind+0x678> // '\x016%s: %s: %s: %d index = %d'
+  1992b4: 02 00 00 90  	adrp	x2, 0x199000 <cam_flash_component_bind+0x67c> // 'CAM_DBG'
+  1992b8: 03 00 00 90  	adrp	x3, 0x199000 <cam_flash_component_bind+0x680> // 'CAM-FLASH'
+  1992bc: 04 00 00 90  	adrp	x4, 0x199000 <cam_flash_component_bind+0x684> // 'cam_flash_component_bind'
+  1992c0: 66 2e 40 b9  	ldr	w6, [x19, #44]
+  1992c4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d index = %d'
+  1992c8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  1992cc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1992d0: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_component_bind'
+  1992d4: 60 00 80 52  	mov	w0, #3
+  1992d8: a5 9c 80 52  	mov	w5, #1253
+  1992dc: 00 00 00 94  	bl	0x1992dc <cam_flash_component_bind+0x6a4> // cam_print_log+0x0
+  1992e0: 51 ff ff 17  	b	0x199024 <cam_flash_component_bind+0x3ec>

@@ -1,0 +1,48 @@
+M2391 source recovery scope (2026-10-21)
+
+Original reference: vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko
+The disassembly and decoded ELF tables in this directory support the recovered
+AF, EEPROM, OIS and SY7808/factory flash code. These are actual C implementations;
+firmware.h retains the original OIS hardware firmware image as program data.
+
+Recovered connected device interfaces:
+AF: af_pos, af_enable, auxaf_pos, aux2af_pos and original device links.
+EEPROM: identity/checksum/force-update/OTP/TOF sysfs, original cached calibration
+read/reload/golden-data policy, and custom HAL ioctl 0x202 partition updates.
+OIS: xy, calibration, calibration-data diagnostic, enable, sanity, angle,
+firmware-upgrade, reset and raw-register sysfs; original firmware and checksums.
+The no-argument mz_ois_self_test export also has its exact recovered register
+sequence and compiler-generated CRC matching stock 0x946b903a.
+Flash: si,sy7808 I2C provider, HAL power/ops/off, four factory controls and the
+36-instruction flash4 timer/work interpreter. All nine M2391 DTS overlays use
+si,sy7808; no meizu,cci_flash node is present, so that unused provider is not bound.
+
+Intentional hardening of malformed or failed operations:
+Complete sscanf requests are required before hardware or partition writes;
+all partition ranges are bounded and metadata reads must succeed; calibration
+metadata is committed after physical payload success; page-enable failures still
+attempt disable; source device teardown drains callbacks/timer/work before free.
+Original binary sanitizer-trap table/shift inputs return EINVAL.
+
+Validation: full Kbuild camera.o and display msm_drm.o targets built successfully
+under out/m2391-camera-display-target with real Kalama feature flags and an
+independent copy of the prepared GKI core. No modpost, baseline ROM/kernel
+rebuild, module loading, hardware I/O or calibration writes were performed.
+All seven new camera translation units appear as members of camera.o.
+Original camera exports: all 91 retained; 90 CRCs/export kinds match stock.
+flashlight_dev_register preserves the actual three-slot mutex registry and
+seven-pointer callback layout; its descriptive source struct names change CRC,
+so build_external rejects any retained stock consumer of this source interface.
+The uint32_t unregister prototype and mz_ois_self_test CRC match exactly.
+Display exports: all 45 retained; 40 match and five are source-group private
+(the four recovered getters and msm_ioctl_rmfb2 with current DRM declarations). Actual .o.symversions
+and precise comparison tables remain under the independent target output.
+All then-retained 96 proprietary module copies were independently scanned;
+none imports any camera/msm_drm exported symbol. The prior complete stock symbol
+inventory also has no such consumer. Do not falsify CRCs for unused interfaces.
+Parent-authorized camera source selection is integrated with Kalama/ICC flags,
+90 public export snapshots and the private-consumer gate. The old camera.ko was
+SHA-verified and backed up under out/m2391-515-analysis/removed-stock-modules,
+then removed from runtime packaging/extraction. Display remains stock pending
+its additional OEM panel factory API audit. These object builds do not claim
+hardware validation.

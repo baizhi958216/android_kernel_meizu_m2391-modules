@@ -1,0 +1,329 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000014b5d0 <cam_actuator_platform_component_bind>:
+  14b5d0: 3f 23 03 d5  	hint	#25
+  14b5d4: 5e 86 00 f8  	str	x30, [x18], #8
+  14b5d8: fd 7b bc a9  	stp	x29, x30, [sp, #-64]!
+  14b5dc: f7 0b 00 f9  	str	x23, [sp, #16]
+  14b5e0: fd 03 00 91  	mov	x29, sp
+  14b5e4: f6 57 02 a9  	stp	x22, x21, [sp, #32]
+  14b5e8: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+  14b5ec: f3 03 00 aa  	mov	x19, x0
+  14b5f0: 00 00 00 94  	bl	0x14b5f0 <cam_actuator_platform_component_bind+0x20> // get_boot_mode+0x0
+  14b5f4: 1f 0c 00 71  	cmp	w0, #3
+  14b5f8: 60 01 00 54  	b.eq	0x14b624 <cam_actuator_platform_component_bind+0x54>
+  14b5fc: 00 00 00 94  	bl	0x14b5fc <cam_actuator_platform_component_bind+0x2c> // get_boot_mode+0x0
+  14b600: 1f 08 00 71  	cmp	w0, #2
+  14b604: 00 01 00 54  	b.eq	0x14b624 <cam_actuator_platform_component_bind+0x54>
+  14b608: 77 42 00 d1  	sub	x23, x19, #16
+  14b60c: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x3c> // 'i3c-i2c-target'
+  14b610: 21 00 00 91  	add	x1, x1, #0 // 'i3c-i2c-target'
+  14b614: e2 03 1f aa  	mov	x2, xzr
+  14b618: e0 82 41 f9  	ldr	x0, [x23, #768]
+  14b61c: 00 00 00 94  	bl	0x14b61c <cam_actuator_platform_component_bind+0x4c> // of_find_property+0x0
+  14b620: 40 01 00 b4  	cbz	x0, 0x14b648 <cam_actuator_platform_component_bind+0x78>
+  14b624: f5 03 1f 2a  	mov	w21, wzr
+  14b628: e0 03 15 2a  	mov	w0, w21
+  14b62c: f7 0b 40 f9  	ldr	x23, [sp, #16]
+  14b630: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+  14b634: f6 57 42 a9  	ldp	x22, x21, [sp, #32]
+  14b638: fd 7b c4 a8  	ldp	x29, x30, [sp], #64
+  14b63c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  14b640: bf 23 03 d5  	hint	#29
+  14b644: c0 03 5f d6  	ret
+  14b648: f3 42 00 91  	add	x19, x23, #16
+  14b64c: 01 f2 81 52  	mov	w1, #3984
+  14b650: e0 03 13 aa  	mov	x0, x19
+  14b654: 02 b8 81 52  	mov	w2, #3520
+  14b658: 00 00 00 94  	bl	0x14b658 <cam_actuator_platform_component_bind+0x88> // devm_kmalloc+0x0
+  14b65c: a0 05 00 b4  	cbz	x0, 0x14b710 <cam_actuator_platform_component_bind+0x140>
+  14b660: 15 00 00 90  	adrp	x21, 0x14b000 <cam_actuator_platform_component_bind+0x90> // kmalloc_caches+0x38
+  14b664: f4 03 00 aa  	mov	x20, x0
+  14b668: 17 54 06 f9  	str	x23, [x0, #3240]
+  14b66c: e8 02 40 f9  	ldr	x8, [x23]
+  14b670: 29 00 80 52  	mov	w9, #1
+  14b674: 17 4c 05 a9  	stp	x23, x19, [x0, #80]
+  14b678: a0 02 40 f9  	ldr	x0, [x21] // kmalloc_caches+0x38
+  14b67c: 01 b8 81 52  	mov	w1, #3520
+  14b680: 02 05 80 52  	mov	w2, #40
+  14b684: 88 36 00 f9  	str	x8, [x20, #104]
+  14b688: 89 2a 00 b9  	str	w9, [x20, #40]
+  14b68c: 00 00 00 94  	bl	0x14b68c <cam_actuator_platform_component_bind+0xbc> // kmem_cache_alloc_trace+0x0
+  14b690: 80 22 00 f9  	str	x0, [x20, #64]
+  14b694: 20 04 00 b4  	cbz	x0, 0x14b718 <cam_actuator_platform_component_bind+0x148>
+  14b698: a0 02 40 f9  	ldr	x0, [x21] // kmalloc_caches+0x38
+  14b69c: 01 b8 81 52  	mov	w1, #3520
+  14b6a0: 02 0c 80 52  	mov	w2, #96
+  14b6a4: 00 00 00 94  	bl	0x14b6a4 <cam_actuator_platform_component_bind+0xd4> // kmem_cache_alloc_trace+0x0
+  14b6a8: 40 0c 00 b4  	cbz	x0, 0x14b830 <cam_actuator_platform_component_bind+0x260>
+  14b6ac: 08 00 00 90  	adrp	x8, 0x14b000 <cam_actuator_platform_component_bind+0xdc> // kmalloc_caches+0x50
+  14b6b0: f6 03 00 aa  	mov	x22, x0
+  14b6b4: 01 b8 81 52  	mov	w1, #3520
+  14b6b8: 02 80 80 52  	mov	w2, #1024
+  14b6bc: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x50
+  14b6c0: 96 aa 05 f9  	str	x22, [x20, #2896]
+  14b6c4: d3 06 00 f9  	str	x19, [x22, #8]
+  14b6c8: 00 00 00 94  	bl	0x14b6c8 <cam_actuator_platform_component_bind+0xf8> // kmem_cache_alloc_trace+0x0
+  14b6cc: 80 72 07 f9  	str	x0, [x20, #3808]
+  14b6d0: 40 0b 00 b4  	cbz	x0, 0x14b838 <cam_actuator_platform_component_bind+0x268>
+  14b6d4: e8 03 1f aa  	mov	x8, xzr
+  14b6d8: 89 02 39 91  	add	x9, x20, #3648
+  14b6dc: 89 22 07 f9  	str	x9, [x20, #3648]
+  14b6e0: 89 26 07 f9  	str	x9, [x20, #3656]
+  14b6e4: 00 00 00 f9  	str	x0, [x0]
+  14b6e8: 00 04 00 f9  	str	x0, [x0, #8]
+  14b6ec: 09 00 08 8b  	add	x9, x0, x8
+  14b6f0: 1f 01 0f f1  	cmp	x8, #960
+  14b6f4: 2a 81 00 91  	add	x10, x9, #32
+  14b6f8: 2a 11 00 f9  	str	x10, [x9, #32]
+  14b6fc: 2a 15 00 f9  	str	x10, [x9, #40]
+  14b700: 00 01 00 54  	b.eq	0x14b720 <cam_actuator_platform_component_bind+0x150>
+  14b704: 80 72 47 f9  	ldr	x0, [x20, #3808]
+  14b708: 08 81 00 91  	add	x8, x8, #32
+  14b70c: f8 ff ff 17  	b	0x14b6ec <cam_actuator_platform_component_bind+0x11c>
+  14b710: 75 01 80 12  	mov	w21, #-12
+  14b714: c5 ff ff 17  	b	0x14b628 <cam_actuator_platform_component_bind+0x58>
+  14b718: 75 01 80 12  	mov	w21, #-12
+  14b71c: 5c 00 00 14  	b	0x14b88c <cam_actuator_platform_component_bind+0x2bc>
+  14b720: e0 03 14 aa  	mov	x0, x20
+  14b724: 00 00 00 94  	bl	0x14b724 <cam_actuator_platform_component_bind+0x154> // cam_actuator_parse_dt+0x0
+  14b728: c0 08 f8 37  	tbnz	w0, #31, 0x14b840 <cam_actuator_platform_component_bind+0x270>
+  14b72c: 88 66 40 b9  	ldr	w8, [x20, #100]
+  14b730: e0 03 14 aa  	mov	x0, x20
+  14b734: e8 0a 00 b9  	str	w8, [x23, #8]
+  14b738: 00 00 00 94  	bl	0x14b738 <cam_actuator_platform_component_bind+0x168> // +0x14bc54
+  14b73c: f5 03 00 2a  	mov	w21, w0
+  14b740: a0 09 00 35  	cbnz	w0, 0x14b874 <cam_actuator_platform_component_bind+0x2a4>
+  14b744: 09 00 00 90  	adrp	x9, 0x14b000 <cam_actuator_platform_component_bind+0x174> // +0x1adb98
+  14b748: 08 00 80 12  	mov	w8, #-1
+  14b74c: 29 01 00 91  	add	x9, x9, #0 // +0x1adb98
+  14b750: 0a 00 00 90  	adrp	x10, 0x14b000 <cam_actuator_platform_component_bind+0x180> // +0x1adbc0
+  14b754: 29 21 00 91  	add	x9, x9, #8
+  14b758: 4a 01 00 91  	add	x10, x10, #0 // +0x1adbc0
+  14b75c: 88 3a 0f b9  	str	w8, [x20, #3896]
+  14b760: 0b 00 00 90  	adrp	x11, 0x14b000 <cam_actuator_platform_component_bind+0x190> // debug_mdl+0x1
+  14b764: 88 42 0f b9  	str	w8, [x20, #3904]
+  14b768: 48 21 00 91  	add	x8, x10, #8
+  14b76c: 89 a6 07 f9  	str	x9, [x20, #3912]
+  14b770: 09 00 00 90  	adrp	x9, 0x14b000 <cam_actuator_platform_component_bind+0x1a0> // +0x1adbe8
+  14b774: 29 01 00 91  	add	x9, x9, #0 // +0x1adbe8
+  14b778: 0a 00 00 90  	adrp	x10, 0x14b000 <cam_actuator_platform_component_bind+0x1a8> // +0x1adb50
+  14b77c: 29 41 00 91  	add	x9, x9, #16
+  14b780: 4a 01 00 91  	add	x10, x10, #0 // +0x1adb50
+  14b784: f4 56 00 f9  	str	x20, [x23, #168]
+  14b788: 88 aa 07 f9  	str	x8, [x20, #3920]
+  14b78c: 48 21 00 91  	add	x8, x10, #8
+  14b790: 89 ae 07 f9  	str	x9, [x20, #3928]
+  14b794: 69 01 40 39  	ldrb	w9, [x11] // debug_mdl+0x1
+  14b798: 9f 8a 0f b9  	str	wzr, [x20, #3976]
+  14b79c: 88 b6 07 f9  	str	x8, [x20, #3944]
+  14b7a0: 9f 9e 0c b9  	str	wzr, [x20, #3228]
+  14b7a4: 89 00 28 36  	tbz	w9, #5, 0x14b7b4 <cam_actuator_platform_component_bind+0x1e4>
+  14b7a8: 08 00 00 90  	adrp	x8, 0x14b000 <cam_actuator_platform_component_bind+0x1d8> // debug_priority+0x0
+  14b7ac: 08 01 40 b9  	ldr	w8, [x8] // debug_priority+0x0
+  14b7b0: a8 17 00 34  	cbz	w8, 0x14baa4 <cam_actuator_platform_component_bind+0x4d4>
+  14b7b4: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x1e4> // '\x016%s: %s: %s: %d enter af_pos create index=%d\n'
+  14b7b8: 02 00 00 90  	adrp	x2, 0x14b000 <cam_actuator_platform_component_bind+0x1e8> // 'CAM_ERR'
+  14b7bc: 03 00 00 90  	adrp	x3, 0x14b000 <cam_actuator_platform_component_bind+0x1ec> // 'CAM-ACTUATOR'
+  14b7c0: 04 00 00 90  	adrp	x4, 0x14b000 <cam_actuator_platform_component_bind+0x1f0> // 'cam_actuator_platform_component_bind'
+  14b7c4: 86 66 40 b9  	ldr	w6, [x20, #100]
+  14b7c8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d enter af_pos create index=%d\n'
+  14b7cc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  14b7d0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-ACTUATOR'
+  14b7d4: 84 00 00 91  	add	x4, x4, #0 // 'cam_actuator_platform_component_bind'
+  14b7d8: 60 00 80 52  	mov	w0, #3
+  14b7dc: 25 59 80 52  	mov	w5, #713
+  14b7e0: 00 00 00 94  	bl	0x14b7e0 <cam_actuator_platform_component_bind+0x210> // cam_print_log+0x0
+  14b7e4: 88 66 40 b9  	ldr	w8, [x20, #100]
+  14b7e8: 1f 3d 00 71  	cmp	w8, #15
+  14b7ec: 68 17 00 54  	b.hi	0x14bad8 <cam_actuator_platform_component_bind+0x508>
+  14b7f0: 09 05 80 52  	mov	w9, #40
+  14b7f4: 0a 00 00 90  	adrp	x10, 0x14b000 <cam_actuator_platform_component_bind+0x224> // +0x248f50
+  14b7f8: 4a 01 00 91  	add	x10, x10, #0 // +0x248f50
+  14b7fc: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x22c> // '&x->wait'
+  14b800: 08 29 09 9b  	madd	x8, x8, x9, x10
+  14b804: 02 00 00 90  	adrp	x2, 0x14b000 <cam_actuator_platform_component_bind+0x234> // +0x2493e0
+  14b808: 21 00 00 91  	add	x1, x1, #0 // '&x->wait'
+  14b80c: 42 00 00 91  	add	x2, x2, #0 // +0x2493e0
+  14b810: 00 41 00 91  	add	x0, x8, #16
+  14b814: 14 01 00 f9  	str	x20, [x8]
+  14b818: 1f 09 00 b9  	str	wzr, [x8, #8]
+  14b81c: 00 00 00 94  	bl	0x14b81c <cam_actuator_platform_component_bind+0x24c> // __init_swait_queue_head+0x0
+  14b820: 88 66 40 b9  	ldr	w8, [x20, #100]
+  14b824: 88 08 00 34  	cbz	w8, 0x14b934 <cam_actuator_platform_component_bind+0x364>
+  14b828: f5 03 1f 2a  	mov	w21, wzr
+  14b82c: 6a 00 00 14  	b	0x14b9d4 <cam_actuator_platform_component_bind+0x404>
+  14b830: 75 01 80 12  	mov	w21, #-12
+  14b834: 14 00 00 14  	b	0x14b884 <cam_actuator_platform_component_bind+0x2b4>
+  14b838: 75 01 80 12  	mov	w21, #-12
+  14b83c: 10 00 00 14  	b	0x14b87c <cam_actuator_platform_component_bind+0x2ac>
+  14b840: f5 03 00 2a  	mov	w21, w0
+  14b844: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x274> // '\x016%s: %s: %s: %d Paring actuator dt failed rc %d'
+  14b848: 02 00 00 90  	adrp	x2, 0x14b000 <cam_actuator_platform_component_bind+0x278> // 'CAM_ERR'
+  14b84c: 03 00 00 90  	adrp	x3, 0x14b000 <cam_actuator_platform_component_bind+0x27c> // 'CAM-ACTUATOR'
+  14b850: 04 00 00 90  	adrp	x4, 0x14b000 <cam_actuator_platform_component_bind+0x280> // 'cam_actuator_platform_component_bind'
+  14b854: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Paring actuator dt failed rc %d'
+  14b858: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  14b85c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-ACTUATOR'
+  14b860: 84 00 00 91  	add	x4, x4, #0 // 'cam_actuator_platform_component_bind'
+  14b864: 60 00 80 52  	mov	w0, #3
+  14b868: a5 55 80 52  	mov	w5, #685
+  14b86c: e6 03 15 2a  	mov	w6, w21
+  14b870: 00 00 00 94  	bl	0x14b870 <cam_actuator_platform_component_bind+0x2a0> // cam_print_log+0x0
+  14b874: 80 72 47 f9  	ldr	x0, [x20, #3808]
+  14b878: 00 00 00 94  	bl	0x14b878 <cam_actuator_platform_component_bind+0x2a8> // kfree+0x0
+  14b87c: e0 03 16 aa  	mov	x0, x22
+  14b880: 00 00 00 94  	bl	0x14b880 <cam_actuator_platform_component_bind+0x2b0> // kfree+0x0
+  14b884: 80 22 40 f9  	ldr	x0, [x20, #64]
+  14b888: 00 00 00 94  	bl	0x14b888 <cam_actuator_platform_component_bind+0x2b8> // kfree+0x0
+  14b88c: e0 03 13 aa  	mov	x0, x19
+  14b890: e1 03 14 aa  	mov	x1, x20
+  14b894: 00 00 00 94  	bl	0x14b894 <cam_actuator_platform_component_bind+0x2c4> // devm_kfree+0x0
+  14b898: 88 66 40 b9  	ldr	w8, [x20, #100]
+  14b89c: c8 01 00 34  	cbz	w8, 0x14b8d4 <cam_actuator_platform_component_bind+0x304>
+  14b8a0: 1f 05 00 71  	cmp	w8, #1
+  14b8a4: 41 03 00 54  	b.ne	0x14b90c <cam_actuator_platform_component_bind+0x33c>
+  14b8a8: 00 00 00 90  	adrp	x0, 0x14b000 <cam_actuator_platform_component_bind+0x2d8> // 'cam_auxaf'
+  14b8ac: 00 00 00 91  	add	x0, x0, #0 // 'cam_auxaf'
+  14b8b0: 00 00 00 94  	bl	0x14b8b0 <cam_actuator_platform_component_bind+0x2e0> // meizu_sysfslink_remove_name+0x0
+  14b8b4: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x2e4> // +0x4dd18
+  14b8b8: e0 03 13 aa  	mov	x0, x19
+  14b8bc: 21 00 00 91  	add	x1, x1, #0 // +0x4dd18
+  14b8c0: 00 00 00 94  	bl	0x14b8c0 <cam_actuator_platform_component_bind+0x2f0> // device_remove_file+0x0
+  14b8c4: 88 66 40 b9  	ldr	w8, [x20, #100]
+  14b8c8: 1f 09 00 71  	cmp	w8, #2
+  14b8cc: e1 ea ff 54  	b.ne	0x14b628 <cam_actuator_platform_component_bind+0x58>
+  14b8d0: 11 00 00 14  	b	0x14b914 <cam_actuator_platform_component_bind+0x344>
+  14b8d4: 00 00 00 90  	adrp	x0, 0x14b000 <cam_actuator_platform_component_bind+0x304> // 'cam_af'
+  14b8d8: 00 00 00 91  	add	x0, x0, #0 // 'cam_af'
+  14b8dc: 00 00 00 94  	bl	0x14b8dc <cam_actuator_platform_component_bind+0x30c> // meizu_sysfslink_remove_name+0x0
+  14b8e0: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x310> // +0x4dcd8
+  14b8e4: e0 03 13 aa  	mov	x0, x19
+  14b8e8: 21 00 00 91  	add	x1, x1, #0 // +0x4dcd8
+  14b8ec: 00 00 00 94  	bl	0x14b8ec <cam_actuator_platform_component_bind+0x31c> // device_remove_file+0x0
+  14b8f0: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x320> // +0x4dcf8
+  14b8f4: e0 03 13 aa  	mov	x0, x19
+  14b8f8: 21 00 00 91  	add	x1, x1, #0 // +0x4dcf8
+  14b8fc: 00 00 00 94  	bl	0x14b8fc <cam_actuator_platform_component_bind+0x32c> // device_remove_file+0x0
+  14b900: 88 66 40 b9  	ldr	w8, [x20, #100]
+  14b904: 1f 05 00 71  	cmp	w8, #1
+  14b908: 00 fd ff 54  	b.eq	0x14b8a8 <cam_actuator_platform_component_bind+0x2d8>
+  14b90c: 1f 09 00 71  	cmp	w8, #2
+  14b910: c1 e8 ff 54  	b.ne	0x14b628 <cam_actuator_platform_component_bind+0x58>
+  14b914: 00 00 00 90  	adrp	x0, 0x14b000 <cam_actuator_platform_component_bind+0x344> // 'cam_aux2af'
+  14b918: 00 00 00 91  	add	x0, x0, #0 // 'cam_aux2af'
+  14b91c: 00 00 00 94  	bl	0x14b91c <cam_actuator_platform_component_bind+0x34c> // meizu_sysfslink_remove_name+0x0
+  14b920: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x350> // +0x4dd38
+  14b924: e0 03 13 aa  	mov	x0, x19
+  14b928: 21 00 00 91  	add	x1, x1, #0 // +0x4dd38
+  14b92c: 00 00 00 94  	bl	0x14b92c <cam_actuator_platform_component_bind+0x35c> // device_remove_file+0x0
+  14b930: 3e ff ff 17  	b	0x14b628 <cam_actuator_platform_component_bind+0x58>
+  14b934: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x364> // +0x4dcd8
+  14b938: e0 03 13 aa  	mov	x0, x19
+  14b93c: 21 00 00 91  	add	x1, x1, #0 // +0x4dcd8
+  14b940: 00 00 00 94  	bl	0x14b940 <cam_actuator_platform_component_bind+0x370> // device_create_file+0x0
+  14b944: 80 01 00 34  	cbz	w0, 0x14b974 <cam_actuator_platform_component_bind+0x3a4>
+  14b948: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x378> // '\x016%s: %s: %s: %d af_pos create file fail!'
+  14b94c: 02 00 00 90  	adrp	x2, 0x14b000 <cam_actuator_platform_component_bind+0x37c> // 'CAM_ERR'
+  14b950: 03 00 00 90  	adrp	x3, 0x14b000 <cam_actuator_platform_component_bind+0x380> // 'CAM-ACTUATOR'
+  14b954: 04 00 00 90  	adrp	x4, 0x14b000 <cam_actuator_platform_component_bind+0x384> // 'cam_actuator_platform_component_bind'
+  14b958: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d af_pos create file fail!'
+  14b95c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  14b960: 63 00 00 91  	add	x3, x3, #0 // 'CAM-ACTUATOR'
+  14b964: 84 00 00 91  	add	x4, x4, #0 // 'cam_actuator_platform_component_bind'
+  14b968: 60 00 80 52  	mov	w0, #3
+  14b96c: 05 5a 80 52  	mov	w5, #720
+  14b970: 00 00 00 94  	bl	0x14b970 <cam_actuator_platform_component_bind+0x3a0> // cam_print_log+0x0
+  14b974: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x3a4> // +0x4dcf8
+  14b978: e0 03 13 aa  	mov	x0, x19
+  14b97c: 21 00 00 91  	add	x1, x1, #0 // +0x4dcf8
+  14b980: 00 00 00 94  	bl	0x14b980 <cam_actuator_platform_component_bind+0x3b0> // device_create_file+0x0
+  14b984: f5 03 00 2a  	mov	w21, w0
+  14b988: 80 01 00 34  	cbz	w0, 0x14b9b8 <cam_actuator_platform_component_bind+0x3e8>
+  14b98c: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x3bc> // '\x016%s: %s: %s: %d af_enable create file fail!'
+  14b990: 02 00 00 90  	adrp	x2, 0x14b000 <cam_actuator_platform_component_bind+0x3c0> // 'CAM_ERR'
+  14b994: 03 00 00 90  	adrp	x3, 0x14b000 <cam_actuator_platform_component_bind+0x3c4> // 'CAM-ACTUATOR'
+  14b998: 04 00 00 90  	adrp	x4, 0x14b000 <cam_actuator_platform_component_bind+0x3c8> // 'cam_actuator_platform_component_bind'
+  14b99c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d af_enable create file fail!'
+  14b9a0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  14b9a4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-ACTUATOR'
+  14b9a8: 84 00 00 91  	add	x4, x4, #0 // 'cam_actuator_platform_component_bind'
+  14b9ac: 60 00 80 52  	mov	w0, #3
+  14b9b0: 85 5a 80 52  	mov	w5, #724
+  14b9b4: 00 00 00 94  	bl	0x14b9b4 <cam_actuator_platform_component_bind+0x3e4> // cam_print_log+0x0
+  14b9b8: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x3e8> // 'cam_af'
+  14b9bc: e0 03 13 aa  	mov	x0, x19
+  14b9c0: 21 00 00 91  	add	x1, x1, #0 // 'cam_af'
+  14b9c4: 00 00 00 94  	bl	0x14b9c4 <cam_actuator_platform_component_bind+0x3f4> // meizu_sysfslink_register_name+0x0
+  14b9c8: 09 00 00 90  	adrp	x9, 0x14b000 <cam_actuator_platform_component_bind+0x3f8> // gr_a_ctrl+0x0
+  14b9cc: 88 66 40 b9  	ldr	w8, [x20, #100]
+  14b9d0: 34 01 00 f9  	str	x20, [x9] // gr_a_ctrl+0x0
+  14b9d4: 1f 05 00 71  	cmp	w8, #1
+  14b9d8: 21 03 00 54  	b.ne	0x14ba3c <cam_actuator_platform_component_bind+0x46c>
+  14b9dc: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x40c> // +0x4dd18
+  14b9e0: e0 03 13 aa  	mov	x0, x19
+  14b9e4: 21 00 00 91  	add	x1, x1, #0 // +0x4dd18
+  14b9e8: 00 00 00 94  	bl	0x14b9e8 <cam_actuator_platform_component_bind+0x418> // device_create_file+0x0
+  14b9ec: f5 03 00 2a  	mov	w21, w0
+  14b9f0: 80 01 00 34  	cbz	w0, 0x14ba20 <cam_actuator_platform_component_bind+0x450>
+  14b9f4: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x424> // '\x016%s: %s: %s: %d auxaf_pos create file fail!'
+  14b9f8: 02 00 00 90  	adrp	x2, 0x14b000 <cam_actuator_platform_component_bind+0x428> // 'CAM_ERR'
+  14b9fc: 03 00 00 90  	adrp	x3, 0x14b000 <cam_actuator_platform_component_bind+0x42c> // 'CAM-ACTUATOR'
+  14ba00: 04 00 00 90  	adrp	x4, 0x14b000 <cam_actuator_platform_component_bind+0x430> // 'cam_actuator_platform_component_bind'
+  14ba04: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d auxaf_pos create file fail!'
+  14ba08: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  14ba0c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-ACTUATOR'
+  14ba10: 84 00 00 91  	add	x4, x4, #0 // 'cam_actuator_platform_component_bind'
+  14ba14: 60 00 80 52  	mov	w0, #3
+  14ba18: 05 5c 80 52  	mov	w5, #736
+  14ba1c: 00 00 00 94  	bl	0x14ba1c <cam_actuator_platform_component_bind+0x44c> // cam_print_log+0x0
+  14ba20: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x450> // 'cam_auxaf'
+  14ba24: e0 03 13 aa  	mov	x0, x19
+  14ba28: 21 00 00 91  	add	x1, x1, #0 // 'cam_auxaf'
+  14ba2c: 00 00 00 94  	bl	0x14ba2c <cam_actuator_platform_component_bind+0x45c> // meizu_sysfslink_register_name+0x0
+  14ba30: 09 00 00 90  	adrp	x9, 0x14b000 <cam_actuator_platform_component_bind+0x460> // gr2_a_ctrl+0x0
+  14ba34: 88 66 40 b9  	ldr	w8, [x20, #100]
+  14ba38: 34 01 00 f9  	str	x20, [x9] // gr2_a_ctrl+0x0
+  14ba3c: 1f 0d 00 71  	cmp	w8, #3
+  14ba40: 41 df ff 54  	b.ne	0x14b628 <cam_actuator_platform_component_bind+0x58>
+  14ba44: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x474> // +0x4dd38
+  14ba48: e0 03 13 aa  	mov	x0, x19
+  14ba4c: 21 00 00 91  	add	x1, x1, #0 // +0x4dd38
+  14ba50: 00 00 00 94  	bl	0x14ba50 <cam_actuator_platform_component_bind+0x480> // device_create_file+0x0
+  14ba54: f5 03 00 2a  	mov	w21, w0
+  14ba58: 80 01 00 34  	cbz	w0, 0x14ba88 <cam_actuator_platform_component_bind+0x4b8>
+  14ba5c: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x48c> // '\x016%s: %s: %s: %d aux2af_pos create file fail!'
+  14ba60: 02 00 00 90  	adrp	x2, 0x14b000 <cam_actuator_platform_component_bind+0x490> // 'CAM_ERR'
+  14ba64: 03 00 00 90  	adrp	x3, 0x14b000 <cam_actuator_platform_component_bind+0x494> // 'CAM-ACTUATOR'
+  14ba68: 04 00 00 90  	adrp	x4, 0x14b000 <cam_actuator_platform_component_bind+0x498> // 'cam_actuator_platform_component_bind'
+  14ba6c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d aux2af_pos create file fail!'
+  14ba70: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  14ba74: 63 00 00 91  	add	x3, x3, #0 // 'CAM-ACTUATOR'
+  14ba78: 84 00 00 91  	add	x4, x4, #0 // 'cam_actuator_platform_component_bind'
+  14ba7c: 60 00 80 52  	mov	w0, #3
+  14ba80: 65 5d 80 52  	mov	w5, #747
+  14ba84: 00 00 00 94  	bl	0x14ba84 <cam_actuator_platform_component_bind+0x4b4> // cam_print_log+0x0
+  14ba88: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x4b8> // 'cam_aux2af'
+  14ba8c: e0 03 13 aa  	mov	x0, x19
+  14ba90: 21 00 00 91  	add	x1, x1, #0 // 'cam_aux2af'
+  14ba94: 00 00 00 94  	bl	0x14ba94 <cam_actuator_platform_component_bind+0x4c4> // meizu_sysfslink_register_name+0x0
+  14ba98: 08 00 00 90  	adrp	x8, 0x14b000 <cam_actuator_platform_component_bind+0x4c8> // gr3_a_ctrl+0x0
+  14ba9c: 14 01 00 f9  	str	x20, [x8] // gr3_a_ctrl+0x0
+  14baa0: e2 fe ff 17  	b	0x14b628 <cam_actuator_platform_component_bind+0x58>
+  14baa4: 01 00 00 90  	adrp	x1, 0x14b000 <cam_actuator_platform_component_bind+0x4d4> // '\x016%s: %s: %s: %d Component bound successfully %d'
+  14baa8: 02 00 00 90  	adrp	x2, 0x14b000 <cam_actuator_platform_component_bind+0x4d8> // 'CAM_DBG'
+  14baac: 03 00 00 90  	adrp	x3, 0x14b000 <cam_actuator_platform_component_bind+0x4dc> // 'CAM-ACTUATOR'
+  14bab0: 04 00 00 90  	adrp	x4, 0x14b000 <cam_actuator_platform_component_bind+0x4e0> // 'cam_actuator_platform_component_bind'
+  14bab4: 86 66 40 b9  	ldr	w6, [x20, #100]
+  14bab8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Component bound successfully %d'
+  14babc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  14bac0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-ACTUATOR'
+  14bac4: 84 00 00 91  	add	x4, x4, #0 // 'cam_actuator_platform_component_bind'
+  14bac8: 60 00 80 52  	mov	w0, #3
+  14bacc: e5 58 80 52  	mov	w5, #711
+  14bad0: 00 00 00 94  	bl	0x14bad0 <cam_actuator_platform_component_bind+0x500> // cam_print_log+0x0
+  14bad4: 38 ff ff 17  	b	0x14b7b4 <cam_actuator_platform_component_bind+0x1e4>
+  14bad8: 40 a2 2a d4  	brk	#0x5512

@@ -1,0 +1,670 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019d27c <sy7808_cfg_duty>:
+  19d27c: 3f 23 03 d5  	hint	#25
+  19d280: ff 03 02 d1  	sub	sp, sp, #128
+  19d284: 5e 86 00 f8  	str	x30, [x18], #8
+  19d288: fd 7b 04 a9  	stp	x29, x30, [sp, #64]
+  19d28c: fd 03 01 91  	add	x29, sp, #64
+  19d290: f8 5f 05 a9  	stp	x24, x23, [sp, #80]
+  19d294: f6 57 06 a9  	stp	x22, x21, [sp, #96]
+  19d298: f4 4f 07 a9  	stp	x20, x19, [sp, #112]
+  19d29c: 08 41 38 d5  	mrs	x8, SP_EL0
+  19d2a0: f4 03 00 2a  	mov	w20, w0
+  19d2a4: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x28> // +0x64a80
+  19d2a8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19d2ac: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19d2b0: f3 03 02 2a  	mov	w19, w2
+  19d2b4: f5 03 01 2a  	mov	w21, w1
+  19d2b8: a8 83 1f f8  	stur	x8, [x29, #-8]
+  19d2bc: 00 00 00 94  	bl	0x19d2bc <sy7808_cfg_duty+0x40> // mutex_lock+0x0
+  19d2c0: 9f 12 00 71  	cmp	w20, #4
+  19d2c4: c2 14 00 54  	b.hs	0x19d55c <sy7808_cfg_duty+0x2e0>
+  19d2c8: e8 03 14 2a  	mov	w8, w20
+  19d2cc: 09 0c 80 52  	mov	w9, #96
+  19d2d0: 09 7d 78 b3  	bfi	x9, x8, #8, #32
+  19d2d4: 3f 01 0c f1  	cmp	x9, #768
+  19d2d8: e8 1c 00 54  	b.hi	0x19d674 <sy7808_cfg_duty+0x3f8>
+  19d2dc: 09 00 00 90  	adrp	x9, 0x19d000 <sy7808_cfg_duty+0x60> // +0x24a660
+  19d2e0: 29 01 00 91  	add	x9, x9, #0 // +0x24a660
+  19d2e4: 2a 21 08 8b  	add	x10, x9, x8, lsl #8
+  19d2e8: 4a 81 41 39  	ldrb	w10, [x10, #96]
+  19d2ec: ea 14 00 34  	cbz	w10, 0x19d588 <sy7808_cfg_duty+0x30c>
+  19d2f0: bf 0e 00 71  	cmp	w21, #3
+  19d2f4: 20 08 00 54  	b.eq	0x19d3f8 <sy7808_cfg_duty+0x17c>
+  19d2f8: bf 0a 00 71  	cmp	w21, #2
+  19d2fc: c1 15 00 54  	b.ne	0x19d5b4 <sy7808_cfg_duty+0x338>
+  19d300: 6a 0a 13 0b  	add	w10, w19, w19, lsl #2
+  19d304: 2b 86 81 52  	mov	w11, #3121
+  19d308: 6b 18 a6 72  	movk	w11, #12483, lsl #16
+  19d30c: 4a 79 00 12  	and	w10, w10, #0x7fffffff
+  19d310: 28 21 08 8b  	add	x8, x9, x8, lsl #8
+  19d314: 36 00 80 52  	mov	w22, #1
+  19d318: 4a 7d ab 9b  	umull	x10, w10, w11
+  19d31c: 0b 09 80 52  	mov	w11, #72
+  19d320: 14 01 02 91  	add	x20, x8, #128
+  19d324: f5 03 00 b2  	mov	x21, #4294967297
+  19d328: 4a fd 62 d3  	lsr	x10, x10, #34
+  19d32c: f7 03 00 91  	mov	x23, sp
+  19d330: 5f 05 00 71  	cmp	w10, #1
+  19d334: e1 43 00 91  	add	x1, sp, #16
+  19d338: 4a 85 9f 1a  	csinc	w10, w10, wzr, hi
+  19d33c: e0 03 14 aa  	mov	x0, x20
+  19d340: 5f 21 01 71  	cmp	w10, #72
+  19d344: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19d348: 4a 31 8b 1a  	csel	w10, w10, w11, lo
+  19d34c: cb 00 80 52  	mov	w11, #6
+  19d350: 4a 05 00 51  	sub	w10, w10, #1
+  19d354: ff 13 00 f9  	str	xzr, [sp, #32]
+  19d358: 53 1d 00 12  	and	w19, w10, #0xff
+  19d35c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19d360: f6 23 00 b9  	str	w22, [sp, #32]
+  19d364: f7 57 01 a9  	stp	x23, x21, [sp, #16]
+  19d368: eb 4f 00 29  	stp	w11, w19, [sp]
+  19d36c: ff 07 00 f9  	str	xzr, [sp, #8]
+  19d370: 00 00 00 94  	bl	0x19d370 <sy7808_cfg_duty+0xf4> // camera_io_dev_write+0x0
+  19d374: e0 12 f8 37  	tbnz	w0, #31, 0x19d5d0 <sy7808_cfg_duty+0x354>
+  19d378: e8 00 80 52  	mov	w8, #7
+  19d37c: e1 43 00 91  	add	x1, sp, #16
+  19d380: e0 03 14 aa  	mov	x0, x20
+  19d384: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19d388: f5 ff 01 a9  	stp	x21, xzr, [sp, #24]
+  19d38c: f6 23 00 b9  	str	w22, [sp, #32]
+  19d390: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19d394: ff df 00 a9  	stp	xzr, x23, [sp, #8]
+  19d398: e8 4f 00 29  	stp	w8, w19, [sp]
+  19d39c: 00 00 00 94  	bl	0x19d39c <sy7808_cfg_duty+0x120> // camera_io_dev_write+0x0
+  19d3a0: 80 12 f8 37  	tbnz	w0, #31, 0x19d5f0 <sy7808_cfg_duty+0x374>
+  19d3a4: 28 00 80 52  	mov	w8, #1
+  19d3a8: ff 13 00 f9  	str	xzr, [sp, #32]
+  19d3ac: e9 03 00 b2  	mov	x9, #4294967297
+  19d3b0: ea 03 00 91  	mov	x10, sp
+  19d3b4: e1 43 00 91  	add	x1, sp, #16
+  19d3b8: e0 03 14 aa  	mov	x0, x20
+  19d3bc: e8 23 00 b9  	str	w8, [sp, #32]
+  19d3c0: 08 01 80 52  	mov	w8, #8
+  19d3c4: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19d3c8: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19d3cc: ea 27 01 a9  	stp	x10, x9, [sp, #16]
+  19d3d0: e8 4f 00 29  	stp	w8, w19, [sp]
+  19d3d4: ff 07 00 f9  	str	xzr, [sp, #8]
+  19d3d8: 00 00 00 94  	bl	0x19d3d8 <sy7808_cfg_duty+0x15c> // camera_io_dev_write+0x0
+  19d3dc: e0 09 f8 36  	tbz	w0, #31, 0x19d518 <sy7808_cfg_duty+0x29c>
+  19d3e0: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x164> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d3e4: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x168> // 'sy7808_write_reg'
+  19d3e8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d3ec: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19d3f0: 02 01 80 52  	mov	w2, #8
+  19d3f4: 9c 00 00 14  	b	0x19d664 <sy7808_cfg_duty+0x3e8>
+  19d3f8: 0a 7d 80 52  	mov	w10, #1000
+  19d3fc: eb c9 9a 52  	mov	w11, #54863
+  19d400: cb 9e bb 72  	movk	w11, #56566, lsl #16
+  19d404: cc 03 80 52  	mov	w12, #30
+  19d408: 6a 7e 0a 1b  	mul	w10, w19, w10
+  19d40c: 28 21 08 8b  	add	x8, x9, x8, lsl #8
+  19d410: 14 01 02 91  	add	x20, x8, #128
+  19d414: 37 00 80 52  	mov	w23, #1
+  19d418: f6 03 00 b2  	mov	x22, #4294967297
+  19d41c: f8 03 00 91  	mov	x24, sp
+  19d420: 4b 7d ab 9b  	umull	x11, w10, w11
+  19d424: e1 43 00 91  	add	x1, sp, #16
+  19d428: e0 03 14 aa  	mov	x0, x20
+  19d42c: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19d430: 6b fd 60 d3  	lsr	x11, x11, #32
+  19d434: ff 13 00 f9  	str	xzr, [sp, #32]
+  19d438: 4a 01 0b 4b  	sub	w10, w10, w11
+  19d43c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19d440: f7 23 00 b9  	str	w23, [sp, #32]
+  19d444: 6a 05 4a 0b  	add	w10, w11, w10, lsr #1
+  19d448: 6b 00 80 52  	mov	w11, #3
+  19d44c: 4a 7d 0f 53  	lsr	w10, w10, #15
+  19d450: f8 5b 01 a9  	stp	x24, x22, [sp, #16]
+  19d454: 5f 05 00 71  	cmp	w10, #1
+  19d458: ff 07 00 f9  	str	xzr, [sp, #8]
+  19d45c: 4a 85 9f 1a  	csinc	w10, w10, wzr, hi
+  19d460: 5f 79 00 71  	cmp	w10, #30
+  19d464: 4a 31 8c 1a  	csel	w10, w10, w12, lo
+  19d468: 4a 05 00 51  	sub	w10, w10, #1
+  19d46c: 55 1d 00 12  	and	w21, w10, #0xff
+  19d470: eb 57 00 29  	stp	w11, w21, [sp]
+  19d474: 00 00 00 94  	bl	0x19d474 <sy7808_cfg_duty+0x1f8> // camera_io_dev_write+0x0
+  19d478: c0 0c f8 37  	tbnz	w0, #31, 0x19d610 <sy7808_cfg_duty+0x394>
+  19d47c: 88 00 80 52  	mov	w8, #4
+  19d480: e1 43 00 91  	add	x1, sp, #16
+  19d484: e0 03 14 aa  	mov	x0, x20
+  19d488: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19d48c: f6 ff 01 a9  	stp	x22, xzr, [sp, #24]
+  19d490: f7 23 00 b9  	str	w23, [sp, #32]
+  19d494: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19d498: ff e3 00 a9  	stp	xzr, x24, [sp, #8]
+  19d49c: e8 57 00 29  	stp	w8, w21, [sp]
+  19d4a0: 00 00 00 94  	bl	0x19d4a0 <sy7808_cfg_duty+0x224> // camera_io_dev_write+0x0
+  19d4a4: 60 0c f8 37  	tbnz	w0, #31, 0x19d630 <sy7808_cfg_duty+0x3b4>
+  19d4a8: 88 0c 80 52  	mov	w8, #100
+  19d4ac: e9 a4 96 52  	mov	w9, #46375
+  19d4b0: c9 51 a9 72  	movk	w9, #19086, lsl #16
+  19d4b4: 2a 00 80 52  	mov	w10, #1
+  19d4b8: 68 7e 08 1b  	mul	w8, w19, w8
+  19d4bc: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19d4c0: eb 03 00 91  	mov	x11, sp
+  19d4c4: e1 43 00 91  	add	x1, sp, #16
+  19d4c8: ea 23 00 b9  	str	w10, [sp, #32]
+  19d4cc: 8a 07 80 52  	mov	w10, #60
+  19d4d0: 08 7d a9 9b  	umull	x8, w8, w9
+  19d4d4: e9 03 00 b2  	mov	x9, #4294967297
+  19d4d8: e0 03 14 aa  	mov	x0, x20
+  19d4dc: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19d4e0: 08 fd 69 d3  	lsr	x8, x8, #41
+  19d4e4: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19d4e8: 1f 05 00 71  	cmp	w8, #1
+  19d4ec: eb 27 01 a9  	stp	x11, x9, [sp, #16]
+  19d4f0: 08 85 9f 1a  	csinc	w8, w8, wzr, hi
+  19d4f4: a9 00 80 52  	mov	w9, #5
+  19d4f8: 1f f1 00 71  	cmp	w8, #60
+  19d4fc: ff 07 00 f9  	str	xzr, [sp, #8]
+  19d500: 08 31 8a 1a  	csel	w8, w8, w10, lo
+  19d504: 08 05 00 51  	sub	w8, w8, #1
+  19d508: 13 1d 00 12  	and	w19, w8, #0xff
+  19d50c: e9 4f 00 29  	stp	w9, w19, [sp]
+  19d510: 00 00 00 94  	bl	0x19d510 <sy7808_cfg_duty+0x294> // camera_io_dev_write+0x0
+  19d514: e0 09 f8 37  	tbnz	w0, #31, 0x19d650 <sy7808_cfg_duty+0x3d4>
+  19d518: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x29c> // +0x64a80
+  19d51c: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19d520: 00 00 00 94  	bl	0x19d520 <sy7808_cfg_duty+0x2a4> // mutex_unlock+0x0
+  19d524: e0 03 1f 2a  	mov	w0, wzr
+  19d528: 08 41 38 d5  	mrs	x8, SP_EL0
+  19d52c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19d530: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  19d534: 1f 01 09 eb  	cmp	x8, x9
+  19d538: c1 09 00 54  	b.ne	0x19d670 <sy7808_cfg_duty+0x3f4>
+  19d53c: f4 4f 47 a9  	ldp	x20, x19, [sp, #112]
+  19d540: f6 57 46 a9  	ldp	x22, x21, [sp, #96]
+  19d544: f8 5f 45 a9  	ldp	x24, x23, [sp, #80]
+  19d548: fd 7b 44 a9  	ldp	x29, x30, [sp, #64]
+  19d54c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19d550: ff 03 02 91  	add	sp, sp, #128
+  19d554: bf 23 03 d5  	hint	#29
+  19d558: c0 03 5f d6  	ret
+  19d55c: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x2e0> // +0x64a80
+  19d560: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19d564: 00 00 00 94  	bl	0x19d564 <sy7808_cfg_duty+0x2e8> // mutex_unlock+0x0
+  19d568: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x2ec> // '\x013[ERROR]%s:Invalid dev_id:%d.\n'
+  19d56c: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x2f0> // 'sy7808_cfg_duty'
+  19d570: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:Invalid dev_id:%d.\n'
+  19d574: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_cfg_duty'
+  19d578: e2 03 14 2a  	mov	w2, w20
+  19d57c: 00 00 00 94  	bl	0x19d57c <sy7808_cfg_duty+0x300> // _printk+0x0
+  19d580: a0 02 80 12  	mov	w0, #-22
+  19d584: e9 ff ff 17  	b	0x19d528 <sy7808_cfg_duty+0x2ac>
+  19d588: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x30c> // +0x64a80
+  19d58c: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19d590: 00 00 00 94  	bl	0x19d590 <sy7808_cfg_duty+0x314> // mutex_unlock+0x0
+  19d594: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x318> // '\x013[ERROR]%s:Request device not ready:%d.\n'
+  19d598: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x31c> // 'sy7808_cfg_duty'
+  19d59c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:Request device not ready:%d.\n'
+  19d5a0: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_cfg_duty'
+  19d5a4: e2 03 14 2a  	mov	w2, w20
+  19d5a8: 00 00 00 94  	bl	0x19d5a8 <sy7808_cfg_duty+0x32c> // _printk+0x0
+  19d5ac: 40 02 80 12  	mov	w0, #-19
+  19d5b0: de ff ff 17  	b	0x19d528 <sy7808_cfg_duty+0x2ac>
+  19d5b4: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x338> // '\x013[ERROR]%s fail. invalid flash mode:%d.\n'
+  19d5b8: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x33c> // 'sy7808_cfg_duty'
+  19d5bc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s fail. invalid flash mode:%d.\n'
+  19d5c0: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_cfg_duty'
+  19d5c4: e2 03 15 2a  	mov	w2, w21
+  19d5c8: 00 00 00 94  	bl	0x19d5c8 <sy7808_cfg_duty+0x34c> // _printk+0x0
+  19d5cc: d3 ff ff 17  	b	0x19d518 <sy7808_cfg_duty+0x29c>
+  19d5d0: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x354> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d5d4: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x358> // 'sy7808_write_reg'
+  19d5d8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d5dc: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19d5e0: c2 00 80 52  	mov	w2, #6
+  19d5e4: e3 03 13 2a  	mov	w3, w19
+  19d5e8: 00 00 00 94  	bl	0x19d5e8 <sy7808_cfg_duty+0x36c> // _printk+0x0
+  19d5ec: 63 ff ff 17  	b	0x19d378 <sy7808_cfg_duty+0xfc>
+  19d5f0: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x374> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d5f4: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x378> // 'sy7808_write_reg'
+  19d5f8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d5fc: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19d600: e2 00 80 52  	mov	w2, #7
+  19d604: e3 03 13 2a  	mov	w3, w19
+  19d608: 00 00 00 94  	bl	0x19d608 <sy7808_cfg_duty+0x38c> // _printk+0x0
+  19d60c: 66 ff ff 17  	b	0x19d3a4 <sy7808_cfg_duty+0x128>
+  19d610: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x394> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d614: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x398> // 'sy7808_write_reg'
+  19d618: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d61c: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19d620: 62 00 80 52  	mov	w2, #3
+  19d624: e3 03 15 2a  	mov	w3, w21
+  19d628: 00 00 00 94  	bl	0x19d628 <sy7808_cfg_duty+0x3ac> // _printk+0x0
+  19d62c: 94 ff ff 17  	b	0x19d47c <sy7808_cfg_duty+0x200>
+  19d630: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x3b4> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d634: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x3b8> // 'sy7808_write_reg'
+  19d638: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d63c: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19d640: 82 00 80 52  	mov	w2, #4
+  19d644: e3 03 15 2a  	mov	w3, w21
+  19d648: 00 00 00 94  	bl	0x19d648 <sy7808_cfg_duty+0x3cc> // _printk+0x0
+  19d64c: 97 ff ff 17  	b	0x19d4a8 <sy7808_cfg_duty+0x22c>
+  19d650: 00 00 00 90  	adrp	x0, 0x19d000 <sy7808_cfg_duty+0x3d4> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d654: 01 00 00 90  	adrp	x1, 0x19d000 <sy7808_cfg_duty+0x3d8> // 'sy7808_write_reg'
+  19d658: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19d65c: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19d660: a2 00 80 52  	mov	w2, #5
+  19d664: e3 03 13 2a  	mov	w3, w19
+  19d668: 00 00 00 94  	bl	0x19d668 <sy7808_cfg_duty+0x3ec> // _printk+0x0
+  19d66c: ab ff ff 17  	b	0x19d518 <sy7808_cfg_duty+0x29c>
+  19d670: 00 00 00 94  	bl	0x19d670 <sy7808_cfg_duty+0x3f4> // __stack_chk_fail+0x0
+  19d674: 20 00 20 d4  	brk	#0x1
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019c7cc <sy7808_init>:
+  19c7cc: 3f 23 03 d5  	hint	#25
+  19c7d0: ff c3 01 d1  	sub	sp, sp, #112
+  19c7d4: 5e 86 00 f8  	str	x30, [x18], #8
+  19c7d8: fd 7b 04 a9  	stp	x29, x30, [sp, #64]
+  19c7dc: fd 03 01 91  	add	x29, sp, #64
+  19c7e0: f6 57 05 a9  	stp	x22, x21, [sp, #80]
+  19c7e4: f4 4f 06 a9  	stp	x20, x19, [sp, #96]
+  19c7e8: 08 41 38 d5  	mrs	x8, SP_EL0
+  19c7ec: f3 03 00 2a  	mov	w19, w0
+  19c7f0: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x24> // +0x64a80
+  19c7f4: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19c7f8: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19c7fc: a8 83 1f f8  	stur	x8, [x29, #-8]
+  19c800: 00 00 00 94  	bl	0x19c800 <sy7808_init+0x34> // mutex_lock+0x0
+  19c804: 7f 12 00 71  	cmp	w19, #4
+  19c808: 42 12 00 54  	b.hs	0x19ca50 <sy7808_init+0x284>
+  19c80c: e8 03 13 2a  	mov	w8, w19
+  19c810: 09 0c 80 52  	mov	w9, #96
+  19c814: 09 7d 78 b3  	bfi	x9, x8, #8, #32
+  19c818: 3f 01 0c f1  	cmp	x9, #768
+  19c81c: c8 1d 00 54  	b.hi	0x19cbd4 <sy7808_init+0x408>
+  19c820: 09 00 00 90  	adrp	x9, 0x19c000 <sy7808_init+0x54> // +0x24a660
+  19c824: 29 01 00 91  	add	x9, x9, #0 // +0x24a660
+  19c828: 2a 21 08 8b  	add	x10, x9, x8, lsl #8
+  19c82c: 4b 81 41 39  	ldrb	w11, [x10, #96]
+  19c830: 6b 12 00 34  	cbz	w11, 0x19ca7c <sy7808_init+0x2b0>
+  19c834: 0b dd 78 d3  	lsl	x11, x8, #8
+  19c838: 8c 0e 80 52  	mov	w12, #116
+  19c83c: 6b 01 0c aa  	orr	x11, x11, x12
+  19c840: 7f 01 0c f1  	cmp	x11, #768
+  19c844: 88 1c 00 54  	b.hi	0x19cbd4 <sy7808_init+0x408>
+  19c848: 53 d1 01 91  	add	x19, x10, #116
+  19c84c: 6a 02 40 b9  	ldr	w10, [x19]
+  19c850: 4b 05 00 11  	add	w11, w10, #1
+  19c854: 6b 02 00 b9  	str	w11, [x19]
+  19c858: 8a 12 00 35  	cbnz	w10, 0x19caa8 <sy7808_init+0x2dc>
+  19c85c: 28 21 08 8b  	add	x8, x9, x8, lsl #8
+  19c860: 35 00 80 52  	mov	w21, #1
+  19c864: 13 01 02 91  	add	x19, x8, #128
+  19c868: f4 03 00 b2  	mov	x20, #4294967297
+  19c86c: f6 03 00 91  	mov	x22, sp
+  19c870: e1 43 00 91  	add	x1, sp, #16
+  19c874: e0 03 13 aa  	mov	x0, x19
+  19c878: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c87c: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c880: f5 23 00 b9  	str	w21, [sp, #32]
+  19c884: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c888: f6 53 01 a9  	stp	x22, x20, [sp, #16]
+  19c88c: f5 7f 00 a9  	stp	x21, xzr, [sp]
+  19c890: 00 00 00 94  	bl	0x19c890 <sy7808_init+0xc4> // camera_io_dev_write+0x0
+  19c894: 00 12 f8 37  	tbnz	w0, #31, 0x19cad4 <sy7808_init+0x308>
+  19c898: 48 01 80 d2  	mov	x8, #10
+  19c89c: e1 43 00 91  	add	x1, sp, #16
+  19c8a0: e8 01 c0 f2  	movk	x8, #15, lsl #32
+  19c8a4: e0 03 13 aa  	mov	x0, x19
+  19c8a8: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c8ac: f4 ff 01 a9  	stp	x20, xzr, [sp, #24]
+  19c8b0: f5 23 00 b9  	str	w21, [sp, #32]
+  19c8b4: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c8b8: ff db 00 a9  	stp	xzr, x22, [sp, #8]
+  19c8bc: e8 03 00 f9  	str	x8, [sp]
+  19c8c0: 00 00 00 94  	bl	0x19c8c0 <sy7808_init+0xf4> // camera_io_dev_write+0x0
+  19c8c4: 80 11 f8 37  	tbnz	w0, #31, 0x19caf4 <sy7808_init+0x328>
+  19c8c8: 35 00 80 52  	mov	w21, #1
+  19c8cc: f4 03 00 b2  	mov	x20, #4294967297
+  19c8d0: f6 03 00 91  	mov	x22, sp
+  19c8d4: 68 00 80 52  	mov	w8, #3
+  19c8d8: e1 43 00 91  	add	x1, sp, #16
+  19c8dc: e0 03 13 aa  	mov	x0, x19
+  19c8e0: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c8e4: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c8e8: f5 23 00 b9  	str	w21, [sp, #32]
+  19c8ec: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c8f0: f6 53 01 a9  	stp	x22, x20, [sp, #16]
+  19c8f4: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19c8f8: 00 00 00 94  	bl	0x19c8f8 <sy7808_init+0x12c> // camera_io_dev_write+0x0
+  19c8fc: c0 10 f8 37  	tbnz	w0, #31, 0x19cb14 <sy7808_init+0x348>
+  19c900: 88 00 80 52  	mov	w8, #4
+  19c904: e1 43 00 91  	add	x1, sp, #16
+  19c908: e0 03 13 aa  	mov	x0, x19
+  19c90c: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c910: f4 ff 01 a9  	stp	x20, xzr, [sp, #24]
+  19c914: f5 23 00 b9  	str	w21, [sp, #32]
+  19c918: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c91c: ff db 00 a9  	stp	xzr, x22, [sp, #8]
+  19c920: e8 03 00 f9  	str	x8, [sp]
+  19c924: 00 00 00 94  	bl	0x19c924 <sy7808_init+0x158> // camera_io_dev_write+0x0
+  19c928: 60 10 f8 37  	tbnz	w0, #31, 0x19cb34 <sy7808_init+0x368>
+  19c92c: 35 00 80 52  	mov	w21, #1
+  19c930: f4 03 00 b2  	mov	x20, #4294967297
+  19c934: f6 03 00 91  	mov	x22, sp
+  19c938: a8 00 80 52  	mov	w8, #5
+  19c93c: e1 43 00 91  	add	x1, sp, #16
+  19c940: e0 03 13 aa  	mov	x0, x19
+  19c944: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c948: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c94c: f5 23 00 b9  	str	w21, [sp, #32]
+  19c950: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c954: f6 53 01 a9  	stp	x22, x20, [sp, #16]
+  19c958: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19c95c: 00 00 00 94  	bl	0x19c95c <sy7808_init+0x190> // camera_io_dev_write+0x0
+  19c960: a0 0f f8 37  	tbnz	w0, #31, 0x19cb54 <sy7808_init+0x388>
+  19c964: c8 00 80 52  	mov	w8, #6
+  19c968: e1 43 00 91  	add	x1, sp, #16
+  19c96c: e0 03 13 aa  	mov	x0, x19
+  19c970: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c974: f4 ff 01 a9  	stp	x20, xzr, [sp, #24]
+  19c978: f5 23 00 b9  	str	w21, [sp, #32]
+  19c97c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c980: ff db 00 a9  	stp	xzr, x22, [sp, #8]
+  19c984: e8 03 00 f9  	str	x8, [sp]
+  19c988: 00 00 00 94  	bl	0x19c988 <sy7808_init+0x1bc> // camera_io_dev_write+0x0
+  19c98c: 40 0f f8 37  	tbnz	w0, #31, 0x19cb74 <sy7808_init+0x3a8>
+  19c990: 35 00 80 52  	mov	w21, #1
+  19c994: f4 03 00 b2  	mov	x20, #4294967297
+  19c998: f6 03 00 91  	mov	x22, sp
+  19c99c: e8 00 80 52  	mov	w8, #7
+  19c9a0: e1 43 00 91  	add	x1, sp, #16
+  19c9a4: e0 03 13 aa  	mov	x0, x19
+  19c9a8: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c9ac: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c9b0: f5 23 00 b9  	str	w21, [sp, #32]
+  19c9b4: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c9b8: f6 53 01 a9  	stp	x22, x20, [sp, #16]
+  19c9bc: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19c9c0: 00 00 00 94  	bl	0x19c9c0 <sy7808_init+0x1f4> // camera_io_dev_write+0x0
+  19c9c4: 80 0e f8 37  	tbnz	w0, #31, 0x19cb94 <sy7808_init+0x3c8>
+  19c9c8: 08 01 80 52  	mov	w8, #8
+  19c9cc: e1 43 00 91  	add	x1, sp, #16
+  19c9d0: e0 03 13 aa  	mov	x0, x19
+  19c9d4: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c9d8: f4 ff 01 a9  	stp	x20, xzr, [sp, #24]
+  19c9dc: f5 23 00 b9  	str	w21, [sp, #32]
+  19c9e0: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c9e4: ff db 00 a9  	stp	xzr, x22, [sp, #8]
+  19c9e8: e8 03 00 f9  	str	x8, [sp]
+  19c9ec: 00 00 00 94  	bl	0x19c9ec <sy7808_init+0x220> // camera_io_dev_write+0x0
+  19c9f0: 20 0e f8 37  	tbnz	w0, #31, 0x19cbb4 <sy7808_init+0x3e8>
+  19c9f4: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x228> // +0x64a80
+  19c9f8: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19c9fc: 00 00 00 94  	bl	0x19c9fc <sy7808_init+0x230> // mutex_unlock+0x0
+  19ca00: 08 00 00 90  	adrp	x8, 0x19c000 <sy7808_init+0x234> // +0x24a964
+  19ca04: 09 01 40 39  	ldrb	w9, [x8] // +0x24a964
+  19ca08: 69 00 00 36  	tbz	w9, #0, 0x19ca14 <sy7808_init+0x248>
+  19ca0c: e0 03 1f 2a  	mov	w0, wzr
+  19ca10: 04 00 00 14  	b	0x19ca20 <sy7808_init+0x254>
+  19ca14: 29 00 80 52  	mov	w9, #1
+  19ca18: e0 03 1f 2a  	mov	w0, wzr
+  19ca1c: 09 01 00 39  	strb	w9, [x8] // +0x24a964
+  19ca20: 08 41 38 d5  	mrs	x8, SP_EL0
+  19ca24: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19ca28: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  19ca2c: 1f 01 09 eb  	cmp	x8, x9
+  19ca30: 41 0d 00 54  	b.ne	0x19cbd8 <sy7808_init+0x40c>
+  19ca34: f4 4f 46 a9  	ldp	x20, x19, [sp, #96]
+  19ca38: f6 57 45 a9  	ldp	x22, x21, [sp, #80]
+  19ca3c: fd 7b 44 a9  	ldp	x29, x30, [sp, #64]
+  19ca40: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19ca44: ff c3 01 91  	add	sp, sp, #112
+  19ca48: bf 23 03 d5  	hint	#29
+  19ca4c: c0 03 5f d6  	ret
+  19ca50: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x284> // +0x64a80
+  19ca54: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19ca58: 00 00 00 94  	bl	0x19ca58 <sy7808_init+0x28c> // mutex_unlock+0x0
+  19ca5c: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x290> // '\x013[ERROR]%s:Invalid dev_id:%d.\n'
+  19ca60: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x294> // 'sy7808_init'
+  19ca64: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:Invalid dev_id:%d.\n'
+  19ca68: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_init'
+  19ca6c: e2 03 13 2a  	mov	w2, w19
+  19ca70: 00 00 00 94  	bl	0x19ca70 <sy7808_init+0x2a4> // _printk+0x0
+  19ca74: a0 02 80 12  	mov	w0, #-22
+  19ca78: ea ff ff 17  	b	0x19ca20 <sy7808_init+0x254>
+  19ca7c: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x2b0> // +0x64a80
+  19ca80: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19ca84: 00 00 00 94  	bl	0x19ca84 <sy7808_init+0x2b8> // mutex_unlock+0x0
+  19ca88: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x2bc> // '\x013[ERROR]%s:Request device not ready:%d.\n'
+  19ca8c: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x2c0> // 'sy7808_init'
+  19ca90: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:Request device not ready:%d.\n'
+  19ca94: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_init'
+  19ca98: e2 03 13 2a  	mov	w2, w19
+  19ca9c: 00 00 00 94  	bl	0x19ca9c <sy7808_init+0x2d0> // _printk+0x0
+  19caa0: 40 02 80 12  	mov	w0, #-19
+  19caa4: df ff ff 17  	b	0x19ca20 <sy7808_init+0x254>
+  19caa8: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x2dc> // +0x64a80
+  19caac: 00 00 00 91  	add	x0, x0, #0 // +0x64a80
+  19cab0: 00 00 00 94  	bl	0x19cab0 <sy7808_init+0x2e4> // mutex_unlock+0x0
+  19cab4: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x2e8> // '\x013%s: init use count:%d.'
+  19cab8: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x2ec> // 'sy7808_init'
+  19cabc: 62 02 40 b9  	ldr	w2, [x19]
+  19cac0: 00 00 00 91  	add	x0, x0, #0 // '\x013%s: init use count:%d.'
+  19cac4: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_init'
+  19cac8: 00 00 00 94  	bl	0x19cac8 <sy7808_init+0x2fc> // _printk+0x0
+  19cacc: e0 03 1f 2a  	mov	w0, wzr
+  19cad0: d4 ff ff 17  	b	0x19ca20 <sy7808_init+0x254>
+  19cad4: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x308> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cad8: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x30c> // 'sy7808_write_reg'
+  19cadc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cae0: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19cae4: 22 00 80 52  	mov	w2, #1
+  19cae8: e3 03 1f 2a  	mov	w3, wzr
+  19caec: 00 00 00 94  	bl	0x19caec <sy7808_init+0x320> // _printk+0x0
+  19caf0: 6a ff ff 17  	b	0x19c898 <sy7808_init+0xcc>
+  19caf4: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x328> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19caf8: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x32c> // 'sy7808_write_reg'
+  19cafc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb00: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19cb04: 42 01 80 52  	mov	w2, #10
+  19cb08: e3 01 80 52  	mov	w3, #15
+  19cb0c: 00 00 00 94  	bl	0x19cb0c <sy7808_init+0x340> // _printk+0x0
+  19cb10: 6e ff ff 17  	b	0x19c8c8 <sy7808_init+0xfc>
+  19cb14: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x348> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb18: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x34c> // 'sy7808_write_reg'
+  19cb1c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb20: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19cb24: 62 00 80 52  	mov	w2, #3
+  19cb28: e3 03 1f 2a  	mov	w3, wzr
+  19cb2c: 00 00 00 94  	bl	0x19cb2c <sy7808_init+0x360> // _printk+0x0
+  19cb30: 74 ff ff 17  	b	0x19c900 <sy7808_init+0x134>
+  19cb34: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x368> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb38: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x36c> // 'sy7808_write_reg'
+  19cb3c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb40: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19cb44: 82 00 80 52  	mov	w2, #4
+  19cb48: e3 03 1f 2a  	mov	w3, wzr
+  19cb4c: 00 00 00 94  	bl	0x19cb4c <sy7808_init+0x380> // _printk+0x0
+  19cb50: 77 ff ff 17  	b	0x19c92c <sy7808_init+0x160>
+  19cb54: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x388> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb58: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x38c> // 'sy7808_write_reg'
+  19cb5c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb60: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19cb64: a2 00 80 52  	mov	w2, #5
+  19cb68: e3 03 1f 2a  	mov	w3, wzr
+  19cb6c: 00 00 00 94  	bl	0x19cb6c <sy7808_init+0x3a0> // _printk+0x0
+  19cb70: 7d ff ff 17  	b	0x19c964 <sy7808_init+0x198>
+  19cb74: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x3a8> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb78: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x3ac> // 'sy7808_write_reg'
+  19cb7c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb80: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19cb84: c2 00 80 52  	mov	w2, #6
+  19cb88: e3 03 1f 2a  	mov	w3, wzr
+  19cb8c: 00 00 00 94  	bl	0x19cb8c <sy7808_init+0x3c0> // _printk+0x0
+  19cb90: 80 ff ff 17  	b	0x19c990 <sy7808_init+0x1c4>
+  19cb94: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x3c8> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cb98: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x3cc> // 'sy7808_write_reg'
+  19cb9c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cba0: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19cba4: e2 00 80 52  	mov	w2, #7
+  19cba8: e3 03 1f 2a  	mov	w3, wzr
+  19cbac: 00 00 00 94  	bl	0x19cbac <sy7808_init+0x3e0> // _printk+0x0
+  19cbb0: 86 ff ff 17  	b	0x19c9c8 <sy7808_init+0x1fc>
+  19cbb4: 00 00 00 90  	adrp	x0, 0x19c000 <sy7808_init+0x3e8> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cbb8: 01 00 00 90  	adrp	x1, 0x19c000 <sy7808_init+0x3ec> // 'sy7808_write_reg'
+  19cbbc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19cbc0: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19cbc4: 02 01 80 52  	mov	w2, #8
+  19cbc8: e3 03 1f 2a  	mov	w3, wzr
+  19cbcc: 00 00 00 94  	bl	0x19cbcc <sy7808_init+0x400> // _printk+0x0
+  19cbd0: 89 ff ff 17  	b	0x19c9f4 <sy7808_init+0x228>
+  19cbd4: 20 00 20 d4  	brk	#0x1
+  19cbd8: 00 00 00 94  	bl	0x19cbd8 <sy7808_init+0x40c> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019c538 <msm_flash_driver_i2c_probe>:
+  19c538: 3f 23 03 d5  	hint	#25
+  19c53c: ff c3 00 d1  	sub	sp, sp, #48
+  19c540: 5e 86 00 f8  	str	x30, [x18], #8
+  19c544: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  19c548: fd 43 00 91  	add	x29, sp, #16
+  19c54c: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  19c550: f3 03 00 aa  	mov	x19, x0
+  19c554: 08 41 38 d5  	mrs	x8, SP_EL0
+  19c558: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x20> // '\x013%s:enter.\n'
+  19c55c: 01 00 00 90  	adrp	x1, 0x19c000 <msm_flash_driver_i2c_probe+0x24> // 'msm_flash_driver_i2c_probe'
+  19c560: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19c564: 00 00 00 91  	add	x0, x0, #0 // '\x013%s:enter.\n'
+  19c568: 21 00 00 91  	add	x1, x1, #0 // 'msm_flash_driver_i2c_probe'
+  19c56c: e8 07 00 f9  	str	x8, [sp, #8]
+  19c570: ff 03 00 f9  	str	xzr, [sp]
+  19c574: 00 00 00 94  	bl	0x19c574 <msm_flash_driver_i2c_probe+0x3c> // _printk+0x0
+  19c578: 01 00 00 90  	adrp	x1, 0x19c000 <msm_flash_driver_i2c_probe+0x40> // 'cell-index'
+  19c57c: 60 8a 41 f9  	ldr	x0, [x19, #784]
+  19c580: 21 00 00 91  	add	x1, x1, #0 // 'cell-index'
+  19c584: e2 13 00 91  	add	x2, sp, #4
+  19c588: 23 00 80 52  	mov	w3, #1
+  19c58c: e4 03 1f aa  	mov	x4, xzr
+  19c590: 00 00 00 94  	bl	0x19c590 <msm_flash_driver_i2c_probe+0x58> // of_property_read_variable_u32_array+0x0
+  19c594: 20 01 f8 37  	tbnz	w0, #31, 0x19c5b8 <msm_flash_driver_i2c_probe+0x80>
+  19c598: 01 00 00 90  	adrp	x1, 0x19c000 <msm_flash_driver_i2c_probe+0x60> // 'slave-addr'
+  19c59c: 60 8a 41 f9  	ldr	x0, [x19, #784]
+  19c5a0: 21 00 00 91  	add	x1, x1, #0 // 'slave-addr'
+  19c5a4: e2 03 00 91  	mov	x2, sp
+  19c5a8: 23 00 80 52  	mov	w3, #1
+  19c5ac: e4 03 1f aa  	mov	x4, xzr
+  19c5b0: 00 00 00 94  	bl	0x19c5b0 <msm_flash_driver_i2c_probe+0x78> // of_property_read_variable_u32_array+0x0
+  19c5b4: e0 00 f8 36  	tbz	w0, #31, 0x19c5d0 <msm_flash_driver_i2c_probe+0x98>
+  19c5b8: f4 03 00 2a  	mov	w20, w0
+  19c5bc: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x84> // '\x013failed rc %d\n'
+  19c5c0: 00 00 00 91  	add	x0, x0, #0 // '\x013failed rc %d\n'
+  19c5c4: e1 03 14 2a  	mov	w1, w20
+  19c5c8: 00 00 00 94  	bl	0x19c5c8 <msm_flash_driver_i2c_probe+0x90> // _printk+0x0
+  19c5cc: 55 00 00 14  	b	0x19c720 <msm_flash_driver_i2c_probe+0x1e8>
+  19c5d0: f4 07 40 b9  	ldr	w20, [sp, #4]
+  19c5d4: 9f 12 00 71  	cmp	w20, #4
+  19c5d8: e2 0b 00 54  	b.hs	0x19c754 <msm_flash_driver_i2c_probe+0x21c>
+  19c5dc: 0a 00 00 90  	adrp	x10, 0x19c000 <msm_flash_driver_i2c_probe+0xa4> // +0x24a660
+  19c5e0: 89 de 78 d3  	lsl	x9, x20, #8
+  19c5e4: 4a 01 00 91  	add	x10, x10, #0 // +0x24a660
+  19c5e8: eb 03 40 b9  	ldr	w11, [sp]
+  19c5ec: 48 01 09 8b  	add	x8, x10, x9
+  19c5f0: 8c 0e 80 52  	mov	w12, #116
+  19c5f4: 8c 7e 78 b3  	bfi	x12, x20, #8, #32
+  19c5f8: 9f 01 0c f1  	cmp	x12, #768
+  19c5fc: 1f 7d 0f a9  	stp	xzr, xzr, [x8, #240]
+  19c600: 1f 7d 0e a9  	stp	xzr, xzr, [x8, #224]
+  19c604: 1f 7d 0d a9  	stp	xzr, xzr, [x8, #208]
+  19c608: 1f 7d 0c a9  	stp	xzr, xzr, [x8, #192]
+  19c60c: 1f 7d 0b a9  	stp	xzr, xzr, [x8, #176]
+  19c610: 1f 7d 0a a9  	stp	xzr, xzr, [x8, #160]
+  19c614: 1f 7d 09 a9  	stp	xzr, xzr, [x8, #144]
+  19c618: 1f 7d 08 a9  	stp	xzr, xzr, [x8, #128]
+  19c61c: 1f 7d 07 a9  	stp	xzr, xzr, [x8, #112]
+  19c620: 1f 7d 06 a9  	stp	xzr, xzr, [x8, #96]
+  19c624: 1f 7d 05 a9  	stp	xzr, xzr, [x8, #80]
+  19c628: 1f 7d 04 a9  	stp	xzr, xzr, [x8, #64]
+  19c62c: 1f 7d 03 a9  	stp	xzr, xzr, [x8, #48]
+  19c630: 1f 7d 02 a9  	stp	xzr, xzr, [x8, #32]
+  19c634: 1f 7d 01 a9  	stp	xzr, xzr, [x8, #16]
+  19c638: 1f 7d 00 a9  	stp	xzr, xzr, [x8]
+  19c63c: 6b 06 00 79  	strh	w11, [x19, #2]
+  19c640: 88 08 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c644: 4b 21 14 8b  	add	x11, x10, x20, lsl #8
+  19c648: 8c 0c 80 52  	mov	w12, #100
+  19c64c: 2c 01 0c aa  	orr	x12, x9, x12
+  19c650: 9f 01 0c f1  	cmp	x12, #768
+  19c654: 7f 75 00 b9  	str	wzr, [x11, #116]
+  19c658: c8 07 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c65c: 0c 11 80 52  	mov	w12, #136
+  19c660: 74 65 00 b9  	str	w20, [x11, #100]
+  19c664: 2c 01 0c aa  	orr	x12, x9, x12
+  19c668: 9f 01 0c f1  	cmp	x12, #768
+  19c66c: 28 07 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c670: 4b 21 14 8b  	add	x11, x10, x20, lsl #8
+  19c674: 2c 01 79 b2  	orr	x12, x9, #0x80
+  19c678: 9f 01 0c f1  	cmp	x12, #768
+  19c67c: 73 45 00 f9  	str	x19, [x11, #136]
+  19c680: 88 06 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c684: 4c 00 80 52  	mov	w12, #2
+  19c688: 2d 05 7b b2  	orr	x13, x9, #0x60
+  19c68c: bf 01 0c f1  	cmp	x13, #768
+  19c690: 6c 81 00 b9  	str	w12, [x11, #128]
+  19c694: e8 05 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c698: 4a 21 14 8b  	add	x10, x10, x20, lsl #8
+  19c69c: 2b 00 80 52  	mov	w11, #1
+  19c6a0: 29 0d 7d b2  	orr	x9, x9, #0x78
+  19c6a4: 3f 01 0c f1  	cmp	x9, #768
+  19c6a8: 4b 81 01 39  	strb	w11, [x10, #96]
+  19c6ac: 28 05 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c6b0: 09 00 00 90  	adrp	x9, 0x19c000 <msm_flash_driver_i2c_probe+0x178> // +0x64a80
+  19c6b4: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x17c> // msm_flash_mutex+0x0
+  19c6b8: 29 01 00 91  	add	x9, x9, #0 // +0x64a80
+  19c6bc: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  19c6c0: 49 3d 00 f9  	str	x9, [x10, #120]
+  19c6c4: 68 5e 00 f9  	str	x8, [x19, #184]
+  19c6c8: 00 00 00 94  	bl	0x19c6c8 <msm_flash_driver_i2c_probe+0x190> // mutex_lock+0x0
+  19c6cc: 9f 0e 00 71  	cmp	w20, #3
+  19c6d0: 22 04 00 54  	b.hs	0x19c754 <msm_flash_driver_i2c_probe+0x21c>
+  19c6d4: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x19c> // msm_flash_mutex+0x0
+  19c6d8: 08 00 00 90  	adrp	x8, 0x19c000 <msm_flash_driver_i2c_probe+0x1a0> // meizu_flash_dev_ops+0x0
+  19c6dc: 09 00 00 90  	adrp	x9, 0x19c000 <msm_flash_driver_i2c_probe+0x1a4> // +0x64a48
+  19c6e0: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  19c6e4: 08 01 00 91  	add	x8, x8, #0 // meizu_flash_dev_ops+0x0
+  19c6e8: 29 01 00 91  	add	x9, x9, #0 // +0x64a48
+  19c6ec: 09 79 34 f8  	str	x9, [x8, x20, lsl #3]
+  19c6f0: 00 00 00 94  	bl	0x19c6f0 <msm_flash_driver_i2c_probe+0x1b8> // mutex_unlock+0x0
+  19c6f4: 08 00 00 90  	adrp	x8, 0x19c000 <msm_flash_driver_i2c_probe+0x1bc> // +0x24a960
+  19c6f8: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x1c0> // '\x013%s: meizu flash i2c probe success,index:%d.\n'
+  19c6fc: 01 00 00 90  	adrp	x1, 0x19c000 <msm_flash_driver_i2c_probe+0x1c4> // 'msm_flash_driver_i2c_probe'
+  19c700: e2 07 40 b9  	ldr	w2, [sp, #4]
+  19c704: 00 00 00 91  	add	x0, x0, #0 // '\x013%s: meizu flash i2c probe success,index:%d.\n'
+  19c708: 21 00 00 91  	add	x1, x1, #0 // 'msm_flash_driver_i2c_probe'
+  19c70c: 09 01 40 b9  	ldr	w9, [x8] // +0x24a960
+  19c710: 29 05 00 11  	add	w9, w9, #1
+  19c714: 09 01 00 b9  	str	w9, [x8] // +0x24a960
+  19c718: 00 00 00 94  	bl	0x19c718 <msm_flash_driver_i2c_probe+0x1e0> // _printk+0x0
+  19c71c: f4 03 1f 2a  	mov	w20, wzr
+  19c720: 08 41 38 d5  	mrs	x8, SP_EL0
+  19c724: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19c728: e9 07 40 f9  	ldr	x9, [sp, #8]
+  19c72c: 1f 01 09 eb  	cmp	x8, x9
+  19c730: 41 01 00 54  	b.ne	0x19c758 <msm_flash_driver_i2c_probe+0x220>
+  19c734: e0 03 14 2a  	mov	w0, w20
+  19c738: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  19c73c: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  19c740: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19c744: ff c3 00 91  	add	sp, sp, #48
+  19c748: bf 23 03 d5  	hint	#29
+  19c74c: c0 03 5f d6  	ret
+  19c750: 20 00 20 d4  	brk	#0x1
+  19c754: 40 a2 2a d4  	brk	#0x5512
+  19c758: 00 00 00 94  	bl	0x19c758 <msm_flash_driver_i2c_probe+0x220> // __stack_chk_fail+0x0

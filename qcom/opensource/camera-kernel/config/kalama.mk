@@ -7,6 +7,9 @@ CONFIG_SPECTRA_JPEG := y
 CONFIG_SPECTRA_CUSTOM := y
 CONFIG_SPECTRA_SENSOR := y
 CONFIG_USE_RPMH_DRV_API := y
+# M2391 stock camera imports icc_get/set_bw/set_tag/put. The GKI core
+# enables INTERCONNECT but its Qualcomm provider is an external module.
+CONFIG_INTERCONNECT_QCOM := y
 
 # Flags to pass into C preprocessor
 ccflags-y += -DCONFIG_SPECTRA_ISP=1
@@ -15,6 +18,7 @@ ccflags-y += -DCONFIG_SPECTRA_JPEG=1
 ccflags-y += -DCONFIG_SPECTRA_CUSTOM=1
 ccflags-y += -DCONFIG_SPECTRA_SENSOR=1
 ccflags-y += -DCONFIG_USE_RPMH_DRV_API=1
+ccflags-y += -DCONFIG_INTERCONNECT_QCOM=1
 
 # External Dependencies
 KBUILD_CPPFLAGS += -DCONFIG_MSM_MMRM=1

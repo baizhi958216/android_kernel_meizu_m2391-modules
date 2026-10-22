@@ -1,0 +1,369 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000199ae8 <show_flash4>:
+  199ae8: 3f 23 03 d5  	hint	#25
+  199aec: 5e 86 00 f8  	str	x30, [x18], #8
+  199af0: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  199af4: f3 0b 00 f9  	str	x19, [sp, #16]
+  199af8: fd 03 00 91  	mov	x29, sp
+  199afc: 00 00 00 90  	adrp	x0, 0x199000 <show_flash4+0x14> // '\x013MZ_FLASH %s() get flash4 mode is %d\n'
+  199b00: 01 00 00 90  	adrp	x1, 0x199000 <show_flash4+0x18> // 'show_flash4'
+  199b04: f3 03 02 aa  	mov	x19, x2
+  199b08: 00 00 00 91  	add	x0, x0, #0 // '\x013MZ_FLASH %s() get flash4 mode is %d\n'
+  199b0c: 21 00 00 91  	add	x1, x1, #0 // 'show_flash4'
+  199b10: e2 03 1f 2a  	mov	w2, wzr
+  199b14: 00 00 00 94  	bl	0x199b14 <show_flash4+0x2c> // _printk+0x0
+  199b18: 01 00 00 90  	adrp	x1, 0x199000 <show_flash4+0x30> // '%d\n'
+  199b1c: e0 03 13 aa  	mov	x0, x19
+  199b20: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  199b24: e2 03 1f 2a  	mov	w2, wzr
+  199b28: 00 00 00 94  	bl	0x199b28 <show_flash4+0x40> // sprintf+0x0
+  199b2c: f3 0b 40 f9  	ldr	x19, [sp, #16]
+  199b30: 00 7c 40 93  	sxtw	x0, w0
+  199b34: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  199b38: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  199b3c: bf 23 03 d5  	hint	#29
+  199b40: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000199b44 <store_flash4>:
+  199b44: 3f 23 03 d5  	hint	#25
+  199b48: 5e 86 00 f8  	str	x30, [x18], #8
+  199b4c: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  199b50: f4 4f 01 a9  	stp	x20, x19, [sp, #16]
+  199b54: fd 03 00 91  	mov	x29, sp
+  199b58: 14 4c 40 f9  	ldr	x20, [x0, #152]
+  199b5c: 34 01 00 b5  	cbnz	x20, 0x199b80 <store_flash4+0x3c>
+  199b60: 01 00 00 90  	adrp	x1, 0x199000 <store_flash4+0x1c> // 'store_flash4'
+  199b64: 00 00 00 90  	adrp	x0, 0x199000 <store_flash4+0x20> // '\x013MZ_FLASH %s() %s:Flash device is NULL.\n'
+  199b68: 21 00 00 91  	add	x1, x1, #0 // 'store_flash4'
+  199b6c: 00 00 00 91  	add	x0, x0, #0 // '\x013MZ_FLASH %s() %s:Flash device is NULL.\n'
+  199b70: e2 03 01 aa  	mov	x2, x1
+  199b74: 00 00 00 94  	bl	0x199b74 <store_flash4+0x30> // _printk+0x0
+  199b78: b3 02 80 92  	mov	x19, #-22
+  199b7c: 2f 00 00 14  	b	0x199c38 <store_flash4+0xf4>
+  199b80: 08 00 00 90  	adrp	x8, 0x199000 <store_flash4+0x3c> // +0x24a614
+  199b84: f3 03 03 aa  	mov	x19, x3
+  199b88: 09 01 40 39  	ldrb	w9, [x8] // +0x24a614
+  199b8c: e9 00 00 36  	tbz	w9, #0, 0x199ba8 <store_flash4+0x64>
+  199b90: 00 00 00 90  	adrp	x0, 0x199000 <store_flash4+0x4c> // '\x013MZ_FLASH %s() Start 2\n'
+  199b94: 01 00 00 90  	adrp	x1, 0x199000 <store_flash4+0x50> // 'flash4_timerInit'
+  199b98: 00 00 00 91  	add	x0, x0, #0 // '\x013MZ_FLASH %s() Start 2\n'
+  199b9c: 21 00 00 91  	add	x1, x1, #0 // 'flash4_timerInit'
+  199ba0: 00 00 00 94  	bl	0x199ba0 <store_flash4+0x5c> // _printk+0x0
+  199ba4: 1d 00 00 14  	b	0x199c18 <store_flash4+0xd4>
+  199ba8: 00 00 00 90  	adrp	x0, 0x199000 <store_flash4+0x64> // '\x013MZ_FLASH %s() Start 1\n'
+  199bac: 01 00 00 90  	adrp	x1, 0x199000 <store_flash4+0x68> // 'flash4_timerInit'
+  199bb0: 29 00 80 52  	mov	w9, #1
+  199bb4: 00 00 00 91  	add	x0, x0, #0 // '\x013MZ_FLASH %s() Start 1\n'
+  199bb8: 21 00 00 91  	add	x1, x1, #0 // 'flash4_timerInit'
+  199bbc: 09 01 00 39  	strb	w9, [x8] // +0x24a614
+  199bc0: 00 00 00 94  	bl	0x199bc0 <store_flash4+0x7c> // _printk+0x0
+  199bc4: e9 7b 7b b2  	mov	x9, #68719476704
+  199bc8: 0a 00 00 90  	adrp	x10, 0x199000 <store_flash4+0x84> // +0x1adcd8
+  199bcc: 08 b7 82 52  	mov	w8, #5560
+  199bd0: 4a 01 00 91  	add	x10, x10, #0 // +0x1adcd8
+  199bd4: 0c bc 82 52  	mov	w12, #5600
+  199bd8: 88 02 08 8b  	add	x8, x20, x8
+  199bdc: 4a c1 01 91  	add	x10, x10, #112
+  199be0: 0b 00 00 90  	adrp	x11, 0x199000 <store_flash4+0x9c> // +0x64840
+  199be4: 89 da 0a f9  	str	x9, [x20, #5552]
+  199be8: 89 0c 80 52  	mov	w9, #100
+  199bec: 80 02 0c 8b  	add	x0, x20, x12
+  199bf0: 21 00 80 52  	mov	w1, #1
+  199bf4: 22 00 80 52  	mov	w2, #1
+  199bf8: 88 de 0a f9  	str	x8, [x20, #5560]
+  199bfc: 88 e2 0a f9  	str	x8, [x20, #5568]
+  199c00: 8a e6 0a f9  	str	x10, [x20, #5576]
+  199c04: 69 01 00 b9  	str	w9, [x11] // +0x64840
+  199c08: 00 00 00 94  	bl	0x199c08 <store_flash4+0xc4> // hrtimer_init+0x0
+  199c0c: 08 00 00 90  	adrp	x8, 0x199000 <store_flash4+0xc8> // +0x1add50
+  199c10: 08 01 00 91  	add	x8, x8, #0 // +0x1add50
+  199c14: 88 06 0b f9  	str	x8, [x20, #5640]
+  199c18: 08 00 00 90  	adrp	x8, 0x199000 <store_flash4+0xd4> // +0x24a610
+  199c1c: 09 01 40 39  	ldrb	w9, [x8] // +0x24a610
+  199c20: c9 00 00 37  	tbnz	w9, #0, 0x199c38 <store_flash4+0xf4>
+  199c24: 29 00 80 52  	mov	w9, #1
+  199c28: e0 03 14 aa  	mov	x0, x20
+  199c2c: e1 03 1f 2a  	mov	w1, wzr
+  199c30: 09 01 00 39  	strb	w9, [x8] // +0x24a610
+  199c34: 00 00 00 94  	bl	0x199c34 <store_flash4+0xf0> // +0x199cb8
+  199c38: e0 03 13 aa  	mov	x0, x19
+  199c3c: f4 4f 41 a9  	ldp	x20, x19, [sp, #16]
+  199c40: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  199c44: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  199c48: bf 23 03 d5  	hint	#29
+  199c4c: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000199cb8 <flash4_timer_start>:
+  199cb8: 3f 23 03 d5  	hint	#25
+  199cbc: 5e 86 00 f8  	str	x30, [x18], #8
+  199cc0: fd 7b ba a9  	stp	x29, x30, [sp, #-96]!
+  199cc4: fc 6f 01 a9  	stp	x28, x27, [sp, #16]
+  199cc8: fd 03 00 91  	mov	x29, sp
+  199ccc: fa 67 02 a9  	stp	x26, x25, [sp, #32]
+  199cd0: f8 5f 03 a9  	stp	x24, x23, [sp, #48]
+  199cd4: f6 57 04 a9  	stp	x22, x21, [sp, #64]
+  199cd8: f4 4f 05 a9  	stp	x20, x19, [sp, #80]
+  199cdc: f3 03 00 aa  	mov	x19, x0
+  199ce0: 0b 00 00 90  	adrp	x11, 0x199000 <flash4_timer_start+0x28> // +0x24a638
+  199ce4: 1b 00 00 90  	adrp	x27, 0x199000 <flash4_timer_start+0x2c> // +0x24a618
+  199ce8: 1c 00 00 90  	adrp	x28, 0x199000 <flash4_timer_start+0x30> // +0x24a620
+  199cec: 16 00 00 90  	adrp	x22, 0x199000 <flash4_timer_start+0x34> // +0x24a628
+  199cf0: 0a 00 00 90  	adrp	x10, 0x199000 <flash4_timer_start+0x38> // +0x24a61c
+  199cf4: 21 02 00 34  	cbz	w1, 0x199d38 <flash4_timer_start+0x80>
+  199cf8: c8 02 40 f9  	ldr	x8, [x22] // +0x24a628
+  199cfc: 29 00 80 52  	mov	w9, #1
+  199d00: 69 01 00 39  	strb	w9, [x11] // +0x24a638
+  199d04: 28 13 00 b4  	cbz	x8, 0x199f68 <flash4_timer_start+0x2b0>
+  199d08: 88 03 40 39  	ldrb	w8, [x28] // +0x24a620
+  199d0c: 69 03 40 b9  	ldr	w9, [x27] // +0x24a618
+  199d10: 1f 01 00 71  	cmp	w8, #0
+  199d14: 88 04 80 52  	mov	w8, #36
+  199d18: 08 11 9f 1a  	csel	w8, w8, wzr, ne
+  199d1c: 3f 01 08 6b  	cmp	w9, w8
+  199d20: 0b 02 00 54  	b.lt	0x199d60 <flash4_timer_start+0xa8>
+  199d24: 08 00 00 90  	adrp	x8, 0x199000 <flash4_timer_start+0x6c> // +0x24a630
+  199d28: 7f 03 00 b9  	str	wzr, [x27] // +0x24a618
+  199d2c: 08 01 40 f9  	ldr	x8, [x8] // +0x24a630
+  199d30: c8 02 00 f9  	str	x8, [x22] // +0x24a628
+  199d34: 0b 00 00 14  	b	0x199d60 <flash4_timer_start+0xa8>
+  199d38: 09 00 00 90  	adrp	x9, 0x199000 <flash4_timer_start+0x80> // LedsStepMode1+0x0
+  199d3c: 28 00 80 52  	mov	w8, #1
+  199d40: 29 01 00 91  	add	x9, x9, #0 // LedsStepMode1+0x0
+  199d44: 5f 01 00 b9  	str	wzr, [x10] // +0x24a61c
+  199d48: 0a 00 00 90  	adrp	x10, 0x199000 <flash4_timer_start+0x90> // +0x24a630
+  199d4c: 7f 03 00 b9  	str	wzr, [x27] // +0x24a618
+  199d50: 88 03 00 39  	strb	w8, [x28] // +0x24a620
+  199d54: c9 02 00 f9  	str	x9, [x22] // +0x24a628
+  199d58: 49 01 00 f9  	str	x9, [x10] // +0x24a630
+  199d5c: 68 01 00 39  	strb	w8, [x11] // +0x24a638
+  199d60: 00 00 00 90  	adrp	x0, 0x199000 <flash4_timer_start+0xa8> // flash4_mutex+0x0
+  199d64: 00 00 00 91  	add	x0, x0, #0 // flash4_mutex+0x0
+  199d68: 00 00 00 94  	bl	0x199d68 <flash4_timer_start+0xb0> // mutex_lock+0x0
+  199d6c: 88 03 40 39  	ldrb	w8, [x28] // +0x24a620
+  199d70: 99 04 80 52  	mov	w25, #36
+  199d74: 63 03 40 b9  	ldr	w3, [x27] // +0x24a618
+  199d78: 1f 01 00 71  	cmp	w8, #0
+  199d7c: 28 13 9f 1a  	csel	w8, w25, wzr, ne
+  199d80: 7f 00 08 6b  	cmp	w3, w8
+  199d84: 2a 14 00 54  	b.ge	0x19a008 <flash4_timer_start+0x350>
+  199d88: 1a 00 00 90  	adrp	x26, 0x199000 <flash4_timer_start+0xd0> // ''
+  199d8c: 15 00 00 90  	adrp	x21, 0x199000 <flash4_timer_start+0xd4> // +0x24a640
+  199d90: c9 02 40 f9  	ldr	x9, [x22] // +0x24a628
+  199d94: 5a 03 00 91  	add	x26, x26, #0 // ''
+  199d98: 17 00 00 90  	adrp	x23, 0x199000 <flash4_timer_start+0xe0> // +0x24a630
+  199d9c: b5 02 00 91  	add	x21, x21, #0 // +0x24a640
+  199da0: 14 08 80 52  	mov	w20, #64
+  199da4: 08 00 00 14  	b	0x199dc4 <flash4_timer_start+0x10c>
+  199da8: c9 02 40 f9  	ldr	x9, [x22] // +0x24a628
+  199dac: 29 19 00 91  	add	x9, x9, #6
+  199db0: 7f 00 0a 6b  	cmp	w3, w10
+  199db4: c9 02 00 f9  	str	x9, [x22] // +0x24a628
+  199db8: ea a7 9f 1a  	cset	w10, lt
+  199dbc: 08 01 0a 0a  	and	w8, w8, w10
+  199dc0: 48 12 00 36  	tbz	w8, #0, 0x19a008 <flash4_timer_start+0x350>
+  199dc4: 29 10 00 b4  	cbz	x9, 0x199fc8 <flash4_timer_start+0x310>
+  199dc8: 28 01 40 39  	ldrb	w8, [x9]
+  199dcc: 1f 11 00 71  	cmp	w8, #4
+  199dd0: 28 04 00 54  	b.hi	0x199e54 <flash4_timer_start+0x19c>
+  199dd4: 8a 00 00 10  	adr	x10, #16
+  199dd8: 4b 6b 68 38  	ldrb	w11, [x26, x8]
+  199ddc: 4a 09 0b 8b  	add	x10, x10, x11, lsl #2
+  199de0: 40 01 1f d6  	br	x10
+  199de4: 9f 24 03 d5  	hint	#36
+  199de8: e0 03 13 aa  	mov	x0, x19
+  199dec: 21 00 80 52  	mov	w1, #1
+  199df0: 00 00 00 94  	bl	0x199df0 <flash4_timer_start+0x138> // cam_flash_prepare+0x0
+  199df4: 00 0a 00 35  	cbnz	w0, 0x199f34 <flash4_timer_start+0x27c>
+  199df8: 28 00 80 52  	mov	w8, #1
+  199dfc: 09 00 00 90  	adrp	x9, 0x199000 <flash4_timer_start+0x144> // +0x24a64c
+  199e00: 28 01 00 39  	strb	w8, [x9] // +0x24a64c
+  199e04: 40 00 00 14  	b	0x199f04 <flash4_timer_start+0x24c>
+  199e08: 9f 24 03 d5  	hint	#36
+  199e0c: 28 11 40 78  	ldurh	w8, [x9, #1]
+  199e10: 2a 11 40 39  	ldrb	w10, [x9, #4]
+  199e14: 29 0d 40 39  	ldrb	w9, [x9, #3]
+  199e18: a8 02 00 79  	strh	w8, [x21]
+  199e1c: 48 19 1f 12  	and	w8, w10, #0xfe
+  199e20: aa 0e 00 39  	strb	w10, [x21, #3]
+  199e24: 1f 11 00 71  	cmp	w8, #4
+  199e28: a9 0a 00 39  	strb	w9, [x21, #2]
+  199e2c: 61 00 00 54  	b.ne	0x199e38 <flash4_timer_start+0x180>
+  199e30: 08 00 00 90  	adrp	x8, 0x199000 <flash4_timer_start+0x178> // +0x24a644
+  199e34: 14 01 00 b9  	str	w20, [x8] // +0x24a644
+  199e38: bf 22 00 39  	strb	wzr, [x21, #8]
+  199e3c: 09 7f 60 92  	and	x9, x24, #0xffffffff00000000
+  199e40: a8 0a 40 b9  	ldr	w8, [x21, #8]
+  199e44: a0 02 40 f9  	ldr	x0, [x21]
+  199e48: 38 01 08 aa  	orr	x24, x9, x8
+  199e4c: e1 03 18 aa  	mov	x1, x24
+  199e50: 00 00 00 94  	bl	0x199e50 <flash4_timer_start+0x198> // leds_torch_write_reg+0x0
+  199e54: 28 00 80 52  	mov	w8, #1
+  199e58: 2b 00 00 14  	b	0x199f04 <flash4_timer_start+0x24c>
+  199e5c: 9f 24 03 d5  	hint	#36
+  199e60: 28 09 40 79  	ldrh	w8, [x9, #4]
+  199e64: 0a 00 00 90  	adrp	x10, 0x199000 <flash4_timer_start+0x1ac> // +0x64840
+  199e68: 08 19 1f 12  	and	w8, w8, #0xfe
+  199e6c: 1f 11 00 71  	cmp	w8, #4
+  199e70: 88 0c 80 52  	mov	w8, #100
+  199e74: 89 02 88 1a  	csel	w9, w20, w8, eq
+  199e78: e8 03 1f 2a  	mov	w8, wzr
+  199e7c: 49 01 00 b9  	str	w9, [x10] // +0x64840
+  199e80: 21 00 00 14  	b	0x199f04 <flash4_timer_start+0x24c>
+  199e84: 9f 24 03 d5  	hint	#36
+  199e88: 28 09 40 79  	ldrh	w8, [x9, #4]
+  199e8c: 1f 09 00 71  	cmp	w8, #2
+  199e90: 40 01 00 54  	b.eq	0x199eb8 <flash4_timer_start+0x200>
+  199e94: 1f 05 00 71  	cmp	w8, #1
+  199e98: 80 01 00 54  	b.eq	0x199ec8 <flash4_timer_start+0x210>
+  199e9c: a8 05 00 35  	cbnz	w8, 0x199f50 <flash4_timer_start+0x298>
+  199ea0: 0a 00 00 90  	adrp	x10, 0x199000 <flash4_timer_start+0x1e8> // +0x24a650
+  199ea4: 28 00 80 52  	mov	w8, #1
+  199ea8: 49 01 00 f9  	str	x9, [x10] // +0x24a650
+  199eac: 09 00 00 90  	adrp	x9, 0x199000 <flash4_timer_start+0x1f4> // +0x24a658
+  199eb0: 23 01 00 b9  	str	w3, [x9] // +0x24a658
+  199eb4: 14 00 00 14  	b	0x199f04 <flash4_timer_start+0x24c>
+  199eb8: 09 00 00 90  	adrp	x9, 0x199000 <flash4_timer_start+0x200> // +0x24a61c
+  199ebc: 28 00 80 52  	mov	w8, #1
+  199ec0: 3f 01 00 b9  	str	wzr, [x9] // +0x24a61c
+  199ec4: 10 00 00 14  	b	0x199f04 <flash4_timer_start+0x24c>
+  199ec8: 08 00 00 90  	adrp	x8, 0x199000 <flash4_timer_start+0x210> // +0x24a650
+  199ecc: 09 01 40 f9  	ldr	x9, [x8] // +0x24a650
+  199ed0: 29 fc ff b4  	cbz	x9, 0x199e54 <flash4_timer_start+0x19c>
+  199ed4: 0b 00 00 90  	adrp	x11, 0x199000 <flash4_timer_start+0x21c> // +0x24a61c
+  199ed8: 0c 00 b0 12  	mov	w12, #2147483647
+  199edc: 68 01 40 b9  	ldr	w8, [x11] // +0x24a61c
+  199ee0: 0a 05 00 11  	add	w10, w8, #1
+  199ee4: 1f 01 0c 6b  	cmp	w8, w12
+  199ee8: 6a 01 00 b9  	str	w10, [x11] // +0x24a61c
+  199eec: 43 fb ff 54  	b.lo	0x199e54 <flash4_timer_start+0x19c>
+  199ef0: 08 00 00 90  	adrp	x8, 0x199000 <flash4_timer_start+0x238> // +0x24a658
+  199ef4: c9 02 00 f9  	str	x9, [x22] // +0x24a628
+  199ef8: 0a 01 40 b9  	ldr	w10, [x8] // +0x24a658
+  199efc: 28 00 80 52  	mov	w8, #1
+  199f00: 6a 03 00 b9  	str	w10, [x27] // +0x24a618
+  199f04: 8a 03 40 39  	ldrb	w10, [x28] // +0x24a620
+  199f08: 69 03 40 b9  	ldr	w9, [x27] // +0x24a618
+  199f0c: 5f 01 00 71  	cmp	w10, #0
+  199f10: 23 05 00 11  	add	w3, w9, #1
+  199f14: 2a 13 9f 1a  	csel	w10, w25, wzr, ne
+  199f18: 7f 00 0a 6b  	cmp	w3, w10
+  199f1c: 63 03 00 b9  	str	w3, [x27] // +0x24a618
+  199f20: 4b f4 ff 54  	b.lt	0x199da8 <flash4_timer_start+0xf0>
+  199f24: e9 02 40 f9  	ldr	x9, [x23] // +0x24a630
+  199f28: e3 03 1f 2a  	mov	w3, wzr
+  199f2c: 7f 03 00 b9  	str	wzr, [x27] // +0x24a618
+  199f30: a0 ff ff 17  	b	0x199db0 <flash4_timer_start+0xf8>
+  199f34: e2 03 00 2a  	mov	w2, w0
+  199f38: 00 00 00 90  	adrp	x0, 0x199000 <flash4_timer_start+0x280> // '\x013%s: flash power up fail,return:%d.\n'
+  199f3c: 01 00 00 90  	adrp	x1, 0x199000 <flash4_timer_start+0x284> // 'leds_torch_en'
+  199f40: 00 00 00 91  	add	x0, x0, #0 // '\x013%s: flash power up fail,return:%d.\n'
+  199f44: 21 00 00 91  	add	x1, x1, #0 // 'leds_torch_en'
+  199f48: 00 00 00 94  	bl	0x199f48 <flash4_timer_start+0x290> // _printk+0x0
+  199f4c: ab ff ff 17  	b	0x199df8 <flash4_timer_start+0x140>
+  199f50: 00 00 00 90  	adrp	x0, 0x199000 <flash4_timer_start+0x298> // '\x013MZ_FLASH %s() No such command\n'
+  199f54: 01 00 00 90  	adrp	x1, 0x199000 <flash4_timer_start+0x29c> // 'flash4_setLeds'
+  199f58: 00 00 00 91  	add	x0, x0, #0 // '\x013MZ_FLASH %s() No such command\n'
+  199f5c: 21 00 00 91  	add	x1, x1, #0 // 'flash4_setLeds'
+  199f60: 00 00 00 94  	bl	0x199f60 <flash4_timer_start+0x2a8> // _printk+0x0
+  199f64: bc ff ff 17  	b	0x199e54 <flash4_timer_start+0x19c>
+  199f68: 08 00 00 90  	adrp	x8, 0x199000 <flash4_timer_start+0x2b0> // +0x24a610
+  199f6c: 1c 00 00 14  	b	0x199fdc <flash4_timer_start+0x324>
+  199f70: 9f 24 03 d5  	hint	#36
+  199f74: 08 00 00 90  	adrp	x8, 0x199000 <flash4_timer_start+0x2bc> // +0x24a64c
+  199f78: 08 01 40 39  	ldrb	w8, [x8] // +0x24a64c
+  199f7c: 1f 05 00 71  	cmp	w8, #1
+  199f80: 41 02 00 54  	b.ne	0x199fc8 <flash4_timer_start+0x310>
+  199f84: 08 40 80 52  	mov	w8, #512
+  199f88: bf 0a 00 39  	strb	wzr, [x21, #2]
+  199f8c: a1 0a 40 b9  	ldr	w1, [x21, #8]
+  199f90: a8 02 00 79  	strh	w8, [x21]
+  199f94: a0 02 40 f9  	ldr	x0, [x21]
+  199f98: 00 00 00 94  	bl	0x199f98 <flash4_timer_start+0x2e0> // leds_torch_write_reg+0x0
+  199f9c: 28 00 80 52  	mov	w8, #1
+  199fa0: a1 0a 40 b9  	ldr	w1, [x21, #8]
+  199fa4: a8 02 00 39  	strb	w8, [x21]
+  199fa8: a0 02 40 f9  	ldr	x0, [x21]
+  199fac: 00 00 00 94  	bl	0x199fac <flash4_timer_start+0x2f4> // leds_torch_write_reg+0x0
+  199fb0: e0 03 13 aa  	mov	x0, x19
+  199fb4: e1 03 1f 2a  	mov	w1, wzr
+  199fb8: 00 00 00 94  	bl	0x199fb8 <flash4_timer_start+0x300> // cam_flash_prepare+0x0
+  199fbc: 20 05 00 35  	cbnz	w0, 0x19a060 <flash4_timer_start+0x3a8>
+  199fc0: 08 00 00 90  	adrp	x8, 0x199000 <flash4_timer_start+0x308> // +0x24a64c
+  199fc4: 1f 01 00 39  	strb	wzr, [x8] // +0x24a64c
+  199fc8: 00 00 00 90  	adrp	x0, 0x199000 <flash4_timer_start+0x310> // flash4_mutex+0x0
+  199fcc: 00 00 00 91  	add	x0, x0, #0 // flash4_mutex+0x0
+  199fd0: 00 00 00 94  	bl	0x199fd0 <flash4_timer_start+0x318> // mutex_unlock+0x0
+  199fd4: 08 00 00 90  	adrp	x8, 0x199000 <flash4_timer_start+0x31c> // +0x24a610
+  199fd8: 0b 00 00 90  	adrp	x11, 0x199000 <flash4_timer_start+0x320> // +0x24a638
+  199fdc: 1f 01 00 39  	strb	wzr, [x8] // +0x24a610
+  199fe0: f4 4f 45 a9  	ldp	x20, x19, [sp, #80]
+  199fe4: 7f 01 00 39  	strb	wzr, [x11] // +0x24a638
+  199fe8: f6 57 44 a9  	ldp	x22, x21, [sp, #64]
+  199fec: f8 5f 43 a9  	ldp	x24, x23, [sp, #48]
+  199ff0: fa 67 42 a9  	ldp	x26, x25, [sp, #32]
+  199ff4: fc 6f 41 a9  	ldp	x28, x27, [sp, #16]
+  199ff8: fd 7b c6 a8  	ldp	x29, x30, [sp], #96
+  199ffc: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19a000: bf 23 03 d5  	hint	#29
+  19a004: c0 03 5f d6  	ret
+  19a008: 08 00 00 90  	adrp	x8, 0x19a000 <flash4_timer_start+0x350> // +0x24a61c
+  19a00c: 00 00 00 90  	adrp	x0, 0x19a000 <flash4_timer_start+0x354> // '\x013MZ_FLASH %s() flash4Counter= %d, ledStepIndex= %d\n'
+  19a010: 01 00 00 90  	adrp	x1, 0x19a000 <flash4_timer_start+0x358> // 'flash4_setLeds'
+  19a014: 00 00 00 91  	add	x0, x0, #0 // '\x013MZ_FLASH %s() flash4Counter= %d, ledStepIndex= %d\n'
+  19a018: 21 00 00 91  	add	x1, x1, #0 // 'flash4_setLeds'
+  19a01c: 02 01 40 b9  	ldr	w2, [x8] // +0x24a61c
+  19a020: 00 00 00 94  	bl	0x19a020 <flash4_timer_start+0x368> // _printk+0x0
+  19a024: 00 00 00 90  	adrp	x0, 0x19a000 <flash4_timer_start+0x36c> // flash4_mutex+0x0
+  19a028: 00 00 00 91  	add	x0, x0, #0 // flash4_mutex+0x0
+  19a02c: 00 00 00 94  	bl	0x19a02c <flash4_timer_start+0x374> // mutex_unlock+0x0
+  19a030: 08 00 00 90  	adrp	x8, 0x19a000 <flash4_timer_start+0x378> // +0x64840
+  19a034: 09 48 88 52  	mov	w9, #16960
+  19a038: e9 01 a0 72  	movk	w9, #15, lsl #16
+  19a03c: e2 03 1f aa  	mov	x2, xzr
+  19a040: 23 00 80 52  	mov	w3, #1
+  19a044: 08 01 40 b9  	ldr	w8, [x8] // +0x64840
+  19a048: 01 7d 09 1b  	mul	w1, w8, w9
+  19a04c: 08 bc 82 52  	mov	w8, #5600
+  19a050: 60 02 08 8b  	add	x0, x19, x8
+  19a054: 00 00 00 94  	bl	0x19a054 <flash4_timer_start+0x39c> // hrtimer_start_range_ns+0x0
+  19a058: 0b 00 00 90  	adrp	x11, 0x19a000 <flash4_timer_start+0x3a0> // +0x24a638
+  19a05c: e1 ff ff 17  	b	0x199fe0 <flash4_timer_start+0x328>
+  19a060: e2 03 00 2a  	mov	w2, w0
+  19a064: 00 00 00 90  	adrp	x0, 0x19a000 <flash4_timer_start+0x3ac> // '\x013%s: flash power down fail,return:%d.\n'
+  19a068: 01 00 00 90  	adrp	x1, 0x19a000 <flash4_timer_start+0x3b0> // 'leds_torch_disable'
+  19a06c: 00 00 00 91  	add	x0, x0, #0 // '\x013%s: flash power down fail,return:%d.\n'
+  19a070: 21 00 00 91  	add	x1, x1, #0 // 'leds_torch_disable'
+  19a074: 00 00 00 94  	bl	0x19a074 <flash4_timer_start+0x3bc> // _printk+0x0
+  19a078: d2 ff ff 17  	b	0x199fc0 <flash4_timer_start+0x308>
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000199c80 <flash4TimeOutCallback>:
+  199c80: 3f 23 03 d5  	hint	#25
+  199c84: 5e 86 00 f8  	str	x30, [x18], #8
+  199c88: fd 7b bf a9  	stp	x29, x30, [sp, #-16]!
+  199c8c: fd 03 00 91  	mov	x29, sp
+  199c90: 08 00 00 90  	adrp	x8, 0x199000 <flash4TimeOutCallback+0x10> // system_wq+0x0
+  199c94: 02 c0 00 d1  	sub	x2, x0, #48
+  199c98: 00 04 80 52  	mov	w0, #32
+  199c9c: 01 01 40 f9  	ldr	x1, [x8] // system_wq+0x0
+  199ca0: 00 00 00 94  	bl	0x199ca0 <flash4TimeOutCallback+0x20> // queue_work_on+0x0
+  199ca4: e0 03 1f 2a  	mov	w0, wzr
+  199ca8: fd 7b c1 a8  	ldp	x29, x30, [sp], #16
+  199cac: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  199cb0: bf 23 03 d5  	hint	#29
+  199cb4: c0 03 5f d6  	ret

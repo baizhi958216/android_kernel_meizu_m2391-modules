@@ -1,0 +1,249 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019e6ec <set_data_to_partition>:
+  19e6ec: 3f 23 03 d5  	hint	#25
+  19e6f0: ff c3 01 d1  	sub	sp, sp, #112
+  19e6f4: 5e 86 00 f8  	str	x30, [x18], #8
+  19e6f8: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  19e6fc: fd 43 00 91  	add	x29, sp, #16
+  19e700: fc 6f 02 a9  	stp	x28, x27, [sp, #32]
+  19e704: fa 67 03 a9  	stp	x26, x25, [sp, #48]
+  19e708: f8 5f 04 a9  	stp	x24, x23, [sp, #64]
+  19e70c: f6 57 05 a9  	stp	x22, x21, [sp, #80]
+  19e710: f4 4f 06 a9  	stp	x20, x19, [sp, #96]
+  19e714: f7 03 05 2a  	mov	w23, w5
+  19e718: fb 03 00 aa  	mov	x27, x0
+  19e71c: f4 7e 40 93  	sxtw	x20, w23
+  19e720: f5 03 06 2a  	mov	w21, w6
+  19e724: e0 03 14 aa  	mov	x0, x20
+  19e728: f8 03 04 2a  	mov	w24, w4
+  19e72c: f9 03 03 2a  	mov	w25, w3
+  19e730: f6 03 02 aa  	mov	x22, x2
+  19e734: fa 03 01 2a  	mov	w26, w1
+  19e738: 00 00 00 94  	bl	0x19e738 <set_data_to_partition+0x4c> // vzalloc+0x0
+  19e73c: f3 03 00 aa  	mov	x19, x0
+  19e740: e0 03 1b aa  	mov	x0, x27
+  19e744: e1 03 1a 2a  	mov	w1, w26
+  19e748: e2 03 16 aa  	mov	x2, x22
+  19e74c: e3 03 19 2a  	mov	w3, w25
+  19e750: e4 03 18 2a  	mov	w4, w24
+  19e754: e5 03 17 2a  	mov	w5, w23
+  19e758: 00 00 00 94  	bl	0x19e758 <set_data_to_partition+0x6c> // camera_io_dev_read_seq+0x0
+  19e75c: f7 03 00 2a  	mov	w23, w0
+  19e760: a0 01 00 34  	cbz	w0, 0x19e794 <set_data_to_partition+0xa8>
+  19e764: 01 00 00 90  	adrp	x1, 0x19e000 <set_data_to_partition+0x78> // '\x016%s: %s: %s: %d Read data from CCI failed %d'
+  19e768: 02 00 00 90  	adrp	x2, 0x19e000 <set_data_to_partition+0x7c> // 'CAM_ERR'
+  19e76c: 03 00 00 90  	adrp	x3, 0x19e000 <set_data_to_partition+0x80> // 'CAM-EEPROM'
+  19e770: 04 00 00 90  	adrp	x4, 0x19e000 <set_data_to_partition+0x84> // 'set_data_to_partition'
+  19e774: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Read data from CCI failed %d'
+  19e778: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19e77c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19e780: 84 00 00 91  	add	x4, x4, #0 // 'set_data_to_partition'
+  19e784: 60 00 80 52  	mov	w0, #3
+  19e788: e5 1e 80 52  	mov	w5, #247
+  19e78c: e6 03 17 2a  	mov	w6, w23
+  19e790: 00 00 00 94  	bl	0x19e790 <set_data_to_partition+0xa4> // cam_print_log+0x0
+  19e794: c7 16 40 39  	ldrb	w7, [x22, #5]
+  19e798: ff e4 00 71  	cmp	w7, #57
+  19e79c: 40 01 00 54  	b.eq	0x19e7c4 <set_data_to_partition+0xd8>
+  19e7a0: ff e0 00 71  	cmp	w7, #56
+  19e7a4: e1 01 00 54  	b.ne	0x19e7e0 <set_data_to_partition+0xf4>
+  19e7a8: bf 0a 00 71  	cmp	w21, #2
+  19e7ac: a0 04 00 54  	b.eq	0x19e840 <set_data_to_partition+0x154>
+  19e7b0: bf 0e 00 71  	cmp	w21, #3
+  19e7b4: 21 03 00 54  	b.ne	0x19e818 <set_data_to_partition+0x12c>
+  19e7b8: 1c 00 00 90  	adrp	x28, 0x19e000 <set_data_to_partition+0xcc> // golden_hex_3p9+0x0
+  19e7bc: 9c 03 00 91  	add	x28, x28, #0 // golden_hex_3p9+0x0
+  19e7c0: 25 00 00 14  	b	0x19e854 <set_data_to_partition+0x168>
+  19e7c4: bf 0a 00 71  	cmp	w21, #2
+  19e7c8: 20 04 00 54  	b.eq	0x19e84c <set_data_to_partition+0x160>
+  19e7cc: bf 0e 00 71  	cmp	w21, #3
+  19e7d0: 41 02 00 54  	b.ne	0x19e818 <set_data_to_partition+0x12c>
+  19e7d4: 1c 00 00 90  	adrp	x28, 0x19e000 <set_data_to_partition+0xe8> // golden_hex_jn103+0x0
+  19e7d8: 9c 03 00 91  	add	x28, x28, #0 // golden_hex_jn103+0x0
+  19e7dc: 1e 00 00 14  	b	0x19e854 <set_data_to_partition+0x168>
+  19e7e0: 01 00 00 90  	adrp	x1, 0x19e000 <set_data_to_partition+0xf4> // '\x016%s: %s: %s: %d Camera model error:(%d) 0x%X'
+  19e7e4: 02 00 00 90  	adrp	x2, 0x19e000 <set_data_to_partition+0xf8> // 'CAM_ERR'
+  19e7e8: 03 00 00 90  	adrp	x3, 0x19e000 <set_data_to_partition+0xfc> // 'CAM-EEPROM'
+  19e7ec: 04 00 00 90  	adrp	x4, 0x19e000 <set_data_to_partition+0x100> // 'get_camera_golden_hex'
+  19e7f0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Camera model error:(%d) 0x%X'
+  19e7f4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19e7f8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19e7fc: 84 00 00 91  	add	x4, x4, #0 // 'get_camera_golden_hex'
+  19e800: 60 00 80 52  	mov	w0, #3
+  19e804: e5 1c 80 52  	mov	w5, #231
+  19e808: e6 03 15 2a  	mov	w6, w21
+  19e80c: 00 00 00 94  	bl	0x19e80c <set_data_to_partition+0x120> // cam_print_log+0x0
+  19e810: 08 00 80 12  	mov	w8, #-1
+  19e814: 02 00 00 14  	b	0x19e81c <set_data_to_partition+0x130>
+  19e818: e8 03 1f 2a  	mov	w8, wzr
+  19e81c: 17 01 17 2a  	orr	w23, w8, w23
+  19e820: a8 2a 00 11  	add	w8, w21, #10
+  19e824: 1f 05 01 71  	cmp	w8, #65
+  19e828: 23 0e 00 54  	b.lo	0x19e9ec <set_data_to_partition+0x300>
+  19e82c: 00 00 00 90  	adrp	x0, 0x19e000 <set_data_to_partition+0x140> // '\x013out of private partition range\n'
+  19e830: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19e834: 00 00 00 94  	bl	0x19e834 <set_data_to_partition+0x148> // _printk+0x0
+  19e838: a0 02 80 12  	mov	w0, #-22
+  19e83c: 74 00 00 14  	b	0x19ea0c <set_data_to_partition+0x320>
+  19e840: 1c 00 00 90  	adrp	x28, 0x19e000 <set_data_to_partition+0x154> // golden_hex_5e9+0x0
+  19e844: 9c 03 00 91  	add	x28, x28, #0 // golden_hex_5e9+0x0
+  19e848: 03 00 00 14  	b	0x19e854 <set_data_to_partition+0x168>
+  19e84c: 1c 00 00 90  	adrp	x28, 0x19e000 <set_data_to_partition+0x160> // golden_hex_jn105+0x0
+  19e850: 9c 03 00 91  	add	x28, x28, #0 // golden_hex_jn105+0x0
+  19e854: eb 03 1f aa  	mov	x11, xzr
+  19e858: e9 03 1f 2a  	mov	w9, wzr
+  19e85c: ea 03 1f 2a  	mov	w10, wzr
+  19e860: 88 03 40 39  	ldrb	w8, [x28]
+  19e864: 98 07 40 39  	ldrb	w24, [x28, #1]
+  19e868: 8c 0b 40 39  	ldrb	w12, [x28, #2]
+  19e86c: 9b 0f 40 39  	ldrb	w27, [x28, #3]
+  19e870: ac c3 1f b8  	stur	w12, [x29, #-4]
+  19e874: 8c 03 0b 8b  	add	x12, x28, x11
+  19e878: 6b 09 00 91  	add	x11, x11, #2
+  19e87c: 7f 01 20 f1  	cmp	x11, #2048
+  19e880: 8d 15 40 39  	ldrb	w13, [x12, #5]
+  19e884: 8c 19 40 39  	ldrb	w12, [x12, #6]
+  19e888: 29 01 0d 0b  	add	w9, w9, w13
+  19e88c: 4a 01 0c 0b  	add	w10, w10, w12
+  19e890: 21 ff ff 54  	b.ne	0x19e874 <set_data_to_partition+0x188>
+  19e894: 49 01 09 0b  	add	w9, w10, w9
+  19e898: 2a 00 90 52  	mov	w10, #32769
+  19e89c: 0a 00 b0 72  	movk	w10, #32768, lsl #16
+  19e8a0: 19 00 00 90  	adrp	x25, 0x19e000 <set_data_to_partition+0x1b4> // 'CAM_INFO'
+  19e8a4: 1a 00 00 90  	adrp	x26, 0x19e000 <set_data_to_partition+0x1b8> // 'CAM-EEPROM'
+  19e8a8: 18 1d 78 b3  	bfi	x24, x8, #8, #8
+  19e8ac: 2a 7d aa 9b  	umull	x10, w9, w10
+  19e8b0: 01 00 00 90  	adrp	x1, 0x19e000 <set_data_to_partition+0x1c4> // '\x016%s: %s: %s: %d %X, %X, %X'
+  19e8b4: 39 03 00 91  	add	x25, x25, #0 // 'CAM_INFO'
+  19e8b8: 5a 03 00 91  	add	x26, x26, #0 // 'CAM-EEPROM'
+  19e8bc: 4a fd 6f d3  	lsr	x10, x10, #47
+  19e8c0: 04 00 00 90  	adrp	x4, 0x19e000 <set_data_to_partition+0x1d4> // 'eeprom_get_check_sum'
+  19e8c4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %X, %X, %X'
+  19e8c8: 84 00 00 91  	add	x4, x4, #0 // 'eeprom_get_check_sum'
+  19e8cc: 4a 41 0a 4b  	sub	w10, w10, w10, lsl #16
+  19e8d0: 60 00 80 52  	mov	w0, #3
+  19e8d4: 29 01 0a 0b  	add	w9, w9, w10
+  19e8d8: e2 03 19 aa  	mov	x2, x25
+  19e8dc: 26 05 00 11  	add	w6, w9, #1
+  19e8e0: 89 17 20 91  	add	x9, x28, #2053
+  19e8e4: c8 08 c0 5a  	rev	w8, w6
+  19e8e8: c7 7c 08 53  	lsr	w7, w6, #8
+  19e8ec: 08 7d 10 53  	lsr	w8, w8, #16
+  19e8f0: ca 1c 00 12  	and	w10, w6, #0xff
+  19e8f4: e3 03 1a aa  	mov	x3, x26
+  19e8f8: 65 16 80 52  	mov	w5, #179
+  19e8fc: 28 01 00 79  	strh	w8, [x9]
+  19e900: ea 03 00 b9  	str	w10, [sp]
+  19e904: 00 00 00 94  	bl	0x19e904 <set_data_to_partition+0x218> // cam_print_log+0x0
+  19e908: 01 00 00 90  	adrp	x1, 0x19e000 <set_data_to_partition+0x21c> // '\x016%s: %s: %s: %d %X, %X'
+  19e90c: 04 00 00 90  	adrp	x4, 0x19e000 <set_data_to_partition+0x220> // 'copy_golden_hex'
+  19e910: 86 17 60 39  	ldrb	w6, [x28, #2053]
+  19e914: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %X, %X'
+  19e918: 87 1b 60 39  	ldrb	w7, [x28, #2054]
+  19e91c: 84 00 00 91  	add	x4, x4, #0 // 'copy_golden_hex'
+  19e920: 60 00 80 52  	mov	w0, #3
+  19e924: e2 03 19 aa  	mov	x2, x25
+  19e928: e3 03 1a aa  	mov	x3, x26
+  19e92c: 25 18 80 52  	mov	w5, #193
+  19e930: 00 00 00 94  	bl	0x19e930 <set_data_to_partition+0x244> // cam_print_log+0x0
+  19e934: e8 03 1f aa  	mov	x8, xzr
+  19e938: c9 02 18 8b  	add	x9, x22, x24
+  19e93c: 8a 13 00 91  	add	x10, x28, #4
+  19e940: 4b 69 68 38  	ldrb	w11, [x10, x8]
+  19e944: 2b 69 28 38  	strb	w11, [x9, x8]
+  19e948: 08 05 00 91  	add	x8, x8, #1
+  19e94c: 1f 0d 20 f1  	cmp	x8, #2051
+  19e950: 81 ff ff 54  	b.ne	0x19e940 <set_data_to_partition+0x254>
+  19e954: a8 c3 5f b8  	ldur	w8, [x29, #-4]
+  19e958: 1b 1d 18 33  	bfi	w27, w8, #8, #8
+  19e95c: 08 0b 20 11  	add	w8, w24, #2050
+  19e960: 1f 01 1b 6b  	cmp	w8, w27
+  19e964: 21 02 00 54  	b.ne	0x19e9a8 <set_data_to_partition+0x2bc>
+  19e968: 01 00 00 90  	adrp	x1, 0x19e000 <set_data_to_partition+0x27c> // '\x016%s: %s: %s: %d Golden HEX copy DONE, Size(%d),From 0x%x to 0x%x'
+  19e96c: 02 00 00 90  	adrp	x2, 0x19e000 <set_data_to_partition+0x280> // 'CAM_INFO'
+  19e970: 03 00 00 90  	adrp	x3, 0x19e000 <set_data_to_partition+0x284> // 'CAM-EEPROM'
+  19e974: 04 00 00 90  	adrp	x4, 0x19e000 <set_data_to_partition+0x288> // 'copy_golden_hex'
+  19e978: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Golden HEX copy DONE, Size(%d),From 0x%x to 0x%x'
+  19e97c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  19e980: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19e984: 84 00 00 91  	add	x4, x4, #0 // 'copy_golden_hex'
+  19e988: 60 00 80 52  	mov	w0, #3
+  19e98c: 25 19 80 52  	mov	w5, #201
+  19e990: 66 00 81 52  	mov	w6, #2051
+  19e994: e7 03 18 2a  	mov	w7, w24
+  19e998: fb 03 00 b9  	str	w27, [sp]
+  19e99c: 00 00 00 94  	bl	0x19e99c <set_data_to_partition+0x2b0> // cam_print_log+0x0
+  19e9a0: e8 03 1f 2a  	mov	w8, wzr
+  19e9a4: 10 00 00 14  	b	0x19e9e4 <set_data_to_partition+0x2f8>
+  19e9a8: 01 00 00 90  	adrp	x1, 0x19e000 <set_data_to_partition+0x2bc> // '\x016%s: %s: %s: %d Copy golden hex failed size mismatch (%X + %X) != (%X)'
+  19e9ac: 02 00 00 90  	adrp	x2, 0x19e000 <set_data_to_partition+0x2c0> // 'CAM_ERR'
+  19e9b0: 03 00 00 90  	adrp	x3, 0x19e000 <set_data_to_partition+0x2c4> // 'CAM-EEPROM'
+  19e9b4: 04 00 00 90  	adrp	x4, 0x19e000 <set_data_to_partition+0x2c8> // 'copy_golden_hex'
+  19e9b8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Copy golden hex failed size mismatch (%X + %X) != (%X)'
+  19e9bc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19e9c0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19e9c4: 84 00 00 91  	add	x4, x4, #0 // 'copy_golden_hex'
+  19e9c8: 60 00 80 52  	mov	w0, #3
+  19e9cc: c5 18 80 52  	mov	w5, #198
+  19e9d0: e6 03 18 2a  	mov	w6, w24
+  19e9d4: 67 00 81 52  	mov	w7, #2051
+  19e9d8: fb 03 00 b9  	str	w27, [sp]
+  19e9dc: 00 00 00 94  	bl	0x19e9dc <set_data_to_partition+0x2f0> // cam_print_log+0x0
+  19e9e0: 08 00 80 12  	mov	w8, #-1
+  19e9e4: 17 01 17 2a  	orr	w23, w8, w23
+  19e9e8: a8 2a 00 11  	add	w8, w21, #10
+  19e9ec: 09 80 8c 52  	mov	w9, #25600
+  19e9f0: 00 00 00 90  	adrp	x0, 0x19e000 <set_data_to_partition+0x304> // 'camera'
+  19e9f4: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19e9f8: 21 00 80 52  	mov	w1, #1
+  19e9fc: 02 7d 09 1b  	mul	w2, w8, w9
+  19ea00: e3 03 16 aa  	mov	x3, x22
+  19ea04: e4 03 14 aa  	mov	x4, x20
+  19ea08: 00 00 00 94  	bl	0x19ea08 <set_data_to_partition+0x31c> // sd_partition_rw+0x0
+  19ea0c: 16 00 17 2a  	orr	w22, w0, w23
+  19ea10: bf 06 01 71  	cmp	w21, #65
+  19ea14: 82 04 00 54  	b.hs	0x19eaa4 <set_data_to_partition+0x3b8>
+  19ea18: 08 80 8c 52  	mov	w8, #25600
+  19ea1c: 00 00 00 90  	adrp	x0, 0x19e000 <set_data_to_partition+0x330> // 'camera'
+  19ea20: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19ea24: e1 03 1f 2a  	mov	w1, wzr
+  19ea28: a2 7e 08 1b  	mul	w2, w21, w8
+  19ea2c: e3 03 13 aa  	mov	x3, x19
+  19ea30: e4 03 14 aa  	mov	x4, x20
+  19ea34: 00 00 00 94  	bl	0x19ea34 <set_data_to_partition+0x348> // sd_partition_rw+0x0
+  19ea38: d4 02 00 2a  	orr	w20, w22, w0
+  19ea3c: e0 03 13 aa  	mov	x0, x19
+  19ea40: 00 00 00 94  	bl	0x19ea40 <set_data_to_partition+0x354> // vfree+0x0
+  19ea44: b4 01 00 34  	cbz	w20, 0x19ea78 <set_data_to_partition+0x38c>
+  19ea48: 01 00 00 90  	adrp	x1, 0x19e000 <set_data_to_partition+0x35c> // '\x016%s: %s: %s: %d Something wrong here %d'
+  19ea4c: 02 00 00 90  	adrp	x2, 0x19e000 <set_data_to_partition+0x360> // 'CAM_ERR'
+  19ea50: 03 00 00 90  	adrp	x3, 0x19e000 <set_data_to_partition+0x364> // 'CAM-EEPROM'
+  19ea54: 04 00 00 90  	adrp	x4, 0x19e000 <set_data_to_partition+0x368> // 'set_data_to_partition'
+  19ea58: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Something wrong here %d'
+  19ea5c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19ea60: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19ea64: 84 00 00 91  	add	x4, x4, #0 // 'set_data_to_partition'
+  19ea68: 60 00 80 52  	mov	w0, #3
+  19ea6c: c5 1f 80 52  	mov	w5, #254
+  19ea70: e6 03 14 2a  	mov	w6, w20
+  19ea74: 00 00 00 94  	bl	0x19ea74 <set_data_to_partition+0x388> // cam_print_log+0x0
+  19ea78: e0 03 14 2a  	mov	w0, w20
+  19ea7c: f4 4f 46 a9  	ldp	x20, x19, [sp, #96]
+  19ea80: f6 57 45 a9  	ldp	x22, x21, [sp, #80]
+  19ea84: f8 5f 44 a9  	ldp	x24, x23, [sp, #64]
+  19ea88: fa 67 43 a9  	ldp	x26, x25, [sp, #48]
+  19ea8c: fc 6f 42 a9  	ldp	x28, x27, [sp, #32]
+  19ea90: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  19ea94: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19ea98: ff c3 01 91  	add	sp, sp, #112
+  19ea9c: bf 23 03 d5  	hint	#29
+  19eaa0: c0 03 5f d6  	ret
+  19eaa4: 00 00 00 90  	adrp	x0, 0x19e000 <set_data_to_partition+0x3b8> // '\x013out of private partition range\n'
+  19eaa8: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19eaac: 00 00 00 94  	bl	0x19eaac <set_data_to_partition+0x3c0> // _printk+0x0
+  19eab0: a0 02 80 12  	mov	w0, #-22
+  19eab4: e1 ff ff 17  	b	0x19ea38 <set_data_to_partition+0x34c>

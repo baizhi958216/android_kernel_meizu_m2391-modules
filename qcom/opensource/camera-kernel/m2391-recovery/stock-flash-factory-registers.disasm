@@ -1,0 +1,791 @@
+000000000019b840 <leds_torch_write_reg>:
+  19b840: 3f 23 03 d5  	hint	#25
+  19b844: ff 43 02 d1  	sub	sp, sp, #144
+  19b848: 5e 86 00 f8  	str	x30, [x18], #8
+  19b84c: fd 7b 04 a9  	stp	x29, x30, [sp, #64]
+  19b850: fd 03 01 91  	add	x29, sp, #64
+  19b854: f9 2b 00 f9  	str	x25, [sp, #80]
+  19b858: f8 5f 06 a9  	stp	x24, x23, [sp, #96]
+  19b85c: f6 57 07 a9  	stp	x22, x21, [sp, #112]
+  19b860: f4 4f 08 a9  	stp	x20, x19, [sp, #128]
+  19b864: 08 41 38 d5  	mrs	x8, SP_EL0
+  19b868: f5 03 00 aa  	mov	x21, x0
+  19b86c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19b870: a2 1e 00 12  	and	w2, w21, #0xff
+  19b874: 5f 10 00 71  	cmp	w2, #4
+  19b878: a8 83 1f f8  	stur	x8, [x29, #-8]
+  19b87c: 42 07 00 54  	b.hs	0x19b964 <leds_torch_write_reg+0x124>
+  19b880: b6 1e 40 92  	and	x22, x21, #0xff
+  19b884: df 12 00 f1  	cmp	x22, #4
+  19b888: 22 60 00 54  	b.hs	0x19c48c <leds_torch_write_reg+0xc4c>
+  19b88c: 08 0c 80 52  	mov	w8, #96
+  19b890: c8 1e 78 b3  	bfi	x8, x22, #8, #8
+  19b894: 1f 01 0c f1  	cmp	x8, #768
+  19b898: c8 5f 00 54  	b.hi	0x19c490 <leds_torch_write_reg+0xc50>
+  19b89c: 17 00 00 90  	adrp	x23, 0x19b000 <leds_torch_write_reg+0x5c> // +0x24a660
+  19b8a0: f7 02 00 91  	add	x23, x23, #0 // +0x24a660
+  19b8a4: e8 22 16 8b  	add	x8, x23, x22, lsl #8
+  19b8a8: 08 81 41 39  	ldrb	w8, [x8, #96]
+  19b8ac: a8 06 00 34  	cbz	w8, 0x19b980 <leds_torch_write_reg+0x140>
+  19b8b0: f4 03 01 aa  	mov	x20, x1
+  19b8b4: a8 fe 48 d3  	lsr	x8, x21, #8
+  19b8b8: b8 fe 58 d3  	lsr	x24, x21, #24
+  19b8bc: 09 1d 00 12  	and	w9, w8, #0xff
+  19b8c0: 3f 19 00 71  	cmp	w9, #6
+  19b8c4: a8 08 00 54  	b.hi	0x19b9d8 <leds_torch_write_reg+0x198>
+  19b8c8: 09 00 00 90  	adrp	x9, 0x19b000 <leds_torch_write_reg+0x88> // 'J\x0b\x0e'
+  19b8cc: 08 1d 40 92  	and	x8, x8, #0xff
+  19b8d0: 29 01 00 91  	add	x9, x9, #0 // 'J\x0b\x0e'
+  19b8d4: d3 00 80 52  	mov	w19, #6
+  19b8d8: 8a 00 00 10  	adr	x10, #16
+  19b8dc: 2b 69 68 38  	ldrb	w11, [x9, x8]
+  19b8e0: 4a 09 0b 8b  	add	x10, x10, x11, lsl #2
+  19b8e4: 40 01 1f d6  	br	x10
+  19b8e8: 9f 24 03 d5  	hint	#36
+  19b8ec: a8 7e 58 d3  	ubfx	x8, x21, #24, #8
+  19b8f0: 08 19 1f 12  	and	w8, w8, #0xfe
+  19b8f4: 1f 11 00 71  	cmp	w8, #4
+  19b8f8: 61 02 00 54  	b.ne	0x19b944 <leds_torch_write_reg+0x104>
+  19b8fc: a8 fe 60 d3  	lsr	x8, x21, #32
+  19b900: 1f fd 0f 71  	cmp	w8, #1023
+  19b904: 6d 02 00 54  	b.le	0x19b950 <leds_torch_write_reg+0x110>
+  19b908: 58 0f 80 52  	mov	w24, #122
+  19b90c: 53 01 80 52  	mov	w19, #10
+  19b910: 40 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b914: 9f 24 03 d5  	hint	#36
+  19b918: f3 00 80 52  	mov	w19, #7
+  19b91c: 3d 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b920: 9f 24 03 d5  	hint	#36
+  19b924: 33 00 80 52  	mov	w19, #1
+  19b928: 3a 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b92c: 9f 24 03 d5  	hint	#36
+  19b930: 13 01 80 52  	mov	w19, #8
+  19b934: 37 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b938: 9f 24 03 d5  	hint	#36
+  19b93c: b3 00 80 52  	mov	w19, #5
+  19b940: 34 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b944: 58 03 80 52  	mov	w24, #26
+  19b948: 53 01 80 52  	mov	w19, #10
+  19b94c: 31 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b950: 1f fd 07 71  	cmp	w8, #511
+  19b954: 4d 02 00 54  	b.le	0x19b99c <leds_torch_write_reg+0x15c>
+  19b958: 58 0d 80 52  	mov	w24, #106
+  19b95c: 53 01 80 52  	mov	w19, #10
+  19b960: 2c 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b964: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x124> // '\x013[ERROR]%s:Invalid dev_id:%d.\n'
+  19b968: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x128> // 'leds_torch_write_reg'
+  19b96c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:Invalid dev_id:%d.\n'
+  19b970: 21 00 00 91  	add	x1, x1, #0 // 'leds_torch_write_reg'
+  19b974: 00 00 00 94  	bl	0x19b974 <leds_torch_write_reg+0x134> // _printk+0x0
+  19b978: a0 02 80 12  	mov	w0, #-22
+  19b97c: 57 02 00 14  	b	0x19c2d8 <leds_torch_write_reg+0xa98>
+  19b980: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x140> // '\x013[ERROR]%s:Request device not ready:%d.\n'
+  19b984: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x144> // 'leds_torch_write_reg'
+  19b988: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:Request device not ready:%d.\n'
+  19b98c: 21 00 00 91  	add	x1, x1, #0 // 'leds_torch_write_reg'
+  19b990: 00 00 00 94  	bl	0x19b990 <leds_torch_write_reg+0x150> // _printk+0x0
+  19b994: 40 02 80 12  	mov	w0, #-19
+  19b998: 50 02 00 14  	b	0x19c2d8 <leds_torch_write_reg+0xa98>
+  19b99c: 1f fd 03 71  	cmp	w8, #255
+  19b9a0: 8d 00 00 54  	b.le	0x19b9b0 <leds_torch_write_reg+0x170>
+  19b9a4: 58 0b 80 52  	mov	w24, #90
+  19b9a8: 53 01 80 52  	mov	w19, #10
+  19b9ac: 19 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b9b0: 1f fd 01 71  	cmp	w8, #127
+  19b9b4: 8d 00 00 54  	b.le	0x19b9c4 <leds_torch_write_reg+0x184>
+  19b9b8: 58 09 80 52  	mov	w24, #74
+  19b9bc: 53 01 80 52  	mov	w19, #10
+  19b9c0: 14 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b9c4: 1f fd 00 71  	cmp	w8, #63
+  19b9c8: 4d 01 00 54  	b.le	0x19b9f0 <leds_torch_write_reg+0x1b0>
+  19b9cc: 58 07 80 52  	mov	w24, #58
+  19b9d0: 53 01 80 52  	mov	w19, #10
+  19b9d4: 0f 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b9d8: b3 3e 08 53  	ubfx	w19, w21, #8, #8
+  19b9dc: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x19c> // '\x013No such data.reg=0x%x\n'
+  19b9e0: 00 00 00 91  	add	x0, x0, #0 // '\x013No such data.reg=0x%x\n'
+  19b9e4: e1 03 13 2a  	mov	w1, w19
+  19b9e8: 00 00 00 94  	bl	0x19b9e8 <leds_torch_write_reg+0x1a8> // _printk+0x0
+  19b9ec: 09 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19b9f0: 53 01 80 52  	mov	w19, #10
+  19b9f4: 1f 7d 00 71  	cmp	w8, #31
+  19b9f8: 6d 00 00 54  	b.le	0x19ba04 <leds_torch_write_reg+0x1c4>
+  19b9fc: 58 05 80 52  	mov	w24, #42
+  19ba00: 04 00 00 14  	b	0x19ba10 <leds_torch_write_reg+0x1d0>
+  19ba04: 1f 01 00 71  	cmp	w8, #0
+  19ba08: 48 03 80 52  	mov	w8, #26
+  19ba0c: 18 c1 93 1a  	csel	w24, w8, w19, gt
+  19ba10: 9f 24 03 d5  	hint	#36
+  19ba14: a1 5e 10 53  	ubfx	w1, w21, #16, #8
+  19ba18: 3f 68 00 71  	cmp	w1, #26
+  19ba1c: e8 4b 00 54  	b.hi	0x19c398 <leds_torch_write_reg+0xb58>
+  19ba20: 09 00 00 90  	adrp	x9, 0x19b000 <leds_torch_write_reg+0x1e0> // '>'
+  19ba24: a8 5e 50 d3  	ubfx	x8, x21, #16, #8
+  19ba28: 29 01 00 91  	add	x9, x9, #0 // '>'
+  19ba2c: 8a 00 00 10  	adr	x10, #16
+  19ba30: 2b 79 68 78  	ldrh	w11, [x9, x8, lsl #1]
+  19ba34: 4a 09 0b 8b  	add	x10, x10, x11, lsl #2
+  19ba38: 40 01 1f d6  	br	x10
+  19ba3c: 9f 24 03 d5  	hint	#36
+  19ba40: 28 00 80 52  	mov	w8, #1
+  19ba44: ff 13 00 f9  	str	xzr, [sp, #32]
+  19ba48: e9 03 00 b2  	mov	x9, #4294967297
+  19ba4c: 94 1e 00 12  	and	w20, w20, #0xff
+  19ba50: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19ba54: e8 23 00 b9  	str	w8, [sp, #32]
+  19ba58: e8 03 00 91  	mov	x8, sp
+  19ba5c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19ba60: b1 00 00 14  	b	0x19bd24 <leds_torch_write_reg+0x4e4>
+  19ba64: 9f 24 03 d5  	hint	#36
+  19ba68: 28 00 80 52  	mov	w8, #1
+  19ba6c: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19ba70: e9 03 00 b2  	mov	x9, #4294967297
+  19ba74: e1 43 00 91  	add	x1, sp, #16
+  19ba78: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19ba7c: e8 23 00 b9  	str	w8, [sp, #32]
+  19ba80: e8 03 00 91  	mov	x8, sp
+  19ba84: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19ba88: f3 03 00 b9  	str	w19, [sp]
+  19ba8c: e8 27 01 a9  	stp	x8, x9, [sp, #16]
+  19ba90: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19ba94: 48 01 80 52  	mov	w8, #10
+  19ba98: 20 01 02 91  	add	x0, x9, #128
+  19ba9c: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19baa0: e8 43 00 f8  	stur	x8, [sp, #4]
+  19baa4: 00 00 00 94  	bl	0x19baa4 <leds_torch_write_reg+0x264> // camera_io_dev_write+0x0
+  19baa8: 60 41 f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19baac: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x26c> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bab0: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x270> // 'sy7808_write_reg'
+  19bab4: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bab8: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19babc: e2 03 13 2a  	mov	w2, w19
+  19bac0: 43 01 80 52  	mov	w3, #10
+  19bac4: 00 00 00 94  	bl	0x19bac4 <leds_torch_write_reg+0x284> // _printk+0x0
+  19bac8: 03 02 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bacc: 9f 24 03 d5  	hint	#36
+  19bad0: 28 00 80 52  	mov	w8, #1
+  19bad4: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19bad8: e9 03 00 b2  	mov	x9, #4294967297
+  19badc: e1 43 00 91  	add	x1, sp, #16
+  19bae0: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19bae4: e8 23 00 b9  	str	w8, [sp, #32]
+  19bae8: e8 03 00 91  	mov	x8, sp
+  19baec: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19baf0: f3 03 00 b9  	str	w19, [sp]
+  19baf4: e8 27 01 a9  	stp	x8, x9, [sp, #16]
+  19baf8: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19bafc: 28 01 80 52  	mov	w8, #9
+  19bb00: 20 01 02 91  	add	x0, x9, #128
+  19bb04: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19bb08: e8 43 00 f8  	stur	x8, [sp, #4]
+  19bb0c: 00 00 00 94  	bl	0x19bb0c <leds_torch_write_reg+0x2cc> // camera_io_dev_write+0x0
+  19bb10: 20 3e f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bb14: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x2d4> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bb18: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x2d8> // 'sy7808_write_reg'
+  19bb1c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bb20: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bb24: e2 03 13 2a  	mov	w2, w19
+  19bb28: 23 01 80 52  	mov	w3, #9
+  19bb2c: 00 00 00 94  	bl	0x19bb2c <leds_torch_write_reg+0x2ec> // _printk+0x0
+  19bb30: e9 01 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bb34: 9f 24 03 d5  	hint	#36
+  19bb38: 28 00 80 52  	mov	w8, #1
+  19bb3c: ff 13 00 f9  	str	xzr, [sp, #32]
+  19bb40: e9 03 00 b2  	mov	x9, #4294967297
+  19bb44: e1 43 00 91  	add	x1, sp, #16
+  19bb48: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bb4c: e8 23 00 b9  	str	w8, [sp, #32]
+  19bb50: e8 03 00 91  	mov	x8, sp
+  19bb54: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bb58: f3 03 00 b9  	str	w19, [sp]
+  19bb5c: e8 27 01 a9  	stp	x8, x9, [sp, #16]
+  19bb60: e8 22 16 8b  	add	x8, x23, x22, lsl #8
+  19bb64: 00 01 02 91  	add	x0, x8, #128
+  19bb68: d7 01 00 14  	b	0x19c2c4 <leds_torch_write_reg+0xa84>
+  19bb6c: 9f 24 03 d5  	hint	#36
+  19bb70: 28 00 80 52  	mov	w8, #1
+  19bb74: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19bb78: e9 03 00 b2  	mov	x9, #4294967297
+  19bb7c: e1 43 00 91  	add	x1, sp, #16
+  19bb80: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19bb84: e8 23 00 b9  	str	w8, [sp, #32]
+  19bb88: e8 03 00 91  	mov	x8, sp
+  19bb8c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bb90: f3 03 00 b9  	str	w19, [sp]
+  19bb94: e8 27 01 a9  	stp	x8, x9, [sp, #16]
+  19bb98: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19bb9c: 68 01 80 52  	mov	w8, #11
+  19bba0: 20 01 02 91  	add	x0, x9, #128
+  19bba4: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19bba8: e8 43 00 f8  	stur	x8, [sp, #4]
+  19bbac: 00 00 00 94  	bl	0x19bbac <leds_torch_write_reg+0x36c> // camera_io_dev_write+0x0
+  19bbb0: 20 39 f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bbb4: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x374> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bbb8: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x378> // 'sy7808_write_reg'
+  19bbbc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bbc0: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bbc4: e2 03 13 2a  	mov	w2, w19
+  19bbc8: 63 01 80 52  	mov	w3, #11
+  19bbcc: 00 00 00 94  	bl	0x19bbcc <leds_torch_write_reg+0x38c> // _printk+0x0
+  19bbd0: c1 01 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bbd4: 9f 24 03 d5  	hint	#36
+  19bbd8: e9 03 00 b2  	mov	x9, #4294967297
+  19bbdc: ea 03 00 91  	mov	x10, sp
+  19bbe0: 28 00 80 52  	mov	w8, #1
+  19bbe4: e1 43 00 91  	add	x1, sp, #16
+  19bbe8: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bbec: ea 27 01 a9  	stp	x10, x9, [sp, #16]
+  19bbf0: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19bbf4: 20 01 02 91  	add	x0, x9, #128
+  19bbf8: ff 13 00 f9  	str	xzr, [sp, #32]
+  19bbfc: e8 23 00 b9  	str	w8, [sp, #32]
+  19bc00: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bc04: f3 03 00 b9  	str	w19, [sp]
+  19bc08: e8 43 00 f8  	stur	x8, [sp, #4]
+  19bc0c: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19bc10: 00 00 00 94  	bl	0x19bc10 <leds_torch_write_reg+0x3d0> // camera_io_dev_write+0x0
+  19bc14: 00 36 f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bc18: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x3d8> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bc1c: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x3dc> // 'sy7808_write_reg'
+  19bc20: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bc24: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bc28: e2 03 13 2a  	mov	w2, w19
+  19bc2c: 23 00 80 52  	mov	w3, #1
+  19bc30: 00 00 00 94  	bl	0x19bc30 <leds_torch_write_reg+0x3f0> // _printk+0x0
+  19bc34: a8 01 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bc38: 9f 24 03 d5  	hint	#36
+  19bc3c: 28 00 80 52  	mov	w8, #1
+  19bc40: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19bc44: e9 03 00 b2  	mov	x9, #4294967297
+  19bc48: e1 43 00 91  	add	x1, sp, #16
+  19bc4c: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19bc50: e8 23 00 b9  	str	w8, [sp, #32]
+  19bc54: e8 03 00 91  	mov	x8, sp
+  19bc58: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bc5c: f3 03 00 b9  	str	w19, [sp]
+  19bc60: e8 27 01 a9  	stp	x8, x9, [sp, #16]
+  19bc64: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19bc68: 48 00 80 52  	mov	w8, #2
+  19bc6c: 20 01 02 91  	add	x0, x9, #128
+  19bc70: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19bc74: e8 43 00 f8  	stur	x8, [sp, #4]
+  19bc78: 00 00 00 94  	bl	0x19bc78 <leds_torch_write_reg+0x438> // camera_io_dev_write+0x0
+  19bc7c: c0 32 f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bc80: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x440> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bc84: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x444> // 'sy7808_write_reg'
+  19bc88: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bc8c: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bc90: e2 03 13 2a  	mov	w2, w19
+  19bc94: 43 00 80 52  	mov	w3, #2
+  19bc98: 00 00 00 94  	bl	0x19bc98 <leds_torch_write_reg+0x458> // _printk+0x0
+  19bc9c: 8e 01 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bca0: 9f 24 03 d5  	hint	#36
+  19bca4: 28 00 80 52  	mov	w8, #1
+  19bca8: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19bcac: e9 03 00 b2  	mov	x9, #4294967297
+  19bcb0: e1 43 00 91  	add	x1, sp, #16
+  19bcb4: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19bcb8: e8 23 00 b9  	str	w8, [sp, #32]
+  19bcbc: e8 03 00 91  	mov	x8, sp
+  19bcc0: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bcc4: f3 03 00 b9  	str	w19, [sp]
+  19bcc8: e8 27 01 a9  	stp	x8, x9, [sp, #16]
+  19bccc: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19bcd0: 68 00 80 52  	mov	w8, #3
+  19bcd4: 20 01 02 91  	add	x0, x9, #128
+  19bcd8: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19bcdc: e8 43 00 f8  	stur	x8, [sp, #4]
+  19bce0: 00 00 00 94  	bl	0x19bce0 <leds_torch_write_reg+0x4a0> // camera_io_dev_write+0x0
+  19bce4: 80 2f f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bce8: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x4a8> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bcec: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x4ac> // 'sy7808_write_reg'
+  19bcf0: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bcf4: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bcf8: e2 03 13 2a  	mov	w2, w19
+  19bcfc: aa 00 00 14  	b	0x19bfa4 <leds_torch_write_reg+0x764>
+  19bd00: 9f 24 03 d5  	hint	#36
+  19bd04: 28 00 80 52  	mov	w8, #1
+  19bd08: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bd0c: ff 13 00 f9  	str	xzr, [sp, #32]
+  19bd10: e9 03 00 b2  	mov	x9, #4294967297
+  19bd14: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bd18: 14 1f 00 12  	and	w20, w24, #0xff
+  19bd1c: e8 23 00 b9  	str	w8, [sp, #32]
+  19bd20: e8 03 00 91  	mov	x8, sp
+  19bd24: e8 27 01 a9  	stp	x8, x9, [sp, #16]
+  19bd28: e8 22 16 8b  	add	x8, x23, x22, lsl #8
+  19bd2c: 00 01 02 91  	add	x0, x8, #128
+  19bd30: e1 43 00 91  	add	x1, sp, #16
+  19bd34: f3 53 00 29  	stp	w19, w20, [sp]
+  19bd38: ff 07 00 f9  	str	xzr, [sp, #8]
+  19bd3c: 00 00 00 94  	bl	0x19bd3c <leds_torch_write_reg+0x4fc> // camera_io_dev_write+0x0
+  19bd40: a0 2c f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bd44: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x504> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bd48: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x508> // 'sy7808_write_reg'
+  19bd4c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bd50: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bd54: e2 03 13 2a  	mov	w2, w19
+  19bd58: e3 03 14 2a  	mov	w3, w20
+  19bd5c: 00 00 00 94  	bl	0x19bd5c <leds_torch_write_reg+0x51c> // _printk+0x0
+  19bd60: 5d 01 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bd64: 9f 24 03 d5  	hint	#36
+  19bd68: 28 00 80 52  	mov	w8, #1
+  19bd6c: eb 22 16 8b  	add	x11, x23, x22, lsl #8
+  19bd70: ff 13 00 f9  	str	xzr, [sp, #32]
+  19bd74: e9 03 00 b2  	mov	x9, #4294967297
+  19bd78: ea 03 00 91  	mov	x10, sp
+  19bd7c: 60 01 02 91  	add	x0, x11, #128
+  19bd80: e8 23 00 b9  	str	w8, [sp, #32]
+  19bd84: a8 00 80 52  	mov	w8, #5
+  19bd88: e1 43 00 91  	add	x1, sp, #16
+  19bd8c: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bd90: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bd94: ea 27 01 a9  	stp	x10, x9, [sp, #16]
+  19bd98: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19bd9c: 00 00 00 94  	bl	0x19bd9c <leds_torch_write_reg+0x55c> // camera_io_dev_write+0x0
+  19bda0: a0 29 f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bda4: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x564> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bda8: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x568> // 'sy7808_write_reg'
+  19bdac: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bdb0: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bdb4: a2 00 80 52  	mov	w2, #5
+  19bdb8: 75 01 00 14  	b	0x19c38c <leds_torch_write_reg+0xb4c>
+  19bdbc: 9f 24 03 d5  	hint	#36
+  19bdc0: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19bdc4: 28 00 80 d2  	mov	x8, #1
+  19bdc8: 33 01 02 91  	add	x19, x9, #128
+  19bdcc: 35 00 80 52  	mov	w21, #1
+  19bdd0: f4 03 00 b2  	mov	x20, #4294967297
+  19bdd4: f8 03 00 91  	mov	x24, sp
+  19bdd8: 08 01 c0 f2  	movk	x8, #8, lsl #32
+  19bddc: e1 43 00 91  	add	x1, sp, #16
+  19bde0: e0 03 13 aa  	mov	x0, x19
+  19bde4: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bde8: ff 13 00 f9  	str	xzr, [sp, #32]
+  19bdec: f5 23 00 b9  	str	w21, [sp, #32]
+  19bdf0: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bdf4: f8 53 01 a9  	stp	x24, x20, [sp, #16]
+  19bdf8: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19bdfc: 00 00 00 94  	bl	0x19bdfc <leds_torch_write_reg+0x5bc> // camera_io_dev_write+0x0
+  19be00: 40 03 f8 36  	tbz	w0, #31, 0x19be68 <leds_torch_write_reg+0x628>
+  19be04: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x5c4> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19be08: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x5c8> // 'sy7808_write_reg'
+  19be0c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19be10: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19be14: 22 00 80 52  	mov	w2, #1
+  19be18: 03 01 80 52  	mov	w3, #8
+  19be1c: 6a 01 00 14  	b	0x19c3c4 <leds_torch_write_reg+0xb84>
+  19be20: 9f 24 03 d5  	hint	#36
+  19be24: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19be28: 28 00 80 d2  	mov	x8, #1
+  19be2c: 33 01 02 91  	add	x19, x9, #128
+  19be30: 35 00 80 52  	mov	w21, #1
+  19be34: f4 03 00 b2  	mov	x20, #4294967297
+  19be38: f8 03 00 91  	mov	x24, sp
+  19be3c: 68 01 c0 f2  	movk	x8, #11, lsl #32
+  19be40: e1 43 00 91  	add	x1, sp, #16
+  19be44: e0 03 13 aa  	mov	x0, x19
+  19be48: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19be4c: ff 13 00 f9  	str	xzr, [sp, #32]
+  19be50: f5 23 00 b9  	str	w21, [sp, #32]
+  19be54: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19be58: f8 53 01 a9  	stp	x24, x20, [sp, #16]
+  19be5c: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19be60: 00 00 00 94  	bl	0x19be60 <leds_torch_write_reg+0x620> // camera_io_dev_write+0x0
+  19be64: 40 2a f8 37  	tbnz	w0, #31, 0x19c3ac <leds_torch_write_reg+0xb6c>
+  19be68: a8 00 80 d2  	mov	x8, #5
+  19be6c: e1 43 00 91  	add	x1, sp, #16
+  19be70: 08 10 c0 f2  	movk	x8, #128, lsl #32
+  19be74: e0 03 13 aa  	mov	x0, x19
+  19be78: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19be7c: f4 ff 01 a9  	stp	x20, xzr, [sp, #24]
+  19be80: f5 23 00 b9  	str	w21, [sp, #32]
+  19be84: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19be88: ff e3 00 a9  	stp	xzr, x24, [sp, #8]
+  19be8c: bc 00 00 14  	b	0x19c17c <leds_torch_write_reg+0x93c>
+  19be90: 9f 24 03 d5  	hint	#36
+  19be94: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19be98: a8 00 80 d2  	mov	x8, #5
+  19be9c: 33 01 02 91  	add	x19, x9, #128
+  19bea0: 34 00 80 52  	mov	w20, #1
+  19bea4: f5 03 00 b2  	mov	x21, #4294967297
+  19bea8: f8 03 00 91  	mov	x24, sp
+  19beac: 08 10 c0 f2  	movk	x8, #128, lsl #32
+  19beb0: e1 43 00 91  	add	x1, sp, #16
+  19beb4: e0 03 13 aa  	mov	x0, x19
+  19beb8: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bebc: ff 13 00 f9  	str	xzr, [sp, #32]
+  19bec0: f4 23 00 b9  	str	w20, [sp, #32]
+  19bec4: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bec8: f8 57 01 a9  	stp	x24, x21, [sp, #16]
+  19becc: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19bed0: 00 00 00 94  	bl	0x19bed0 <leds_torch_write_reg+0x690> // camera_io_dev_write+0x0
+  19bed4: c0 27 f8 37  	tbnz	w0, #31, 0x19c3cc <leds_torch_write_reg+0xb8c>
+  19bed8: e1 43 00 91  	add	x1, sp, #16
+  19bedc: e0 03 13 aa  	mov	x0, x19
+  19bee0: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bee4: f5 ff 01 a9  	stp	x21, xzr, [sp, #24]
+  19bee8: f4 23 00 b9  	str	w20, [sp, #32]
+  19beec: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bef0: ff e3 00 a9  	stp	xzr, x24, [sp, #8]
+  19bef4: f4 03 00 f9  	str	x20, [sp]
+  19bef8: 00 00 00 94  	bl	0x19bef8 <leds_torch_write_reg+0x6b8> // camera_io_dev_write+0x0
+  19befc: c0 1e f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bf00: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x6c0> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bf04: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x6c4> // 'sy7808_write_reg'
+  19bf08: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bf0c: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bf10: 22 00 80 52  	mov	w2, #1
+  19bf14: 1e 01 00 14  	b	0x19c38c <leds_torch_write_reg+0xb4c>
+  19bf18: 9f 24 03 d5  	hint	#36
+  19bf1c: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19bf20: a8 00 80 d2  	mov	x8, #5
+  19bf24: 33 01 02 91  	add	x19, x9, #128
+  19bf28: 35 00 80 52  	mov	w21, #1
+  19bf2c: f4 03 00 b2  	mov	x20, #4294967297
+  19bf30: f8 03 00 91  	mov	x24, sp
+  19bf34: 08 10 c0 f2  	movk	x8, #128, lsl #32
+  19bf38: e1 43 00 91  	add	x1, sp, #16
+  19bf3c: e0 03 13 aa  	mov	x0, x19
+  19bf40: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bf44: ff 13 00 f9  	str	xzr, [sp, #32]
+  19bf48: f5 23 00 b9  	str	w21, [sp, #32]
+  19bf4c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bf50: f8 53 01 a9  	stp	x24, x20, [sp, #16]
+  19bf54: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19bf58: 00 00 00 94  	bl	0x19bf58 <leds_torch_write_reg+0x718> // camera_io_dev_write+0x0
+  19bf5c: 80 24 f8 37  	tbnz	w0, #31, 0x19c3ec <leds_torch_write_reg+0xbac>
+  19bf60: 28 00 80 d2  	mov	x8, #1
+  19bf64: e1 43 00 91  	add	x1, sp, #16
+  19bf68: 68 00 c0 f2  	movk	x8, #3, lsl #32
+  19bf6c: e0 03 13 aa  	mov	x0, x19
+  19bf70: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19bf74: f4 ff 01 a9  	stp	x20, xzr, [sp, #24]
+  19bf78: f5 23 00 b9  	str	w21, [sp, #32]
+  19bf7c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bf80: ff e3 00 a9  	stp	xzr, x24, [sp, #8]
+  19bf84: e8 03 00 f9  	str	x8, [sp]
+  19bf88: 00 00 00 94  	bl	0x19bf88 <leds_torch_write_reg+0x748> // camera_io_dev_write+0x0
+  19bf8c: 40 1a f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bf90: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x750> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bf94: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x754> // 'sy7808_write_reg'
+  19bf98: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bf9c: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19bfa0: 22 00 80 52  	mov	w2, #1
+  19bfa4: 63 00 80 52  	mov	w3, #3
+  19bfa8: 00 00 00 94  	bl	0x19bfa8 <leds_torch_write_reg+0x768> // _printk+0x0
+  19bfac: ca 00 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bfb0: 9f 24 03 d5  	hint	#36
+  19bfb4: e9 03 00 b2  	mov	x9, #4294967297
+  19bfb8: ea 03 00 91  	mov	x10, sp
+  19bfbc: 28 00 80 52  	mov	w8, #1
+  19bfc0: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19bfc4: 93 1e 00 12  	and	w19, w20, #0xff
+  19bfc8: e1 43 00 91  	add	x1, sp, #16
+  19bfcc: ea 27 01 a9  	stp	x10, x9, [sp, #16]
+  19bfd0: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19bfd4: e8 23 00 b9  	str	w8, [sp, #32]
+  19bfd8: 08 01 80 52  	mov	w8, #8
+  19bfdc: 20 01 02 91  	add	x0, x9, #128
+  19bfe0: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19bfe4: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19bfe8: e8 4f 00 29  	stp	w8, w19, [sp]
+  19bfec: ff 07 00 f9  	str	xzr, [sp, #8]
+  19bff0: 00 00 00 94  	bl	0x19bff0 <leds_torch_write_reg+0x7b0> // camera_io_dev_write+0x0
+  19bff4: 00 17 f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19bff8: 00 00 00 90  	adrp	x0, 0x19b000 <leds_torch_write_reg+0x7b8> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19bffc: 01 00 00 90  	adrp	x1, 0x19b000 <leds_torch_write_reg+0x7bc> // 'sy7808_write_reg'
+  19c000: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c004: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c008: 02 01 80 52  	mov	w2, #8
+  19c00c: 18 00 00 14  	b	0x19c06c <leds_torch_write_reg+0x82c>
+  19c010: 9f 24 03 d5  	hint	#36
+  19c014: e9 03 00 b2  	mov	x9, #4294967297
+  19c018: ea 03 00 91  	mov	x10, sp
+  19c01c: 28 00 80 52  	mov	w8, #1
+  19c020: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19c024: 13 1f 00 12  	and	w19, w24, #0xff
+  19c028: e1 43 00 91  	add	x1, sp, #16
+  19c02c: ea 27 01 a9  	stp	x10, x9, [sp, #16]
+  19c030: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19c034: e8 23 00 b9  	str	w8, [sp, #32]
+  19c038: 48 01 80 52  	mov	w8, #10
+  19c03c: 20 01 02 91  	add	x0, x9, #128
+  19c040: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19c044: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c048: e8 4f 00 29  	stp	w8, w19, [sp]
+  19c04c: ff 07 00 f9  	str	xzr, [sp, #8]
+  19c050: 00 00 00 94  	bl	0x19c050 <leds_torch_write_reg+0x810> // camera_io_dev_write+0x0
+  19c054: 00 14 f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c058: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0x818> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c05c: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0x81c> // 'sy7808_write_reg'
+  19c060: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c064: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c068: 42 01 80 52  	mov	w2, #10
+  19c06c: e3 03 13 2a  	mov	w3, w19
+  19c070: 00 00 00 94  	bl	0x19c070 <leds_torch_write_reg+0x830> // _printk+0x0
+  19c074: 98 00 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c078: 9f 24 03 d5  	hint	#36
+  19c07c: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19c080: 28 00 80 d2  	mov	x8, #1
+  19c084: 34 01 02 91  	add	x20, x9, #128
+  19c088: 39 00 80 52  	mov	w25, #1
+  19c08c: f5 03 00 b2  	mov	x21, #4294967297
+  19c090: f8 03 00 91  	mov	x24, sp
+  19c094: 28 01 c0 f2  	movk	x8, #9, lsl #32
+  19c098: e1 43 00 91  	add	x1, sp, #16
+  19c09c: e0 03 14 aa  	mov	x0, x20
+  19c0a0: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c0a4: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c0a8: f9 23 00 b9  	str	w25, [sp, #32]
+  19c0ac: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c0b0: f8 57 01 a9  	stp	x24, x21, [sp, #16]
+  19c0b4: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19c0b8: 00 00 00 94  	bl	0x19c0b8 <leds_torch_write_reg+0x878> // camera_io_dev_write+0x0
+  19c0bc: 80 1a f8 37  	tbnz	w0, #31, 0x19c40c <leds_torch_write_reg+0xbcc>
+  19c0c0: 08 10 80 52  	mov	w8, #128
+  19c0c4: e1 43 00 91  	add	x1, sp, #16
+  19c0c8: e0 03 14 aa  	mov	x0, x20
+  19c0cc: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c0d0: f5 ff 01 a9  	stp	x21, xzr, [sp, #24]
+  19c0d4: f9 23 00 b9  	str	w25, [sp, #32]
+  19c0d8: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c0dc: f8 0b 00 f9  	str	x24, [sp, #16]
+  19c0e0: f3 03 00 b9  	str	w19, [sp]
+  19c0e4: e8 43 00 f8  	stur	x8, [sp, #4]
+  19c0e8: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19c0ec: 00 00 00 94  	bl	0x19c0ec <leds_torch_write_reg+0x8ac> // camera_io_dev_write+0x0
+  19c0f0: 20 0f f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c0f4: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0x8b4> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c0f8: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0x8b8> // 'sy7808_write_reg'
+  19c0fc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c100: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c104: e2 03 13 2a  	mov	w2, w19
+  19c108: 25 00 00 14  	b	0x19c19c <leds_torch_write_reg+0x95c>
+  19c10c: 9f 24 03 d5  	hint	#36
+  19c110: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19c114: 38 00 80 52  	mov	w24, #1
+  19c118: 34 01 02 91  	add	x20, x9, #128
+  19c11c: f5 03 00 b2  	mov	x21, #4294967297
+  19c120: f9 03 00 91  	mov	x25, sp
+  19c124: 48 01 80 52  	mov	w8, #10
+  19c128: e1 43 00 91  	add	x1, sp, #16
+  19c12c: e0 03 14 aa  	mov	x0, x20
+  19c130: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c134: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c138: f8 23 00 b9  	str	w24, [sp, #32]
+  19c13c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c140: f9 57 01 a9  	stp	x25, x21, [sp, #16]
+  19c144: f3 03 00 b9  	str	w19, [sp]
+  19c148: e8 43 00 f8  	stur	x8, [sp, #4]
+  19c14c: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19c150: 00 00 00 94  	bl	0x19c150 <leds_torch_write_reg+0x910> // camera_io_dev_write+0x0
+  19c154: c0 16 f8 37  	tbnz	w0, #31, 0x19c42c <leds_torch_write_reg+0xbec>
+  19c158: a8 00 80 d2  	mov	x8, #5
+  19c15c: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c160: 08 10 c0 f2  	movk	x8, #128, lsl #32
+  19c164: f5 ff 01 a9  	stp	x21, xzr, [sp, #24]
+  19c168: f8 23 00 b9  	str	w24, [sp, #32]
+  19c16c: e1 43 00 91  	add	x1, sp, #16
+  19c170: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c174: e0 03 14 aa  	mov	x0, x20
+  19c178: ff e7 00 a9  	stp	xzr, x25, [sp, #8]
+  19c17c: e8 03 00 f9  	str	x8, [sp]
+  19c180: 00 00 00 94  	bl	0x19c180 <leds_torch_write_reg+0x940> // camera_io_dev_write+0x0
+  19c184: 80 0a f8 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c188: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0x948> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c18c: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0x94c> // 'sy7808_write_reg'
+  19c190: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c194: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c198: a2 00 80 52  	mov	w2, #5
+  19c19c: 03 10 80 52  	mov	w3, #128
+  19c1a0: 00 00 00 94  	bl	0x19c1a0 <leds_torch_write_reg+0x960> // _printk+0x0
+  19c1a4: 4c 00 00 14  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c1a8: 9f 24 03 d5  	hint	#36
+  19c1ac: e8 22 16 8b  	add	x8, x23, x22, lsl #8
+  19c1b0: 38 00 80 52  	mov	w24, #1
+  19c1b4: 14 01 02 91  	add	x20, x8, #128
+  19c1b8: f5 03 00 b2  	mov	x21, #4294967297
+  19c1bc: f9 03 00 91  	mov	x25, sp
+  19c1c0: e1 43 00 91  	add	x1, sp, #16
+  19c1c4: e0 03 14 aa  	mov	x0, x20
+  19c1c8: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c1cc: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c1d0: f8 23 00 b9  	str	w24, [sp, #32]
+  19c1d4: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c1d8: f9 57 01 a9  	stp	x25, x21, [sp, #16]
+  19c1dc: f8 7f 00 a9  	stp	x24, xzr, [sp]
+  19c1e0: 00 00 00 94  	bl	0x19c1e0 <leds_torch_write_reg+0x9a0> // camera_io_dev_write+0x0
+  19c1e4: 40 13 f8 37  	tbnz	w0, #31, 0x19c44c <leds_torch_write_reg+0xc0c>
+  19c1e8: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c1ec: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c1f0: f8 23 00 b9  	str	w24, [sp, #32]
+  19c1f4: 2f 00 00 14  	b	0x19c2b0 <leds_torch_write_reg+0xa70>
+  19c1f8: 9f 24 03 d5  	hint	#36
+  19c1fc: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19c200: 28 00 80 d2  	mov	x8, #1
+  19c204: 34 01 02 91  	add	x20, x9, #128
+  19c208: 38 00 80 52  	mov	w24, #1
+  19c20c: f5 03 00 b2  	mov	x21, #4294967297
+  19c210: f9 03 00 91  	mov	x25, sp
+  19c214: 48 01 c0 f2  	movk	x8, #10, lsl #32
+  19c218: e1 43 00 91  	add	x1, sp, #16
+  19c21c: e0 03 14 aa  	mov	x0, x20
+  19c220: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c224: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c228: f8 23 00 b9  	str	w24, [sp, #32]
+  19c22c: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c230: f9 57 01 a9  	stp	x25, x21, [sp, #16]
+  19c234: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19c238: 00 00 00 94  	bl	0x19c238 <leds_torch_write_reg+0x9f8> // camera_io_dev_write+0x0
+  19c23c: 40 03 f8 36  	tbz	w0, #31, 0x19c2a4 <leds_torch_write_reg+0xa64>
+  19c240: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xa00> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c244: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xa04> // 'sy7808_write_reg'
+  19c248: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c24c: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c250: 22 00 80 52  	mov	w2, #1
+  19c254: 43 01 80 52  	mov	w3, #10
+  19c258: 8b 00 00 14  	b	0x19c484 <leds_torch_write_reg+0xc44>
+  19c25c: 9f 24 03 d5  	hint	#36
+  19c260: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19c264: 28 00 80 d2  	mov	x8, #1
+  19c268: 34 01 02 91  	add	x20, x9, #128
+  19c26c: 38 00 80 52  	mov	w24, #1
+  19c270: f5 03 00 b2  	mov	x21, #4294967297
+  19c274: f9 03 00 91  	mov	x25, sp
+  19c278: 28 01 c0 f2  	movk	x8, #9, lsl #32
+  19c27c: e1 43 00 91  	add	x1, sp, #16
+  19c280: e0 03 14 aa  	mov	x0, x20
+  19c284: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c288: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c28c: f8 23 00 b9  	str	w24, [sp, #32]
+  19c290: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c294: f9 57 01 a9  	stp	x25, x21, [sp, #16]
+  19c298: e8 7f 00 a9  	stp	x8, xzr, [sp]
+  19c29c: 00 00 00 94  	bl	0x19c29c <leds_torch_write_reg+0xa5c> // camera_io_dev_write+0x0
+  19c2a0: 60 0e f8 37  	tbnz	w0, #31, 0x19c46c <leds_torch_write_reg+0xc2c>
+  19c2a4: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  19c2a8: ff 13 00 f9  	str	xzr, [sp, #32]
+  19c2ac: f8 23 00 b9  	str	w24, [sp, #32]
+  19c2b0: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c2b4: e1 43 00 91  	add	x1, sp, #16
+  19c2b8: f9 57 01 a9  	stp	x25, x21, [sp, #16]
+  19c2bc: e0 03 14 aa  	mov	x0, x20
+  19c2c0: f3 03 00 b9  	str	w19, [sp]
+  19c2c4: ff 43 00 f8  	stur	xzr, [sp, #4]
+  19c2c8: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19c2cc: 00 00 00 94  	bl	0x19c2cc <leds_torch_write_reg+0xa8c> // camera_io_dev_write+0x0
+  19c2d0: 40 05 f8 37  	tbnz	w0, #31, 0x19c378 <leds_torch_write_reg+0xb38>
+  19c2d4: e0 03 1f 2a  	mov	w0, wzr
+  19c2d8: 08 41 38 d5  	mrs	x8, SP_EL0
+  19c2dc: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19c2e0: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  19c2e4: 1f 01 09 eb  	cmp	x8, x9
+  19c2e8: 61 0d 00 54  	b.ne	0x19c494 <leds_torch_write_reg+0xc54>
+  19c2ec: f4 4f 48 a9  	ldp	x20, x19, [sp, #128]
+  19c2f0: f6 57 47 a9  	ldp	x22, x21, [sp, #112]
+  19c2f4: f8 5f 46 a9  	ldp	x24, x23, [sp, #96]
+  19c2f8: fd 7b 44 a9  	ldp	x29, x30, [sp, #64]
+  19c2fc: f9 2b 40 f9  	ldr	x25, [sp, #80]
+  19c300: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19c304: ff 43 02 91  	add	sp, sp, #144
+  19c308: bf 23 03 d5  	hint	#29
+  19c30c: c0 03 5f d6  	ret
+  19c310: 9f 24 03 d5  	hint	#36
+  19c314: 28 00 80 52  	mov	w8, #1
+  19c318: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19c31c: e9 03 00 b2  	mov	x9, #4294967297
+  19c320: e1 43 00 91  	add	x1, sp, #16
+  19c324: ff 1b 00 f9  	str	xzr, [sp, #48]
+  19c328: e8 23 00 b9  	str	w8, [sp, #32]
+  19c32c: e8 03 00 91  	mov	x8, sp
+  19c330: ff 4b 00 79  	strh	wzr, [sp, #36]
+  19c334: f3 03 00 b9  	str	w19, [sp]
+  19c338: e8 27 01 a9  	stp	x8, x9, [sp, #16]
+  19c33c: e9 22 16 8b  	add	x9, x23, x22, lsl #8
+  19c340: 08 01 80 52  	mov	w8, #8
+  19c344: 20 01 02 91  	add	x0, x9, #128
+  19c348: ff 0f 00 b9  	str	wzr, [sp, #12]
+  19c34c: e8 43 00 f8  	stur	x8, [sp, #4]
+  19c350: 00 00 00 94  	bl	0x19c350 <leds_torch_write_reg+0xb10> // camera_io_dev_write+0x0
+  19c354: 00 fc ff 36  	tbz	w0, #31, 0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c358: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xb18> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c35c: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xb1c> // 'sy7808_write_reg'
+  19c360: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c364: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c368: e2 03 13 2a  	mov	w2, w19
+  19c36c: 03 01 80 52  	mov	w3, #8
+  19c370: 00 00 00 94  	bl	0x19c370 <leds_torch_write_reg+0xb30> // _printk+0x0
+  19c374: d8 ff ff 17  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c378: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xb38> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c37c: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xb3c> // 'sy7808_write_reg'
+  19c380: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c384: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c388: e2 03 13 2a  	mov	w2, w19
+  19c38c: e3 03 1f 2a  	mov	w3, wzr
+  19c390: 00 00 00 94  	bl	0x19c390 <leds_torch_write_reg+0xb50> // _printk+0x0
+  19c394: d0 ff ff 17  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c398: 9f 24 03 d5  	hint	#36
+  19c39c: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xb5c> // '\x013No such data.value=0x%x\n'
+  19c3a0: 00 00 00 91  	add	x0, x0, #0 // '\x013No such data.value=0x%x\n'
+  19c3a4: 00 00 00 94  	bl	0x19c3a4 <leds_torch_write_reg+0xb64> // _printk+0x0
+  19c3a8: cb ff ff 17  	b	0x19c2d4 <leds_torch_write_reg+0xa94>
+  19c3ac: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xb6c> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c3b0: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xb70> // 'sy7808_write_reg'
+  19c3b4: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c3b8: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c3bc: 22 00 80 52  	mov	w2, #1
+  19c3c0: 63 01 80 52  	mov	w3, #11
+  19c3c4: 00 00 00 94  	bl	0x19c3c4 <leds_torch_write_reg+0xb84> // _printk+0x0
+  19c3c8: a8 fe ff 17  	b	0x19be68 <leds_torch_write_reg+0x628>
+  19c3cc: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xb8c> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c3d0: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xb90> // 'sy7808_write_reg'
+  19c3d4: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c3d8: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c3dc: a2 00 80 52  	mov	w2, #5
+  19c3e0: 03 10 80 52  	mov	w3, #128
+  19c3e4: 00 00 00 94  	bl	0x19c3e4 <leds_torch_write_reg+0xba4> // _printk+0x0
+  19c3e8: bc fe ff 17  	b	0x19bed8 <leds_torch_write_reg+0x698>
+  19c3ec: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xbac> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c3f0: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xbb0> // 'sy7808_write_reg'
+  19c3f4: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c3f8: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c3fc: a2 00 80 52  	mov	w2, #5
+  19c400: 03 10 80 52  	mov	w3, #128
+  19c404: 00 00 00 94  	bl	0x19c404 <leds_torch_write_reg+0xbc4> // _printk+0x0
+  19c408: d6 fe ff 17  	b	0x19bf60 <leds_torch_write_reg+0x720>
+  19c40c: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xbcc> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c410: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xbd0> // 'sy7808_write_reg'
+  19c414: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c418: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c41c: 22 00 80 52  	mov	w2, #1
+  19c420: 23 01 80 52  	mov	w3, #9
+  19c424: 00 00 00 94  	bl	0x19c424 <leds_torch_write_reg+0xbe4> // _printk+0x0
+  19c428: 26 ff ff 17  	b	0x19c0c0 <leds_torch_write_reg+0x880>
+  19c42c: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xbec> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c430: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xbf0> // 'sy7808_write_reg'
+  19c434: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c438: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c43c: e2 03 13 2a  	mov	w2, w19
+  19c440: 43 01 80 52  	mov	w3, #10
+  19c444: 00 00 00 94  	bl	0x19c444 <leds_torch_write_reg+0xc04> // _printk+0x0
+  19c448: 44 ff ff 17  	b	0x19c158 <leds_torch_write_reg+0x918>
+  19c44c: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xc0c> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c450: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xc10> // 'sy7808_write_reg'
+  19c454: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c458: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c45c: 22 00 80 52  	mov	w2, #1
+  19c460: e3 03 1f 2a  	mov	w3, wzr
+  19c464: 00 00 00 94  	bl	0x19c464 <leds_torch_write_reg+0xc24> // _printk+0x0
+  19c468: 60 ff ff 17  	b	0x19c1e8 <leds_torch_write_reg+0x9a8>
+  19c46c: 00 00 00 90  	adrp	x0, 0x19c000 <leds_torch_write_reg+0xc2c> // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c470: 01 00 00 90  	adrp	x1, 0x19c000 <leds_torch_write_reg+0xc30> // 'sy7808_write_reg'
+  19c474: 00 00 00 91  	add	x0, x0, #0 // '\x013[ERROR]%s:write i2c reg fail, reg:0x%x, val:0x%x.\n'
+  19c478: 21 00 00 91  	add	x1, x1, #0 // 'sy7808_write_reg'
+  19c47c: 22 00 80 52  	mov	w2, #1
+  19c480: 23 01 80 52  	mov	w3, #9
+  19c484: 00 00 00 94  	bl	0x19c484 <leds_torch_write_reg+0xc44> // _printk+0x0
+  19c488: 87 ff ff 17  	b	0x19c2a4 <leds_torch_write_reg+0xa64>
+  19c48c: 40 a2 2a d4  	brk	#0x5512
+  19c490: 20 00 20 d4  	brk	#0x1
+  19c494: 00 00 00 94  	bl	0x19c494 <leds_torch_write_reg+0xc54> // __stack_chk_fail+0x0

@@ -1,0 +1,285 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000017717c <meizu_ois_adj_angle_show>:
+  17717c: 3f 23 03 d5  	hint	#25
+  177180: 08 00 00 90  	adrp	x8, 0x177000 <meizu_ois_adj_angle_show+0x4> // 'adj_angle 0~2 \n'
+  177184: e0 01 80 52  	mov	w0, #15
+  177188: 08 01 00 91  	add	x8, x8, #0 // 'adj_angle 0~2 \n'
+  17718c: 08 25 40 a9  	ldp	x8, x9, [x8]
+  177190: 48 24 00 a9  	stp	x8, x9, [x2]
+  177194: bf 23 03 d5  	hint	#29
+  177198: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000017719c <meizu_ois_adj_angle_store>:
+  17719c: 3f 23 03 d5  	hint	#25
+  1771a0: ff 43 02 d1  	sub	sp, sp, #144
+  1771a4: 5e 86 00 f8  	str	x30, [x18], #8
+  1771a8: fd 7b 05 a9  	stp	x29, x30, [sp, #80]
+  1771ac: fd 43 01 91  	add	x29, sp, #80
+  1771b0: f7 33 00 f9  	str	x23, [sp, #96]
+  1771b4: f6 57 07 a9  	stp	x22, x21, [sp, #112]
+  1771b8: f4 4f 08 a9  	stp	x20, x19, [sp, #128]
+  1771bc: e8 03 02 aa  	mov	x8, x2
+  1771c0: 09 41 38 d5  	mrs	x9, SP_EL0
+  1771c4: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x28> // '%d\n'
+  1771c8: f4 03 00 aa  	mov	x20, x0
+  1771cc: 29 f1 42 f9  	ldr	x9, [x9, #1504]
+  1771d0: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  1771d4: a2 33 00 d1  	sub	x2, x29, #12
+  1771d8: e0 03 08 aa  	mov	x0, x8
+  1771dc: f3 03 03 aa  	mov	x19, x3
+  1771e0: a9 83 1f f8  	stur	x9, [x29, #-8]
+  1771e4: bf ff 3e a9  	stp	xzr, xzr, [x29, #-24]
+  1771e8: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  1771ec: ff 13 00 f9  	str	xzr, [sp, #32]
+  1771f0: 00 00 00 94  	bl	0x1771f0 <meizu_ois_adj_angle_store+0x54> // sscanf+0x0
+  1771f4: 00 00 00 90  	adrp	x0, 0x177000 <meizu_ois_adj_angle_store+0x58> // '\x016%s(), input angle is %d\n'
+  1771f8: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x5c> // 'meizu_ois_adj_angle_store'
+  1771fc: a2 43 5f b8  	ldur	w2, [x29, #-12]
+  177200: 00 00 00 91  	add	x0, x0, #0 // '\x016%s(), input angle is %d\n'
+  177204: 21 00 00 91  	add	x1, x1, #0 // 'meizu_ois_adj_angle_store'
+  177208: 00 00 00 94  	bl	0x177208 <meizu_ois_adj_angle_store+0x6c> // _printk+0x0
+  17720c: a7 43 5f b8  	ldur	w7, [x29, #-12]
+  177210: ff 50 00 71  	cmp	w7, #20
+  177214: e3 01 00 54  	b.lo	0x177250 <meizu_ois_adj_angle_store+0xb4>
+  177218: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x7c> // 'meizu_ois_adj_angle_store'
+  17721c: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x80> // '\x016%s: %s: %s: %d %s(), invalid input %d\n'
+  177220: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x84> // 'CAM_ERR'
+  177224: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x88> // 'CAM-OIS'
+  177228: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  17722c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s(), invalid input %d\n'
+  177230: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177234: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177238: 60 00 80 52  	mov	w0, #3
+  17723c: a5 57 80 52  	mov	w5, #701
+  177240: e6 03 04 aa  	mov	x6, x4
+  177244: 00 00 00 94  	bl	0x177244 <meizu_ois_adj_angle_store+0xa8> // cam_print_log+0x0
+  177248: b3 02 80 92  	mov	x19, #-22
+  17724c: c1 00 00 14  	b	0x177550 <meizu_ois_adj_angle_store+0x3b4>
+  177250: 88 4e 40 f9  	ldr	x8, [x20, #152]
+  177254: a2 43 00 d1  	sub	x2, x29, #16
+  177258: 01 87 90 52  	mov	w1, #33848
+  17725c: 43 00 80 52  	mov	w3, #2
+  177260: 44 00 80 52  	mov	w4, #2
+  177264: 25 00 80 52  	mov	w5, #1
+  177268: 14 81 31 91  	add	x20, x8, #3168
+  17726c: e0 03 14 aa  	mov	x0, x20
+  177270: 00 00 00 94  	bl	0x177270 <meizu_ois_adj_angle_store+0xd4> // camera_io_dev_read+0x0
+  177274: 60 11 f8 37  	tbnz	w0, #31, 0x1774a0 <meizu_ois_adj_angle_store+0x304>
+  177278: a2 53 00 d1  	sub	x2, x29, #20
+  17727c: e0 03 14 aa  	mov	x0, x20
+  177280: e1 88 90 52  	mov	w1, #33863
+  177284: 43 00 80 52  	mov	w3, #2
+  177288: 44 00 80 52  	mov	w4, #2
+  17728c: 25 00 80 52  	mov	w5, #1
+  177290: 00 00 00 94  	bl	0x177290 <meizu_ois_adj_angle_store+0xf4> // camera_io_dev_read+0x0
+  177294: 20 12 f8 37  	tbnz	w0, #31, 0x1774d8 <meizu_ois_adj_angle_store+0x33c>
+  177298: a2 63 00 d1  	sub	x2, x29, #24
+  17729c: e0 03 14 aa  	mov	x0, x20
+  1772a0: e1 8e 90 52  	mov	w1, #33911
+  1772a4: 43 00 80 52  	mov	w3, #2
+  1772a8: 44 00 80 52  	mov	w4, #2
+  1772ac: 25 00 80 52  	mov	w5, #1
+  1772b0: 57 00 80 52  	mov	w23, #2
+  1772b4: 00 00 00 94  	bl	0x1772b4 <meizu_ois_adj_angle_store+0x118> // camera_io_dev_read+0x0
+  1772b8: c0 12 f8 37  	tbnz	w0, #31, 0x177510 <meizu_ois_adj_angle_store+0x374>
+  1772bc: 08 00 00 90  	adrp	x8, 0x177000 <meizu_ois_adj_angle_store+0x120> // kmalloc_caches+0x38
+  1772c0: 29 00 80 d2  	mov	x9, #1
+  1772c4: 49 00 c0 f2  	movk	x9, #2, lsl #32
+  1772c8: 01 b8 81 52  	mov	w1, #3520
+  1772cc: 02 02 80 52  	mov	w2, #16
+  1772d0: b5 83 5e b8  	ldur	w21, [x29, #-24]
+  1772d4: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x38
+  1772d8: f7 23 00 b9  	str	w23, [sp, #32]
+  1772dc: b6 43 5f b8  	ldur	w22, [x29, #-12]
+  1772e0: e9 0f 00 f9  	str	x9, [sp, #24]
+  1772e4: ff 4b 00 79  	strh	wzr, [sp, #36]
+  1772e8: 00 00 00 94  	bl	0x1772e8 <meizu_ois_adj_angle_store+0x14c> // kmem_cache_alloc_trace+0x0
+  1772ec: e0 0b 00 f9  	str	x0, [sp, #16]
+  1772f0: c0 14 00 b4  	cbz	x0, 0x177588 <meizu_ois_adj_angle_store+0x3ec>
+  1772f4: c8 7e 15 1b  	mul	w8, w22, w21
+  1772f8: a9 99 99 52  	mov	w9, #52429
+  1772fc: 89 99 b9 72  	movk	w9, #52428, lsl #16
+  177300: ea ff 8f 52  	mov	w10, #32767
+  177304: 1f 04 00 f9  	str	xzr, [x0, #8]
+  177308: e1 43 00 91  	add	x1, sp, #16
+  17730c: 08 7d a9 9b  	umull	x8, w8, w9
+  177310: a9 03 5f b8  	ldur	w9, [x29, #-16]
+  177314: 15 c9 63 d3  	ubfx	x21, x8, #35, #16
+  177318: 28 c5 72 d3  	lsl	x8, x9, #14
+  17731c: c9 ff 8f 52  	mov	w9, #32766
+  177320: 08 09 d5 9a  	udiv	x8, x8, x21
+  177324: 1f 01 09 eb  	cmp	x8, x9
+  177328: 08 3d 00 12  	and	w8, w8, #0xffff
+  17732c: 09 87 90 52  	mov	w9, #33848
+  177330: 56 81 88 1a  	csel	w22, w10, w8, hi
+  177334: 09 58 00 29  	stp	w9, w22, [x0]
+  177338: e0 03 14 aa  	mov	x0, x20
+  17733c: 00 00 00 94  	bl	0x17733c <meizu_ois_adj_angle_store+0x1a0> // camera_io_dev_write+0x0
+  177340: a0 01 f8 36  	tbz	w0, #31, 0x177374 <meizu_ois_adj_angle_store+0x1d8>
+  177344: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x1a8> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  177348: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x1ac> // 'CAM_ERR'
+  17734c: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x1b0> // 'CAM-OIS'
+  177350: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x1b4> // 'meizu_ois_adj_angle_store'
+  177354: e6 03 00 2a  	mov	w6, w0
+  177358: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  17735c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177360: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177364: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  177368: 60 00 80 52  	mov	w0, #3
+  17736c: 05 62 80 52  	mov	w5, #784
+  177370: 00 00 00 94  	bl	0x177370 <meizu_ois_adj_angle_store+0x1d4> // cam_print_log+0x0
+  177374: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  177378: 09 97 90 52  	mov	w9, #33976
+  17737c: e1 43 00 91  	add	x1, sp, #16
+  177380: e0 03 14 aa  	mov	x0, x20
+  177384: 09 01 00 b9  	str	w9, [x8]
+  177388: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  17738c: 16 05 00 b9  	str	w22, [x8, #4]
+  177390: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  177394: 1f 05 00 f9  	str	xzr, [x8, #8]
+  177398: 00 00 00 94  	bl	0x177398 <meizu_ois_adj_angle_store+0x1fc> // camera_io_dev_write+0x0
+  17739c: a0 01 f8 36  	tbz	w0, #31, 0x1773d0 <meizu_ois_adj_angle_store+0x234>
+  1773a0: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x204> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  1773a4: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x208> // 'CAM_ERR'
+  1773a8: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x20c> // 'CAM-OIS'
+  1773ac: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x210> // 'meizu_ois_adj_angle_store'
+  1773b0: e6 03 00 2a  	mov	w6, w0
+  1773b4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  1773b8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1773bc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1773c0: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  1773c4: 60 00 80 52  	mov	w0, #3
+  1773c8: 85 63 80 52  	mov	w5, #796
+  1773cc: 00 00 00 94  	bl	0x1773cc <meizu_ois_adj_angle_store+0x230> // cam_print_log+0x0
+  1773d0: a8 c3 5e b8  	ldur	w8, [x29, #-20]
+  1773d4: ea 88 90 52  	mov	w10, #33863
+  1773d8: e9 0b 40 f9  	ldr	x9, [sp, #16]
+  1773dc: e1 43 00 91  	add	x1, sp, #16
+  1773e0: e0 03 14 aa  	mov	x0, x20
+  1773e4: 08 7d 15 1b  	mul	w8, w8, w21
+  1773e8: 2a 01 00 b9  	str	w10, [x9]
+  1773ec: 15 75 0e 53  	ubfx	w21, w8, #14, #16
+  1773f0: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  1773f4: 15 05 00 b9  	str	w21, [x8, #4]
+  1773f8: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  1773fc: 1f 05 00 f9  	str	xzr, [x8, #8]
+  177400: 00 00 00 94  	bl	0x177400 <meizu_ois_adj_angle_store+0x264> // camera_io_dev_write+0x0
+  177404: a0 01 f8 36  	tbz	w0, #31, 0x177438 <meizu_ois_adj_angle_store+0x29c>
+  177408: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x26c> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  17740c: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x270> // 'CAM_ERR'
+  177410: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x274> // 'CAM-OIS'
+  177414: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x278> // 'meizu_ois_adj_angle_store'
+  177418: e6 03 00 2a  	mov	w6, w0
+  17741c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  177420: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177424: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177428: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  17742c: 60 00 80 52  	mov	w0, #3
+  177430: 45 65 80 52  	mov	w5, #810
+  177434: 00 00 00 94  	bl	0x177434 <meizu_ois_adj_angle_store+0x298> // cam_print_log+0x0
+  177438: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  17743c: e9 98 90 52  	mov	w9, #33991
+  177440: e1 43 00 91  	add	x1, sp, #16
+  177444: e0 03 14 aa  	mov	x0, x20
+  177448: 09 01 00 b9  	str	w9, [x8]
+  17744c: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  177450: 15 05 00 b9  	str	w21, [x8, #4]
+  177454: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  177458: 1f 05 00 f9  	str	xzr, [x8, #8]
+  17745c: 00 00 00 94  	bl	0x17745c <meizu_ois_adj_angle_store+0x2c0> // camera_io_dev_write+0x0
+  177460: a0 01 f8 36  	tbz	w0, #31, 0x177494 <meizu_ois_adj_angle_store+0x2f8>
+  177464: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x2c8> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  177468: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x2cc> // 'CAM_ERR'
+  17746c: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x2d0> // 'CAM-OIS'
+  177470: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x2d4> // 'meizu_ois_adj_angle_store'
+  177474: e6 03 00 2a  	mov	w6, w0
+  177478: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  17747c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177480: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177484: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  177488: 60 00 80 52  	mov	w0, #3
+  17748c: c5 66 80 52  	mov	w5, #822
+  177490: 00 00 00 94  	bl	0x177490 <meizu_ois_adj_angle_store+0x2f4> // cam_print_log+0x0
+  177494: e0 0b 40 f9  	ldr	x0, [sp, #16]
+  177498: 00 00 00 94  	bl	0x177498 <meizu_ois_adj_angle_store+0x2fc> // kfree+0x0
+  17749c: 2d 00 00 14  	b	0x177550 <meizu_ois_adj_angle_store+0x3b4>
+  1774a0: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x304> // 'meizu_ois_adj_angle_store'
+  1774a4: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x308> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  1774a8: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x30c> // 'CAM_ERR'
+  1774ac: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x310> // 'CAM-OIS'
+  1774b0: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  1774b4: f5 03 00 2a  	mov	w21, w0
+  1774b8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  1774bc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1774c0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1774c4: 60 00 80 52  	mov	w0, #3
+  1774c8: 45 59 80 52  	mov	w5, #714
+  1774cc: e6 03 04 aa  	mov	x6, x4
+  1774d0: 07 87 90 52  	mov	w7, #33848
+  1774d4: 1c 00 00 14  	b	0x177544 <meizu_ois_adj_angle_store+0x3a8>
+  1774d8: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x33c> // 'meizu_ois_adj_angle_store'
+  1774dc: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x340> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  1774e0: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x344> // 'CAM_ERR'
+  1774e4: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x348> // 'CAM-OIS'
+  1774e8: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  1774ec: f5 03 00 2a  	mov	w21, w0
+  1774f0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  1774f4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1774f8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1774fc: 60 00 80 52  	mov	w0, #3
+  177500: a5 5a 80 52  	mov	w5, #725
+  177504: e6 03 04 aa  	mov	x6, x4
+  177508: e7 88 90 52  	mov	w7, #33863
+  17750c: 0e 00 00 14  	b	0x177544 <meizu_ois_adj_angle_store+0x3a8>
+  177510: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x374> // 'meizu_ois_adj_angle_store'
+  177514: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x378> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  177518: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x37c> // 'CAM_ERR'
+  17751c: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x380> // 'CAM-OIS'
+  177520: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  177524: f5 03 00 2a  	mov	w21, w0
+  177528: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  17752c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177530: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177534: 60 00 80 52  	mov	w0, #3
+  177538: 05 5c 80 52  	mov	w5, #736
+  17753c: e6 03 04 aa  	mov	x6, x4
+  177540: e7 8e 90 52  	mov	w7, #33911
+  177544: f5 03 00 b9  	str	w21, [sp]
+  177548: 00 00 00 94  	bl	0x177548 <meizu_ois_adj_angle_store+0x3ac> // cam_print_log+0x0
+  17754c: b3 7e 40 93  	sxtw	x19, w21
+  177550: 08 41 38 d5  	mrs	x8, SP_EL0
+  177554: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  177558: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  17755c: 1f 01 09 eb  	cmp	x8, x9
+  177560: e1 02 00 54  	b.ne	0x1775bc <meizu_ois_adj_angle_store+0x420>
+  177564: e0 03 13 aa  	mov	x0, x19
+  177568: f7 33 40 f9  	ldr	x23, [sp, #96]
+  17756c: f4 4f 48 a9  	ldp	x20, x19, [sp, #128]
+  177570: f6 57 47 a9  	ldp	x22, x21, [sp, #112]
+  177574: fd 7b 45 a9  	ldp	x29, x30, [sp, #80]
+  177578: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  17757c: ff 43 02 91  	add	sp, sp, #144
+  177580: bf 23 03 d5  	hint	#29
+  177584: c0 03 5f d6  	ret
+  177588: 01 00 00 90  	adrp	x1, 0x177000 <meizu_ois_adj_angle_store+0x3ec> // '\x016%s: %s: %s: %d Failed in allocating i2c_array'
+  17758c: 02 00 00 90  	adrp	x2, 0x177000 <meizu_ois_adj_angle_store+0x3f0> // 'CAM_ERR'
+  177590: 03 00 00 90  	adrp	x3, 0x177000 <meizu_ois_adj_angle_store+0x3f4> // 'CAM-OIS'
+  177594: 04 00 00 90  	adrp	x4, 0x177000 <meizu_ois_adj_angle_store+0x3f8> // 'meizu_ois_adj_angle_store'
+  177598: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Failed in allocating i2c_array'
+  17759c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1775a0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1775a4: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_adj_angle_store'
+  1775a8: 60 00 80 52  	mov	w0, #3
+  1775ac: 65 5f 80 52  	mov	w5, #763
+  1775b0: 00 00 00 94  	bl	0x1775b0 <meizu_ois_adj_angle_store+0x414> // cam_print_log+0x0
+  1775b4: 73 01 80 92  	mov	x19, #-12
+  1775b8: e6 ff ff 17  	b	0x177550 <meizu_ois_adj_angle_store+0x3b4>
+  1775bc: 00 00 00 94  	bl	0x1775bc <meizu_ois_adj_angle_store+0x420> // __stack_chk_fail+0x0

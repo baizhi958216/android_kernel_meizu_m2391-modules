@@ -1,0 +1,319 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000176cb0 <sanity_show>:
+  176cb0: 3f 23 03 d5  	hint	#25
+  176cb4: ff c3 02 d1  	sub	sp, sp, #176
+  176cb8: 5e 86 00 f8  	str	x30, [x18], #8
+  176cbc: fd 7b 05 a9  	stp	x29, x30, [sp, #80]
+  176cc0: fd 43 01 91  	add	x29, sp, #80
+  176cc4: fc 6f 06 a9  	stp	x28, x27, [sp, #96]
+  176cc8: fa 67 07 a9  	stp	x26, x25, [sp, #112]
+  176ccc: f8 5f 08 a9  	stp	x24, x23, [sp, #128]
+  176cd0: f6 57 09 a9  	stp	x22, x21, [sp, #144]
+  176cd4: f4 4f 0a a9  	stp	x20, x19, [sp, #160]
+  176cd8: 08 41 38 d5  	mrs	x8, SP_EL0
+  176cdc: 09 00 00 90  	adrp	x9, 0x176000 <sanity_show+0x2c> // debug_mdl+0x2
+  176ce0: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  176ce4: f3 03 02 aa  	mov	x19, x2
+  176ce8: a8 83 1f f8  	stur	x8, [x29, #-8]
+  176cec: 28 01 40 39  	ldrb	w8, [x9] // debug_mdl+0x2
+  176cf0: 14 4c 40 f9  	ldr	x20, [x0, #152]
+  176cf4: 88 00 20 36  	tbz	w8, #4, 0x176d04 <sanity_show+0x54>
+  176cf8: 08 00 00 90  	adrp	x8, 0x176000 <sanity_show+0x48> // debug_priority+0x0
+  176cfc: 08 01 40 b9  	ldr	w8, [x8] // debug_priority+0x0
+  176d00: 88 1a 00 34  	cbz	w8, 0x177050 <sanity_show+0x3a0>
+  176d04: 14 1c 00 b4  	cbz	x20, 0x177084 <sanity_show+0x3d4>
+  176d08: 9f fe 3f b1  	cmn	x20, #4095
+  176d0c: c2 1b 00 54  	b.hs	0x177084 <sanity_show+0x3d4>
+  176d10: 86 26 4f b9  	ldr	w6, [x20, #3876]
+  176d14: df 0c 00 71  	cmp	w6, #3
+  176d18: c0 01 00 54  	b.eq	0x176d50 <sanity_show+0xa0>
+  176d1c: 01 00 00 90  	adrp	x1, 0x176000 <sanity_show+0x6c> // '\x016%s: %s: %s: %d ois state %d is err!\n'
+  176d20: 02 00 00 90  	adrp	x2, 0x176000 <sanity_show+0x70> // 'CAM_ERR'
+  176d24: 03 00 00 90  	adrp	x3, 0x176000 <sanity_show+0x74> // 'CAM-OIS'
+  176d28: 04 00 00 90  	adrp	x4, 0x176000 <sanity_show+0x78> // 'sanity_show'
+  176d2c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d ois state %d is err!\n'
+  176d30: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  176d34: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  176d38: 84 00 00 91  	add	x4, x4, #0 // 'sanity_show'
+  176d3c: 60 00 80 52  	mov	w0, #3
+  176d40: e5 4f 80 52  	mov	w5, #639
+  176d44: 00 00 00 94  	bl	0x176d44 <sanity_show+0x94> // cam_print_log+0x0
+  176d48: 80 00 80 92  	mov	x0, #-5
+  176d4c: db 00 00 14  	b	0x1770b8 <sanity_show+0x408>
+  176d50: 08 00 00 90  	adrp	x8, 0x176000 <sanity_show+0xa0> // kmalloc_caches+0x38
+  176d54: 2a 00 80 d2  	mov	x10, #1
+  176d58: 29 00 80 52  	mov	w9, #1
+  176d5c: 4a 00 c0 f2  	movk	x10, #2, lsl #32
+  176d60: 01 b8 81 52  	mov	w1, #3520
+  176d64: 02 02 80 52  	mov	w2, #16
+  176d68: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x38
+  176d6c: bf c3 1e f8  	stur	xzr, [x29, #-20]
+  176d70: bf 43 1f 38  	sturb	wzr, [x29, #-12]
+  176d74: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  176d78: ea ff 01 a9  	stp	x10, xzr, [sp, #24]
+  176d7c: e9 23 00 b9  	str	w9, [sp, #32]
+  176d80: 00 00 00 94  	bl	0x176d80 <sanity_show+0xd0> // kmem_cache_alloc_trace+0x0
+  176d84: 28 00 c0 d2  	mov	x8, #4294967296
+  176d88: 94 82 31 91  	add	x20, x20, #3168
+  176d8c: e0 0b 00 f9  	str	x0, [sp, #16]
+  176d90: e1 43 00 91  	add	x1, sp, #16
+  176d94: 08 7c 00 a9  	stp	x8, xzr, [x0]
+  176d98: e0 03 14 aa  	mov	x0, x20
+  176d9c: 00 00 00 94  	bl	0x176d9c <sanity_show+0xec> // camera_io_dev_write+0x0
+  176da0: a0 01 f8 36  	tbz	w0, #31, 0x176dd4 <sanity_show+0x124>
+  176da4: 01 00 00 90  	adrp	x1, 0x176000 <sanity_show+0xf4> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  176da8: 02 00 00 90  	adrp	x2, 0x176000 <sanity_show+0xf8> // 'CAM_ERR'
+  176dac: 03 00 00 90  	adrp	x3, 0x176000 <sanity_show+0xfc> // 'CAM-OIS'
+  176db0: 04 00 00 90  	adrp	x4, 0x176000 <sanity_show+0x100> // 'Oscillation_Check'
+  176db4: e6 03 00 2a  	mov	w6, w0
+  176db8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  176dbc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  176dc0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  176dc4: 84 00 00 91  	add	x4, x4, #0 // 'Oscillation_Check'
+  176dc8: 60 00 80 52  	mov	w0, #3
+  176dcc: 25 40 80 52  	mov	w5, #513
+  176dd0: 00 00 00 94  	bl	0x176dd0 <sanity_show+0x120> // cam_print_log+0x0
+  176dd4: 1c 00 00 90  	adrp	x28, 0x176000 <sanity_show+0x124> // g_ois_cri+0x0
+  176dd8: 1b 00 00 90  	adrp	x27, 0x176000 <sanity_show+0x128> // g_ois_cnt+0x0
+  176ddc: 08 00 00 90  	adrp	x8, 0x176000 <sanity_show+0x12c> // g_ois_lvl+0x0
+  176de0: 00 00 00 90  	adrp	x0, 0x176000 <sanity_show+0x130> // '\x016%s(), crite:%d, cnt:%d, lvl:%d\n'
+  176de4: 01 00 00 90  	adrp	x1, 0x176000 <sanity_show+0x134> // 'Oscillation_Check'
+  176de8: 00 00 00 91  	add	x0, x0, #0 // '\x016%s(), crite:%d, cnt:%d, lvl:%d\n'
+  176dec: 82 03 40 b9  	ldr	w2, [x28] // g_ois_cri+0x0
+  176df0: 21 00 00 91  	add	x1, x1, #0 // 'Oscillation_Check'
+  176df4: 63 03 40 b9  	ldr	w3, [x27] // g_ois_cnt+0x0
+  176df8: 04 01 40 b9  	ldr	w4, [x8] // g_ois_lvl+0x0
+  176dfc: 00 00 00 94  	bl	0x176dfc <sanity_show+0x14c> // _printk+0x0
+  176e00: 68 03 40 b9  	ldr	w8, [x27] // g_ois_cnt+0x0
+  176e04: 1f 05 00 71  	cmp	w8, #1
+  176e08: 4b 07 00 54  	b.lt	0x176ef0 <sanity_show+0x240>
+  176e0c: 18 00 00 90  	adrp	x24, 0x176000 <sanity_show+0x15c> // 'CAM-OIS'
+  176e10: 19 00 00 90  	adrp	x25, 0x176000 <sanity_show+0x160> // 'Oscillation_Check'
+  176e14: f5 03 1f 2a  	mov	w21, wzr
+  176e18: f6 03 1f 2a  	mov	w22, wzr
+  176e1c: 18 03 00 91  	add	x24, x24, #0 // 'CAM-OIS'
+  176e20: 39 03 00 91  	add	x25, x25, #0 // 'Oscillation_Check'
+  176e24: 16 00 00 14  	b	0x176e7c <sanity_show+0x1cc>
+  176e28: b5 06 00 11  	add	w21, w21, #1
+  176e2c: 01 00 00 90  	adrp	x1, 0x176000 <sanity_show+0x17c> // '\x016%s: %s: %s: %d %s(), err_cnt:%d, hall_x:%d, hall_y:%d\n'
+  176e30: 02 00 00 90  	adrp	x2, 0x176000 <sanity_show+0x180> // 'CAM_ERR'
+  176e34: 60 00 80 52  	mov	w0, #3
+  176e38: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s(), err_cnt:%d, hall_x:%d, hall_y:%d\n'
+  176e3c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  176e40: e3 03 18 aa  	mov	x3, x24
+  176e44: e4 03 19 aa  	mov	x4, x25
+  176e48: 25 48 80 52  	mov	w5, #577
+  176e4c: e6 03 19 aa  	mov	x6, x25
+  176e50: e7 03 15 2a  	mov	w7, w21
+  176e54: e8 0b 00 b9  	str	w8, [sp, #8]
+  176e58: e9 03 00 b9  	str	w9, [sp]
+  176e5c: 00 00 00 94  	bl	0x176e5c <sanity_show+0x1ac> // cam_print_log+0x0
+  176e60: 00 d7 95 52  	mov	w0, #44728
+  176e64: e0 28 a0 72  	movk	w0, #327, lsl #16
+  176e68: 00 00 00 94  	bl	0x176e68 <sanity_show+0x1b8> // __const_udelay+0x0
+  176e6c: 68 03 40 b9  	ldr	w8, [x27] // g_ois_cnt+0x0
+  176e70: d6 06 00 11  	add	w22, w22, #1
+  176e74: df 02 08 6b  	cmp	w22, w8
+  176e78: ea 03 00 54  	b.ge	0x176ef4 <sanity_show+0x244>
+  176e7c: a2 43 00 d1  	sub	x2, x29, #16
+  176e80: e0 03 14 aa  	mov	x0, x20
+  176e84: e1 87 90 52  	mov	w1, #33855
+  176e88: 43 00 80 52  	mov	w3, #2
+  176e8c: 44 00 80 52  	mov	w4, #2
+  176e90: 25 00 80 52  	mov	w5, #1
+  176e94: 00 00 00 94  	bl	0x176e94 <sanity_show+0x1e4> // camera_io_dev_read+0x0
+  176e98: 60 07 f8 37  	tbnz	w0, #31, 0x176f84 <sanity_show+0x2d4>
+  176e9c: a2 53 00 d1  	sub	x2, x29, #20
+  176ea0: e0 03 14 aa  	mov	x0, x20
+  176ea4: e1 97 90 52  	mov	w1, #33983
+  176ea8: 43 00 80 52  	mov	w3, #2
+  176eac: 44 00 80 52  	mov	w4, #2
+  176eb0: 25 00 80 52  	mov	w5, #1
+  176eb4: b7 03 5f b8  	ldur	w23, [x29, #-16]
+  176eb8: 00 00 00 94  	bl	0x176eb8 <sanity_show+0x208> // camera_io_dev_read+0x0
+  176ebc: 00 08 f8 37  	tbnz	w0, #31, 0x176fbc <sanity_show+0x30c>
+  176ec0: a8 c3 de 78  	ldursh	w8, [x29, #-20]
+  176ec4: e9 3e 00 13  	sxth	w9, w23
+  176ec8: 3f 01 00 71  	cmp	w9, #0
+  176ecc: 8a 03 40 b9  	ldr	w10, [x28] // g_ois_cri+0x0
+  176ed0: 2c 55 89 5a  	cneg	w12, w9, mi
+  176ed4: 1f 01 00 71  	cmp	w8, #0
+  176ed8: 0b 55 88 5a  	cneg	w11, w8, mi
+  176edc: 9f 01 0a 6b  	cmp	w12, w10
+  176ee0: 4c fa ff 54  	b.gt	0x176e28 <sanity_show+0x178>
+  176ee4: 7f 01 0a 6b  	cmp	w11, w10
+  176ee8: cd fb ff 54  	b.le	0x176e60 <sanity_show+0x1b0>
+  176eec: cf ff ff 17  	b	0x176e28 <sanity_show+0x178>
+  176ef0: f5 03 1f 2a  	mov	w21, wzr
+  176ef4: 08 00 00 90  	adrp	x8, 0x176000 <sanity_show+0x244> // g_ois_lvl+0x0
+  176ef8: 08 01 40 b9  	ldr	w8, [x8] // g_ois_lvl+0x0
+  176efc: bf 02 08 6b  	cmp	w21, w8
+  176f00: ed 08 00 54  	b.le	0x17701c <sanity_show+0x36c>
+  176f04: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  176f08: e9 8f 90 52  	mov	w9, #33919
+  176f0c: e1 43 00 91  	add	x1, sp, #16
+  176f10: e0 03 14 aa  	mov	x0, x20
+  176f14: 09 01 00 b9  	str	w9, [x8]
+  176f18: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  176f1c: 1f 05 00 b9  	str	wzr, [x8, #4]
+  176f20: e8 0b 40 f9  	ldr	x8, [sp, #16]
+  176f24: 1f 05 00 f9  	str	xzr, [x8, #8]
+  176f28: 00 00 00 94  	bl	0x176f28 <sanity_show+0x278> // camera_io_dev_write+0x0
+  176f2c: a0 01 f8 36  	tbz	w0, #31, 0x176f60 <sanity_show+0x2b0>
+  176f30: 01 00 00 90  	adrp	x1, 0x176000 <sanity_show+0x280> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  176f34: 02 00 00 90  	adrp	x2, 0x176000 <sanity_show+0x284> // 'CAM_ERR'
+  176f38: 03 00 00 90  	adrp	x3, 0x176000 <sanity_show+0x288> // 'CAM-OIS'
+  176f3c: 04 00 00 90  	adrp	x4, 0x176000 <sanity_show+0x28c> // 'Oscillation_Check'
+  176f40: e6 03 00 2a  	mov	w6, w0
+  176f44: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  176f48: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  176f4c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  176f50: 84 00 00 91  	add	x4, x4, #0 // 'Oscillation_Check'
+  176f54: 60 00 80 52  	mov	w0, #3
+  176f58: 25 4b 80 52  	mov	w5, #601
+  176f5c: 00 00 00 94  	bl	0x176f5c <sanity_show+0x2ac> // cam_print_log+0x0
+  176f60: 28 00 80 52  	mov	w8, #1
+  176f64: a0 33 00 d1  	sub	x0, x29, #12
+  176f68: 21 00 80 52  	mov	w1, #1
+  176f6c: 22 8c 83 52  	mov	w2, #7265
+  176f70: e3 03 1f 2a  	mov	w3, wzr
+  176f74: a8 43 1f 38  	sturb	w8, [x29, #-12]
+  176f78: 00 00 00 94  	bl	0x176f78 <sanity_show+0x2c8> // meizu_bsp_partition_write+0x0
+  176f7c: 1a 00 80 12  	mov	w26, #-1
+  176f80: 1e 00 00 14  	b	0x176ff8 <sanity_show+0x348>
+  176f84: 04 00 00 90  	adrp	x4, 0x176000 <sanity_show+0x2d4> // 'Oscillation_Check'
+  176f88: 01 00 00 90  	adrp	x1, 0x176000 <sanity_show+0x2d8> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  176f8c: 02 00 00 90  	adrp	x2, 0x176000 <sanity_show+0x2dc> // 'CAM_ERR'
+  176f90: 03 00 00 90  	adrp	x3, 0x176000 <sanity_show+0x2e0> // 'CAM-OIS'
+  176f94: 84 00 00 91  	add	x4, x4, #0 // 'Oscillation_Check'
+  176f98: fa 03 00 2a  	mov	w26, w0
+  176f9c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  176fa0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  176fa4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  176fa8: 60 00 80 52  	mov	w0, #3
+  176fac: 45 42 80 52  	mov	w5, #530
+  176fb0: e6 03 04 aa  	mov	x6, x4
+  176fb4: e7 87 90 52  	mov	w7, #33855
+  176fb8: 0e 00 00 14  	b	0x176ff0 <sanity_show+0x340>
+  176fbc: 04 00 00 90  	adrp	x4, 0x176000 <sanity_show+0x30c> // 'Oscillation_Check'
+  176fc0: 01 00 00 90  	adrp	x1, 0x176000 <sanity_show+0x310> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  176fc4: 02 00 00 90  	adrp	x2, 0x176000 <sanity_show+0x314> // 'CAM_ERR'
+  176fc8: 03 00 00 90  	adrp	x3, 0x176000 <sanity_show+0x318> // 'CAM-OIS'
+  176fcc: 84 00 00 91  	add	x4, x4, #0 // 'Oscillation_Check'
+  176fd0: fa 03 00 2a  	mov	w26, w0
+  176fd4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  176fd8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  176fdc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  176fe0: 60 00 80 52  	mov	w0, #3
+  176fe4: c5 43 80 52  	mov	w5, #542
+  176fe8: e6 03 04 aa  	mov	x6, x4
+  176fec: e7 97 90 52  	mov	w7, #33983
+  176ff0: fa 03 00 b9  	str	w26, [sp]
+  176ff4: 00 00 00 94  	bl	0x176ff4 <sanity_show+0x344> // cam_print_log+0x0
+  176ff8: e0 0b 40 f9  	ldr	x0, [sp, #16]
+  176ffc: 00 00 00 94  	bl	0x176ffc <sanity_show+0x34c> // kfree+0x0
+  177000: 01 00 00 90  	adrp	x1, 0x177000 <sanity_show+0x350> // '%d\n'
+  177004: e0 03 13 aa  	mov	x0, x19
+  177008: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  17700c: e2 03 1a 2a  	mov	w2, w26
+  177010: 00 00 00 94  	bl	0x177010 <sanity_show+0x360> // sprintf+0x0
+  177014: 00 7c 40 93  	sxtw	x0, w0
+  177018: 28 00 00 14  	b	0x1770b8 <sanity_show+0x408>
+  17701c: a0 33 00 d1  	sub	x0, x29, #12
+  177020: 21 00 80 52  	mov	w1, #1
+  177024: 22 8c 83 52  	mov	w2, #7265
+  177028: e3 03 1f 2a  	mov	w3, wzr
+  17702c: bf 43 1f 38  	sturb	wzr, [x29, #-12]
+  177030: 00 00 00 94  	bl	0x177030 <sanity_show+0x380> // meizu_bsp_partition_write+0x0
+  177034: 00 00 00 90  	adrp	x0, 0x177000 <sanity_show+0x384> // '\x016%s(), ok\n'
+  177038: 01 00 00 90  	adrp	x1, 0x177000 <sanity_show+0x388> // 'Oscillation_Check'
+  17703c: 00 00 00 91  	add	x0, x0, #0 // '\x016%s(), ok\n'
+  177040: 21 00 00 91  	add	x1, x1, #0 // 'Oscillation_Check'
+  177044: 00 00 00 94  	bl	0x177044 <sanity_show+0x394> // _printk+0x0
+  177048: fa 03 1f 2a  	mov	w26, wzr
+  17704c: eb ff ff 17  	b	0x176ff8 <sanity_show+0x348>
+  177050: 01 00 00 90  	adrp	x1, 0x177000 <sanity_show+0x3a0> // '\x016%s: %s: %s: %d instance struct msm_ois_ctrl_t: 0x%p\n'
+  177054: 02 00 00 90  	adrp	x2, 0x177000 <sanity_show+0x3a4> // 'CAM_DBG'
+  177058: 03 00 00 90  	adrp	x3, 0x177000 <sanity_show+0x3a8> // 'CAM-OIS'
+  17705c: 04 00 00 90  	adrp	x4, 0x177000 <sanity_show+0x3ac> // 'sanity_show'
+  177060: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d instance struct msm_ois_ctrl_t: 0x%p\n'
+  177064: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  177068: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17706c: 84 00 00 91  	add	x4, x4, #0 // 'sanity_show'
+  177070: 60 00 80 52  	mov	w0, #3
+  177074: 05 4f 80 52  	mov	w5, #632
+  177078: e6 03 14 aa  	mov	x6, x20
+  17707c: 00 00 00 94  	bl	0x17707c <sanity_show+0x3cc> // cam_print_log+0x0
+  177080: 54 e4 ff b5  	cbnz	x20, 0x176d08 <sanity_show+0x58>
+  177084: 01 00 00 90  	adrp	x1, 0x177000 <sanity_show+0x3d4> // '\x016%s: %s: %s: %d o_ctrl: 0x%p is err!\n'
+  177088: 02 00 00 90  	adrp	x2, 0x177000 <sanity_show+0x3d8> // 'CAM_ERR'
+  17708c: 03 00 00 90  	adrp	x3, 0x177000 <sanity_show+0x3dc> // 'CAM-OIS'
+  177090: 04 00 00 90  	adrp	x4, 0x177000 <sanity_show+0x3e0> // 'sanity_show'
+  177094: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d o_ctrl: 0x%p is err!\n'
+  177098: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  17709c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1770a0: 84 00 00 91  	add	x4, x4, #0 // 'sanity_show'
+  1770a4: 60 00 80 52  	mov	w0, #3
+  1770a8: 45 4f 80 52  	mov	w5, #634
+  1770ac: e6 03 14 aa  	mov	x6, x20
+  1770b0: 00 00 00 94  	bl	0x1770b0 <sanity_show+0x400> // cam_print_log+0x0
+  1770b4: a0 02 80 92  	mov	x0, #-22
+  1770b8: 08 41 38 d5  	mrs	x8, SP_EL0
+  1770bc: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  1770c0: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  1770c4: 1f 01 09 eb  	cmp	x8, x9
+  1770c8: 61 01 00 54  	b.ne	0x1770f4 <sanity_show+0x444>
+  1770cc: f4 4f 4a a9  	ldp	x20, x19, [sp, #160]
+  1770d0: f6 57 49 a9  	ldp	x22, x21, [sp, #144]
+  1770d4: f8 5f 48 a9  	ldp	x24, x23, [sp, #128]
+  1770d8: fa 67 47 a9  	ldp	x26, x25, [sp, #112]
+  1770dc: fc 6f 46 a9  	ldp	x28, x27, [sp, #96]
+  1770e0: fd 7b 45 a9  	ldp	x29, x30, [sp, #80]
+  1770e4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1770e8: ff c3 02 91  	add	sp, sp, #176
+  1770ec: bf 23 03 d5  	hint	#29
+  1770f0: c0 03 5f d6  	ret
+  1770f4: 00 00 00 94  	bl	0x1770f4 <sanity_show+0x444> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001770f8 <sanity_store>:
+  1770f8: 3f 23 03 d5  	hint	#25
+  1770fc: 5e 86 00 f8  	str	x30, [x18], #8
+  177100: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+  177104: f6 57 01 a9  	stp	x22, x21, [sp, #16]
+  177108: fd 03 00 91  	mov	x29, sp
+  17710c: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  177110: 14 00 00 90  	adrp	x20, 0x177000 <sanity_store+0x18> // g_ois_cri+0x0
+  177114: 15 00 00 90  	adrp	x21, 0x177000 <sanity_store+0x1c> // g_ois_cnt+0x0
+  177118: 16 00 00 90  	adrp	x22, 0x177000 <sanity_store+0x20> // g_ois_lvl+0x0
+  17711c: 01 00 00 90  	adrp	x1, 0x177000 <sanity_store+0x24> // '%d%d%d'
+  177120: 94 02 00 91  	add	x20, x20, #0 // g_ois_cri+0x0
+  177124: b5 02 00 91  	add	x21, x21, #0 // g_ois_cnt+0x0
+  177128: d6 02 00 91  	add	x22, x22, #0 // g_ois_lvl+0x0
+  17712c: f3 03 03 aa  	mov	x19, x3
+  177130: e0 03 02 aa  	mov	x0, x2
+  177134: 21 00 00 91  	add	x1, x1, #0 // '%d%d%d'
+  177138: e2 03 14 aa  	mov	x2, x20
+  17713c: e3 03 15 aa  	mov	x3, x21
+  177140: e4 03 16 aa  	mov	x4, x22
+  177144: 00 00 00 94  	bl	0x177144 <sanity_store+0x4c> // sscanf+0x0
+  177148: 00 00 00 90  	adrp	x0, 0x177000 <sanity_store+0x50> // '\x016input g_ois_cri:%d, g_ois_cnt:%d, g_ois_lvl:%d\n'
+  17714c: 81 02 40 b9  	ldr	w1, [x20]
+  177150: a2 02 40 b9  	ldr	w2, [x21]
+  177154: 00 00 00 91  	add	x0, x0, #0 // '\x016input g_ois_cri:%d, g_ois_cnt:%d, g_ois_lvl:%d\n'
+  177158: c3 02 40 b9  	ldr	w3, [x22]
+  17715c: 00 00 00 94  	bl	0x17715c <sanity_store+0x64> // _printk+0x0
+  177160: e0 03 13 aa  	mov	x0, x19
+  177164: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  177168: f6 57 41 a9  	ldp	x22, x21, [sp, #16]
+  17716c: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+  177170: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  177174: bf 23 03 d5  	hint	#29
+  177178: c0 03 5f d6  	ret

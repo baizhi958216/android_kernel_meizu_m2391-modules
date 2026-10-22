@@ -1,0 +1,863 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001775c0 <meizu_fw_upgrade_show>:
+  1775c0: 3f 23 03 d5  	hint	#25
+  1775c4: 5e 86 00 f8  	str	x30, [x18], #8
+  1775c8: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  1775cc: f4 4f 01 a9  	stp	x20, x19, [sp, #16]
+  1775d0: fd 03 00 91  	mov	x29, sp
+  1775d4: 14 00 00 90  	adrp	x20, 0x177000 <meizu_fw_upgrade_show+0x14> // cali_exec_result+0x0
+  1775d8: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_show+0x18> // 'meizu_fw_upgrade_show'
+  1775dc: f3 03 02 aa  	mov	x19, x2
+  1775e0: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_show+0x20> // '\x016%s: %s: %s: %d %s(), cali_exec_result: %d\n'
+  1775e4: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_show+0x24> // 'CAM_INFO'
+  1775e8: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_show+0x28> // 'CAM-OIS'
+  1775ec: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_show'
+  1775f0: 87 02 40 b9  	ldr	w7, [x20] // cali_exec_result+0x0
+  1775f4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s(), cali_exec_result: %d\n'
+  1775f8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  1775fc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177600: 60 00 80 52  	mov	w0, #3
+  177604: 45 77 80 52  	mov	w5, #954
+  177608: e6 03 04 aa  	mov	x6, x4
+  17760c: 00 00 00 94  	bl	0x17760c <meizu_fw_upgrade_show+0x4c> // cam_print_log+0x0
+  177610: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_show+0x50> // '%d \n'
+  177614: 82 02 40 b9  	ldr	w2, [x20] // cali_exec_result+0x0
+  177618: 21 00 00 91  	add	x1, x1, #0 // '%d \n'
+  17761c: e0 03 13 aa  	mov	x0, x19
+  177620: 00 00 00 94  	bl	0x177620 <meizu_fw_upgrade_show+0x60> // sprintf+0x0
+  177624: f4 4f 41 a9  	ldp	x20, x19, [sp, #16]
+  177628: 00 7c 40 93  	sxtw	x0, w0
+  17762c: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  177630: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  177634: bf 23 03 d5  	hint	#29
+  177638: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000017763c <meizu_fw_upgrade_store>:
+  17763c: 3f 23 03 d5  	hint	#25
+  177640: ff c3 02 d1  	sub	sp, sp, #176
+  177644: 5e 86 00 f8  	str	x30, [x18], #8
+  177648: fd 7b 05 a9  	stp	x29, x30, [sp, #80]
+  17764c: fd 43 01 91  	add	x29, sp, #80
+  177650: fc 6f 06 a9  	stp	x28, x27, [sp, #96]
+  177654: fa 67 07 a9  	stp	x26, x25, [sp, #112]
+  177658: f8 5f 08 a9  	stp	x24, x23, [sp, #128]
+  17765c: f6 57 09 a9  	stp	x22, x21, [sp, #144]
+  177660: f4 4f 0a a9  	stp	x20, x19, [sp, #160]
+  177664: e8 03 02 aa  	mov	x8, x2
+  177668: 09 41 38 d5  	mrs	x9, SP_EL0
+  17766c: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x30> // '%d\n'
+  177670: f4 03 00 aa  	mov	x20, x0
+  177674: 29 f1 42 f9  	ldr	x9, [x9, #1504]
+  177678: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  17767c: e2 53 00 91  	add	x2, sp, #20
+  177680: e0 03 08 aa  	mov	x0, x8
+  177684: f3 03 03 aa  	mov	x19, x3
+  177688: a9 83 1f f8  	stur	x9, [x29, #-8]
+  17768c: bf 03 1f b8  	stur	wzr, [x29, #-16]
+  177690: ff 7f 03 a9  	stp	xzr, xzr, [sp, #48]
+  177694: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  177698: ff 0f 00 f9  	str	xzr, [sp, #24]
+  17769c: bf 43 1f 38  	sturb	wzr, [x29, #-12]
+  1776a0: ff 17 00 b9  	str	wzr, [sp, #20]
+  1776a4: 00 00 00 94  	bl	0x1776a4 <meizu_fw_upgrade_store+0x68> // sscanf+0x0
+  1776a8: e6 17 40 b9  	ldr	w6, [sp, #20]
+  1776ac: df 04 00 71  	cmp	w6, #1
+  1776b0: a1 28 00 54  	b.ne	0x177bc4 <meizu_fw_upgrade_store+0x588>
+  1776b4: 16 00 00 90  	adrp	x22, 0x177000 <meizu_fw_upgrade_store+0x78> // 'CAM_INFO'
+  1776b8: 17 00 00 90  	adrp	x23, 0x177000 <meizu_fw_upgrade_store+0x7c> // 'CAM-OIS'
+  1776bc: 18 00 00 90  	adrp	x24, 0x177000 <meizu_fw_upgrade_store+0x80> // 'meizu_fw_upgrade_store'
+  1776c0: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x84> // '\x016%s: %s: %s: %d ois enable %d is ok\n'
+  1776c4: d6 02 00 91  	add	x22, x22, #0 // 'CAM_INFO'
+  1776c8: f7 02 00 91  	add	x23, x23, #0 // 'CAM-OIS'
+  1776cc: 18 03 00 91  	add	x24, x24, #0 // 'meizu_fw_upgrade_store'
+  1776d0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d ois enable %d is ok\n'
+  1776d4: 60 00 80 52  	mov	w0, #3
+  1776d8: e2 03 16 aa  	mov	x2, x22
+  1776dc: e3 03 17 aa  	mov	x3, x23
+  1776e0: e4 03 18 aa  	mov	x4, x24
+  1776e4: 25 7b 80 52  	mov	w5, #985
+  1776e8: 00 00 00 94  	bl	0x1776e8 <meizu_fw_upgrade_store+0xac> // cam_print_log+0x0
+  1776ec: 95 4e 40 f9  	ldr	x21, [x20, #152]
+  1776f0: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0xb4> // '\x016%s: %s: %s: %d instance struct msm_ois_ctrl_t: 0x%p\n'
+  1776f4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d instance struct msm_ois_ctrl_t: 0x%p\n'
+  1776f8: 60 00 80 52  	mov	w0, #3
+  1776fc: e2 03 16 aa  	mov	x2, x22
+  177700: e3 03 17 aa  	mov	x3, x23
+  177704: e4 03 18 aa  	mov	x4, x24
+  177708: 85 7b 80 52  	mov	w5, #988
+  17770c: e6 03 15 aa  	mov	x6, x21
+  177710: 00 00 00 94  	bl	0x177710 <meizu_fw_upgrade_store+0xd4> // cam_print_log+0x0
+  177714: 35 27 00 b4  	cbz	x21, 0x177bf8 <meizu_fw_upgrade_store+0x5bc>
+  177718: bf fe 3f b1  	cmn	x21, #4095
+  17771c: e2 26 00 54  	b.hs	0x177bf8 <meizu_fw_upgrade_store+0x5bc>
+  177720: a6 26 4f b9  	ldr	w6, [x21, #3876]
+  177724: df 0c 00 71  	cmp	w6, #3
+  177728: 41 28 00 54  	b.ne	0x177c30 <meizu_fw_upgrade_store+0x5f4>
+  17772c: e0 03 15 aa  	mov	x0, x21
+  177730: 41 00 80 52  	mov	w1, #2
+  177734: 22 00 80 52  	mov	w2, #1
+  177738: e3 03 1f 2a  	mov	w3, wzr
+  17773c: e4 03 1f 2a  	mov	w4, wzr
+  177740: 25 00 80 52  	mov	w5, #1
+  177744: 00 00 00 94  	bl	0x177744 <meizu_fw_upgrade_store+0x108> // camera_i2c_write_bytes+0x0
+  177748: 00 02 f8 36  	tbz	w0, #31, 0x177788 <meizu_fw_upgrade_store+0x14c>
+  17774c: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x110> // '\x016%s: %s: %s: %d camera_i2c_write_bytes failed %d'
+  177750: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x114> // 'CAM_ERR'
+  177754: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x118> // 'CAM-OIS'
+  177758: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x11c> // 'meizu_fw_upgrade_store'
+  17775c: e6 03 00 2a  	mov	w6, w0
+  177760: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_i2c_write_bytes failed %d'
+  177764: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177768: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17776c: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177770: 60 00 80 52  	mov	w0, #3
+  177774: 85 7d 80 52  	mov	w5, #1004
+  177778: 00 00 00 94  	bl	0x177778 <meizu_fw_upgrade_store+0x13c> // cam_print_log+0x0
+  17777c: 08 00 00 90  	adrp	x8, 0x177000 <meizu_fw_upgrade_store+0x140> // cali_exec_result+0x0
+  177780: 29 00 80 12  	mov	w9, #-2
+  177784: 09 01 00 b9  	str	w9, [x8] // cali_exec_result+0x0
+  177788: 74 0c 80 92  	mov	x20, #-100
+  17778c: 00 2b 91 52  	mov	w0, #35160
+  177790: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177794: 00 00 00 94  	bl	0x177794 <meizu_fw_upgrade_store+0x158> // __const_udelay+0x0
+  177798: 94 06 00 b1  	adds	x20, x20, #1
+  17779c: 83 ff ff 54  	b.lo	0x17778c <meizu_fw_upgrade_store+0x150>
+  1777a0: b4 82 31 91  	add	x20, x21, #3168
+  1777a4: a2 43 00 d1  	sub	x2, x29, #16
+  1777a8: e0 03 14 aa  	mov	x0, x20
+  1777ac: 21 00 80 52  	mov	w1, #1
+  1777b0: 43 00 80 52  	mov	w3, #2
+  1777b4: 24 00 80 52  	mov	w4, #1
+  1777b8: 25 00 80 52  	mov	w5, #1
+  1777bc: 00 00 00 94  	bl	0x1777bc <meizu_fw_upgrade_store+0x180> // camera_io_dev_read+0x0
+  1777c0: 60 25 f8 37  	tbnz	w0, #31, 0x177c6c <meizu_fw_upgrade_store+0x630>
+  1777c4: a7 03 5f b8  	ldur	w7, [x29, #-16]
+  1777c8: ff 04 00 71  	cmp	w7, #1
+  1777cc: 41 27 00 54  	b.ne	0x177cb4 <meizu_fw_upgrade_store+0x678>
+  1777d0: 16 00 00 90  	adrp	x22, 0x177000 <meizu_fw_upgrade_store+0x194> // 'CAM-OIS'
+  1777d4: 17 00 00 90  	adrp	x23, 0x177000 <meizu_fw_upgrade_store+0x198> // 'meizu_fw_upgrade_store'
+  1777d8: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x19c> // '\x016%s: %s: %s: %d %s: ois in idle stats\n'
+  1777dc: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x1a0> // 'CAM_INFO'
+  1777e0: d6 02 00 91  	add	x22, x22, #0 // 'CAM-OIS'
+  1777e4: f7 02 00 91  	add	x23, x23, #0 // 'meizu_fw_upgrade_store'
+  1777e8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: ois in idle stats\n'
+  1777ec: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  1777f0: 60 00 80 52  	mov	w0, #3
+  1777f4: e3 03 16 aa  	mov	x3, x22
+  1777f8: e4 03 17 aa  	mov	x4, x23
+  1777fc: c5 7f 80 52  	mov	w5, #1022
+  177800: e6 03 17 aa  	mov	x6, x23
+  177804: 00 00 00 94  	bl	0x177804 <meizu_fw_upgrade_store+0x1c8> // cam_print_log+0x0
+  177808: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x1cc> // '\x016%s: %s: %s: %d %s: NewFwVer:0x%x\n'
+  17780c: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x1d0> // 'CAM_ERR'
+  177810: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: NewFwVer:0x%x\n'
+  177814: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177818: 60 00 80 52  	mov	w0, #3
+  17781c: e3 03 16 aa  	mov	x3, x22
+  177820: e4 03 17 aa  	mov	x4, x23
+  177824: e5 80 80 52  	mov	w5, #1031
+  177828: e6 03 17 aa  	mov	x6, x23
+  17782c: 27 4d bf 52  	mov	w7, #-93782016
+  177830: 00 00 00 94  	bl	0x177830 <meizu_fw_upgrade_store+0x1f4> // cam_print_log+0x0
+  177834: e0 03 15 aa  	mov	x0, x21
+  177838: 41 00 80 52  	mov	w1, #2
+  17783c: 22 00 80 52  	mov	w2, #1
+  177840: 83 01 80 52  	mov	w3, #12
+  177844: a4 0e 80 52  	mov	w4, #117
+  177848: 25 00 80 52  	mov	w5, #1
+  17784c: 00 00 00 94  	bl	0x17784c <meizu_fw_upgrade_store+0x210> // camera_i2c_write_bytes+0x0
+  177850: 80 26 f8 37  	tbnz	w0, #31, 0x177d20 <meizu_fw_upgrade_store+0x6e4>
+  177854: 75 0c 80 92  	mov	x21, #-100
+  177858: 00 2b 91 52  	mov	w0, #35160
+  17785c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177860: 00 00 00 94  	bl	0x177860 <meizu_fw_upgrade_store+0x224> // __const_udelay+0x0
+  177864: b5 06 00 b1  	adds	x21, x21, #1
+  177868: 83 ff ff 54  	b.lo	0x177858 <meizu_fw_upgrade_store+0x21c>
+  17786c: 15 00 00 90  	adrp	x21, 0x177000 <meizu_fw_upgrade_store+0x230> // 'CAM_INFO'
+  177870: 16 00 00 90  	adrp	x22, 0x177000 <meizu_fw_upgrade_store+0x234> // 'CAM-OIS'
+  177874: 17 00 00 90  	adrp	x23, 0x177000 <meizu_fw_upgrade_store+0x238> // 'meizu_fw_upgrade_store'
+  177878: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x23c> // '\x016%s: %s: %s: %d camera_io_dev_write FwVerCount %d'
+  17787c: b5 02 00 91  	add	x21, x21, #0 // 'CAM_INFO'
+  177880: d6 02 00 91  	add	x22, x22, #0 // 'CAM-OIS'
+  177884: f7 02 00 91  	add	x23, x23, #0 // 'meizu_fw_upgrade_store'
+  177888: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write FwVerCount %d'
+  17788c: 60 00 80 52  	mov	w0, #3
+  177890: e2 03 15 aa  	mov	x2, x21
+  177894: e3 03 16 aa  	mov	x3, x22
+  177898: e4 03 17 aa  	mov	x4, x23
+  17789c: 85 82 80 52  	mov	w5, #1044
+  1778a0: 06 0e 80 52  	mov	w6, #112
+  1778a4: 00 00 00 94  	bl	0x1778a4 <meizu_fw_upgrade_store+0x268> // cam_print_log+0x0
+  1778a8: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x26c> // '\x016%s: %s: %s: %d OIS FW upgrade start'
+  1778ac: 60 00 80 52  	mov	w0, #3
+  1778b0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OIS FW upgrade start'
+  1778b4: e2 03 15 aa  	mov	x2, x21
+  1778b8: e3 03 16 aa  	mov	x3, x22
+  1778bc: e4 03 17 aa  	mov	x4, x23
+  1778c0: a5 82 80 52  	mov	w5, #1045
+  1778c4: 00 00 00 94  	bl	0x1778c4 <meizu_fw_upgrade_store+0x288> // cam_print_log+0x0
+  1778c8: 19 20 80 d2  	mov	x25, #256
+  1778cc: 1c 00 00 90  	adrp	x28, 0x177000 <meizu_fw_upgrade_store+0x290> // ''
+  1778d0: f6 03 1f 2a  	mov	w22, wzr
+  1778d4: f7 03 1f aa  	mov	x23, xzr
+  1778d8: 38 00 80 52  	mov	w24, #1
+  1778dc: 59 00 c0 f2  	movk	x25, #2, lsl #32
+  1778e0: 1a 20 80 52  	mov	w26, #256
+  1778e4: 9c 03 00 91  	add	x28, x28, #0 // ''
+  1778e8: 00 00 82 52  	mov	w0, #4096
+  1778ec: f8 2b 00 b9  	str	w24, [sp, #40]
+  1778f0: f9 13 00 f9  	str	x25, [sp, #32]
+  1778f4: ff 5b 00 79  	strh	wzr, [sp, #44]
+  1778f8: 00 00 00 94  	bl	0x1778f8 <meizu_fw_upgrade_store+0x2bc> // vmalloc+0x0
+  1778fc: 00 23 00 b4  	cbz	x0, 0x177d5c <meizu_fw_upgrade_store+0x720>
+  177900: f5 03 00 aa  	mov	x21, x0
+  177904: e8 fe 4c d3  	lsr	x8, x23, #12
+  177908: 1f 19 00 f1  	cmp	x8, #6
+  17790c: e0 0f 00 f9  	str	x0, [sp, #24]
+  177910: 1a 00 00 b9  	str	w26, [x0]
+  177914: 88 4f 00 54  	b.hi	0x178304 <meizu_fw_upgrade_store+0xcc8>
+  177918: 9c 07 00 91  	add	x28, x28, #1
+  17791c: 1b 02 80 52  	mov	w27, #16
+  177920: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177924: 00 2b 91 52  	mov	w0, #35160
+  177928: 89 f3 5f 38  	ldurb	w9, [x28, #-1]
+  17792c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177930: 08 01 1b 8b  	add	x8, x8, x27
+  177934: 09 41 1f b8  	stur	w9, [x8, #-12]
+  177938: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  17793c: 08 01 1b 8b  	add	x8, x8, x27
+  177940: 1f 81 1f b8  	stur	wzr, [x8, #-8]
+  177944: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177948: 08 01 1b 8b  	add	x8, x8, x27
+  17794c: 1f c1 1f b8  	stur	wzr, [x8, #-4]
+  177950: 00 00 00 94  	bl	0x177950 <meizu_fw_upgrade_store+0x314> // __const_udelay+0x0
+  177954: f7 06 00 91  	add	x23, x23, #1
+  177958: 7f 07 40 f1  	cmp	x27, #1, lsl #12        // =4096
+  17795c: 00 01 00 54  	b.eq	0x17797c <meizu_fw_upgrade_store+0x340>
+  177960: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177964: 9c 07 00 91  	add	x28, x28, #1
+  177968: ff 1e 40 f1  	cmp	x23, #7, lsl #12        // =28672
+  17796c: 1a 69 3b b8  	str	w26, [x8, x27]
+  177970: 7b 43 00 91  	add	x27, x27, #16
+  177974: 61 fd ff 54  	b.ne	0x177920 <meizu_fw_upgrade_store+0x2e4>
+  177978: 63 02 00 14  	b	0x178304 <meizu_fw_upgrade_store+0xcc8>
+  17797c: e1 63 00 91  	add	x1, sp, #24
+  177980: e0 03 14 aa  	mov	x0, x20
+  177984: e2 03 1f 2a  	mov	w2, wzr
+  177988: 00 00 00 94  	bl	0x177988 <meizu_fw_upgrade_store+0x34c> // camera_io_dev_write_continuous+0x0
+  17798c: 80 20 f8 37  	tbnz	w0, #31, 0x177d9c <meizu_fw_upgrade_store+0x760>
+  177990: e0 03 15 aa  	mov	x0, x21
+  177994: 00 00 00 94  	bl	0x177994 <meizu_fw_upgrade_store+0x358> // vfree+0x0
+  177998: 00 2b 91 52  	mov	w0, #35160
+  17799c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1779a0: 00 00 00 94  	bl	0x1779a0 <meizu_fw_upgrade_store+0x364> // __const_udelay+0x0
+  1779a4: 00 2b 91 52  	mov	w0, #35160
+  1779a8: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1779ac: 00 00 00 94  	bl	0x1779ac <meizu_fw_upgrade_store+0x370> // __const_udelay+0x0
+  1779b0: 00 2b 91 52  	mov	w0, #35160
+  1779b4: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1779b8: 00 00 00 94  	bl	0x1779b8 <meizu_fw_upgrade_store+0x37c> // __const_udelay+0x0
+  1779bc: 00 2b 91 52  	mov	w0, #35160
+  1779c0: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1779c4: 00 00 00 94  	bl	0x1779c4 <meizu_fw_upgrade_store+0x388> // __const_udelay+0x0
+  1779c8: 00 2b 91 52  	mov	w0, #35160
+  1779cc: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1779d0: 00 00 00 94  	bl	0x1779d0 <meizu_fw_upgrade_store+0x394> // __const_udelay+0x0
+  1779d4: 00 2b 91 52  	mov	w0, #35160
+  1779d8: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1779dc: 00 00 00 94  	bl	0x1779dc <meizu_fw_upgrade_store+0x3a0> // __const_udelay+0x0
+  1779e0: 00 2b 91 52  	mov	w0, #35160
+  1779e4: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1779e8: 00 00 00 94  	bl	0x1779e8 <meizu_fw_upgrade_store+0x3ac> // __const_udelay+0x0
+  1779ec: 00 2b 91 52  	mov	w0, #35160
+  1779f0: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1779f4: 00 00 00 94  	bl	0x1779f4 <meizu_fw_upgrade_store+0x3b8> // __const_udelay+0x0
+  1779f8: 00 2b 91 52  	mov	w0, #35160
+  1779fc: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a00: 00 00 00 94  	bl	0x177a00 <meizu_fw_upgrade_store+0x3c4> // __const_udelay+0x0
+  177a04: 00 2b 91 52  	mov	w0, #35160
+  177a08: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a0c: 00 00 00 94  	bl	0x177a0c <meizu_fw_upgrade_store+0x3d0> // __const_udelay+0x0
+  177a10: 00 2b 91 52  	mov	w0, #35160
+  177a14: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a18: 00 00 00 94  	bl	0x177a18 <meizu_fw_upgrade_store+0x3dc> // __const_udelay+0x0
+  177a1c: 00 2b 91 52  	mov	w0, #35160
+  177a20: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a24: 00 00 00 94  	bl	0x177a24 <meizu_fw_upgrade_store+0x3e8> // __const_udelay+0x0
+  177a28: 00 2b 91 52  	mov	w0, #35160
+  177a2c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a30: 00 00 00 94  	bl	0x177a30 <meizu_fw_upgrade_store+0x3f4> // __const_udelay+0x0
+  177a34: 00 2b 91 52  	mov	w0, #35160
+  177a38: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a3c: 00 00 00 94  	bl	0x177a3c <meizu_fw_upgrade_store+0x400> // __const_udelay+0x0
+  177a40: 00 2b 91 52  	mov	w0, #35160
+  177a44: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a48: 00 00 00 94  	bl	0x177a48 <meizu_fw_upgrade_store+0x40c> // __const_udelay+0x0
+  177a4c: 00 2b 91 52  	mov	w0, #35160
+  177a50: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a54: 00 00 00 94  	bl	0x177a54 <meizu_fw_upgrade_store+0x418> // __const_udelay+0x0
+  177a58: 00 2b 91 52  	mov	w0, #35160
+  177a5c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a60: 00 00 00 94  	bl	0x177a60 <meizu_fw_upgrade_store+0x424> // __const_udelay+0x0
+  177a64: 00 2b 91 52  	mov	w0, #35160
+  177a68: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a6c: 00 00 00 94  	bl	0x177a6c <meizu_fw_upgrade_store+0x430> // __const_udelay+0x0
+  177a70: 00 2b 91 52  	mov	w0, #35160
+  177a74: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a78: 00 00 00 94  	bl	0x177a78 <meizu_fw_upgrade_store+0x43c> // __const_udelay+0x0
+  177a7c: 00 2b 91 52  	mov	w0, #35160
+  177a80: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a84: 00 00 00 94  	bl	0x177a84 <meizu_fw_upgrade_store+0x448> // __const_udelay+0x0
+  177a88: 00 2b 91 52  	mov	w0, #35160
+  177a8c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a90: 00 00 00 94  	bl	0x177a90 <meizu_fw_upgrade_store+0x454> // __const_udelay+0x0
+  177a94: 00 2b 91 52  	mov	w0, #35160
+  177a98: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177a9c: 00 00 00 94  	bl	0x177a9c <meizu_fw_upgrade_store+0x460> // __const_udelay+0x0
+  177aa0: 00 2b 91 52  	mov	w0, #35160
+  177aa4: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177aa8: 00 00 00 94  	bl	0x177aa8 <meizu_fw_upgrade_store+0x46c> // __const_udelay+0x0
+  177aac: 00 2b 91 52  	mov	w0, #35160
+  177ab0: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177ab4: 00 00 00 94  	bl	0x177ab4 <meizu_fw_upgrade_store+0x478> // __const_udelay+0x0
+  177ab8: 00 2b 91 52  	mov	w0, #35160
+  177abc: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177ac0: 00 00 00 94  	bl	0x177ac0 <meizu_fw_upgrade_store+0x484> // __const_udelay+0x0
+  177ac4: 00 2b 91 52  	mov	w0, #35160
+  177ac8: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177acc: 00 00 00 94  	bl	0x177acc <meizu_fw_upgrade_store+0x490> // __const_udelay+0x0
+  177ad0: 00 2b 91 52  	mov	w0, #35160
+  177ad4: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177ad8: 00 00 00 94  	bl	0x177ad8 <meizu_fw_upgrade_store+0x49c> // __const_udelay+0x0
+  177adc: 00 2b 91 52  	mov	w0, #35160
+  177ae0: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177ae4: 00 00 00 94  	bl	0x177ae4 <meizu_fw_upgrade_store+0x4a8> // __const_udelay+0x0
+  177ae8: 00 2b 91 52  	mov	w0, #35160
+  177aec: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177af0: 00 00 00 94  	bl	0x177af0 <meizu_fw_upgrade_store+0x4b4> // __const_udelay+0x0
+  177af4: 00 2b 91 52  	mov	w0, #35160
+  177af8: 20 08 a0 72  	movk	w0, #65, lsl #16
+  177afc: 00 00 00 94  	bl	0x177afc <meizu_fw_upgrade_store+0x4c0> // __const_udelay+0x0
+  177b00: d6 06 00 11  	add	w22, w22, #1
+  177b04: df c2 01 71  	cmp	w22, #112
+  177b08: 01 ef ff 54  	b.ne	0x1778e8 <meizu_fw_upgrade_store+0x2ac>
+  177b0c: 15 00 00 90  	adrp	x21, 0x177000 <meizu_fw_upgrade_store+0x4d0> // 'CAM_INFO'
+  177b10: 16 00 00 90  	adrp	x22, 0x177000 <meizu_fw_upgrade_store+0x4d4> // 'CAM-OIS'
+  177b14: 17 00 00 90  	adrp	x23, 0x177000 <meizu_fw_upgrade_store+0x4d8> // 'meizu_fw_upgrade_store'
+  177b18: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x4dc> // '\x016%s: %s: %s: %d OIS FwVerCount i:%d '
+  177b1c: b5 02 00 91  	add	x21, x21, #0 // 'CAM_INFO'
+  177b20: d6 02 00 91  	add	x22, x22, #0 // 'CAM-OIS'
+  177b24: f7 02 00 91  	add	x23, x23, #0 // 'meizu_fw_upgrade_store'
+  177b28: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OIS FwVerCount i:%d '
+  177b2c: 60 00 80 52  	mov	w0, #3
+  177b30: e2 03 15 aa  	mov	x2, x21
+  177b34: e3 03 16 aa  	mov	x3, x22
+  177b38: e4 03 17 aa  	mov	x4, x23
+  177b3c: 25 88 80 52  	mov	w5, #1089
+  177b40: 06 0e 80 52  	mov	w6, #112
+  177b44: 00 00 00 94  	bl	0x177b44 <meizu_fw_upgrade_store+0x508> // cam_print_log+0x0
+  177b48: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x50c> // '\x016%s: %s: %s: %d OIS FW upgrade end'
+  177b4c: 60 00 80 52  	mov	w0, #3
+  177b50: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OIS FW upgrade end'
+  177b54: e2 03 15 aa  	mov	x2, x21
+  177b58: e3 03 16 aa  	mov	x3, x22
+  177b5c: e4 03 17 aa  	mov	x4, x23
+  177b60: 45 88 80 52  	mov	w5, #1090
+  177b64: 00 00 00 94  	bl	0x177b64 <meizu_fw_upgrade_store+0x528> // cam_print_log+0x0
+  177b68: a2 43 00 d1  	sub	x2, x29, #16
+  177b6c: e0 03 14 aa  	mov	x0, x20
+  177b70: c1 00 80 52  	mov	w1, #6
+  177b74: 43 00 80 52  	mov	w3, #2
+  177b78: 44 00 80 52  	mov	w4, #2
+  177b7c: 25 00 80 52  	mov	w5, #1
+  177b80: 00 00 00 94  	bl	0x177b80 <meizu_fw_upgrade_store+0x544> // camera_io_dev_read+0x0
+  177b84: a0 12 f8 37  	tbnz	w0, #31, 0x177dd8 <meizu_fw_upgrade_store+0x79c>
+  177b88: a8 03 5f b8  	ldur	w8, [x29, #-16]
+  177b8c: a8 16 00 34  	cbz	w8, 0x177e60 <meizu_fw_upgrade_store+0x824>
+  177b90: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x554> // 'meizu_fw_upgrade_store'
+  177b94: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x558> // '\x016%s: %s: %s: %d %s: write error stats \n'
+  177b98: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x55c> // 'CAM_ERR'
+  177b9c: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x560> // 'CAM-OIS'
+  177ba0: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177ba4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: write error stats \n'
+  177ba8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177bac: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177bb0: 60 00 80 52  	mov	w0, #3
+  177bb4: 05 95 80 52  	mov	w5, #1192
+  177bb8: e6 03 04 aa  	mov	x6, x4
+  177bbc: 00 00 00 94  	bl	0x177bbc <meizu_fw_upgrade_store+0x580> // cam_print_log+0x0
+  177bc0: 98 00 00 14  	b	0x177e20 <meizu_fw_upgrade_store+0x7e4>
+  177bc4: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x588> // '\x016%s: %s: %s: %d ois enable %d is err!\n'
+  177bc8: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x58c> // 'CAM_ERR'
+  177bcc: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x590> // 'CAM-OIS'
+  177bd0: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x594> // 'meizu_fw_upgrade_store'
+  177bd4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d ois enable %d is err!\n'
+  177bd8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177bdc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177be0: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177be4: 60 00 80 52  	mov	w0, #3
+  177be8: c5 7a 80 52  	mov	w5, #982
+  177bec: 00 00 00 94  	bl	0x177bec <meizu_fw_upgrade_store+0x5b0> // cam_print_log+0x0
+  177bf0: b3 02 80 92  	mov	x19, #-22
+  177bf4: 8b 00 00 14  	b	0x177e20 <meizu_fw_upgrade_store+0x7e4>
+  177bf8: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x5bc> // '\x016%s: %s: %s: %d o_ctrl: 0x%p is err!\n'
+  177bfc: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x5c0> // 'CAM_ERR'
+  177c00: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x5c4> // 'CAM-OIS'
+  177c04: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x5c8> // 'meizu_fw_upgrade_store'
+  177c08: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d o_ctrl: 0x%p is err!\n'
+  177c0c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177c10: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177c14: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177c18: 60 00 80 52  	mov	w0, #3
+  177c1c: c5 7b 80 52  	mov	w5, #990
+  177c20: e6 03 15 aa  	mov	x6, x21
+  177c24: 00 00 00 94  	bl	0x177c24 <meizu_fw_upgrade_store+0x5e8> // cam_print_log+0x0
+  177c28: b3 02 80 92  	mov	x19, #-22
+  177c2c: 7d 00 00 14  	b	0x177e20 <meizu_fw_upgrade_store+0x7e4>
+  177c30: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x5f4> // '\x016%s: %s: %s: %d ois state %d is err!\n'
+  177c34: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x5f8> // 'CAM_ERR'
+  177c38: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x5fc> // 'CAM-OIS'
+  177c3c: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x600> // 'meizu_fw_upgrade_store'
+  177c40: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d ois state %d is err!\n'
+  177c44: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177c48: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177c4c: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177c50: 60 00 80 52  	mov	w0, #3
+  177c54: 65 7c 80 52  	mov	w5, #995
+  177c58: 00 00 00 94  	bl	0x177c58 <meizu_fw_upgrade_store+0x61c> // cam_print_log+0x0
+  177c5c: 08 00 00 90  	adrp	x8, 0x177000 <meizu_fw_upgrade_store+0x620> // cali_exec_result+0x0
+  177c60: 09 00 80 12  	mov	w9, #-1
+  177c64: 93 00 80 92  	mov	x19, #-5
+  177c68: 6d 00 00 14  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  177c6c: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x630> // 'meizu_fw_upgrade_store'
+  177c70: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x634> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  177c74: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x638> // 'CAM_ERR'
+  177c78: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x63c> // 'CAM-OIS'
+  177c7c: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177c80: e8 03 00 2a  	mov	w8, w0
+  177c84: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  177c88: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177c8c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177c90: 60 00 80 52  	mov	w0, #3
+  177c94: 05 7f 80 52  	mov	w5, #1016
+  177c98: e6 03 04 aa  	mov	x6, x4
+  177c9c: e7 03 1f 2a  	mov	w7, wzr
+  177ca0: e8 03 00 b9  	str	w8, [sp]
+  177ca4: 00 00 00 94  	bl	0x177ca4 <meizu_fw_upgrade_store+0x668> // cam_print_log+0x0
+  177ca8: 08 00 00 90  	adrp	x8, 0x177000 <meizu_fw_upgrade_store+0x66c> // cali_exec_result+0x0
+  177cac: 49 00 80 12  	mov	w9, #-3
+  177cb0: 5b 00 00 14  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  177cb4: 14 00 00 90  	adrp	x20, 0x177000 <meizu_fw_upgrade_store+0x678> // 'CAM_ERR'
+  177cb8: 15 00 00 90  	adrp	x21, 0x177000 <meizu_fw_upgrade_store+0x67c> // 'CAM-OIS'
+  177cbc: 16 00 00 90  	adrp	x22, 0x177000 <meizu_fw_upgrade_store+0x680> // 'meizu_fw_upgrade_store'
+  177cc0: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x684> // '\x016%s: %s: %s: %d %s: address:0x0001 reg_data:0x%x\n'
+  177cc4: 94 02 00 91  	add	x20, x20, #0 // 'CAM_ERR'
+  177cc8: b5 02 00 91  	add	x21, x21, #0 // 'CAM-OIS'
+  177ccc: d6 02 00 91  	add	x22, x22, #0 // 'meizu_fw_upgrade_store'
+  177cd0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: address:0x0001 reg_data:0x%x\n'
+  177cd4: 60 00 80 52  	mov	w0, #3
+  177cd8: e2 03 14 aa  	mov	x2, x20
+  177cdc: e3 03 15 aa  	mov	x3, x21
+  177ce0: e4 03 16 aa  	mov	x4, x22
+  177ce4: 05 80 80 52  	mov	w5, #1024
+  177ce8: e6 03 16 aa  	mov	x6, x22
+  177cec: 00 00 00 94  	bl	0x177cec <meizu_fw_upgrade_store+0x6b0> // cam_print_log+0x0
+  177cf0: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x6b4> // '\x016%s: %s: %s: %d %s: ois is not idle stats\n'
+  177cf4: 60 00 80 52  	mov	w0, #3
+  177cf8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: ois is not idle stats\n'
+  177cfc: e2 03 14 aa  	mov	x2, x20
+  177d00: e3 03 15 aa  	mov	x3, x21
+  177d04: e4 03 16 aa  	mov	x4, x22
+  177d08: 25 80 80 52  	mov	w5, #1025
+  177d0c: e6 03 16 aa  	mov	x6, x22
+  177d10: 00 00 00 94  	bl	0x177d10 <meizu_fw_upgrade_store+0x6d4> // cam_print_log+0x0
+  177d14: 08 00 00 90  	adrp	x8, 0x177000 <meizu_fw_upgrade_store+0x6d8> // cali_exec_result+0x0
+  177d18: 69 00 80 12  	mov	w9, #-4
+  177d1c: 40 00 00 14  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  177d20: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x6e4> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  177d24: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x6e8> // 'CAM_ERR'
+  177d28: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x6ec> // 'CAM-OIS'
+  177d2c: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x6f0> // 'meizu_fw_upgrade_store'
+  177d30: e6 03 00 2a  	mov	w6, w0
+  177d34: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  177d38: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177d3c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177d40: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177d44: 60 00 80 52  	mov	w0, #3
+  177d48: a5 81 80 52  	mov	w5, #1037
+  177d4c: 00 00 00 94  	bl	0x177d4c <meizu_fw_upgrade_store+0x710> // cam_print_log+0x0
+  177d50: 08 00 00 90  	adrp	x8, 0x177000 <meizu_fw_upgrade_store+0x714> // cali_exec_result+0x0
+  177d54: 89 00 80 12  	mov	w9, #-5
+  177d58: 31 00 00 14  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  177d5c: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x720> // '\x016%s: %s: %s: %d Failed in allocating i2c_array: fw_size: %u'
+  177d60: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x724> // 'CAM_ERR'
+  177d64: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x728> // 'CAM-OIS'
+  177d68: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x72c> // 'meizu_fw_upgrade_store'
+  177d6c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Failed in allocating i2c_array: fw_size: %u'
+  177d70: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177d74: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177d78: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177d7c: 60 00 80 52  	mov	w0, #3
+  177d80: 25 84 80 52  	mov	w5, #1057
+  177d84: 06 00 82 52  	mov	w6, #4096
+  177d88: 00 00 00 94  	bl	0x177d88 <meizu_fw_upgrade_store+0x74c> // cam_print_log+0x0
+  177d8c: e0 03 1f aa  	mov	x0, xzr
+  177d90: 00 00 00 94  	bl	0x177d90 <meizu_fw_upgrade_store+0x754> // vfree+0x0
+  177d94: 73 01 80 92  	mov	x19, #-12
+  177d98: 22 00 00 14  	b	0x177e20 <meizu_fw_upgrade_store+0x7e4>
+  177d9c: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x760> // '\x016%s: %s: %s: %d OIS FW download failed %d'
+  177da0: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x764> // 'CAM_ERR'
+  177da4: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x768> // 'CAM-OIS'
+  177da8: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x76c> // 'meizu_fw_upgrade_store'
+  177dac: e6 03 00 2a  	mov	w6, w0
+  177db0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OIS FW download failed %d'
+  177db4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177db8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177dbc: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177dc0: 60 00 80 52  	mov	w0, #3
+  177dc4: c5 86 80 52  	mov	w5, #1078
+  177dc8: 00 00 00 94  	bl	0x177dc8 <meizu_fw_upgrade_store+0x78c> // cam_print_log+0x0
+  177dcc: 08 00 00 90  	adrp	x8, 0x177000 <meizu_fw_upgrade_store+0x790> // cali_exec_result+0x0
+  177dd0: a9 00 80 12  	mov	w9, #-6
+  177dd4: 12 00 00 14  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  177dd8: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x79c> // 'meizu_fw_upgrade_store'
+  177ddc: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x7a0> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  177de0: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x7a4> // 'CAM_ERR'
+  177de4: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x7a8> // 'CAM-OIS'
+  177de8: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177dec: e8 03 00 2a  	mov	w8, w0
+  177df0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  177df4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  177df8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177dfc: 60 00 80 52  	mov	w0, #3
+  177e00: 45 89 80 52  	mov	w5, #1098
+  177e04: e6 03 04 aa  	mov	x6, x4
+  177e08: e7 03 1f 2a  	mov	w7, wzr
+  177e0c: e8 03 00 b9  	str	w8, [sp]
+  177e10: 00 00 00 94  	bl	0x177e10 <meizu_fw_upgrade_store+0x7d4> // cam_print_log+0x0
+  177e14: 08 00 00 90  	adrp	x8, 0x177000 <meizu_fw_upgrade_store+0x7d8> // cali_exec_result+0x0
+  177e18: c9 00 80 12  	mov	w9, #-7
+  177e1c: 09 01 00 b9  	str	w9, [x8] // cali_exec_result+0x0
+  177e20: 08 41 38 d5  	mrs	x8, SP_EL0
+  177e24: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  177e28: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  177e2c: 1f 01 09 eb  	cmp	x8, x9
+  177e30: c1 26 00 54  	b.ne	0x178308 <meizu_fw_upgrade_store+0xccc>
+  177e34: e0 03 13 aa  	mov	x0, x19
+  177e38: f4 4f 4a a9  	ldp	x20, x19, [sp, #160]
+  177e3c: f6 57 49 a9  	ldp	x22, x21, [sp, #144]
+  177e40: f8 5f 48 a9  	ldp	x24, x23, [sp, #128]
+  177e44: fa 67 47 a9  	ldp	x26, x25, [sp, #112]
+  177e48: fc 6f 46 a9  	ldp	x28, x27, [sp, #96]
+  177e4c: fd 7b 45 a9  	ldp	x29, x30, [sp, #80]
+  177e50: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  177e54: ff c3 02 91  	add	sp, sp, #176
+  177e58: bf 23 03 d5  	hint	#29
+  177e5c: c0 03 5f d6  	ret
+  177e60: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x824> // 'meizu_fw_upgrade_store'
+  177e64: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x828> // '\x016%s: %s: %s: %d %s: write ok stats \n'
+  177e68: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x82c> // 'CAM_INFO'
+  177e6c: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x830> // 'CAM-OIS'
+  177e70: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177e74: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: write ok stats \n'
+  177e78: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  177e7c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177e80: 60 00 80 52  	mov	w0, #3
+  177e84: 05 8a 80 52  	mov	w5, #1104
+  177e88: e6 03 04 aa  	mov	x6, x4
+  177e8c: 00 00 00 94  	bl	0x177e8c <meizu_fw_upgrade_store+0x850> // cam_print_log+0x0
+  177e90: 0b 00 00 90  	adrp	x11, 0x177000 <meizu_fw_upgrade_store+0x854> // ''
+  177e94: e8 03 1f 2a  	mov	w8, wzr
+  177e98: e9 03 1f 2a  	mov	w9, wzr
+  177e9c: 0a 00 87 52  	mov	w10, #14336
+  177ea0: 6b 01 00 91  	add	x11, x11, #0 // ''
+  177ea4: 6c d1 5f 78  	ldurh	w12, [x11, #-3]
+  177ea8: 4a 09 00 f1  	subs	x10, x10, #2
+  177eac: 6d f1 5f 78  	ldurh	w13, [x11, #-1]
+  177eb0: 6b 11 00 91  	add	x11, x11, #4
+  177eb4: 88 01 08 0b  	add	w8, w12, w8
+  177eb8: a9 01 09 0b  	add	w9, w13, w9
+  177ebc: 41 ff ff 54  	b.ne	0x177ea4 <meizu_fw_upgrade_store+0x868>
+  177ec0: 3a 01 08 0b  	add	w26, w9, w8
+  177ec4: 01 00 00 90  	adrp	x1, 0x177000 <meizu_fw_upgrade_store+0x888> // '\x016%s: %s: %s: %d camera_io_dev_write CheckSum 0x%x'
+  177ec8: 02 00 00 90  	adrp	x2, 0x177000 <meizu_fw_upgrade_store+0x88c> // 'CAM_INFO'
+  177ecc: 03 00 00 90  	adrp	x3, 0x177000 <meizu_fw_upgrade_store+0x890> // 'CAM-OIS'
+  177ed0: 04 00 00 90  	adrp	x4, 0x177000 <meizu_fw_upgrade_store+0x894> // 'meizu_fw_upgrade_store'
+  177ed4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write CheckSum 0x%x'
+  177ed8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  177edc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  177ee0: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  177ee4: 60 00 80 52  	mov	w0, #3
+  177ee8: c5 8a 80 52  	mov	w5, #1110
+  177eec: e6 03 1a 2a  	mov	w6, w26
+  177ef0: 00 00 00 94  	bl	0x177ef0 <meizu_fw_upgrade_store+0x8b4> // cam_print_log+0x0
+  177ef4: 89 00 80 d2  	mov	x9, #4
+  177ef8: 28 00 80 52  	mov	w8, #1
+  177efc: 49 00 c0 f2  	movk	x9, #2, lsl #32
+  177f00: 00 08 80 52  	mov	w0, #64
+  177f04: ff 5b 00 79  	strh	wzr, [sp, #44]
+  177f08: e8 2b 00 b9  	str	w8, [sp, #40]
+  177f0c: e9 13 00 f9  	str	x9, [sp, #32]
+  177f10: 00 00 00 94  	bl	0x177f10 <meizu_fw_upgrade_store+0x8d4> // vmalloc+0x0
+  177f14: a0 10 00 b4  	cbz	x0, 0x178128 <meizu_fw_upgrade_store+0xaec>
+  177f18: 1c 01 80 52  	mov	w28, #8
+  177f1c: e0 0f 00 f9  	str	x0, [sp, #24]
+  177f20: 48 1f 00 12  	and	w8, w26, #0xff
+  177f24: 16 00 00 90  	adrp	x22, 0x177000 <meizu_fw_upgrade_store+0x8e8> // '\x016%s: %s: %s: %d OIS FW Checksum %d,0x%x'
+  177f28: 17 00 00 90  	adrp	x23, 0x177000 <meizu_fw_upgrade_store+0x8ec> // 'CAM_INFO'
+  177f2c: 18 00 00 90  	adrp	x24, 0x177000 <meizu_fw_upgrade_store+0x8f0> // 'CAM-OIS'
+  177f30: 1c 00 00 b9  	str	w28, [x0]
+  177f34: 19 00 00 90  	adrp	x25, 0x177000 <meizu_fw_upgrade_store+0x8f8> // 'meizu_fw_upgrade_store'
+  177f38: e9 0f 40 f9  	ldr	x9, [sp, #24]
+  177f3c: d6 02 00 91  	add	x22, x22, #0 // '\x016%s: %s: %s: %d OIS FW Checksum %d,0x%x'
+  177f40: f7 02 00 91  	add	x23, x23, #0 // 'CAM_INFO'
+  177f44: 18 03 00 91  	add	x24, x24, #0 // 'CAM-OIS'
+  177f48: 39 03 00 91  	add	x25, x25, #0 // 'meizu_fw_upgrade_store'
+  177f4c: f5 03 00 aa  	mov	x21, x0
+  177f50: 28 05 00 b9  	str	w8, [x9, #4]
+  177f54: 60 00 80 52  	mov	w0, #3
+  177f58: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177f5c: e1 03 16 aa  	mov	x1, x22
+  177f60: e2 03 17 aa  	mov	x2, x23
+  177f64: e3 03 18 aa  	mov	x3, x24
+  177f68: e4 03 19 aa  	mov	x4, x25
+  177f6c: e5 8e 80 52  	mov	w5, #1143
+  177f70: 1f 09 00 b9  	str	wzr, [x8, #8]
+  177f74: e6 03 1f 2a  	mov	w6, wzr
+  177f78: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177f7c: 1f 0d 00 b9  	str	wzr, [x8, #12]
+  177f80: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177f84: 07 05 40 b9  	ldr	w7, [x8, #4]
+  177f88: 00 00 00 94  	bl	0x177f88 <meizu_fw_upgrade_store+0x94c> // cam_print_log+0x0
+  177f8c: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177f90: 60 00 80 52  	mov	w0, #3
+  177f94: e1 03 16 aa  	mov	x1, x22
+  177f98: e2 03 17 aa  	mov	x2, x23
+  177f9c: e3 03 18 aa  	mov	x3, x24
+  177fa0: e4 03 19 aa  	mov	x4, x25
+  177fa4: 1c 11 00 b9  	str	w28, [x8, #16]
+  177fa8: 48 3f 08 53  	ubfx	w8, w26, #8, #8
+  177fac: e9 0f 40 f9  	ldr	x9, [sp, #24]
+  177fb0: e5 8e 80 52  	mov	w5, #1143
+  177fb4: 26 00 80 52  	mov	w6, #1
+  177fb8: 28 15 00 b9  	str	w8, [x9, #20]
+  177fbc: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177fc0: 1f 19 00 b9  	str	wzr, [x8, #24]
+  177fc4: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177fc8: 1f 1d 00 b9  	str	wzr, [x8, #28]
+  177fcc: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177fd0: 07 15 40 b9  	ldr	w7, [x8, #20]
+  177fd4: 00 00 00 94  	bl	0x177fd4 <meizu_fw_upgrade_store+0x998> // cam_print_log+0x0
+  177fd8: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177fdc: 60 00 80 52  	mov	w0, #3
+  177fe0: e1 03 16 aa  	mov	x1, x22
+  177fe4: e2 03 17 aa  	mov	x2, x23
+  177fe8: e3 03 18 aa  	mov	x3, x24
+  177fec: e4 03 19 aa  	mov	x4, x25
+  177ff0: 1c 21 00 b9  	str	w28, [x8, #32]
+  177ff4: e5 8e 80 52  	mov	w5, #1143
+  177ff8: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  177ffc: 46 00 80 52  	mov	w6, #2
+  178000: 1f 25 00 b9  	str	wzr, [x8, #36]
+  178004: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  178008: 1f 29 00 b9  	str	wzr, [x8, #40]
+  17800c: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  178010: 1f 2d 00 b9  	str	wzr, [x8, #44]
+  178014: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  178018: 07 25 40 b9  	ldr	w7, [x8, #36]
+  17801c: 00 00 00 94  	bl	0x17801c <meizu_fw_upgrade_store+0x9e0> // cam_print_log+0x0
+  178020: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  178024: 09 10 80 52  	mov	w9, #128
+  178028: 60 00 80 52  	mov	w0, #3
+  17802c: e1 03 16 aa  	mov	x1, x22
+  178030: e2 03 17 aa  	mov	x2, x23
+  178034: e3 03 18 aa  	mov	x3, x24
+  178038: 1c 31 00 b9  	str	w28, [x8, #48]
+  17803c: e4 03 19 aa  	mov	x4, x25
+  178040: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  178044: e5 8e 80 52  	mov	w5, #1143
+  178048: 66 00 80 52  	mov	w6, #3
+  17804c: 09 35 00 b9  	str	w9, [x8, #52]
+  178050: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  178054: 1f 39 00 b9  	str	wzr, [x8, #56]
+  178058: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  17805c: 1f 3d 00 b9  	str	wzr, [x8, #60]
+  178060: e8 0f 40 f9  	ldr	x8, [sp, #24]
+  178064: 07 35 40 b9  	ldr	w7, [x8, #52]
+  178068: 00 00 00 94  	bl	0x178068 <meizu_fw_upgrade_store+0xa2c> // cam_print_log+0x0
+  17806c: e1 63 00 91  	add	x1, sp, #24
+  178070: e0 03 14 aa  	mov	x0, x20
+  178074: e2 03 1f 2a  	mov	w2, wzr
+  178078: 00 00 00 94  	bl	0x178078 <meizu_fw_upgrade_store+0xa3c> // camera_io_dev_write_continuous+0x0
+  17807c: e0 06 f8 37  	tbnz	w0, #31, 0x178158 <meizu_fw_upgrade_store+0xb1c>
+  178080: e0 03 15 aa  	mov	x0, x21
+  178084: 00 00 00 94  	bl	0x178084 <meizu_fw_upgrade_store+0xa48> // vfree+0x0
+  178088: 75 25 80 92  	mov	x21, #-300
+  17808c: 00 2b 91 52  	mov	w0, #35160
+  178090: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178094: 00 00 00 94  	bl	0x178094 <meizu_fw_upgrade_store+0xa58> // __const_udelay+0x0
+  178098: b5 06 00 b1  	adds	x21, x21, #1
+  17809c: 83 ff ff 54  	b.lo	0x17808c <meizu_fw_upgrade_store+0xa50>
+  1780a0: a2 43 00 d1  	sub	x2, x29, #16
+  1780a4: e0 03 14 aa  	mov	x0, x20
+  1780a8: c1 00 80 52  	mov	w1, #6
+  1780ac: 43 00 80 52  	mov	w3, #2
+  1780b0: 44 00 80 52  	mov	w4, #2
+  1780b4: 25 00 80 52  	mov	w5, #1
+  1780b8: 00 00 00 94  	bl	0x1780b8 <meizu_fw_upgrade_store+0xa7c> // camera_io_dev_read+0x0
+  1780bc: f5 03 00 2a  	mov	w21, w0
+  1780c0: a0 06 f8 37  	tbnz	w0, #31, 0x178194 <meizu_fw_upgrade_store+0xb58>
+  1780c4: a8 03 5f b8  	ldur	w8, [x29, #-16]
+  1780c8: 88 08 00 34  	cbz	w8, 0x1781d8 <meizu_fw_upgrade_store+0xb9c>
+  1780cc: 28 00 80 52  	mov	w8, #1
+  1780d0: a0 33 00 d1  	sub	x0, x29, #12
+  1780d4: 21 00 80 52  	mov	w1, #1
+  1780d8: c2 05 80 52  	mov	w2, #46
+  1780dc: e3 03 1f 2a  	mov	w3, wzr
+  1780e0: a8 43 1f 38  	sturb	w8, [x29, #-12]
+  1780e4: 00 00 00 94  	bl	0x1780e4 <meizu_fw_upgrade_store+0xaa8> // meizu_bsp_partition_write+0x0
+  1780e8: c0 0a 00 34  	cbz	w0, 0x178240 <meizu_fw_upgrade_store+0xc04>
+  1780ec: 01 00 00 90  	adrp	x1, 0x178000 <meizu_fw_upgrade_store+0xab0> // '\x016%s: %s: %s: %d write ois fw_upgrade flag failed %d'
+  1780f0: 02 00 00 90  	adrp	x2, 0x178000 <meizu_fw_upgrade_store+0xab4> // 'CAM_ERR'
+  1780f4: 03 00 00 90  	adrp	x3, 0x178000 <meizu_fw_upgrade_store+0xab8> // 'CAM-OIS'
+  1780f8: 04 00 00 90  	adrp	x4, 0x178000 <meizu_fw_upgrade_store+0xabc> // 'meizu_fw_upgrade_store'
+  1780fc: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d write ois fw_upgrade flag failed %d'
+  178100: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  178104: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  178108: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  17810c: 60 00 80 52  	mov	w0, #3
+  178110: 05 96 80 52  	mov	w5, #1200
+  178114: e6 03 15 2a  	mov	w6, w21
+  178118: 00 00 00 94  	bl	0x178118 <meizu_fw_upgrade_store+0xadc> // cam_print_log+0x0
+  17811c: 08 00 00 90  	adrp	x8, 0x178000 <meizu_fw_upgrade_store+0xae0> // cali_exec_result+0x0
+  178120: 69 01 80 12  	mov	w9, #-12
+  178124: 3e ff ff 17  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  178128: 01 00 00 90  	adrp	x1, 0x178000 <meizu_fw_upgrade_store+0xaec> // '\x016%s: %s: %s: %d Failed in allocating i2c_array: fw_size: %u'
+  17812c: 02 00 00 90  	adrp	x2, 0x178000 <meizu_fw_upgrade_store+0xaf0> // 'CAM_ERR'
+  178130: 03 00 00 90  	adrp	x3, 0x178000 <meizu_fw_upgrade_store+0xaf4> // 'CAM-OIS'
+  178134: 04 00 00 90  	adrp	x4, 0x178000 <meizu_fw_upgrade_store+0xaf8> // 'meizu_fw_upgrade_store'
+  178138: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Failed in allocating i2c_array: fw_size: %u'
+  17813c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  178140: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  178144: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  178148: 60 00 80 52  	mov	w0, #3
+  17814c: e5 8c 80 52  	mov	w5, #1127
+  178150: 06 08 80 52  	mov	w6, #64
+  178154: 0d ff ff 17  	b	0x177d88 <meizu_fw_upgrade_store+0x74c>
+  178158: 01 00 00 90  	adrp	x1, 0x178000 <meizu_fw_upgrade_store+0xb1c> // '\x016%s: %s: %s: %d OIS FW download failed %d'
+  17815c: 02 00 00 90  	adrp	x2, 0x178000 <meizu_fw_upgrade_store+0xb20> // 'CAM_ERR'
+  178160: 03 00 00 90  	adrp	x3, 0x178000 <meizu_fw_upgrade_store+0xb24> // 'CAM-OIS'
+  178164: 04 00 00 90  	adrp	x4, 0x178000 <meizu_fw_upgrade_store+0xb28> // 'meizu_fw_upgrade_store'
+  178168: e6 03 00 2a  	mov	w6, w0
+  17816c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OIS FW download failed %d'
+  178170: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  178174: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  178178: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  17817c: 60 00 80 52  	mov	w0, #3
+  178180: a5 8f 80 52  	mov	w5, #1149
+  178184: 00 00 00 94  	bl	0x178184 <meizu_fw_upgrade_store+0xb48> // cam_print_log+0x0
+  178188: 08 00 00 90  	adrp	x8, 0x178000 <meizu_fw_upgrade_store+0xb4c> // cali_exec_result+0x0
+  17818c: e9 00 80 12  	mov	w9, #-8
+  178190: 23 ff ff 17  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  178194: 04 00 00 90  	adrp	x4, 0x178000 <meizu_fw_upgrade_store+0xb58> // 'meizu_fw_upgrade_store'
+  178198: 01 00 00 90  	adrp	x1, 0x178000 <meizu_fw_upgrade_store+0xb5c> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  17819c: 02 00 00 90  	adrp	x2, 0x178000 <meizu_fw_upgrade_store+0xb60> // 'CAM_ERR'
+  1781a0: 03 00 00 90  	adrp	x3, 0x178000 <meizu_fw_upgrade_store+0xb64> // 'CAM-OIS'
+  1781a4: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  1781a8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  1781ac: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1781b0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1781b4: 60 00 80 52  	mov	w0, #3
+  1781b8: c5 91 80 52  	mov	w5, #1166
+  1781bc: e6 03 04 aa  	mov	x6, x4
+  1781c0: e7 03 1f 2a  	mov	w7, wzr
+  1781c4: f5 03 00 b9  	str	w21, [sp]
+  1781c8: 00 00 00 94  	bl	0x1781c8 <meizu_fw_upgrade_store+0xb8c> // cam_print_log+0x0
+  1781cc: 08 00 00 90  	adrp	x8, 0x178000 <meizu_fw_upgrade_store+0xb90> // cali_exec_result+0x0
+  1781d0: 09 01 80 12  	mov	w9, #-9
+  1781d4: 12 ff ff 17  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  1781d8: a2 43 00 d1  	sub	x2, x29, #16
+  1781dc: e0 03 14 aa  	mov	x0, x20
+  1781e0: 81 1f 80 52  	mov	w1, #252
+  1781e4: 43 00 80 52  	mov	w3, #2
+  1781e8: 84 00 80 52  	mov	w4, #4
+  1781ec: 25 00 80 52  	mov	w5, #1
+  1781f0: 00 00 00 94  	bl	0x1781f0 <meizu_fw_upgrade_store+0xbb4> // camera_io_dev_read+0x0
+  1781f4: f5 03 00 2a  	mov	w21, w0
+  1781f8: a0 02 f8 37  	tbnz	w0, #31, 0x17824c <meizu_fw_upgrade_store+0xc10>
+  1781fc: b4 03 5f b8  	ldur	w20, [x29, #-16]
+  178200: 38 4d bf 52  	mov	w24, #-93782016
+  178204: 9f 02 18 6b  	cmp	w20, w24
+  178208: 41 04 00 54  	b.ne	0x178290 <meizu_fw_upgrade_store+0xc54>
+  17820c: 04 00 00 90  	adrp	x4, 0x178000 <meizu_fw_upgrade_store+0xbd0> // 'meizu_fw_upgrade_store'
+  178210: 01 00 00 90  	adrp	x1, 0x178000 <meizu_fw_upgrade_store+0xbd4> // '\x016%s: %s: %s: %d %s: ois fw upgrade success \n'
+  178214: 02 00 00 90  	adrp	x2, 0x178000 <meizu_fw_upgrade_store+0xbd8> // 'CAM_INFO'
+  178218: 03 00 00 90  	adrp	x3, 0x178000 <meizu_fw_upgrade_store+0xbdc> // 'CAM-OIS'
+  17821c: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  178220: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: ois fw upgrade success \n'
+  178224: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  178228: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17822c: 60 00 80 52  	mov	w0, #3
+  178230: e5 93 80 52  	mov	w5, #1183
+  178234: e6 03 04 aa  	mov	x6, x4
+  178238: 00 00 00 94  	bl	0x178238 <meizu_fw_upgrade_store+0xbfc> // cam_print_log+0x0
+  17823c: a4 ff ff 17  	b	0x1780cc <meizu_fw_upgrade_store+0xa90>
+  178240: 08 00 00 90  	adrp	x8, 0x178000 <meizu_fw_upgrade_store+0xc04> // cali_exec_result+0x0
+  178244: 1f 01 00 b9  	str	wzr, [x8] // cali_exec_result+0x0
+  178248: f6 fe ff 17  	b	0x177e20 <meizu_fw_upgrade_store+0x7e4>
+  17824c: 04 00 00 90  	adrp	x4, 0x178000 <meizu_fw_upgrade_store+0xc10> // 'meizu_fw_upgrade_store'
+  178250: 01 00 00 90  	adrp	x1, 0x178000 <meizu_fw_upgrade_store+0xc14> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  178254: 02 00 00 90  	adrp	x2, 0x178000 <meizu_fw_upgrade_store+0xc18> // 'CAM_ERR'
+  178258: 03 00 00 90  	adrp	x3, 0x178000 <meizu_fw_upgrade_store+0xc1c> // 'CAM-OIS'
+  17825c: 84 00 00 91  	add	x4, x4, #0 // 'meizu_fw_upgrade_store'
+  178260: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  178264: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  178268: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17826c: 60 00 80 52  	mov	w0, #3
+  178270: 45 93 80 52  	mov	w5, #1178
+  178274: e6 03 04 aa  	mov	x6, x4
+  178278: e7 03 1f 2a  	mov	w7, wzr
+  17827c: f5 03 00 b9  	str	w21, [sp]
+  178280: 00 00 00 94  	bl	0x178280 <meizu_fw_upgrade_store+0xc44> // cam_print_log+0x0
+  178284: 08 00 00 90  	adrp	x8, 0x178000 <meizu_fw_upgrade_store+0xc48> // cali_exec_result+0x0
+  178288: 29 01 80 12  	mov	w9, #-10
+  17828c: e4 fe ff 17  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  178290: 15 00 00 90  	adrp	x21, 0x178000 <meizu_fw_upgrade_store+0xc54> // 'CAM_INFO'
+  178294: 16 00 00 90  	adrp	x22, 0x178000 <meizu_fw_upgrade_store+0xc58> // 'CAM-OIS'
+  178298: 17 00 00 90  	adrp	x23, 0x178000 <meizu_fw_upgrade_store+0xc5c> // 'meizu_fw_upgrade_store'
+  17829c: 01 00 00 90  	adrp	x1, 0x178000 <meizu_fw_upgrade_store+0xc60> // '\x016%s: %s: %s: %d %s: ois fw upgrade failed \n'
+  1782a0: b5 02 00 91  	add	x21, x21, #0 // 'CAM_INFO'
+  1782a4: d6 02 00 91  	add	x22, x22, #0 // 'CAM-OIS'
+  1782a8: f7 02 00 91  	add	x23, x23, #0 // 'meizu_fw_upgrade_store'
+  1782ac: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: ois fw upgrade failed \n'
+  1782b0: 60 00 80 52  	mov	w0, #3
+  1782b4: e2 03 15 aa  	mov	x2, x21
+  1782b8: e3 03 16 aa  	mov	x3, x22
+  1782bc: e4 03 17 aa  	mov	x4, x23
+  1782c0: 25 94 80 52  	mov	w5, #1185
+  1782c4: e6 03 17 aa  	mov	x6, x23
+  1782c8: 00 00 00 94  	bl	0x1782c8 <meizu_fw_upgrade_store+0xc8c> // cam_print_log+0x0
+  1782cc: 01 00 00 90  	adrp	x1, 0x178000 <meizu_fw_upgrade_store+0xc90> // '\x016%s: %s: %s: %d %s: reg_data: 0x%x,NewFwVer: 0x%x\n'
+  1782d0: 60 00 80 52  	mov	w0, #3
+  1782d4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: reg_data: 0x%x,NewFwVer: 0x%x\n'
+  1782d8: e2 03 15 aa  	mov	x2, x21
+  1782dc: e3 03 16 aa  	mov	x3, x22
+  1782e0: e4 03 17 aa  	mov	x4, x23
+  1782e4: 45 94 80 52  	mov	w5, #1186
+  1782e8: e6 03 17 aa  	mov	x6, x23
+  1782ec: e7 03 14 2a  	mov	w7, w20
+  1782f0: f8 03 00 b9  	str	w24, [sp]
+  1782f4: 00 00 00 94  	bl	0x1782f4 <meizu_fw_upgrade_store+0xcb8> // cam_print_log+0x0
+  1782f8: 08 00 00 90  	adrp	x8, 0x178000 <meizu_fw_upgrade_store+0xcbc> // cali_exec_result+0x0
+  1782fc: 49 01 80 12  	mov	w9, #-11
+  178300: c7 fe ff 17  	b	0x177e1c <meizu_fw_upgrade_store+0x7e0>
+  178304: 20 00 20 d4  	brk	#0x1
+  178308: 00 00 00 94  	bl	0x178308 <meizu_fw_upgrade_store+0xccc> // __stack_chk_fail+0x0

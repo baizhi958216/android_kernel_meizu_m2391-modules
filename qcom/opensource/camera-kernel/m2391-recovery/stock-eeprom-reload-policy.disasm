@@ -1,0 +1,334 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019e174 <is_need_reload_eeprom>:
+  19e174: 3f 23 03 d5  	hint	#25
+  19e178: 5e 86 00 f8  	str	x30, [x18], #8
+  19e17c: fd 7b bb a9  	stp	x29, x30, [sp, #-80]!
+  19e180: fc 0b 00 f9  	str	x28, [sp, #16]
+  19e184: fd 03 00 91  	mov	x29, sp
+  19e188: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+  19e18c: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+  19e190: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+  19e194: ff 83 0a d1  	sub	sp, sp, #672
+  19e198: 08 41 38 d5  	mrs	x8, SP_EL0
+  19e19c: f6 03 02 2a  	mov	w22, w2
+  19e1a0: f7 03 01 2a  	mov	w23, w1
+  19e1a4: f8 03 00 aa  	mov	x24, x0
+  19e1a8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19e1ac: e0 e3 00 91  	add	x0, sp, #56
+  19e1b0: e1 03 1f 2a  	mov	w1, wzr
+  19e1b4: 22 46 80 52  	mov	w2, #561
+  19e1b8: f3 03 05 2a  	mov	w19, w5
+  19e1bc: f4 03 04 2a  	mov	w20, w4
+  19e1c0: f5 03 03 2a  	mov	w21, w3
+  19e1c4: a8 83 1f f8  	stur	x8, [x29, #-8]
+  19e1c8: bf ff 3e a9  	stp	xzr, xzr, [x29, #-24]
+  19e1cc: bf ff 3d a9  	stp	xzr, xzr, [x29, #-40]
+  19e1d0: bf 03 1d f8  	stur	xzr, [x29, #-48]
+  19e1d4: 00 00 00 94  	bl	0x19e1d4 <is_need_reload_eeprom+0x60> // memset+0x0
+  19e1d8: 7f 06 01 71  	cmp	w19, #65
+  19e1dc: c2 15 00 54  	b.hs	0x19e494 <is_need_reload_eeprom+0x320>
+  19e1e0: 08 80 8c 52  	mov	w8, #25600
+  19e1e4: 00 00 00 90  	adrp	x0, 0x19e000 <is_need_reload_eeprom+0x70> // 'camera'
+  19e1e8: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19e1ec: e3 e3 00 91  	add	x3, sp, #56
+  19e1f0: 62 7e 08 1b  	mul	w2, w19, w8
+  19e1f4: e1 03 1f 2a  	mov	w1, wzr
+  19e1f8: 24 46 80 52  	mov	w4, #561
+  19e1fc: 00 00 00 94  	bl	0x19e1fc <is_need_reload_eeprom+0x88> // sd_partition_rw+0x0
+  19e200: a2 c3 00 d1  	sub	x2, x29, #48
+  19e204: e0 03 18 aa  	mov	x0, x24
+  19e208: e1 03 17 2a  	mov	w1, w23
+  19e20c: e3 03 16 2a  	mov	w3, w22
+  19e210: e4 03 15 2a  	mov	w4, w21
+  19e214: 05 05 80 52  	mov	w5, #40
+  19e218: 00 00 00 94  	bl	0x19e218 <is_need_reload_eeprom+0xa4> // camera_io_dev_read_seq+0x0
+  19e21c: e6 e3 42 39  	ldrb	w6, [sp, #184]
+  19e220: e8 93 4b 78  	ldurh	w8, [sp, #185]
+  19e224: e7 e7 40 39  	ldrb	w7, [sp, #57]
+  19e228: a9 13 5d 38  	ldurb	w9, [x29, #-47]
+  19e22c: df 04 00 71  	cmp	w6, #1
+  19e230: a0 09 00 54  	b.eq	0x19e364 <is_need_reload_eeprom+0x1f0>
+  19e234: ff 00 09 6b  	cmp	w7, w9
+  19e238: 61 09 00 54  	b.ne	0x19e364 <is_need_reload_eeprom+0x1f0>
+  19e23c: 1f 01 14 6b  	cmp	w8, w20
+  19e240: 21 09 00 54  	b.ne	0x19e364 <is_need_reload_eeprom+0x1f0>
+  19e244: e7 57 41 39  	ldrb	w7, [sp, #85]
+  19e248: a8 d3 5e 38  	ldurb	w8, [x29, #-19]
+  19e24c: ff 00 08 6b  	cmp	w7, w8
+  19e250: a1 11 00 54  	b.ne	0x19e484 <is_need_reload_eeprom+0x310>
+  19e254: e7 5b 41 39  	ldrb	w7, [sp, #86]
+  19e258: a8 e3 5e 38  	ldurb	w8, [x29, #-18]
+  19e25c: ff 00 08 6b  	cmp	w7, w8
+  19e260: 61 11 00 54  	b.ne	0x19e48c <is_need_reload_eeprom+0x318>
+  19e264: e7 5f 41 39  	ldrb	w7, [sp, #87]
+  19e268: a8 f3 5e 38  	ldurb	w8, [x29, #-17]
+  19e26c: ff 00 08 6b  	cmp	w7, w8
+  19e270: 41 12 00 54  	b.ne	0x19e4b8 <is_need_reload_eeprom+0x344>
+  19e274: e7 63 41 39  	ldrb	w7, [sp, #88]
+  19e278: a8 03 5f 38  	ldurb	w8, [x29, #-16]
+  19e27c: ff 00 08 6b  	cmp	w7, w8
+  19e280: 01 12 00 54  	b.ne	0x19e4c0 <is_need_reload_eeprom+0x34c>
+  19e284: e7 67 41 39  	ldrb	w7, [sp, #89]
+  19e288: a8 13 5f 38  	ldurb	w8, [x29, #-15]
+  19e28c: ff 00 08 6b  	cmp	w7, w8
+  19e290: c1 11 00 54  	b.ne	0x19e4c8 <is_need_reload_eeprom+0x354>
+  19e294: e7 6b 41 39  	ldrb	w7, [sp, #90]
+  19e298: a8 23 5f 38  	ldurb	w8, [x29, #-14]
+  19e29c: ff 00 08 6b  	cmp	w7, w8
+  19e2a0: 81 11 00 54  	b.ne	0x19e4d0 <is_need_reload_eeprom+0x35c>
+  19e2a4: e7 6f 41 39  	ldrb	w7, [sp, #91]
+  19e2a8: a8 33 5f 38  	ldurb	w8, [x29, #-13]
+  19e2ac: ff 00 08 6b  	cmp	w7, w8
+  19e2b0: 41 11 00 54  	b.ne	0x19e4d8 <is_need_reload_eeprom+0x364>
+  19e2b4: e7 73 41 39  	ldrb	w7, [sp, #92]
+  19e2b8: a8 43 5f 38  	ldurb	w8, [x29, #-12]
+  19e2bc: ff 00 08 6b  	cmp	w7, w8
+  19e2c0: 01 11 00 54  	b.ne	0x19e4e0 <is_need_reload_eeprom+0x36c>
+  19e2c4: e7 77 41 39  	ldrb	w7, [sp, #93]
+  19e2c8: a8 53 5f 38  	ldurb	w8, [x29, #-11]
+  19e2cc: ff 00 08 6b  	cmp	w7, w8
+  19e2d0: c1 10 00 54  	b.ne	0x19e4e8 <is_need_reload_eeprom+0x374>
+  19e2d4: e7 7b 41 39  	ldrb	w7, [sp, #94]
+  19e2d8: a8 63 5f 38  	ldurb	w8, [x29, #-10]
+  19e2dc: ff 00 08 6b  	cmp	w7, w8
+  19e2e0: 81 10 00 54  	b.ne	0x19e4f0 <is_need_reload_eeprom+0x37c>
+  19e2e4: 34 0b 00 34  	cbz	w20, 0x19e448 <is_need_reload_eeprom+0x2d4>
+  19e2e8: f5 03 14 2a  	mov	w21, w20
+  19e2ec: e0 03 15 aa  	mov	x0, x21
+  19e2f0: 00 00 00 94  	bl	0x19e2f0 <is_need_reload_eeprom+0x17c> // vzalloc+0x0
+  19e2f4: f4 03 00 aa  	mov	x20, x0
+  19e2f8: 80 0a 00 b4  	cbz	x0, 0x19e448 <is_need_reload_eeprom+0x2d4>
+  19e2fc: 68 2a 00 11  	add	w8, w19, #10
+  19e300: 1f 05 01 71  	cmp	w8, #65
+  19e304: e8 37 00 b9  	str	w8, [sp, #52]
+  19e308: c2 1b 00 54  	b.hs	0x19e680 <is_need_reload_eeprom+0x50c>
+  19e30c: 09 80 8c 52  	mov	w9, #25600
+  19e310: 00 00 00 90  	adrp	x0, 0x19e000 <is_need_reload_eeprom+0x19c> // 'camera'
+  19e314: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19e318: e1 03 1f 2a  	mov	w1, wzr
+  19e31c: 02 7d 09 1b  	mul	w2, w8, w9
+  19e320: e3 03 14 aa  	mov	x3, x20
+  19e324: e4 03 15 aa  	mov	x4, x21
+  19e328: 00 00 00 94  	bl	0x19e328 <is_need_reload_eeprom+0x1b4> // sd_partition_rw+0x0
+  19e32c: e7 f7 40 39  	ldrb	w7, [sp, #61]
+  19e330: ff e4 00 71  	cmp	w7, #57
+  19e334: c0 15 00 54  	b.eq	0x19e5ec <is_need_reload_eeprom+0x478>
+  19e338: ff e0 00 71  	cmp	w7, #56
+  19e33c: e1 16 00 54  	b.ne	0x19e618 <is_need_reload_eeprom+0x4a4>
+  19e340: 7f 0e 00 71  	cmp	w19, #3
+  19e344: a0 18 00 54  	b.eq	0x19e658 <is_need_reload_eeprom+0x4e4>
+  19e348: 7f 0a 00 71  	cmp	w19, #2
+  19e34c: e1 17 00 54  	b.ne	0x19e648 <is_need_reload_eeprom+0x4d4>
+  19e350: 88 5e 5e 39  	ldrb	w8, [x20, #1943]
+  19e354: a8 17 00 35  	cbnz	w8, 0x19e648 <is_need_reload_eeprom+0x4d4>
+  19e358: 28 00 80 52  	mov	w8, #1
+  19e35c: 88 5e 1e 39  	strb	w8, [x20, #1943]
+  19e360: c2 00 00 14  	b	0x19e668 <is_need_reload_eeprom+0x4f4>
+  19e364: 0a 00 00 90  	adrp	x10, 0x19e000 <is_need_reload_eeprom+0x1f0> // '!='
+  19e368: 0b 00 00 90  	adrp	x11, 0x19e000 <is_need_reload_eeprom+0x1f4> // '='
+  19e36c: 4a 01 00 91  	add	x10, x10, #0 // '!='
+  19e370: 6b 01 00 91  	add	x11, x11, #0 // '='
+  19e374: 3f 01 07 6b  	cmp	w9, w7
+  19e378: 01 00 00 90  	adrp	x1, 0x19e000 <is_need_reload_eeprom+0x204> // "\x016%s: %s: %s: %d Vendor don't match. flag [0x%x] Module [P:0x%x %s O:0x%x] size [P:0x%X %s O:0x%X]"
+  19e37c: 6c 01 8a 9a  	csel	x12, x11, x10, eq
+  19e380: 1f 01 14 6b  	cmp	w8, w20
+  19e384: 02 00 00 90  	adrp	x2, 0x19e000 <is_need_reload_eeprom+0x210> // 'CAM_INFO'
+  19e388: 03 00 00 90  	adrp	x3, 0x19e000 <is_need_reload_eeprom+0x214> // 'CAM-EEPROM'
+  19e38c: 04 00 00 90  	adrp	x4, 0x19e000 <is_need_reload_eeprom+0x218> // 'is_need_reload_eeprom'
+  19e390: 6a 01 8a 9a  	csel	x10, x11, x10, eq
+  19e394: 21 00 00 91  	add	x1, x1, #0 // "\x016%s: %s: %s: %d Vendor don't match. flag [0x%x] Module [P:0x%x %s O:0x%x] size [P:0x%X %s O:0x%X]"
+  19e398: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  19e39c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19e3a0: 84 00 00 91  	add	x4, x4, #0 // 'is_need_reload_eeprom'
+  19e3a4: 60 00 80 52  	mov	w0, #3
+  19e3a8: 85 0a 80 52  	mov	w5, #84
+  19e3ac: e8 13 00 b9  	str	w8, [sp, #16]
+  19e3b0: e9 0b 00 b9  	str	w9, [sp, #8]
+  19e3b4: ea 0f 00 f9  	str	x10, [sp, #24]
+  19e3b8: ec 03 00 f9  	str	x12, [sp]
+  19e3bc: f4 23 00 b9  	str	w20, [sp, #32]
+  19e3c0: 00 00 00 94  	bl	0x19e3c0 <is_need_reload_eeprom+0x24c> // cam_print_log+0x0
+  19e3c4: a8 27 7e a9  	ldp	x8, x9, [x29, #-32]
+  19e3c8: 7f 06 01 71  	cmp	w19, #65
+  19e3cc: ff e3 02 39  	strb	wzr, [sp, #184]
+  19e3d0: aa 03 5f f8  	ldur	x10, [x29, #-16]
+  19e3d4: f4 e7 02 39  	strb	w20, [sp, #185]
+  19e3d8: e8 a7 04 a9  	stp	x8, x9, [sp, #72]
+  19e3dc: a8 2f 7d a9  	ldp	x8, x11, [x29, #-48]
+  19e3e0: ea 2f 00 f9  	str	x10, [sp, #88]
+  19e3e4: e8 af 03 a9  	stp	x8, x11, [sp, #56]
+  19e3e8: 88 7e 08 53  	lsr	w8, w20, #8
+  19e3ec: e8 eb 02 39  	strb	w8, [sp, #186]
+  19e3f0: a2 05 00 54  	b.hs	0x19e4a4 <is_need_reload_eeprom+0x330>
+  19e3f4: 08 80 8c 52  	mov	w8, #25600
+  19e3f8: 00 00 00 90  	adrp	x0, 0x19e000 <is_need_reload_eeprom+0x284> // 'camera'
+  19e3fc: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19e400: e3 e3 00 91  	add	x3, sp, #56
+  19e404: 62 7e 08 1b  	mul	w2, w19, w8
+  19e408: 21 00 80 52  	mov	w1, #1
+  19e40c: 24 46 80 52  	mov	w4, #561
+  19e410: 00 00 00 94  	bl	0x19e410 <is_need_reload_eeprom+0x29c> // sd_partition_rw+0x0
+  19e414: e6 03 00 2a  	mov	w6, w0
+  19e418: 01 00 00 90  	adrp	x1, 0x19e000 <is_need_reload_eeprom+0x2a4> // '\x016%s: %s: %s: %d Write partition resute : %d'
+  19e41c: 02 00 00 90  	adrp	x2, 0x19e000 <is_need_reload_eeprom+0x2a8> // 'CAM_INFO'
+  19e420: 03 00 00 90  	adrp	x3, 0x19e000 <is_need_reload_eeprom+0x2ac> // 'CAM-EEPROM'
+  19e424: 04 00 00 90  	adrp	x4, 0x19e000 <is_need_reload_eeprom+0x2b0> // 'is_need_reload_eeprom'
+  19e428: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Write partition resute : %d'
+  19e42c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  19e430: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19e434: 84 00 00 91  	add	x4, x4, #0 // 'is_need_reload_eeprom'
+  19e438: 60 00 80 52  	mov	w0, #3
+  19e43c: 45 0b 80 52  	mov	w5, #90
+  19e440: 00 00 00 94  	bl	0x19e440 <is_need_reload_eeprom+0x2cc> // cam_print_log+0x0
+  19e444: 34 00 80 52  	mov	w20, #1
+  19e448: 08 41 38 d5  	mrs	x8, SP_EL0
+  19e44c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19e450: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  19e454: 1f 01 09 eb  	cmp	x8, x9
+  19e458: c1 11 00 54  	b.ne	0x19e690 <is_need_reload_eeprom+0x51c>
+  19e45c: e0 03 14 2a  	mov	w0, w20
+  19e460: ff 83 0a 91  	add	sp, sp, #672
+  19e464: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+  19e468: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+  19e46c: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+  19e470: fc 0b 40 f9  	ldr	x28, [sp, #16]
+  19e474: fd 7b c5 a8  	ldp	x29, x30, [sp], #80
+  19e478: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19e47c: bf 23 03 d5  	hint	#29
+  19e480: c0 03 5f d6  	ret
+  19e484: a6 03 80 52  	mov	w6, #29
+  19e488: 1b 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e48c: c6 03 80 52  	mov	w6, #30
+  19e490: 19 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e494: 00 00 00 90  	adrp	x0, 0x19e000 <is_need_reload_eeprom+0x320> // '\x013out of private partition range\n'
+  19e498: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19e49c: 00 00 00 94  	bl	0x19e49c <is_need_reload_eeprom+0x328> // _printk+0x0
+  19e4a0: 58 ff ff 17  	b	0x19e200 <is_need_reload_eeprom+0x8c>
+  19e4a4: 00 00 00 90  	adrp	x0, 0x19e000 <is_need_reload_eeprom+0x330> // '\x013out of private partition range\n'
+  19e4a8: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19e4ac: 00 00 00 94  	bl	0x19e4ac <is_need_reload_eeprom+0x338> // _printk+0x0
+  19e4b0: a6 02 80 12  	mov	w6, #-22
+  19e4b4: d9 ff ff 17  	b	0x19e418 <is_need_reload_eeprom+0x2a4>
+  19e4b8: e6 03 80 52  	mov	w6, #31
+  19e4bc: 0e 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e4c0: 06 04 80 52  	mov	w6, #32
+  19e4c4: 0c 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e4c8: 26 04 80 52  	mov	w6, #33
+  19e4cc: 0a 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e4d0: 46 04 80 52  	mov	w6, #34
+  19e4d4: 08 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e4d8: 66 04 80 52  	mov	w6, #35
+  19e4dc: 06 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e4e0: 86 04 80 52  	mov	w6, #36
+  19e4e4: 04 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e4e8: a6 04 80 52  	mov	w6, #37
+  19e4ec: 02 00 00 14  	b	0x19e4f4 <is_need_reload_eeprom+0x380>
+  19e4f0: c6 04 80 52  	mov	w6, #38
+  19e4f4: 01 00 00 90  	adrp	x1, 0x19e000 <is_need_reload_eeprom+0x380> // "\x016%s: %s: %s: %d SN [%d] don't match 0x%x ,EEP data 0x%x"
+  19e4f8: 02 00 00 90  	adrp	x2, 0x19e000 <is_need_reload_eeprom+0x384> // 'CAM_INFO'
+  19e4fc: 03 00 00 90  	adrp	x3, 0x19e000 <is_need_reload_eeprom+0x388> // 'CAM-EEPROM'
+  19e500: 04 00 00 90  	adrp	x4, 0x19e000 <is_need_reload_eeprom+0x38c> // 'is_need_reload_eeprom'
+  19e504: 21 00 00 91  	add	x1, x1, #0 // "\x016%s: %s: %s: %d SN [%d] don't match 0x%x ,EEP data 0x%x"
+  19e508: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  19e50c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19e510: 84 00 00 91  	add	x4, x4, #0 // 'is_need_reload_eeprom'
+  19e514: 60 00 80 52  	mov	w0, #3
+  19e518: e5 0b 80 52  	mov	w5, #95
+  19e51c: e8 03 00 b9  	str	w8, [sp]
+  19e520: 00 00 00 94  	bl	0x19e520 <is_need_reload_eeprom+0x3ac> // cam_print_log+0x0
+  19e524: a8 27 7e a9  	ldp	x8, x9, [x29, #-32]
+  19e528: ff e3 02 39  	strb	wzr, [sp, #184]
+  19e52c: eb b7 48 39  	ldrb	w11, [sp, #557]
+  19e530: f4 e7 02 39  	strb	w20, [sp, #185]
+  19e534: aa 03 5f f8  	ldur	x10, [x29, #-16]
+  19e538: e8 a7 04 a9  	stp	x8, x9, [sp, #72]
+  19e53c: 68 05 00 11  	add	w8, w11, #1
+  19e540: 1f 01 18 72  	tst	w8, #0x100
+  19e544: ea 2f 00 f9  	str	x10, [sp, #88]
+  19e548: a9 23 7d a9  	ldp	x9, x8, [x29, #-48]
+  19e54c: 2a 00 80 52  	mov	w10, #1
+  19e550: 4a 15 8b 1a  	csinc	w10, w10, w11, ne
+  19e554: 7f 06 01 71  	cmp	w19, #65
+  19e558: e9 a3 03 a9  	stp	x9, x8, [sp, #56]
+  19e55c: 88 7e 08 53  	lsr	w8, w20, #8
+  19e560: ea b7 08 39  	strb	w10, [sp, #557]
+  19e564: e8 eb 02 39  	strb	w8, [sp, #186]
+  19e568: a2 03 00 54  	b.hs	0x19e5dc <is_need_reload_eeprom+0x468>
+  19e56c: 08 80 8c 52  	mov	w8, #25600
+  19e570: 00 00 00 90  	adrp	x0, 0x19e000 <is_need_reload_eeprom+0x3fc> // 'camera'
+  19e574: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19e578: e3 e3 00 91  	add	x3, sp, #56
+  19e57c: 62 7e 08 1b  	mul	w2, w19, w8
+  19e580: 21 00 80 52  	mov	w1, #1
+  19e584: 24 46 80 52  	mov	w4, #561
+  19e588: 34 00 80 52  	mov	w20, #1
+  19e58c: 00 00 00 94  	bl	0x19e58c <is_need_reload_eeprom+0x418> // sd_partition_rw+0x0
+  19e590: d3 f5 ff 35  	cbnz	w19, 0x19e448 <is_need_reload_eeprom+0x2d4>
+  19e594: 13 00 00 90  	adrp	x19, 0x19e000 <is_need_reload_eeprom+0x420> // 'camera'
+  19e598: 02 80 85 52  	mov	w2, #11264
+  19e59c: 73 02 00 91  	add	x19, x19, #0 // 'camera'
+  19e5a0: e3 e3 00 91  	add	x3, sp, #56
+  19e5a4: e0 03 13 aa  	mov	x0, x19
+  19e5a8: e1 03 1f 2a  	mov	w1, wzr
+  19e5ac: 22 00 a0 72  	movk	w2, #1, lsl #16
+  19e5b0: 24 46 80 52  	mov	w4, #561
+  19e5b4: 00 00 00 94  	bl	0x19e5b4 <is_need_reload_eeprom+0x440> // sd_partition_rw+0x0
+  19e5b8: 02 80 85 52  	mov	w2, #11264
+  19e5bc: e3 e3 00 91  	add	x3, sp, #56
+  19e5c0: e0 03 13 aa  	mov	x0, x19
+  19e5c4: 21 00 80 52  	mov	w1, #1
+  19e5c8: 22 00 a0 72  	movk	w2, #1, lsl #16
+  19e5cc: 24 46 80 52  	mov	w4, #561
+  19e5d0: f4 e3 02 39  	strb	w20, [sp, #184]
+  19e5d4: 00 00 00 94  	bl	0x19e5d4 <is_need_reload_eeprom+0x460> // sd_partition_rw+0x0
+  19e5d8: 9c ff ff 17  	b	0x19e448 <is_need_reload_eeprom+0x2d4>
+  19e5dc: 00 00 00 90  	adrp	x0, 0x19e000 <is_need_reload_eeprom+0x468> // '\x013out of private partition range\n'
+  19e5e0: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19e5e4: 00 00 00 94  	bl	0x19e5e4 <is_need_reload_eeprom+0x470> // _printk+0x0
+  19e5e8: 97 ff ff 17  	b	0x19e444 <is_need_reload_eeprom+0x2d0>
+  19e5ec: 7f 0e 00 71  	cmp	w19, #3
+  19e5f0: 60 00 00 54  	b.eq	0x19e5fc <is_need_reload_eeprom+0x488>
+  19e5f4: 7f 0a 00 71  	cmp	w19, #2
+  19e5f8: 81 02 00 54  	b.ne	0x19e648 <is_need_reload_eeprom+0x4d4>
+  19e5fc: 88 58 86 52  	mov	w8, #12996
+  19e600: 88 02 08 8b  	add	x8, x20, x8
+  19e604: 09 01 40 39  	ldrb	w9, [x8]
+  19e608: 09 02 00 35  	cbnz	w9, 0x19e648 <is_need_reload_eeprom+0x4d4>
+  19e60c: 29 00 80 52  	mov	w9, #1
+  19e610: 09 01 00 39  	strb	w9, [x8]
+  19e614: 15 00 00 14  	b	0x19e668 <is_need_reload_eeprom+0x4f4>
+  19e618: 01 00 00 90  	adrp	x1, 0x19e000 <is_need_reload_eeprom+0x4a4> // '\x016%s: %s: %s: %d Camera model error:(%d) 0x%X'
+  19e61c: 02 00 00 90  	adrp	x2, 0x19e000 <is_need_reload_eeprom+0x4a8> // 'CAM_ERR'
+  19e620: 03 00 00 90  	adrp	x3, 0x19e000 <is_need_reload_eeprom+0x4ac> // 'CAM-EEPROM'
+  19e624: 04 00 00 90  	adrp	x4, 0x19e000 <is_need_reload_eeprom+0x4b0> // 'is_need_reload_eeprom'
+  19e628: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Camera model error:(%d) 0x%X'
+  19e62c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19e630: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19e634: 84 00 00 91  	add	x4, x4, #0 // 'is_need_reload_eeprom'
+  19e638: 60 00 80 52  	mov	w0, #3
+  19e63c: e5 13 80 52  	mov	w5, #159
+  19e640: e6 03 13 2a  	mov	w6, w19
+  19e644: 00 00 00 94  	bl	0x19e644 <is_need_reload_eeprom+0x4d0> // cam_print_log+0x0
+  19e648: e0 03 14 aa  	mov	x0, x20
+  19e64c: 00 00 00 94  	bl	0x19e64c <is_need_reload_eeprom+0x4d8> // vfree+0x0
+  19e650: f4 03 1f 2a  	mov	w20, wzr
+  19e654: 7d ff ff 17  	b	0x19e448 <is_need_reload_eeprom+0x2d4>
+  19e658: 88 1a 71 39  	ldrb	w8, [x20, #3142]
+  19e65c: 68 ff ff 35  	cbnz	w8, 0x19e648 <is_need_reload_eeprom+0x4d4>
+  19e660: 28 00 80 52  	mov	w8, #1
+  19e664: 88 1a 31 39  	strb	w8, [x20, #3142]
+  19e668: e0 37 40 b9  	ldr	w0, [sp, #52]
+  19e66c: e1 03 14 aa  	mov	x1, x20
+  19e670: e2 03 15 aa  	mov	x2, x21
+  19e674: 34 00 80 52  	mov	w20, #1
+  19e678: 00 00 00 94  	bl	0x19e678 <is_need_reload_eeprom+0x504> // +0x19e694
+  19e67c: 73 ff ff 17  	b	0x19e448 <is_need_reload_eeprom+0x2d4>
+  19e680: 00 00 00 90  	adrp	x0, 0x19e000 <is_need_reload_eeprom+0x50c> // '\x013out of private partition range\n'
+  19e684: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19e688: 00 00 00 94  	bl	0x19e688 <is_need_reload_eeprom+0x514> // _printk+0x0
+  19e68c: 28 ff ff 17  	b	0x19e32c <is_need_reload_eeprom+0x1b8>
+  19e690: 00 00 00 94  	bl	0x19e690 <is_need_reload_eeprom+0x51c> // __stack_chk_fail+0x0

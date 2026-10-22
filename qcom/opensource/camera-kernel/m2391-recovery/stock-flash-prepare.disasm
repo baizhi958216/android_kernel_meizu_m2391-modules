@@ -1,0 +1,518 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001916f4 <flash_request_gpio_table>:
+  1916f4: 3f 23 03 d5  	hint	#25
+  1916f8: ff c3 01 d1  	sub	sp, sp, #112
+  1916fc: 5e 86 00 f8  	str	x30, [x18], #8
+  191700: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  191704: fd 43 00 91  	add	x29, sp, #16
+  191708: fc 6f 02 a9  	stp	x28, x27, [sp, #32]
+  19170c: fa 67 03 a9  	stp	x26, x25, [sp, #48]
+  191710: f8 5f 04 a9  	stp	x24, x23, [sp, #64]
+  191714: f6 57 05 a9  	stp	x22, x21, [sp, #80]
+  191718: f4 4f 06 a9  	stp	x20, x19, [sp, #96]
+  19171c: 40 05 00 b4  	cbz	x0, 0x1917c4 <flash_request_gpio_table+0xd0>
+  191720: 08 20 40 39  	ldrb	w8, [x0, #8]
+  191724: 68 07 00 34  	cbz	w8, 0x191810 <flash_request_gpio_table+0x11c>
+  191728: 14 08 40 f9  	ldr	x20, [x0, #16]
+  19172c: 13 60 40 39  	ldrb	w19, [x0, #24]
+  191730: b4 08 00 b4  	cbz	x20, 0x191844 <flash_request_gpio_table+0x150>
+  191734: 93 08 00 34  	cbz	w19, 0x191844 <flash_request_gpio_table+0x150>
+  191738: 1b 00 00 90  	adrp	x27, 0x191000 <flash_request_gpio_table+0x44> // debug_mdl+0x0
+  19173c: 1c 00 00 90  	adrp	x28, 0x191000 <flash_request_gpio_table+0x48> // debug_priority+0x0
+  191740: 18 00 00 90  	adrp	x24, 0x191000 <flash_request_gpio_table+0x4c> // 'CAM_DBG'
+  191744: 19 00 00 90  	adrp	x25, 0x191000 <flash_request_gpio_table+0x50> // 'CAM-FLASH'
+  191748: 1a 00 00 90  	adrp	x26, 0x191000 <flash_request_gpio_table+0x54> // 'flash_request_gpio_table'
+  19174c: f5 03 01 2a  	mov	w21, w1
+  191750: f6 03 1f aa  	mov	x22, xzr
+  191754: 68 03 40 f9  	ldr	x8, [x27] // debug_mdl+0x0
+  191758: 97 22 00 91  	add	x23, x20, #8
+  19175c: 89 03 40 b9  	ldr	w9, [x28] // debug_priority+0x0
+  191760: 18 03 00 91  	add	x24, x24, #0 // 'CAM_DBG'
+  191764: 39 03 00 91  	add	x25, x25, #0 // 'CAM-FLASH'
+  191768: 5a 03 00 91  	add	x26, x26, #0 // 'flash_request_gpio_table'
+  19176c: 05 00 00 14  	b	0x191780 <flash_request_gpio_table+0x8c>
+  191770: d6 06 00 91  	add	x22, x22, #1
+  191774: f7 62 00 91  	add	x23, x23, #24
+  191778: 7f 02 16 eb  	cmp	x19, x22
+  19177c: 20 08 00 54  	b.eq	0x191880 <flash_request_gpio_table+0x18c>
+  191780: 88 ff 67 36  	tbz	w8, #12, 0x191770 <flash_request_gpio_table+0x7c>
+  191784: 69 ff ff 35  	cbnz	w9, 0x191770 <flash_request_gpio_table+0x7c>
+  191788: 01 00 00 90  	adrp	x1, 0x191000 <flash_request_gpio_table+0x94> // '\x016%s: %s: %s: %d i=%d, gpio=%d dir=%ld'
+  19178c: e7 82 5f b8  	ldur	w7, [x23, #-8]
+  191790: e8 02 40 f9  	ldr	x8, [x23]
+  191794: 60 00 80 52  	mov	w0, #3
+  191798: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d i=%d, gpio=%d dir=%ld'
+  19179c: e2 03 18 aa  	mov	x2, x24
+  1917a0: e3 03 19 aa  	mov	x3, x25
+  1917a4: e4 03 1a aa  	mov	x4, x26
+  1917a8: e5 0a 80 52  	mov	w5, #87
+  1917ac: e6 03 16 2a  	mov	w6, w22
+  1917b0: e8 03 00 f9  	str	x8, [sp]
+  1917b4: 00 00 00 94  	bl	0x1917b4 <flash_request_gpio_table+0xc0> // cam_print_log+0x0
+  1917b8: 68 03 40 f9  	ldr	x8, [x27] // debug_mdl+0x0
+  1917bc: 89 03 40 b9  	ldr	w9, [x28] // debug_priority+0x0
+  1917c0: ec ff ff 17  	b	0x191770 <flash_request_gpio_table+0x7c>
+  1917c4: 08 00 00 90  	adrp	x8, 0x191000 <flash_request_gpio_table+0xd0> // debug_mdl+0x1
+  1917c8: f4 03 1f 2a  	mov	w20, wzr
+  1917cc: 08 01 40 39  	ldrb	w8, [x8] // debug_mdl+0x1
+  1917d0: a8 09 20 36  	tbz	w8, #4, 0x191904 <flash_request_gpio_table+0x210>
+  1917d4: 08 00 00 90  	adrp	x8, 0x191000 <flash_request_gpio_table+0xe0> // debug_priority+0x0
+  1917d8: 08 01 40 b9  	ldr	w8, [x8] // debug_priority+0x0
+  1917dc: 48 09 00 35  	cbnz	w8, 0x191904 <flash_request_gpio_table+0x210>
+  1917e0: 01 00 00 90  	adrp	x1, 0x191000 <flash_request_gpio_table+0xec> // '\x016%s: %s: %s: %d No GPIO entry'
+  1917e4: 02 00 00 90  	adrp	x2, 0x191000 <flash_request_gpio_table+0xf0> // 'CAM_DBG'
+  1917e8: 03 00 00 90  	adrp	x3, 0x191000 <flash_request_gpio_table+0xf4> // 'CAM-FLASH'
+  1917ec: 04 00 00 90  	adrp	x4, 0x191000 <flash_request_gpio_table+0xf8> // 'flash_request_gpio_table'
+  1917f0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d No GPIO entry'
+  1917f4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  1917f8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1917fc: 84 00 00 91  	add	x4, x4, #0 // 'flash_request_gpio_table'
+  191800: 60 00 80 52  	mov	w0, #3
+  191804: c5 08 80 52  	mov	w5, #70
+  191808: 00 00 00 94  	bl	0x191808 <flash_request_gpio_table+0x114> // cam_print_log+0x0
+  19180c: 3d 00 00 14  	b	0x191900 <flash_request_gpio_table+0x20c>
+  191810: 01 00 00 90  	adrp	x1, 0x191000 <flash_request_gpio_table+0x11c> // '\x016%s: %s: %s: %d GPIO table size is invalid'
+  191814: 02 00 00 90  	adrp	x2, 0x191000 <flash_request_gpio_table+0x120> // 'CAM_ERR'
+  191818: 03 00 00 90  	adrp	x3, 0x191000 <flash_request_gpio_table+0x124> // 'CAM-FLASH'
+  19181c: 04 00 00 90  	adrp	x4, 0x191000 <flash_request_gpio_table+0x128> // 'flash_request_gpio_table'
+  191820: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d GPIO table size is invalid'
+  191824: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  191828: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  19182c: 84 00 00 91  	add	x4, x4, #0 // 'flash_request_gpio_table'
+  191830: 60 00 80 52  	mov	w0, #3
+  191834: 45 09 80 52  	mov	w5, #74
+  191838: 00 00 00 94  	bl	0x191838 <flash_request_gpio_table+0x144> // cam_print_log+0x0
+  19183c: b4 02 80 12  	mov	w20, #-22
+  191840: 31 00 00 14  	b	0x191904 <flash_request_gpio_table+0x210>
+  191844: 01 00 00 90  	adrp	x1, 0x191000 <flash_request_gpio_table+0x150> // '\x016%s: %s: %s: %d Invalid gpio_tbl %pK / size %d'
+  191848: 02 00 00 90  	adrp	x2, 0x191000 <flash_request_gpio_table+0x154> // 'CAM_ERR'
+  19184c: 03 00 00 90  	adrp	x3, 0x191000 <flash_request_gpio_table+0x158> // 'CAM-FLASH'
+  191850: 04 00 00 90  	adrp	x4, 0x191000 <flash_request_gpio_table+0x15c> // 'flash_request_gpio_table'
+  191854: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Invalid gpio_tbl %pK / size %d'
+  191858: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19185c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  191860: 84 00 00 91  	add	x4, x4, #0 // 'flash_request_gpio_table'
+  191864: 60 00 80 52  	mov	w0, #3
+  191868: 45 0a 80 52  	mov	w5, #82
+  19186c: e6 03 14 aa  	mov	x6, x20
+  191870: e7 03 13 2a  	mov	w7, w19
+  191874: 00 00 00 94  	bl	0x191874 <flash_request_gpio_table+0x180> // cam_print_log+0x0
+  191878: b4 02 80 12  	mov	w20, #-22
+  19187c: 22 00 00 14  	b	0x191904 <flash_request_gpio_table+0x210>
+  191880: b5 03 00 36  	tbz	w21, #0, 0x1918f4 <flash_request_gpio_table+0x200>
+  191884: 15 00 00 90  	adrp	x21, 0x191000 <flash_request_gpio_table+0x190> // '\x016%s: %s: %s: %d gpio %d:%s request fails'
+  191888: 16 00 00 90  	adrp	x22, 0x191000 <flash_request_gpio_table+0x194> // 'CAM_ERR'
+  19188c: 17 00 00 90  	adrp	x23, 0x191000 <flash_request_gpio_table+0x198> // 'CAM-FLASH'
+  191890: 18 00 00 90  	adrp	x24, 0x191000 <flash_request_gpio_table+0x19c> // 'flash_request_gpio_table'
+  191894: 99 42 00 91  	add	x25, x20, #16
+  191898: b5 02 00 91  	add	x21, x21, #0 // '\x016%s: %s: %s: %d gpio %d:%s request fails'
+  19189c: d6 02 00 91  	add	x22, x22, #0 // 'CAM_ERR'
+  1918a0: f7 02 00 91  	add	x23, x23, #0 // 'CAM-FLASH'
+  1918a4: 18 03 00 91  	add	x24, x24, #0 // 'flash_request_gpio_table'
+  1918a8: 04 00 00 14  	b	0x1918b8 <flash_request_gpio_table+0x1c4>
+  1918ac: 73 06 00 f1  	subs	x19, x19, #1
+  1918b0: 39 63 00 91  	add	x25, x25, #24
+  1918b4: 80 02 00 54  	b.eq	0x191904 <flash_request_gpio_table+0x210>
+  1918b8: 21 8b 7f a9  	ldp	x1, x2, [x25, #-8]
+  1918bc: 20 03 5f b8  	ldur	w0, [x25, #-16]
+  1918c0: 00 00 00 94  	bl	0x1918c0 <flash_request_gpio_table+0x1cc> // gpio_request_one+0x0
+  1918c4: f4 03 00 2a  	mov	w20, w0
+  1918c8: 20 ff ff 34  	cbz	w0, 0x1918ac <flash_request_gpio_table+0x1b8>
+  1918cc: 26 03 5f b8  	ldur	w6, [x25, #-16]
+  1918d0: 60 00 80 52  	mov	w0, #3
+  1918d4: 27 03 40 f9  	ldr	x7, [x25]
+  1918d8: e1 03 15 aa  	mov	x1, x21
+  1918dc: e2 03 16 aa  	mov	x2, x22
+  1918e0: e3 03 17 aa  	mov	x3, x23
+  1918e4: e4 03 18 aa  	mov	x4, x24
+  1918e8: 85 0c 80 52  	mov	w5, #100
+  1918ec: 00 00 00 94  	bl	0x1918ec <flash_request_gpio_table+0x1f8> // cam_print_log+0x0
+  1918f0: ef ff ff 17  	b	0x1918ac <flash_request_gpio_table+0x1b8>
+  1918f4: e0 03 14 aa  	mov	x0, x20
+  1918f8: e1 03 13 aa  	mov	x1, x19
+  1918fc: 00 00 00 94  	bl	0x1918fc <flash_request_gpio_table+0x208> // gpio_free_array+0x0
+  191900: f4 03 1f 2a  	mov	w20, wzr
+  191904: e0 03 14 2a  	mov	w0, w20
+  191908: f4 4f 46 a9  	ldp	x20, x19, [sp, #96]
+  19190c: f6 57 45 a9  	ldp	x22, x21, [sp, #80]
+  191910: f8 5f 44 a9  	ldp	x24, x23, [sp, #64]
+  191914: fa 67 43 a9  	ldp	x26, x25, [sp, #48]
+  191918: fc 6f 42 a9  	ldp	x28, x27, [sp, #32]
+  19191c: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  191920: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  191924: ff c3 01 91  	add	sp, sp, #112
+  191928: bf 23 03 d5  	hint	#29
+  19192c: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000191e80 <cam_flash_prepare>:
+  191e80: 3f 23 03 d5  	hint	#25
+  191e84: ff 43 01 d1  	sub	sp, sp, #80
+  191e88: 5e 86 00 f8  	str	x30, [x18], #8
+  191e8c: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  191e90: fd 43 00 91  	add	x29, sp, #16
+  191e94: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+  191e98: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+  191e9c: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+  191ea0: a8 ad 82 52  	mov	w8, #5485
+  191ea4: f3 03 00 aa  	mov	x19, x0
+  191ea8: 15 00 08 8b  	add	x21, x0, x8
+  191eac: a8 02 40 39  	ldrb	w8, [x21]
+  191eb0: 41 02 00 36  	tbz	w1, #0, 0x191ef8 <cam_flash_prepare+0x78>
+  191eb4: e8 0a 00 35  	cbnz	w8, 0x192010 <cam_flash_prepare+0x190>
+  191eb8: e0 03 13 aa  	mov	x0, x19
+  191ebc: 21 00 80 52  	mov	w1, #1
+  191ec0: 00 00 00 94  	bl	0x191ec0 <cam_flash_prepare+0x40> // cam_flash_power+0x0
+  191ec4: 80 0f 00 34  	cbz	w0, 0x1920b4 <cam_flash_prepare+0x234>
+  191ec8: 01 00 00 90  	adrp	x1, 0x191000 <cam_flash_prepare+0x48> // '\x016%s: %s: %s: %d power enable failed rc = %d'
+  191ecc: 02 00 00 90  	adrp	x2, 0x191000 <cam_flash_prepare+0x4c> // 'CAM_ERR'
+  191ed0: 03 00 00 90  	adrp	x3, 0x191000 <cam_flash_prepare+0x50> // 'CAM-FLASH'
+  191ed4: 04 00 00 90  	adrp	x4, 0x191000 <cam_flash_prepare+0x54> // 'cam_flash_prepare'
+  191ed8: f3 03 00 2a  	mov	w19, w0
+  191edc: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d power enable failed rc = %d'
+  191ee0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  191ee4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  191ee8: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  191eec: 60 00 80 52  	mov	w0, #3
+  191ef0: 45 1d 80 52  	mov	w5, #234
+  191ef4: 44 00 00 14  	b	0x192004 <cam_flash_prepare+0x184>
+  191ef8: c8 08 00 34  	cbz	w8, 0x192010 <cam_flash_prepare+0x190>
+  191efc: 18 00 00 90  	adrp	x24, 0x191000 <cam_flash_prepare+0x7c> // debug_mdl+0x1
+  191f00: 17 00 00 90  	adrp	x23, 0x191000 <cam_flash_prepare+0x80> // debug_priority+0x0
+  191f04: 08 03 40 39  	ldrb	w8, [x24] // debug_mdl+0x1
+  191f08: 68 00 20 36  	tbz	w8, #4, 0x191f14 <cam_flash_prepare+0x94>
+  191f0c: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  191f10: 28 17 00 34  	cbz	w8, 0x1921f4 <cam_flash_prepare+0x374>
+  191f14: 08 00 00 90  	adrp	x8, 0x191000 <cam_flash_prepare+0x94> // meizu_flash_dev_ops+0x0
+  191f18: 16 00 00 90  	adrp	x22, 0x191000 <cam_flash_prepare+0x98> // +0x1addd8
+  191f1c: d6 02 00 91  	add	x22, x22, #0 // +0x1addd8
+  191f20: 08 01 40 f9  	ldr	x8, [x8] // meizu_flash_dev_ops+0x0
+  191f24: 28 01 00 b4  	cbz	x8, 0x191f48 <cam_flash_prepare+0xc8>
+  191f28: 14 15 40 f9  	ldr	x20, [x8, #40]
+  191f2c: 88 02 16 cb  	sub	x8, x20, x22
+  191f30: 08 0d c8 93  	ror	x8, x8, #3
+  191f34: 1f 51 00 f1  	cmp	x8, #20
+  191f38: 62 20 00 54  	b.hs	0x192344 <cam_flash_prepare+0x4c4>
+  191f3c: e0 03 1f 2a  	mov	w0, wzr
+  191f40: 80 02 3f d6  	blr	x20
+  191f44: 40 08 f8 37  	tbnz	w0, #31, 0x19204c <cam_flash_prepare+0x1cc>
+  191f48: 08 03 40 39  	ldrb	w8, [x24] // debug_mdl+0x1
+  191f4c: 68 00 20 36  	tbz	w8, #4, 0x191f58 <cam_flash_prepare+0xd8>
+  191f50: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  191f54: c8 16 00 34  	cbz	w8, 0x19222c <cam_flash_prepare+0x3ac>
+  191f58: 08 00 00 90  	adrp	x8, 0x191000 <cam_flash_prepare+0xd8> // meizu_flash_dev_ops+0x8
+  191f5c: 08 01 40 f9  	ldr	x8, [x8] // meizu_flash_dev_ops+0x8
+  191f60: 48 01 00 b4  	cbz	x8, 0x191f88 <cam_flash_prepare+0x108>
+  191f64: 08 15 40 f9  	ldr	x8, [x8, #40]
+  191f68: 09 01 16 cb  	sub	x9, x8, x22
+  191f6c: 29 0d c9 93  	ror	x9, x9, #3
+  191f70: 3f 51 00 f1  	cmp	x9, #20
+  191f74: a2 1f 00 54  	b.hs	0x192368 <cam_flash_prepare+0x4e8>
+  191f78: 20 00 80 52  	mov	w0, #1
+  191f7c: 34 00 80 52  	mov	w20, #1
+  191f80: 00 01 3f d6  	blr	x8
+  191f84: 00 06 f8 37  	tbnz	w0, #31, 0x192044 <cam_flash_prepare+0x1c4>
+  191f88: 08 03 40 39  	ldrb	w8, [x24] // debug_mdl+0x1
+  191f8c: 68 00 20 36  	tbz	w8, #4, 0x191f98 <cam_flash_prepare+0x118>
+  191f90: e8 02 40 b9  	ldr	w8, [x23] // debug_priority+0x0
+  191f94: 88 16 00 34  	cbz	w8, 0x192264 <cam_flash_prepare+0x3e4>
+  191f98: 08 00 00 90  	adrp	x8, 0x191000 <cam_flash_prepare+0x118> // meizu_flash_dev_ops+0x10
+  191f9c: 08 01 40 f9  	ldr	x8, [x8] // meizu_flash_dev_ops+0x10
+  191fa0: 48 01 00 b4  	cbz	x8, 0x191fc8 <cam_flash_prepare+0x148>
+  191fa4: 08 15 40 f9  	ldr	x8, [x8, #40]
+  191fa8: 09 01 16 cb  	sub	x9, x8, x22
+  191fac: 29 0d c9 93  	ror	x9, x9, #3
+  191fb0: 3f 51 00 f1  	cmp	x9, #20
+  191fb4: 02 1f 00 54  	b.hs	0x192394 <cam_flash_prepare+0x514>
+  191fb8: 40 00 80 52  	mov	w0, #2
+  191fbc: 54 00 80 52  	mov	w20, #2
+  191fc0: 00 01 3f d6  	blr	x8
+  191fc4: 00 04 f8 37  	tbnz	w0, #31, 0x192044 <cam_flash_prepare+0x1c4>
+  191fc8: e0 03 13 aa  	mov	x0, x19
+  191fcc: e1 03 1f 2a  	mov	w1, wzr
+  191fd0: 00 00 00 94  	bl	0x191fd0 <cam_flash_prepare+0x150> // cam_flash_power+0x0
+  191fd4: f3 03 00 2a  	mov	w19, w0
+  191fd8: a0 09 00 34  	cbz	w0, 0x19210c <cam_flash_prepare+0x28c>
+  191fdc: 01 00 00 90  	adrp	x1, 0x191000 <cam_flash_prepare+0x15c> // '\x016%s: %s: %s: %d power disable failed rc = %d'
+  191fe0: 02 00 00 90  	adrp	x2, 0x191000 <cam_flash_prepare+0x160> // 'CAM_ERR'
+  191fe4: 03 00 00 90  	adrp	x3, 0x191000 <cam_flash_prepare+0x164> // 'CAM-FLASH'
+  191fe8: 04 00 00 90  	adrp	x4, 0x191000 <cam_flash_prepare+0x168> // 'cam_flash_prepare'
+  191fec: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d power disable failed rc = %d'
+  191ff0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  191ff4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  191ff8: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  191ffc: 60 00 80 52  	mov	w0, #3
+  192000: c5 21 80 52  	mov	w5, #270
+  192004: e6 03 13 2a  	mov	w6, w19
+  192008: 00 00 00 94  	bl	0x192008 <cam_flash_prepare+0x188> // cam_print_log+0x0
+  19200c: 21 00 00 14  	b	0x192090 <cam_flash_prepare+0x210>
+  192010: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x190> // '\x016%s: %s: %s: %d Wrong Flash State : %d'
+  192014: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x194> // 'CAM_ERR'
+  192018: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x198> // 'CAM-FLASH'
+  19201c: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x19c> // 'cam_flash_prepare'
+  192020: 66 6a 55 b9  	ldr	w6, [x19, #5480]
+  192024: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Wrong Flash State : %d'
+  192028: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19202c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  192030: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  192034: 60 00 80 52  	mov	w0, #3
+  192038: 85 22 80 52  	mov	w5, #276
+  19203c: 00 00 00 94  	bl	0x19203c <cam_flash_prepare+0x1bc> // cam_print_log+0x0
+  192040: 13 00 00 14  	b	0x19208c <cam_flash_prepare+0x20c>
+  192044: e8 03 00 2a  	mov	w8, w0
+  192048: 03 00 00 14  	b	0x192054 <cam_flash_prepare+0x1d4>
+  19204c: e8 03 00 2a  	mov	w8, w0
+  192050: f4 03 1f 2a  	mov	w20, wzr
+  192054: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x1d4> // 'cam_flash_prepare'
+  192058: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x1d8> // '\x016%s: %s: %s: %d %s:flash dev %d disable failed, ret:%d.\n'
+  19205c: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x1dc> // 'CAM_ERR'
+  192060: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x1e0> // 'CAM-FLASH'
+  192064: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  192068: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s:flash dev %d disable failed, ret:%d.\n'
+  19206c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  192070: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  192074: 60 00 80 52  	mov	w0, #3
+  192078: a5 20 80 52  	mov	w5, #261
+  19207c: e6 03 04 aa  	mov	x6, x4
+  192080: e7 03 14 2a  	mov	w7, w20
+  192084: e8 03 00 b9  	str	w8, [sp]
+  192088: 00 00 00 94  	bl	0x192088 <cam_flash_prepare+0x208> // cam_print_log+0x0
+  19208c: b3 02 80 12  	mov	w19, #-22
+  192090: e0 03 13 2a  	mov	w0, w19
+  192094: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+  192098: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+  19209c: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+  1920a0: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  1920a4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1920a8: ff 43 01 91  	add	sp, sp, #80
+  1920ac: bf 23 03 d5  	hint	#29
+  1920b0: c0 03 5f d6  	ret
+  1920b4: 17 00 00 90  	adrp	x23, 0x192000 <cam_flash_prepare+0x234> // debug_mdl+0x1
+  1920b8: 16 00 00 90  	adrp	x22, 0x192000 <cam_flash_prepare+0x238> // debug_priority+0x0
+  1920bc: e8 02 40 39  	ldrb	w8, [x23] // debug_mdl+0x1
+  1920c0: 68 00 20 36  	tbz	w8, #4, 0x1920cc <cam_flash_prepare+0x24c>
+  1920c4: c8 02 40 b9  	ldr	w8, [x22] // debug_priority+0x0
+  1920c8: a8 0e 00 34  	cbz	w8, 0x19229c <cam_flash_prepare+0x41c>
+  1920cc: 08 00 00 90  	adrp	x8, 0x192000 <cam_flash_prepare+0x24c> // meizu_flash_dev_ops+0x0
+  1920d0: 08 01 40 f9  	ldr	x8, [x8] // meizu_flash_dev_ops+0x0
+  1920d4: 08 02 00 b4  	cbz	x8, 0x192114 <cam_flash_prepare+0x294>
+  1920d8: 13 01 40 f9  	ldr	x19, [x8]
+  1920dc: 08 00 00 90  	adrp	x8, 0x192000 <cam_flash_prepare+0x25c> // +0x1addd8
+  1920e0: 08 01 00 91  	add	x8, x8, #0 // +0x1addd8
+  1920e4: 68 02 08 cb  	sub	x8, x19, x8
+  1920e8: 08 0d c8 93  	ror	x8, x8, #3
+  1920ec: 1f 51 00 f1  	cmp	x8, #20
+  1920f0: 82 16 00 54  	b.hs	0x1923c0 <cam_flash_prepare+0x540>
+  1920f4: e0 03 1f 2a  	mov	w0, wzr
+  1920f8: 60 02 3f d6  	blr	x19
+  1920fc: f3 03 00 2a  	mov	w19, w0
+  192100: c0 00 f8 36  	tbz	w0, #31, 0x192118 <cam_flash_prepare+0x298>
+  192104: f4 03 1f 2a  	mov	w20, wzr
+  192108: 2d 00 00 14  	b	0x1921bc <cam_flash_prepare+0x33c>
+  19210c: bf 02 00 39  	strb	wzr, [x21]
+  192110: e0 ff ff 17  	b	0x192090 <cam_flash_prepare+0x210>
+  192114: f3 03 1f 2a  	mov	w19, wzr
+  192118: e8 02 40 39  	ldrb	w8, [x23] // debug_mdl+0x1
+  19211c: 68 00 20 36  	tbz	w8, #4, 0x192128 <cam_flash_prepare+0x2a8>
+  192120: c8 02 40 b9  	ldr	w8, [x22] // debug_priority+0x0
+  192124: 88 0d 00 34  	cbz	w8, 0x1922d4 <cam_flash_prepare+0x454>
+  192128: 08 00 00 90  	adrp	x8, 0x192000 <cam_flash_prepare+0x2a8> // meizu_flash_dev_ops+0x8
+  19212c: 08 01 40 f9  	ldr	x8, [x8] // meizu_flash_dev_ops+0x8
+  192130: a8 01 00 b4  	cbz	x8, 0x192164 <cam_flash_prepare+0x2e4>
+  192134: 13 01 40 f9  	ldr	x19, [x8]
+  192138: 08 00 00 90  	adrp	x8, 0x192000 <cam_flash_prepare+0x2b8> // +0x1addd8
+  19213c: 08 01 00 91  	add	x8, x8, #0 // +0x1addd8
+  192140: 68 02 08 cb  	sub	x8, x19, x8
+  192144: 08 0d c8 93  	ror	x8, x8, #3
+  192148: 1f 51 00 f1  	cmp	x8, #20
+  19214c: c2 14 00 54  	b.hs	0x1923e4 <cam_flash_prepare+0x564>
+  192150: 20 00 80 52  	mov	w0, #1
+  192154: 34 00 80 52  	mov	w20, #1
+  192158: 60 02 3f d6  	blr	x19
+  19215c: f3 03 00 2a  	mov	w19, w0
+  192160: e0 02 f8 37  	tbnz	w0, #31, 0x1921bc <cam_flash_prepare+0x33c>
+  192164: e8 02 40 39  	ldrb	w8, [x23] // debug_mdl+0x1
+  192168: 68 00 20 36  	tbz	w8, #4, 0x192174 <cam_flash_prepare+0x2f4>
+  19216c: c8 02 40 b9  	ldr	w8, [x22] // debug_priority+0x0
+  192170: e8 0c 00 34  	cbz	w8, 0x19230c <cam_flash_prepare+0x48c>
+  192174: 08 00 00 90  	adrp	x8, 0x192000 <cam_flash_prepare+0x2f4> // meizu_flash_dev_ops+0x10
+  192178: 08 01 40 f9  	ldr	x8, [x8] // meizu_flash_dev_ops+0x10
+  19217c: a8 01 00 b4  	cbz	x8, 0x1921b0 <cam_flash_prepare+0x330>
+  192180: 13 01 40 f9  	ldr	x19, [x8]
+  192184: 08 00 00 90  	adrp	x8, 0x192000 <cam_flash_prepare+0x304> // +0x1addd8
+  192188: 08 01 00 91  	add	x8, x8, #0 // +0x1addd8
+  19218c: 68 02 08 cb  	sub	x8, x19, x8
+  192190: 08 0d c8 93  	ror	x8, x8, #3
+  192194: 1f 51 00 f1  	cmp	x8, #20
+  192198: 82 13 00 54  	b.hs	0x192408 <cam_flash_prepare+0x588>
+  19219c: 40 00 80 52  	mov	w0, #2
+  1921a0: 54 00 80 52  	mov	w20, #2
+  1921a4: 60 02 3f d6  	blr	x19
+  1921a8: f3 03 00 2a  	mov	w19, w0
+  1921ac: 80 00 f8 37  	tbnz	w0, #31, 0x1921bc <cam_flash_prepare+0x33c>
+  1921b0: 28 00 80 52  	mov	w8, #1
+  1921b4: a8 02 00 39  	strb	w8, [x21]
+  1921b8: b6 ff ff 17  	b	0x192090 <cam_flash_prepare+0x210>
+  1921bc: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x33c> // 'cam_flash_prepare'
+  1921c0: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x340> // '\x016%s: %s: %s: %d %s:flash dev %d enable failed, ret:%d.\n'
+  1921c4: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x344> // 'CAM_ERR'
+  1921c8: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x348> // 'CAM-FLASH'
+  1921cc: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  1921d0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s:flash dev %d enable failed, ret:%d.\n'
+  1921d4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1921d8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1921dc: 60 00 80 52  	mov	w0, #3
+  1921e0: a5 1e 80 52  	mov	w5, #245
+  1921e4: e6 03 04 aa  	mov	x6, x4
+  1921e8: e7 03 14 2a  	mov	w7, w20
+  1921ec: f3 03 00 b9  	str	w19, [sp]
+  1921f0: a6 ff ff 17  	b	0x192088 <cam_flash_prepare+0x208>
+  1921f4: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x374> // 'cam_flash_prepare'
+  1921f8: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x378> // '\x016%s: %s: %s: %d %s: release flash dev: %d'
+  1921fc: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x37c> // 'CAM_DBG'
+  192200: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x380> // 'CAM-FLASH'
+  192204: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  192208: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: release flash dev: %d'
+  19220c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  192210: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  192214: 60 00 80 52  	mov	w0, #3
+  192218: 05 20 80 52  	mov	w5, #256
+  19221c: e6 03 04 aa  	mov	x6, x4
+  192220: e7 03 1f 2a  	mov	w7, wzr
+  192224: 00 00 00 94  	bl	0x192224 <cam_flash_prepare+0x3a4> // cam_print_log+0x0
+  192228: 3b ff ff 17  	b	0x191f14 <cam_flash_prepare+0x94>
+  19222c: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x3ac> // 'cam_flash_prepare'
+  192230: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x3b0> // '\x016%s: %s: %s: %d %s: release flash dev: %d'
+  192234: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x3b4> // 'CAM_DBG'
+  192238: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x3b8> // 'CAM-FLASH'
+  19223c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  192240: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: release flash dev: %d'
+  192244: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  192248: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  19224c: 60 00 80 52  	mov	w0, #3
+  192250: 05 20 80 52  	mov	w5, #256
+  192254: e6 03 04 aa  	mov	x6, x4
+  192258: 27 00 80 52  	mov	w7, #1
+  19225c: 00 00 00 94  	bl	0x19225c <cam_flash_prepare+0x3dc> // cam_print_log+0x0
+  192260: 3e ff ff 17  	b	0x191f58 <cam_flash_prepare+0xd8>
+  192264: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x3e4> // 'cam_flash_prepare'
+  192268: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x3e8> // '\x016%s: %s: %s: %d %s: release flash dev: %d'
+  19226c: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x3ec> // 'CAM_DBG'
+  192270: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x3f0> // 'CAM-FLASH'
+  192274: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  192278: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: release flash dev: %d'
+  19227c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  192280: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  192284: 60 00 80 52  	mov	w0, #3
+  192288: 05 20 80 52  	mov	w5, #256
+  19228c: e6 03 04 aa  	mov	x6, x4
+  192290: 47 00 80 52  	mov	w7, #2
+  192294: 00 00 00 94  	bl	0x192294 <cam_flash_prepare+0x414> // cam_print_log+0x0
+  192298: 40 ff ff 17  	b	0x191f98 <cam_flash_prepare+0x118>
+  19229c: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x41c> // 'cam_flash_prepare'
+  1922a0: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x420> // '\x016%s: %s: %s: %d %s: init flash dev: %d'
+  1922a4: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x424> // 'CAM_DBG'
+  1922a8: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x428> // 'CAM-FLASH'
+  1922ac: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  1922b0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: init flash dev: %d'
+  1922b4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  1922b8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1922bc: 60 00 80 52  	mov	w0, #3
+  1922c0: 05 1e 80 52  	mov	w5, #240
+  1922c4: e6 03 04 aa  	mov	x6, x4
+  1922c8: e7 03 1f 2a  	mov	w7, wzr
+  1922cc: 00 00 00 94  	bl	0x1922cc <cam_flash_prepare+0x44c> // cam_print_log+0x0
+  1922d0: 7f ff ff 17  	b	0x1920cc <cam_flash_prepare+0x24c>
+  1922d4: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x454> // 'cam_flash_prepare'
+  1922d8: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x458> // '\x016%s: %s: %s: %d %s: init flash dev: %d'
+  1922dc: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x45c> // 'CAM_DBG'
+  1922e0: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x460> // 'CAM-FLASH'
+  1922e4: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  1922e8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: init flash dev: %d'
+  1922ec: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  1922f0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  1922f4: 60 00 80 52  	mov	w0, #3
+  1922f8: 05 1e 80 52  	mov	w5, #240
+  1922fc: e6 03 04 aa  	mov	x6, x4
+  192300: 27 00 80 52  	mov	w7, #1
+  192304: 00 00 00 94  	bl	0x192304 <cam_flash_prepare+0x484> // cam_print_log+0x0
+  192308: 88 ff ff 17  	b	0x192128 <cam_flash_prepare+0x2a8>
+  19230c: 04 00 00 90  	adrp	x4, 0x192000 <cam_flash_prepare+0x48c> // 'cam_flash_prepare'
+  192310: 01 00 00 90  	adrp	x1, 0x192000 <cam_flash_prepare+0x490> // '\x016%s: %s: %s: %d %s: init flash dev: %d'
+  192314: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x494> // 'CAM_DBG'
+  192318: 03 00 00 90  	adrp	x3, 0x192000 <cam_flash_prepare+0x498> // 'CAM-FLASH'
+  19231c: 84 00 00 91  	add	x4, x4, #0 // 'cam_flash_prepare'
+  192320: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: init flash dev: %d'
+  192324: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  192328: 63 00 00 91  	add	x3, x3, #0 // 'CAM-FLASH'
+  19232c: 60 00 80 52  	mov	w0, #3
+  192330: 05 1e 80 52  	mov	w5, #240
+  192334: e6 03 04 aa  	mov	x6, x4
+  192338: 47 00 80 52  	mov	w7, #2
+  19233c: 00 00 00 94  	bl	0x19233c <cam_flash_prepare+0x4bc> // cam_print_log+0x0
+  192340: 8d ff ff 17  	b	0x192174 <cam_flash_prepare+0x2f4>
+  192344: a0 b7 95 d2  	mov	x0, #44477
+  192348: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x4c8> // +0x6d9f0
+  19234c: 20 aa b1 f2  	movk	x0, #36177, lsl #16
+  192350: 42 00 00 91  	add	x2, x2, #0 // +0x6d9f0
+  192354: 20 0b cf f2  	movk	x0, #30809, lsl #32
+  192358: e1 03 14 aa  	mov	x1, x20
+  19235c: e0 86 f5 f2  	movk	x0, #44087, lsl #48
+  192360: 00 00 00 94  	bl	0x192360 <cam_flash_prepare+0x4e0> // __cfi_slowpath_diag+0x0
+  192364: f6 fe ff 17  	b	0x191f3c <cam_flash_prepare+0xbc>
+  192368: a0 b7 95 d2  	mov	x0, #44477
+  19236c: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x4ec> // +0x6d9f0
+  192370: 20 aa b1 f2  	movk	x0, #36177, lsl #16
+  192374: 42 00 00 91  	add	x2, x2, #0 // +0x6d9f0
+  192378: 20 0b cf f2  	movk	x0, #30809, lsl #32
+  19237c: e1 03 08 aa  	mov	x1, x8
+  192380: e0 86 f5 f2  	movk	x0, #44087, lsl #48
+  192384: f4 03 08 aa  	mov	x20, x8
+  192388: 00 00 00 94  	bl	0x192388 <cam_flash_prepare+0x508> // __cfi_slowpath_diag+0x0
+  19238c: e8 03 14 aa  	mov	x8, x20
+  192390: fa fe ff 17  	b	0x191f78 <cam_flash_prepare+0xf8>
+  192394: a0 b7 95 d2  	mov	x0, #44477
+  192398: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x518> // +0x6d9f0
+  19239c: 20 aa b1 f2  	movk	x0, #36177, lsl #16
+  1923a0: 42 00 00 91  	add	x2, x2, #0 // +0x6d9f0
+  1923a4: 20 0b cf f2  	movk	x0, #30809, lsl #32
+  1923a8: e1 03 08 aa  	mov	x1, x8
+  1923ac: e0 86 f5 f2  	movk	x0, #44087, lsl #48
+  1923b0: f4 03 08 aa  	mov	x20, x8
+  1923b4: 00 00 00 94  	bl	0x1923b4 <cam_flash_prepare+0x534> // __cfi_slowpath_diag+0x0
+  1923b8: e8 03 14 aa  	mov	x8, x20
+  1923bc: ff fe ff 17  	b	0x191fb8 <cam_flash_prepare+0x138>
+  1923c0: a0 b7 95 d2  	mov	x0, #44477
+  1923c4: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x544> // +0x6d9d0
+  1923c8: 20 aa b1 f2  	movk	x0, #36177, lsl #16
+  1923cc: 42 00 00 91  	add	x2, x2, #0 // +0x6d9d0
+  1923d0: 20 0b cf f2  	movk	x0, #30809, lsl #32
+  1923d4: e1 03 13 aa  	mov	x1, x19
+  1923d8: e0 86 f5 f2  	movk	x0, #44087, lsl #48
+  1923dc: 00 00 00 94  	bl	0x1923dc <cam_flash_prepare+0x55c> // __cfi_slowpath_diag+0x0
+  1923e0: 45 ff ff 17  	b	0x1920f4 <cam_flash_prepare+0x274>
+  1923e4: a0 b7 95 d2  	mov	x0, #44477
+  1923e8: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x568> // +0x6d9d0
+  1923ec: 20 aa b1 f2  	movk	x0, #36177, lsl #16
+  1923f0: 42 00 00 91  	add	x2, x2, #0 // +0x6d9d0
+  1923f4: 20 0b cf f2  	movk	x0, #30809, lsl #32
+  1923f8: e1 03 13 aa  	mov	x1, x19
+  1923fc: e0 86 f5 f2  	movk	x0, #44087, lsl #48
+  192400: 00 00 00 94  	bl	0x192400 <cam_flash_prepare+0x580> // __cfi_slowpath_diag+0x0
+  192404: 53 ff ff 17  	b	0x192150 <cam_flash_prepare+0x2d0>
+  192408: a0 b7 95 d2  	mov	x0, #44477
+  19240c: 02 00 00 90  	adrp	x2, 0x192000 <cam_flash_prepare+0x58c> // +0x6d9d0
+  192410: 20 aa b1 f2  	movk	x0, #36177, lsl #16
+  192414: 42 00 00 91  	add	x2, x2, #0 // +0x6d9d0
+  192418: 20 0b cf f2  	movk	x0, #30809, lsl #32
+  19241c: e1 03 13 aa  	mov	x1, x19
+  192420: e0 86 f5 f2  	movk	x0, #44087, lsl #48
+  192424: 00 00 00 94  	bl	0x192424 <cam_flash_prepare+0x5a4> // __cfi_slowpath_diag+0x0
+  192428: 5d ff ff 17  	b	0x19219c <cam_flash_prepare+0x31c>

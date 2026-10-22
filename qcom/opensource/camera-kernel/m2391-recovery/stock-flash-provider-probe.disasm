@@ -1,0 +1,318 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019da68 <msm_flash_platform_probe>:
+  19da68: 3f 23 03 d5  	hint	#25
+  19da6c: ff 03 01 d1  	sub	sp, sp, #64
+  19da70: 5e 86 00 f8  	str	x30, [x18], #8
+  19da74: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  19da78: fd 43 00 91  	add	x29, sp, #16
+  19da7c: f6 57 02 a9  	stp	x22, x21, [sp, #32]
+  19da80: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+  19da84: f3 03 00 aa  	mov	x19, x0
+  19da88: 08 41 38 d5  	mrs	x8, SP_EL0
+  19da8c: 00 00 00 90  	adrp	x0, 0x19d000 <msm_flash_platform_probe+0x24> // '\x013%s:Enter.\n'
+  19da90: 01 00 00 90  	adrp	x1, 0x19d000 <msm_flash_platform_probe+0x28> // 'msm_flash_platform_probe'
+  19da94: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19da98: 00 00 00 91  	add	x0, x0, #0 // '\x013%s:Enter.\n'
+  19da9c: 21 00 00 91  	add	x1, x1, #0 // 'msm_flash_platform_probe'
+  19daa0: e8 07 00 f9  	str	x8, [sp, #8]
+  19daa4: ff 03 00 f9  	str	xzr, [sp]
+  19daa8: 00 00 00 94  	bl	0x19daa8 <msm_flash_platform_probe+0x40> // _printk+0x0
+  19daac: 60 82 41 f9  	ldr	x0, [x19, #768]
+  19dab0: c0 00 00 b5  	cbnz	x0, 0x19dac8 <msm_flash_platform_probe+0x60>
+  19dab4: 00 00 00 90  	adrp	x0, 0x19d000 <msm_flash_platform_probe+0x4c> // '\x013of_node NULL\n'
+  19dab8: 00 00 00 91  	add	x0, x0, #0 // '\x013of_node NULL\n'
+  19dabc: 00 00 00 94  	bl	0x19dabc <msm_flash_platform_probe+0x54> // _printk+0x0
+  19dac0: b4 02 80 12  	mov	w20, #-22
+  19dac4: 19 00 00 14  	b	0x19db28 <msm_flash_platform_probe+0xc0>
+  19dac8: 01 00 00 90  	adrp	x1, 0x19d000 <msm_flash_platform_probe+0x60> // 'cell-index'
+  19dacc: e2 13 00 91  	add	x2, sp, #4
+  19dad0: 21 00 00 91  	add	x1, x1, #0 // 'cell-index'
+  19dad4: 23 00 80 52  	mov	w3, #1
+  19dad8: e4 03 1f aa  	mov	x4, xzr
+  19dadc: 00 00 00 94  	bl	0x19dadc <msm_flash_platform_probe+0x74> // of_property_read_variable_u32_array+0x0
+  19dae0: a0 00 f8 36  	tbz	w0, #31, 0x19daf4 <msm_flash_platform_probe+0x8c>
+  19dae4: f4 03 00 2a  	mov	w20, w0
+  19dae8: 00 00 00 90  	adrp	x0, 0x19d000 <msm_flash_platform_probe+0x80> // '\x013cell-index failed rc %d\n'
+  19daec: 00 00 00 91  	add	x0, x0, #0 // '\x013cell-index failed rc %d\n'
+  19daf0: 0c 00 00 14  	b	0x19db20 <msm_flash_platform_probe+0xb8>
+  19daf4: 01 00 00 90  	adrp	x1, 0x19d000 <msm_flash_platform_probe+0x8c> // 'slave-addr'
+  19daf8: 60 82 41 f9  	ldr	x0, [x19, #768]
+  19dafc: 21 00 00 91  	add	x1, x1, #0 // 'slave-addr'
+  19db00: e2 03 00 91  	mov	x2, sp
+  19db04: 23 00 80 52  	mov	w3, #1
+  19db08: e4 03 1f aa  	mov	x4, xzr
+  19db0c: 00 00 00 94  	bl	0x19db0c <msm_flash_platform_probe+0xa4> // of_property_read_variable_u32_array+0x0
+  19db10: 60 02 f8 36  	tbz	w0, #31, 0x19db5c <msm_flash_platform_probe+0xf4>
+  19db14: f4 03 00 2a  	mov	w20, w0
+  19db18: 00 00 00 90  	adrp	x0, 0x19d000 <msm_flash_platform_probe+0xb0> // '\x013slave-addr failed rc %d\n'
+  19db1c: 00 00 00 91  	add	x0, x0, #0 // '\x013slave-addr failed rc %d\n'
+  19db20: e1 03 14 2a  	mov	w1, w20
+  19db24: 00 00 00 94  	bl	0x19db24 <msm_flash_platform_probe+0xbc> // _printk+0x0
+  19db28: 08 41 38 d5  	mrs	x8, SP_EL0
+  19db2c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19db30: e9 07 40 f9  	ldr	x9, [sp, #8]
+  19db34: 1f 01 09 eb  	cmp	x8, x9
+  19db38: 81 0e 00 54  	b.ne	0x19dd08 <msm_flash_platform_probe+0x2a0>
+  19db3c: e0 03 14 2a  	mov	w0, w20
+  19db40: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+  19db44: f6 57 42 a9  	ldp	x22, x21, [sp, #32]
+  19db48: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  19db4c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19db50: ff 03 01 91  	add	sp, sp, #64
+  19db54: bf 23 03 d5  	hint	#29
+  19db58: c0 03 5f d6  	ret
+  19db5c: e8 07 40 b9  	ldr	w8, [sp, #4]
+  19db60: 1f 11 00 71  	cmp	w8, #4
+  19db64: 02 0d 00 54  	b.hs	0x19dd04 <msm_flash_platform_probe+0x29c>
+  19db68: 09 00 00 90  	adrp	x9, 0x19d000 <msm_flash_platform_probe+0x100> // +0x24a660
+  19db6c: 15 dd 78 d3  	lsl	x21, x8, #8
+  19db70: 29 01 00 91  	add	x9, x9, #0 // +0x24a660
+  19db74: 0a 0b 80 52  	mov	w10, #88
+  19db78: 34 01 15 8b  	add	x20, x9, x21
+  19db7c: 0a 7d 78 b3  	bfi	x10, x8, #8, #32
+  19db80: 5f 01 0c f1  	cmp	x10, #768
+  19db84: 9f 7e 0f a9  	stp	xzr, xzr, [x20, #240]
+  19db88: 9f 7e 0e a9  	stp	xzr, xzr, [x20, #224]
+  19db8c: 9f 7e 0d a9  	stp	xzr, xzr, [x20, #208]
+  19db90: 9f 7e 0c a9  	stp	xzr, xzr, [x20, #192]
+  19db94: 9f 7e 0b a9  	stp	xzr, xzr, [x20, #176]
+  19db98: 9f 7e 0a a9  	stp	xzr, xzr, [x20, #160]
+  19db9c: 9f 7e 09 a9  	stp	xzr, xzr, [x20, #144]
+  19dba0: 9f 7e 08 a9  	stp	xzr, xzr, [x20, #128]
+  19dba4: 9f 7e 07 a9  	stp	xzr, xzr, [x20, #112]
+  19dba8: 9f 7e 06 a9  	stp	xzr, xzr, [x20, #96]
+  19dbac: 9f 7e 05 a9  	stp	xzr, xzr, [x20, #80]
+  19dbb0: 9f 7e 04 a9  	stp	xzr, xzr, [x20, #64]
+  19dbb4: 9f 7e 03 a9  	stp	xzr, xzr, [x20, #48]
+  19dbb8: 9f 7e 02 a9  	stp	xzr, xzr, [x20, #32]
+  19dbbc: 9f 7e 01 a9  	stp	xzr, xzr, [x20, #16]
+  19dbc0: 9f 7e 00 a9  	stp	xzr, xzr, [x20]
+  19dbc4: e8 09 00 54  	b.hi	0x19dd00 <msm_flash_platform_probe+0x298>
+  19dbc8: 2a 21 08 8b  	add	x10, x9, x8, lsl #8
+  19dbcc: ab 0a 7c b2  	orr	x11, x21, #0x70
+  19dbd0: 7f 01 0c f1  	cmp	x11, #768
+  19dbd4: 53 2d 00 f9  	str	x19, [x10, #88]
+  19dbd8: 48 09 00 54  	b.hi	0x19dd00 <msm_flash_platform_probe+0x298>
+  19dbdc: 8b 0e 80 52  	mov	w11, #116
+  19dbe0: 5f 71 00 b9  	str	wzr, [x10, #112]
+  19dbe4: ab 02 0b aa  	orr	x11, x21, x11
+  19dbe8: 7f 01 0c f1  	cmp	x11, #768
+  19dbec: a8 08 00 54  	b.hi	0x19dd00 <msm_flash_platform_probe+0x298>
+  19dbf0: 2a 21 08 8b  	add	x10, x9, x8, lsl #8
+  19dbf4: 8b 0c 80 52  	mov	w11, #100
+  19dbf8: ab 02 0b aa  	orr	x11, x21, x11
+  19dbfc: 7f 01 0c f1  	cmp	x11, #768
+  19dc00: 5f 75 00 b9  	str	wzr, [x10, #116]
+  19dc04: e8 07 00 54  	b.hi	0x19dd00 <msm_flash_platform_probe+0x298>
+  19dc08: 0b 15 80 52  	mov	w11, #168
+  19dc0c: 48 65 00 b9  	str	w8, [x10, #100]
+  19dc10: ab 02 0b aa  	orr	x11, x21, x11
+  19dc14: 68 0a 00 b9  	str	w8, [x19, #8]
+  19dc18: 7f 01 0c f1  	cmp	x11, #768
+  19dc1c: 28 07 00 54  	b.hi	0x19dd00 <msm_flash_platform_probe+0x298>
+  19dc20: 2a 21 08 8b  	add	x10, x9, x8, lsl #8
+  19dc24: 2b 00 80 52  	mov	w11, #1
+  19dc28: ac 02 79 b2  	orr	x12, x21, #0x80
+  19dc2c: 9f 01 0c f1  	cmp	x12, #768
+  19dc30: 4b a9 00 b9  	str	w11, [x10, #168]
+  19dc34: 68 06 00 54  	b.hi	0x19dd00 <msm_flash_platform_probe+0x298>
+  19dc38: ac 06 7b b2  	orr	x12, x21, #0x60
+  19dc3c: 4b 81 00 b9  	str	w11, [x10, #128]
+  19dc40: 9f 01 0c f1  	cmp	x12, #768
+  19dc44: e8 05 00 54  	b.hi	0x19dd00 <msm_flash_platform_probe+0x298>
+  19dc48: 0a 00 00 90  	adrp	x10, 0x19d000 <msm_flash_platform_probe+0x1e0> // kmalloc_caches+0x38
+  19dc4c: 36 21 08 8b  	add	x22, x9, x8, lsl #8
+  19dc50: 28 00 80 52  	mov	w8, #1
+  19dc54: 01 b8 81 52  	mov	w1, #3520
+  19dc58: 02 05 80 52  	mov	w2, #40
+  19dc5c: 40 01 40 f9  	ldr	x0, [x10] // kmalloc_caches+0x38
+  19dc60: c8 82 01 39  	strb	w8, [x22, #96]
+  19dc64: 00 00 00 94  	bl	0x19dc64 <msm_flash_platform_probe+0x1fc> // kmem_cache_alloc_trace+0x0
+  19dc68: 08 13 80 52  	mov	w8, #152
+  19dc6c: a8 02 08 aa  	orr	x8, x21, x8
+  19dc70: 1f 01 0c f1  	cmp	x8, #768
+  19dc74: 68 04 00 54  	b.hi	0x19dd00 <msm_flash_platform_probe+0x298>
+  19dc78: c0 4e 00 f9  	str	x0, [x22, #152]
+  19dc7c: c0 00 00 b5  	cbnz	x0, 0x19dc94 <msm_flash_platform_probe+0x22c>
+  19dc80: 00 00 00 90  	adrp	x0, 0x19d000 <msm_flash_platform_probe+0x218> // '\x013Allocate cci client failed.\n'
+  19dc84: 00 00 00 91  	add	x0, x0, #0 // '\x013Allocate cci client failed.\n'
+  19dc88: 00 00 00 94  	bl	0x19dc88 <msm_flash_platform_probe+0x220> // _printk+0x0
+  19dc8c: 74 01 80 12  	mov	w20, #-12
+  19dc90: a6 ff ff 17  	b	0x19db28 <msm_flash_platform_probe+0xc0>
+  19dc94: 08 00 00 90  	adrp	x8, 0x19d000 <msm_flash_platform_probe+0x22c> // +0x24a960
+  19dc98: 00 00 00 90  	adrp	x0, 0x19d000 <msm_flash_platform_probe+0x230> // msm_flash_mutex+0x0
+  19dc9c: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  19dca0: f5 07 40 b9  	ldr	w21, [sp, #4]
+  19dca4: 74 56 00 f9  	str	x20, [x19, #168]
+  19dca8: 09 01 40 b9  	ldr	w9, [x8] // +0x24a960
+  19dcac: 29 05 00 11  	add	w9, w9, #1
+  19dcb0: 09 01 00 b9  	str	w9, [x8] // +0x24a960
+  19dcb4: 00 00 00 94  	bl	0x19dcb4 <msm_flash_platform_probe+0x24c> // mutex_lock+0x0
+  19dcb8: bf 0e 00 71  	cmp	w21, #3
+  19dcbc: 42 02 00 54  	b.hs	0x19dd04 <msm_flash_platform_probe+0x29c>
+  19dcc0: 00 00 00 90  	adrp	x0, 0x19d000 <msm_flash_platform_probe+0x258> // msm_flash_mutex+0x0
+  19dcc4: 08 00 00 90  	adrp	x8, 0x19d000 <msm_flash_platform_probe+0x25c> // meizu_flash_dev_ops+0x0
+  19dcc8: 09 00 00 90  	adrp	x9, 0x19d000 <msm_flash_platform_probe+0x260> // +0x64a48
+  19dccc: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  19dcd0: 08 01 00 91  	add	x8, x8, #0 // meizu_flash_dev_ops+0x0
+  19dcd4: 29 01 00 91  	add	x9, x9, #0 // +0x64a48
+  19dcd8: 09 79 35 f8  	str	x9, [x8, x21, lsl #3]
+  19dcdc: 00 00 00 94  	bl	0x19dcdc <msm_flash_platform_probe+0x274> // mutex_unlock+0x0
+  19dce0: 00 00 00 90  	adrp	x0, 0x19d000 <msm_flash_platform_probe+0x278> // '\x013%s: meizu flash cci probe success,index:%d.\n'
+  19dce4: 01 00 00 90  	adrp	x1, 0x19d000 <msm_flash_platform_probe+0x27c> // 'msm_flash_platform_probe'
+  19dce8: e2 07 40 b9  	ldr	w2, [sp, #4]
+  19dcec: 00 00 00 91  	add	x0, x0, #0 // '\x013%s: meizu flash cci probe success,index:%d.\n'
+  19dcf0: 21 00 00 91  	add	x1, x1, #0 // 'msm_flash_platform_probe'
+  19dcf4: 00 00 00 94  	bl	0x19dcf4 <msm_flash_platform_probe+0x28c> // _printk+0x0
+  19dcf8: f4 03 1f 2a  	mov	w20, wzr
+  19dcfc: 8b ff ff 17  	b	0x19db28 <msm_flash_platform_probe+0xc0>
+  19dd00: 20 00 20 d4  	brk	#0x1
+  19dd04: 40 a2 2a d4  	brk	#0x5512
+  19dd08: 00 00 00 94  	bl	0x19dd08 <msm_flash_platform_probe+0x2a0> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019c538 <msm_flash_driver_i2c_probe>:
+  19c538: 3f 23 03 d5  	hint	#25
+  19c53c: ff c3 00 d1  	sub	sp, sp, #48
+  19c540: 5e 86 00 f8  	str	x30, [x18], #8
+  19c544: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  19c548: fd 43 00 91  	add	x29, sp, #16
+  19c54c: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  19c550: f3 03 00 aa  	mov	x19, x0
+  19c554: 08 41 38 d5  	mrs	x8, SP_EL0
+  19c558: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x20> // '\x013%s:enter.\n'
+  19c55c: 01 00 00 90  	adrp	x1, 0x19c000 <msm_flash_driver_i2c_probe+0x24> // 'msm_flash_driver_i2c_probe'
+  19c560: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19c564: 00 00 00 91  	add	x0, x0, #0 // '\x013%s:enter.\n'
+  19c568: 21 00 00 91  	add	x1, x1, #0 // 'msm_flash_driver_i2c_probe'
+  19c56c: e8 07 00 f9  	str	x8, [sp, #8]
+  19c570: ff 03 00 f9  	str	xzr, [sp]
+  19c574: 00 00 00 94  	bl	0x19c574 <msm_flash_driver_i2c_probe+0x3c> // _printk+0x0
+  19c578: 01 00 00 90  	adrp	x1, 0x19c000 <msm_flash_driver_i2c_probe+0x40> // 'cell-index'
+  19c57c: 60 8a 41 f9  	ldr	x0, [x19, #784]
+  19c580: 21 00 00 91  	add	x1, x1, #0 // 'cell-index'
+  19c584: e2 13 00 91  	add	x2, sp, #4
+  19c588: 23 00 80 52  	mov	w3, #1
+  19c58c: e4 03 1f aa  	mov	x4, xzr
+  19c590: 00 00 00 94  	bl	0x19c590 <msm_flash_driver_i2c_probe+0x58> // of_property_read_variable_u32_array+0x0
+  19c594: 20 01 f8 37  	tbnz	w0, #31, 0x19c5b8 <msm_flash_driver_i2c_probe+0x80>
+  19c598: 01 00 00 90  	adrp	x1, 0x19c000 <msm_flash_driver_i2c_probe+0x60> // 'slave-addr'
+  19c59c: 60 8a 41 f9  	ldr	x0, [x19, #784]
+  19c5a0: 21 00 00 91  	add	x1, x1, #0 // 'slave-addr'
+  19c5a4: e2 03 00 91  	mov	x2, sp
+  19c5a8: 23 00 80 52  	mov	w3, #1
+  19c5ac: e4 03 1f aa  	mov	x4, xzr
+  19c5b0: 00 00 00 94  	bl	0x19c5b0 <msm_flash_driver_i2c_probe+0x78> // of_property_read_variable_u32_array+0x0
+  19c5b4: e0 00 f8 36  	tbz	w0, #31, 0x19c5d0 <msm_flash_driver_i2c_probe+0x98>
+  19c5b8: f4 03 00 2a  	mov	w20, w0
+  19c5bc: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x84> // '\x013failed rc %d\n'
+  19c5c0: 00 00 00 91  	add	x0, x0, #0 // '\x013failed rc %d\n'
+  19c5c4: e1 03 14 2a  	mov	w1, w20
+  19c5c8: 00 00 00 94  	bl	0x19c5c8 <msm_flash_driver_i2c_probe+0x90> // _printk+0x0
+  19c5cc: 55 00 00 14  	b	0x19c720 <msm_flash_driver_i2c_probe+0x1e8>
+  19c5d0: f4 07 40 b9  	ldr	w20, [sp, #4]
+  19c5d4: 9f 12 00 71  	cmp	w20, #4
+  19c5d8: e2 0b 00 54  	b.hs	0x19c754 <msm_flash_driver_i2c_probe+0x21c>
+  19c5dc: 0a 00 00 90  	adrp	x10, 0x19c000 <msm_flash_driver_i2c_probe+0xa4> // +0x24a660
+  19c5e0: 89 de 78 d3  	lsl	x9, x20, #8
+  19c5e4: 4a 01 00 91  	add	x10, x10, #0 // +0x24a660
+  19c5e8: eb 03 40 b9  	ldr	w11, [sp]
+  19c5ec: 48 01 09 8b  	add	x8, x10, x9
+  19c5f0: 8c 0e 80 52  	mov	w12, #116
+  19c5f4: 8c 7e 78 b3  	bfi	x12, x20, #8, #32
+  19c5f8: 9f 01 0c f1  	cmp	x12, #768
+  19c5fc: 1f 7d 0f a9  	stp	xzr, xzr, [x8, #240]
+  19c600: 1f 7d 0e a9  	stp	xzr, xzr, [x8, #224]
+  19c604: 1f 7d 0d a9  	stp	xzr, xzr, [x8, #208]
+  19c608: 1f 7d 0c a9  	stp	xzr, xzr, [x8, #192]
+  19c60c: 1f 7d 0b a9  	stp	xzr, xzr, [x8, #176]
+  19c610: 1f 7d 0a a9  	stp	xzr, xzr, [x8, #160]
+  19c614: 1f 7d 09 a9  	stp	xzr, xzr, [x8, #144]
+  19c618: 1f 7d 08 a9  	stp	xzr, xzr, [x8, #128]
+  19c61c: 1f 7d 07 a9  	stp	xzr, xzr, [x8, #112]
+  19c620: 1f 7d 06 a9  	stp	xzr, xzr, [x8, #96]
+  19c624: 1f 7d 05 a9  	stp	xzr, xzr, [x8, #80]
+  19c628: 1f 7d 04 a9  	stp	xzr, xzr, [x8, #64]
+  19c62c: 1f 7d 03 a9  	stp	xzr, xzr, [x8, #48]
+  19c630: 1f 7d 02 a9  	stp	xzr, xzr, [x8, #32]
+  19c634: 1f 7d 01 a9  	stp	xzr, xzr, [x8, #16]
+  19c638: 1f 7d 00 a9  	stp	xzr, xzr, [x8]
+  19c63c: 6b 06 00 79  	strh	w11, [x19, #2]
+  19c640: 88 08 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c644: 4b 21 14 8b  	add	x11, x10, x20, lsl #8
+  19c648: 8c 0c 80 52  	mov	w12, #100
+  19c64c: 2c 01 0c aa  	orr	x12, x9, x12
+  19c650: 9f 01 0c f1  	cmp	x12, #768
+  19c654: 7f 75 00 b9  	str	wzr, [x11, #116]
+  19c658: c8 07 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c65c: 0c 11 80 52  	mov	w12, #136
+  19c660: 74 65 00 b9  	str	w20, [x11, #100]
+  19c664: 2c 01 0c aa  	orr	x12, x9, x12
+  19c668: 9f 01 0c f1  	cmp	x12, #768
+  19c66c: 28 07 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c670: 4b 21 14 8b  	add	x11, x10, x20, lsl #8
+  19c674: 2c 01 79 b2  	orr	x12, x9, #0x80
+  19c678: 9f 01 0c f1  	cmp	x12, #768
+  19c67c: 73 45 00 f9  	str	x19, [x11, #136]
+  19c680: 88 06 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c684: 4c 00 80 52  	mov	w12, #2
+  19c688: 2d 05 7b b2  	orr	x13, x9, #0x60
+  19c68c: bf 01 0c f1  	cmp	x13, #768
+  19c690: 6c 81 00 b9  	str	w12, [x11, #128]
+  19c694: e8 05 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c698: 4a 21 14 8b  	add	x10, x10, x20, lsl #8
+  19c69c: 2b 00 80 52  	mov	w11, #1
+  19c6a0: 29 0d 7d b2  	orr	x9, x9, #0x78
+  19c6a4: 3f 01 0c f1  	cmp	x9, #768
+  19c6a8: 4b 81 01 39  	strb	w11, [x10, #96]
+  19c6ac: 28 05 00 54  	b.hi	0x19c750 <msm_flash_driver_i2c_probe+0x218>
+  19c6b0: 09 00 00 90  	adrp	x9, 0x19c000 <msm_flash_driver_i2c_probe+0x178> // +0x64a80
+  19c6b4: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x17c> // msm_flash_mutex+0x0
+  19c6b8: 29 01 00 91  	add	x9, x9, #0 // +0x64a80
+  19c6bc: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  19c6c0: 49 3d 00 f9  	str	x9, [x10, #120]
+  19c6c4: 68 5e 00 f9  	str	x8, [x19, #184]
+  19c6c8: 00 00 00 94  	bl	0x19c6c8 <msm_flash_driver_i2c_probe+0x190> // mutex_lock+0x0
+  19c6cc: 9f 0e 00 71  	cmp	w20, #3
+  19c6d0: 22 04 00 54  	b.hs	0x19c754 <msm_flash_driver_i2c_probe+0x21c>
+  19c6d4: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x19c> // msm_flash_mutex+0x0
+  19c6d8: 08 00 00 90  	adrp	x8, 0x19c000 <msm_flash_driver_i2c_probe+0x1a0> // meizu_flash_dev_ops+0x0
+  19c6dc: 09 00 00 90  	adrp	x9, 0x19c000 <msm_flash_driver_i2c_probe+0x1a4> // +0x64a48
+  19c6e0: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  19c6e4: 08 01 00 91  	add	x8, x8, #0 // meizu_flash_dev_ops+0x0
+  19c6e8: 29 01 00 91  	add	x9, x9, #0 // +0x64a48
+  19c6ec: 09 79 34 f8  	str	x9, [x8, x20, lsl #3]
+  19c6f0: 00 00 00 94  	bl	0x19c6f0 <msm_flash_driver_i2c_probe+0x1b8> // mutex_unlock+0x0
+  19c6f4: 08 00 00 90  	adrp	x8, 0x19c000 <msm_flash_driver_i2c_probe+0x1bc> // +0x24a960
+  19c6f8: 00 00 00 90  	adrp	x0, 0x19c000 <msm_flash_driver_i2c_probe+0x1c0> // '\x013%s: meizu flash i2c probe success,index:%d.\n'
+  19c6fc: 01 00 00 90  	adrp	x1, 0x19c000 <msm_flash_driver_i2c_probe+0x1c4> // 'msm_flash_driver_i2c_probe'
+  19c700: e2 07 40 b9  	ldr	w2, [sp, #4]
+  19c704: 00 00 00 91  	add	x0, x0, #0 // '\x013%s: meizu flash i2c probe success,index:%d.\n'
+  19c708: 21 00 00 91  	add	x1, x1, #0 // 'msm_flash_driver_i2c_probe'
+  19c70c: 09 01 40 b9  	ldr	w9, [x8] // +0x24a960
+  19c710: 29 05 00 11  	add	w9, w9, #1
+  19c714: 09 01 00 b9  	str	w9, [x8] // +0x24a960
+  19c718: 00 00 00 94  	bl	0x19c718 <msm_flash_driver_i2c_probe+0x1e0> // _printk+0x0
+  19c71c: f4 03 1f 2a  	mov	w20, wzr
+  19c720: 08 41 38 d5  	mrs	x8, SP_EL0
+  19c724: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19c728: e9 07 40 f9  	ldr	x9, [sp, #8]
+  19c72c: 1f 01 09 eb  	cmp	x8, x9
+  19c730: 41 01 00 54  	b.ne	0x19c758 <msm_flash_driver_i2c_probe+0x220>
+  19c734: e0 03 14 2a  	mov	w0, w20
+  19c738: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  19c73c: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  19c740: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19c744: ff c3 00 91  	add	sp, sp, #48
+  19c748: bf 23 03 d5  	hint	#29
+  19c74c: c0 03 5f d6  	ret
+  19c750: 20 00 20 d4  	brk	#0x1
+  19c754: 40 a2 2a d4  	brk	#0x5512
+  19c758: 00 00 00 94  	bl	0x19c758 <msm_flash_driver_i2c_probe+0x220> // __stack_chk_fail+0x0

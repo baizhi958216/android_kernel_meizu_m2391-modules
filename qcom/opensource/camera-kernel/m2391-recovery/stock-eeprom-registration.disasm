@@ -1,0 +1,484 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019f704 <meizu_create_eeprom_dev>:
+  19f704: 3f 23 03 d5  	hint	#25
+  19f708: ff 03 01 d1  	sub	sp, sp, #64
+  19f70c: 5e 86 00 f8  	str	x30, [x18], #8
+  19f710: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  19f714: fd 43 00 91  	add	x29, sp, #16
+  19f718: f5 13 00 f9  	str	x21, [sp, #32]
+  19f71c: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+  19f720: c0 05 00 b4  	cbz	x0, 0x19f7d8 <meizu_create_eeprom_dev+0xd4>
+  19f724: 33 3c 00 12  	and	w19, w1, #0xffff
+  19f728: 7f 12 00 71  	cmp	w19, #4
+  19f72c: a8 05 00 54  	b.hi	0x19f7e0 <meizu_create_eeprom_dev+0xdc>
+  19f730: 09 00 00 90  	adrp	x9, 0x19f000 <meizu_create_eeprom_dev+0x2c> // ''
+  19f734: 28 3c 40 92  	and	x8, x1, #0xffff
+  19f738: 29 01 00 91  	add	x9, x9, #0 // ''
+  19f73c: f5 03 00 aa  	mov	x21, x0
+  19f740: 8a 00 00 10  	adr	x10, #16
+  19f744: 2b 69 68 38  	ldrb	w11, [x9, x8]
+  19f748: 4a 09 0b 8b  	add	x10, x10, x11, lsl #2
+  19f74c: 40 01 1f d6  	br	x10
+  19f750: 9f 24 03 d5  	hint	#36
+  19f754: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x50> // +0x678f0
+  19f758: e0 03 15 aa  	mov	x0, x21
+  19f75c: 21 00 00 91  	add	x1, x1, #0 // +0x678f0
+  19f760: 00 00 00 94  	bl	0x19f760 <meizu_create_eeprom_dev+0x5c> // device_create_file+0x0
+  19f764: 20 0e f8 37  	tbnz	w0, #31, 0x19f928 <meizu_create_eeprom_dev+0x224>
+  19f768: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x64> // +0x67910
+  19f76c: e0 03 15 aa  	mov	x0, x21
+  19f770: 21 00 00 91  	add	x1, x1, #0 // +0x67910
+  19f774: 00 00 00 94  	bl	0x19f774 <meizu_create_eeprom_dev+0x70> // device_create_file+0x0
+  19f778: e0 0d f8 37  	tbnz	w0, #31, 0x19f934 <meizu_create_eeprom_dev+0x230>
+  19f77c: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x78> // +0x67930
+  19f780: e0 03 15 aa  	mov	x0, x21
+  19f784: 21 00 00 91  	add	x1, x1, #0 // +0x67930
+  19f788: 00 00 00 94  	bl	0x19f788 <meizu_create_eeprom_dev+0x84> // device_create_file+0x0
+  19f78c: a0 0d f8 37  	tbnz	w0, #31, 0x19f940 <meizu_create_eeprom_dev+0x23c>
+  19f790: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x8c> // +0x67950
+  19f794: e0 03 15 aa  	mov	x0, x21
+  19f798: 21 00 00 91  	add	x1, x1, #0 // +0x67950
+  19f79c: 00 00 00 94  	bl	0x19f79c <meizu_create_eeprom_dev+0x98> // device_create_file+0x0
+  19f7a0: 60 0d f8 37  	tbnz	w0, #31, 0x19f94c <meizu_create_eeprom_dev+0x248>
+  19f7a4: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0xa0> // +0x67970
+  19f7a8: e0 03 15 aa  	mov	x0, x21
+  19f7ac: 21 00 00 91  	add	x1, x1, #0 // +0x67970
+  19f7b0: 00 00 00 94  	bl	0x19f7b0 <meizu_create_eeprom_dev+0xac> // device_create_file+0x0
+  19f7b4: 20 0d f8 37  	tbnz	w0, #31, 0x19f958 <meizu_create_eeprom_dev+0x254>
+  19f7b8: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0xb4> // +0x67990
+  19f7bc: e0 03 15 aa  	mov	x0, x21
+  19f7c0: 21 00 00 91  	add	x1, x1, #0 // +0x67990
+  19f7c4: 00 00 00 94  	bl	0x19f7c4 <meizu_create_eeprom_dev+0xc0> // device_create_file+0x0
+  19f7c8: e0 0c f8 37  	tbnz	w0, #31, 0x19f964 <meizu_create_eeprom_dev+0x260>
+  19f7cc: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0xc8> // +0x679b0
+  19f7d0: 21 00 00 91  	add	x1, x1, #0 // +0x679b0
+  19f7d4: 4f 00 00 14  	b	0x19f910 <meizu_create_eeprom_dev+0x20c>
+  19f7d8: 54 02 80 12  	mov	w20, #-19
+  19f7dc: 72 00 00 14  	b	0x19f9a4 <meizu_create_eeprom_dev+0x2a0>
+  19f7e0: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0xdc> // '\x016%s: %s: %s: %d Invalid camera id %d'
+  19f7e4: 02 00 00 90  	adrp	x2, 0x19f000 <meizu_create_eeprom_dev+0xe0> // 'CAM_ERR'
+  19f7e8: 03 00 00 90  	adrp	x3, 0x19f000 <meizu_create_eeprom_dev+0xe4> // 'CAM-EEPROM'
+  19f7ec: 04 00 00 90  	adrp	x4, 0x19f000 <meizu_create_eeprom_dev+0xe8> // 'meizu_create_eeprom_dev'
+  19f7f0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Invalid camera id %d'
+  19f7f4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19f7f8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19f7fc: 84 00 00 91  	add	x4, x4, #0 // 'meizu_create_eeprom_dev'
+  19f800: 60 00 80 52  	mov	w0, #3
+  19f804: e5 5b 80 52  	mov	w5, #735
+  19f808: e6 03 13 2a  	mov	w6, w19
+  19f80c: 00 00 00 94  	bl	0x19f80c <meizu_create_eeprom_dev+0x108> // cam_print_log+0x0
+  19f810: f4 03 1f 2a  	mov	w20, wzr
+  19f814: 64 00 00 14  	b	0x19f9a4 <meizu_create_eeprom_dev+0x2a0>
+  19f818: 9f 24 03 d5  	hint	#36
+  19f81c: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x118> // +0x679d0
+  19f820: e0 03 15 aa  	mov	x0, x21
+  19f824: 21 00 00 91  	add	x1, x1, #0 // +0x679d0
+  19f828: 00 00 00 94  	bl	0x19f828 <meizu_create_eeprom_dev+0x124> // device_create_file+0x0
+  19f82c: e0 07 f8 37  	tbnz	w0, #31, 0x19f928 <meizu_create_eeprom_dev+0x224>
+  19f830: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x12c> // +0x679f0
+  19f834: e0 03 15 aa  	mov	x0, x21
+  19f838: 21 00 00 91  	add	x1, x1, #0 // +0x679f0
+  19f83c: 00 00 00 94  	bl	0x19f83c <meizu_create_eeprom_dev+0x138> // device_create_file+0x0
+  19f840: a0 07 f8 37  	tbnz	w0, #31, 0x19f934 <meizu_create_eeprom_dev+0x230>
+  19f844: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x140> // +0x67a10
+  19f848: e0 03 15 aa  	mov	x0, x21
+  19f84c: 21 00 00 91  	add	x1, x1, #0 // +0x67a10
+  19f850: 00 00 00 94  	bl	0x19f850 <meizu_create_eeprom_dev+0x14c> // device_create_file+0x0
+  19f854: 60 07 f8 37  	tbnz	w0, #31, 0x19f940 <meizu_create_eeprom_dev+0x23c>
+  19f858: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x154> // +0x67a30
+  19f85c: e0 03 15 aa  	mov	x0, x21
+  19f860: 21 00 00 91  	add	x1, x1, #0 // +0x67a30
+  19f864: 00 00 00 94  	bl	0x19f864 <meizu_create_eeprom_dev+0x160> // device_create_file+0x0
+  19f868: 20 07 f8 37  	tbnz	w0, #31, 0x19f94c <meizu_create_eeprom_dev+0x248>
+  19f86c: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x168> // +0x67a50
+  19f870: e0 03 15 aa  	mov	x0, x21
+  19f874: 21 00 00 91  	add	x1, x1, #0 // +0x67a50
+  19f878: 00 00 00 94  	bl	0x19f878 <meizu_create_eeprom_dev+0x174> // device_create_file+0x0
+  19f87c: f4 03 00 2a  	mov	w20, w0
+  19f880: 20 09 f8 36  	tbz	w0, #31, 0x19f9a4 <meizu_create_eeprom_dev+0x2a0>
+  19f884: 88 00 80 52  	mov	w8, #4
+  19f888: 39 00 00 14  	b	0x19f96c <meizu_create_eeprom_dev+0x268>
+  19f88c: 9f 24 03 d5  	hint	#36
+  19f890: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x18c> // +0x67a70
+  19f894: e0 03 15 aa  	mov	x0, x21
+  19f898: 21 00 00 91  	add	x1, x1, #0 // +0x67a70
+  19f89c: 00 00 00 94  	bl	0x19f89c <meizu_create_eeprom_dev+0x198> // device_create_file+0x0
+  19f8a0: 40 04 f8 37  	tbnz	w0, #31, 0x19f928 <meizu_create_eeprom_dev+0x224>
+  19f8a4: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x1a0> // +0x67a90
+  19f8a8: e0 03 15 aa  	mov	x0, x21
+  19f8ac: 21 00 00 91  	add	x1, x1, #0 // +0x67a90
+  19f8b0: 00 00 00 94  	bl	0x19f8b0 <meizu_create_eeprom_dev+0x1ac> // device_create_file+0x0
+  19f8b4: 00 04 f8 37  	tbnz	w0, #31, 0x19f934 <meizu_create_eeprom_dev+0x230>
+  19f8b8: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x1b4> // +0x67ab0
+  19f8bc: e0 03 15 aa  	mov	x0, x21
+  19f8c0: 21 00 00 91  	add	x1, x1, #0 // +0x67ab0
+  19f8c4: 00 00 00 94  	bl	0x19f8c4 <meizu_create_eeprom_dev+0x1c0> // device_create_file+0x0
+  19f8c8: c0 03 f8 37  	tbnz	w0, #31, 0x19f940 <meizu_create_eeprom_dev+0x23c>
+  19f8cc: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x1c8> // +0x67ad0
+  19f8d0: e0 03 15 aa  	mov	x0, x21
+  19f8d4: 21 00 00 91  	add	x1, x1, #0 // +0x67ad0
+  19f8d8: 00 00 00 94  	bl	0x19f8d8 <meizu_create_eeprom_dev+0x1d4> // device_create_file+0x0
+  19f8dc: 80 03 f8 37  	tbnz	w0, #31, 0x19f94c <meizu_create_eeprom_dev+0x248>
+  19f8e0: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x1dc> // +0x67af0
+  19f8e4: e0 03 15 aa  	mov	x0, x21
+  19f8e8: 21 00 00 91  	add	x1, x1, #0 // +0x67af0
+  19f8ec: 00 00 00 94  	bl	0x19f8ec <meizu_create_eeprom_dev+0x1e8> // device_create_file+0x0
+  19f8f0: 40 03 f8 37  	tbnz	w0, #31, 0x19f958 <meizu_create_eeprom_dev+0x254>
+  19f8f4: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x1f0> // +0x67b10
+  19f8f8: e0 03 15 aa  	mov	x0, x21
+  19f8fc: 21 00 00 91  	add	x1, x1, #0 // +0x67b10
+  19f900: 00 00 00 94  	bl	0x19f900 <meizu_create_eeprom_dev+0x1fc> // device_create_file+0x0
+  19f904: 00 03 f8 37  	tbnz	w0, #31, 0x19f964 <meizu_create_eeprom_dev+0x260>
+  19f908: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x204> // +0x67b30
+  19f90c: 21 00 00 91  	add	x1, x1, #0 // +0x67b30
+  19f910: e0 03 15 aa  	mov	x0, x21
+  19f914: 00 00 00 94  	bl	0x19f914 <meizu_create_eeprom_dev+0x210> // device_create_file+0x0
+  19f918: f4 03 00 2a  	mov	w20, w0
+  19f91c: 40 04 f8 36  	tbz	w0, #31, 0x19f9a4 <meizu_create_eeprom_dev+0x2a0>
+  19f920: c8 00 80 52  	mov	w8, #6
+  19f924: 12 00 00 14  	b	0x19f96c <meizu_create_eeprom_dev+0x268>
+  19f928: f4 03 00 2a  	mov	w20, w0
+  19f92c: e8 03 1f 2a  	mov	w8, wzr
+  19f930: 0f 00 00 14  	b	0x19f96c <meizu_create_eeprom_dev+0x268>
+  19f934: f4 03 00 2a  	mov	w20, w0
+  19f938: 28 00 80 52  	mov	w8, #1
+  19f93c: 0c 00 00 14  	b	0x19f96c <meizu_create_eeprom_dev+0x268>
+  19f940: f4 03 00 2a  	mov	w20, w0
+  19f944: 48 00 80 52  	mov	w8, #2
+  19f948: 09 00 00 14  	b	0x19f96c <meizu_create_eeprom_dev+0x268>
+  19f94c: f4 03 00 2a  	mov	w20, w0
+  19f950: 68 00 80 52  	mov	w8, #3
+  19f954: 06 00 00 14  	b	0x19f96c <meizu_create_eeprom_dev+0x268>
+  19f958: f4 03 00 2a  	mov	w20, w0
+  19f95c: 88 00 80 52  	mov	w8, #4
+  19f960: 03 00 00 14  	b	0x19f96c <meizu_create_eeprom_dev+0x268>
+  19f964: f4 03 00 2a  	mov	w20, w0
+  19f968: a8 00 80 52  	mov	w8, #5
+  19f96c: 01 00 00 90  	adrp	x1, 0x19f000 <meizu_create_eeprom_dev+0x268> // '\x016%s: %s: %s: %d Camera[%d] create sys fail:%d, device:%d'
+  19f970: 02 00 00 90  	adrp	x2, 0x19f000 <meizu_create_eeprom_dev+0x26c> // 'CAM_ERR'
+  19f974: 03 00 00 90  	adrp	x3, 0x19f000 <meizu_create_eeprom_dev+0x270> // 'CAM-EEPROM'
+  19f978: 04 00 00 90  	adrp	x4, 0x19f000 <meizu_create_eeprom_dev+0x274> // 'meizu_create_eeprom_dev'
+  19f97c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Camera[%d] create sys fail:%d, device:%d'
+  19f980: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19f984: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19f988: 84 00 00 91  	add	x4, x4, #0 // 'meizu_create_eeprom_dev'
+  19f98c: 60 00 80 52  	mov	w0, #3
+  19f990: 65 5c 80 52  	mov	w5, #739
+  19f994: e6 03 13 2a  	mov	w6, w19
+  19f998: e7 03 14 2a  	mov	w7, w20
+  19f99c: e8 03 00 b9  	str	w8, [sp]
+  19f9a0: 00 00 00 94  	bl	0x19f9a0 <meizu_create_eeprom_dev+0x29c> // cam_print_log+0x0
+  19f9a4: e0 03 14 2a  	mov	w0, w20
+  19f9a8: f5 13 40 f9  	ldr	x21, [sp, #32]
+  19f9ac: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+  19f9b0: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  19f9b4: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19f9b8: ff 03 01 91  	add	sp, sp, #64
+  19f9bc: bf 23 03 d5  	hint	#29
+  19f9c0: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001a13ac <meizu_delete_eeprom_dev>:
+  1a13ac: 5f 24 03 d5  	hint	#34
+  1a13b0: 40 0a 00 b4  	cbz	x0, 0x1a14f8 <meizu_delete_eeprom_dev+0x14c>
+  1a13b4: e9 03 01 2a  	mov	w9, w1
+  1a13b8: 28 3c 00 12  	and	w8, w1, #0xffff
+  1a13bc: 1f 11 00 71  	cmp	w8, #4
+  1a13c0: 08 0a 00 54  	b.hi	0x1a1500 <meizu_delete_eeprom_dev+0x154>
+  1a13c4: 3f 23 03 d5  	hint	#25
+  1a13c8: 5e 86 00 f8  	str	x30, [x18], #8
+  1a13cc: fd 7b ba a9  	stp	x29, x30, [sp, #-96]!
+  1a13d0: fc 6f 01 a9  	stp	x28, x27, [sp, #16]
+  1a13d4: fd 03 00 91  	mov	x29, sp
+  1a13d8: fa 67 02 a9  	stp	x26, x25, [sp, #32]
+  1a13dc: f8 5f 03 a9  	stp	x24, x23, [sp, #48]
+  1a13e0: f6 57 04 a9  	stp	x22, x21, [sp, #64]
+  1a13e4: f4 4f 05 a9  	stp	x20, x19, [sp, #80]
+  1a13e8: 0a 00 00 90  	adrp	x10, 0x1a1000 <meizu_delete_eeprom_dev+0x3c> // ''
+  1a13ec: 29 3d 40 92  	and	x9, x9, #0xffff
+  1a13f0: 4a 01 00 91  	add	x10, x10, #0 // ''
+  1a13f4: 01 00 00 90  	adrp	x1, 0x1a1000 <meizu_delete_eeprom_dev+0x48> // +0x67a70
+  1a13f8: 08 00 00 90  	adrp	x8, 0x1a1000 <meizu_delete_eeprom_dev+0x4c> // +0x679d0
+  1a13fc: 21 00 00 91  	add	x1, x1, #0 // +0x67a70
+  1a1400: 08 01 00 91  	add	x8, x8, #0 // +0x679d0
+  1a1404: f3 03 00 aa  	mov	x19, x0
+  1a1408: cb 01 00 10  	adr	x11, #56
+  1a140c: 4c 69 69 38  	ldrb	w12, [x10, x9]
+  1a1410: 6b 09 0c 8b  	add	x11, x11, x12, lsl #2
+  1a1414: 2d 00 03 91  	add	x13, x1, #192
+  1a1418: 3a 80 02 91  	add	x26, x1, #160
+  1a141c: 3b 00 02 91  	add	x27, x1, #128
+  1a1420: 3c 80 01 91  	add	x28, x1, #96
+  1a1424: 39 00 01 91  	add	x25, x1, #64
+  1a1428: 34 80 00 91  	add	x20, x1, #32
+  1a142c: 15 01 02 91  	add	x21, x8, #128
+  1a1430: 16 81 01 91  	add	x22, x8, #96
+  1a1434: 17 01 01 91  	add	x23, x8, #64
+  1a1438: 18 81 00 91  	add	x24, x8, #32
+  1a143c: 60 01 1f d6  	br	x11
+  1a1440: 9f 24 03 d5  	hint	#36
+  1a1444: 01 00 00 90  	adrp	x1, 0x1a1000 <meizu_delete_eeprom_dev+0x98> // +0x678f0
+  1a1448: 21 00 00 91  	add	x1, x1, #0 // +0x678f0
+  1a144c: 2d 00 03 91  	add	x13, x1, #192
+  1a1450: 3a 80 02 91  	add	x26, x1, #160
+  1a1454: 3b 00 02 91  	add	x27, x1, #128
+  1a1458: 3c 80 01 91  	add	x28, x1, #96
+  1a145c: 39 00 01 91  	add	x25, x1, #64
+  1a1460: 34 80 00 91  	add	x20, x1, #32
+  1a1464: 9f 24 03 d5  	hint	#36
+  1a1468: e0 03 13 aa  	mov	x0, x19
+  1a146c: f5 03 0d aa  	mov	x21, x13
+  1a1470: 00 00 00 94  	bl	0x1a1470 <meizu_delete_eeprom_dev+0xc4> // device_remove_file+0x0
+  1a1474: e0 03 13 aa  	mov	x0, x19
+  1a1478: e1 03 14 aa  	mov	x1, x20
+  1a147c: 00 00 00 94  	bl	0x1a147c <meizu_delete_eeprom_dev+0xd0> // device_remove_file+0x0
+  1a1480: e8 03 19 aa  	mov	x8, x25
+  1a1484: f8 03 1c aa  	mov	x24, x28
+  1a1488: f7 03 1b aa  	mov	x23, x27
+  1a148c: f6 03 1a aa  	mov	x22, x26
+  1a1490: 9f 24 03 d5  	hint	#36
+  1a1494: e0 03 13 aa  	mov	x0, x19
+  1a1498: e1 03 08 aa  	mov	x1, x8
+  1a149c: 00 00 00 94  	bl	0x1a149c <meizu_delete_eeprom_dev+0xf0> // device_remove_file+0x0
+  1a14a0: e0 03 13 aa  	mov	x0, x19
+  1a14a4: e1 03 18 aa  	mov	x1, x24
+  1a14a8: 00 00 00 94  	bl	0x1a14a8 <meizu_delete_eeprom_dev+0xfc> // device_remove_file+0x0
+  1a14ac: e0 03 13 aa  	mov	x0, x19
+  1a14b0: e1 03 17 aa  	mov	x1, x23
+  1a14b4: 00 00 00 94  	bl	0x1a14b4 <meizu_delete_eeprom_dev+0x108> // device_remove_file+0x0
+  1a14b8: e0 03 13 aa  	mov	x0, x19
+  1a14bc: e1 03 16 aa  	mov	x1, x22
+  1a14c0: 00 00 00 94  	bl	0x1a14c0 <meizu_delete_eeprom_dev+0x114> // device_remove_file+0x0
+  1a14c4: e0 03 13 aa  	mov	x0, x19
+  1a14c8: e1 03 15 aa  	mov	x1, x21
+  1a14cc: 00 00 00 94  	bl	0x1a14cc <meizu_delete_eeprom_dev+0x120> // device_remove_file+0x0
+  1a14d0: f4 4f 45 a9  	ldp	x20, x19, [sp, #80]
+  1a14d4: e0 03 1f 2a  	mov	w0, wzr
+  1a14d8: f6 57 44 a9  	ldp	x22, x21, [sp, #64]
+  1a14dc: f8 5f 43 a9  	ldp	x24, x23, [sp, #48]
+  1a14e0: fa 67 42 a9  	ldp	x26, x25, [sp, #32]
+  1a14e4: fc 6f 41 a9  	ldp	x28, x27, [sp, #16]
+  1a14e8: fd 7b c6 a8  	ldp	x29, x30, [sp], #96
+  1a14ec: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1a14f0: bf 23 03 d5  	hint	#29
+  1a14f4: c0 03 5f d6  	ret
+  1a14f8: 40 02 80 12  	mov	w0, #-19
+  1a14fc: c0 03 5f d6  	ret
+  1a1500: e0 03 1f 2a  	mov	w0, wzr
+  1a1504: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000016e9e8 <cam_eeprom_component_bind>:
+  16e9e8: 3f 23 03 d5  	hint	#25
+  16e9ec: 5e 86 00 f8  	str	x30, [x18], #8
+  16e9f0: fd 7b bc a9  	stp	x29, x30, [sp, #-64]!
+  16e9f4: f7 0b 00 f9  	str	x23, [sp, #16]
+  16e9f8: fd 03 00 91  	mov	x29, sp
+  16e9fc: f6 57 02 a9  	stp	x22, x21, [sp, #32]
+  16ea00: f4 4f 03 a9  	stp	x20, x19, [sp, #48]
+  16ea04: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x1c> // 'i3c-i2c-target'
+  16ea08: f4 03 00 aa  	mov	x20, x0
+  16ea0c: 00 78 41 f9  	ldr	x0, [x0, #752]
+  16ea10: 21 00 00 91  	add	x1, x1, #0 // 'i3c-i2c-target'
+  16ea14: e2 03 1f aa  	mov	x2, xzr
+  16ea18: 00 00 00 94  	bl	0x16ea18 <cam_eeprom_component_bind+0x30> // of_find_property+0x0
+  16ea1c: 60 00 00 b4  	cbz	x0, 0x16ea28 <cam_eeprom_component_bind+0x40>
+  16ea20: f5 03 1f 2a  	mov	w21, wzr
+  16ea24: 53 00 00 14  	b	0x16eb70 <cam_eeprom_component_bind+0x188>
+  16ea28: 08 00 00 90  	adrp	x8, 0x16e000 <cam_eeprom_component_bind+0x40> // kmalloc_caches+0x60
+  16ea2c: 01 b8 81 52  	mov	w1, #3520
+  16ea30: 02 df 81 52  	mov	w2, #3832
+  16ea34: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x60
+  16ea38: 00 00 00 94  	bl	0x16ea38 <cam_eeprom_component_bind+0x50> // kmem_cache_alloc_trace+0x0
+  16ea3c: 00 06 00 b4  	cbz	x0, 0x16eafc <cam_eeprom_component_bind+0x114>
+  16ea40: 97 42 00 d1  	sub	x23, x20, #16
+  16ea44: 28 00 80 52  	mov	w8, #1
+  16ea48: 15 00 00 90  	adrp	x21, 0x16e000 <cam_eeprom_component_bind+0x60> // kmalloc_caches+0x38
+  16ea4c: f3 03 00 aa  	mov	x19, x0
+  16ea50: 1f 58 07 f9  	str	xzr, [x0, #3760]
+  16ea54: 01 b8 81 52  	mov	w1, #3520
+  16ea58: 1f 50 07 f9  	str	xzr, [x0, #3744]
+  16ea5c: e9 02 40 f9  	ldr	x9, [x23]
+  16ea60: 1f 60 3a 39  	strb	wzr, [x0, #3736]
+  16ea64: 02 05 80 52  	mov	w2, #40
+  16ea68: 17 d0 05 a9  	stp	x23, x20, [x0, #88]
+  16ea6c: 08 90 0e b9  	str	w8, [x0, #3728]
+  16ea70: a0 02 40 f9  	ldr	x0, [x21] // kmalloc_caches+0x38
+  16ea74: 69 3a 00 f9  	str	x9, [x19, #112]
+  16ea78: 68 6a 0c b9  	str	w8, [x19, #3176]
+  16ea7c: 00 00 00 94  	bl	0x16ea7c <cam_eeprom_component_bind+0x94> // kmem_cache_alloc_trace+0x0
+  16ea80: 60 42 06 f9  	str	x0, [x19, #3200]
+  16ea84: 00 04 00 b4  	cbz	x0, 0x16eb04 <cam_eeprom_component_bind+0x11c>
+  16ea88: a0 02 40 f9  	ldr	x0, [x21] // kmalloc_caches+0x38
+  16ea8c: 01 b8 81 52  	mov	w1, #3520
+  16ea90: 02 0f 80 52  	mov	w2, #120
+  16ea94: 00 00 00 94  	bl	0x16ea94 <cam_eeprom_component_bind+0xac> // kmem_cache_alloc_trace+0x0
+  16ea98: a0 03 00 b4  	cbz	x0, 0x16eb0c <cam_eeprom_component_bind+0x124>
+  16ea9c: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0xb4> // '&(e_ctrl->eeprom_mutex)'
+  16eaa0: 02 00 00 90  	adrp	x2, 0x16e000 <cam_eeprom_component_bind+0xb8> // +0x249c88
+  16eaa4: f6 03 00 aa  	mov	x22, x0
+  16eaa8: 60 a2 00 91  	add	x0, x19, #40
+  16eaac: 21 00 00 91  	add	x1, x1, #0 // '&(e_ctrl->eeprom_mutex)'
+  16eab0: 42 00 00 91  	add	x2, x2, #0 // +0x249c88
+  16eab4: 76 ae 05 f9  	str	x22, [x19, #2904]
+  16eab8: d4 0a 00 f9  	str	x20, [x22, #16]
+  16eabc: 00 00 00 94  	bl	0x16eabc <cam_eeprom_component_bind+0xd4> // __mutex_init+0x0
+  16eac0: e0 03 13 aa  	mov	x0, x19
+  16eac4: 00 00 00 94  	bl	0x16eac4 <cam_eeprom_component_bind+0xdc> // cam_eeprom_parse_dt+0x0
+  16eac8: 60 02 00 34  	cbz	w0, 0x16eb14 <cam_eeprom_component_bind+0x12c>
+  16eacc: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0xe4> // '\x016%s: %s: %s: %d failed: soc init rc %d'
+  16ead0: 02 00 00 90  	adrp	x2, 0x16e000 <cam_eeprom_component_bind+0xe8> // 'CAM_ERR'
+  16ead4: 03 00 00 90  	adrp	x3, 0x16e000 <cam_eeprom_component_bind+0xec> // 'CAM-EEPROM'
+  16ead8: 04 00 00 90  	adrp	x4, 0x16e000 <cam_eeprom_component_bind+0xf0> // 'cam_eeprom_component_bind'
+  16eadc: f5 03 00 2a  	mov	w21, w0
+  16eae0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d failed: soc init rc %d'
+  16eae4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  16eae8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  16eaec: 84 00 00 91  	add	x4, x4, #0 // 'cam_eeprom_component_bind'
+  16eaf0: 60 00 80 52  	mov	w0, #3
+  16eaf4: 05 45 80 52  	mov	w5, #552
+  16eaf8: 16 00 00 14  	b	0x16eb50 <cam_eeprom_component_bind+0x168>
+  16eafc: 75 01 80 12  	mov	w21, #-12
+  16eb00: 1c 00 00 14  	b	0x16eb70 <cam_eeprom_component_bind+0x188>
+  16eb04: 75 01 80 12  	mov	w21, #-12
+  16eb08: 18 00 00 14  	b	0x16eb68 <cam_eeprom_component_bind+0x180>
+  16eb0c: 75 01 80 12  	mov	w21, #-12
+  16eb10: 14 00 00 14  	b	0x16eb60 <cam_eeprom_component_bind+0x178>
+  16eb14: c1 22 00 91  	add	x1, x22, #8
+  16eb18: e0 03 13 aa  	mov	x0, x19
+  16eb1c: 00 00 00 94  	bl	0x16eb1c <cam_eeprom_component_bind+0x134> // cam_eeprom_update_i2c_info+0x0
+  16eb20: 80 03 00 34  	cbz	w0, 0x16eb90 <cam_eeprom_component_bind+0x1a8>
+  16eb24: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x13c> // '\x016%s: %s: %s: %d failed: to update i2c info rc %d'
+  16eb28: 02 00 00 90  	adrp	x2, 0x16e000 <cam_eeprom_component_bind+0x140> // 'CAM_ERR'
+  16eb2c: 03 00 00 90  	adrp	x3, 0x16e000 <cam_eeprom_component_bind+0x144> // 'CAM-EEPROM'
+  16eb30: 04 00 00 90  	adrp	x4, 0x16e000 <cam_eeprom_component_bind+0x148> // 'cam_eeprom_component_bind'
+  16eb34: f5 03 00 2a  	mov	w21, w0
+  16eb38: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d failed: to update i2c info rc %d'
+  16eb3c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  16eb40: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  16eb44: 84 00 00 91  	add	x4, x4, #0 // 'cam_eeprom_component_bind'
+  16eb48: 60 00 80 52  	mov	w0, #3
+  16eb4c: a5 45 80 52  	mov	w5, #557
+  16eb50: e6 03 15 2a  	mov	w6, w21
+  16eb54: 00 00 00 94  	bl	0x16eb54 <cam_eeprom_component_bind+0x16c> // cam_print_log+0x0
+  16eb58: e0 03 16 aa  	mov	x0, x22
+  16eb5c: 00 00 00 94  	bl	0x16eb5c <cam_eeprom_component_bind+0x174> // kfree+0x0
+  16eb60: 60 42 46 f9  	ldr	x0, [x19, #3200]
+  16eb64: 00 00 00 94  	bl	0x16eb64 <cam_eeprom_component_bind+0x17c> // kfree+0x0
+  16eb68: e0 03 13 aa  	mov	x0, x19
+  16eb6c: 00 00 00 94  	bl	0x16eb6c <cam_eeprom_component_bind+0x184> // kfree+0x0
+  16eb70: e0 03 15 2a  	mov	w0, w21
+  16eb74: f7 0b 40 f9  	ldr	x23, [sp, #16]
+  16eb78: f4 4f 43 a9  	ldp	x20, x19, [sp, #48]
+  16eb7c: f6 57 42 a9  	ldp	x22, x21, [sp, #32]
+  16eb80: fd 7b c4 a8  	ldp	x29, x30, [sp], #64
+  16eb84: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  16eb88: bf 23 03 d5  	hint	#29
+  16eb8c: c0 03 5f d6  	ret
+  16eb90: 68 22 3b 91  	add	x8, x19, #3784
+  16eb94: e0 03 13 aa  	mov	x0, x19
+  16eb98: 68 66 07 f9  	str	x8, [x19, #3784]
+  16eb9c: 68 6a 07 f9  	str	x8, [x19, #3792]
+  16eba0: 00 00 00 94  	bl	0x16eba0 <cam_eeprom_component_bind+0x1b8> // +0x16ef78
+  16eba4: f5 03 00 2a  	mov	w21, w0
+  16eba8: 80 fd ff 35  	cbnz	w0, 0x16eb58 <cam_eeprom_component_bind+0x170>
+  16ebac: 08 00 80 12  	mov	w8, #-1
+  16ebb0: 09 00 00 90  	adrp	x9, 0x16e000 <cam_eeprom_component_bind+0x1c8> // debug_mdl+0x2
+  16ebb4: f3 56 00 f9  	str	x19, [x23, #168]
+  16ebb8: 7f 2a 07 f9  	str	xzr, [x19, #3664]
+  16ebbc: 68 42 0e b9  	str	w8, [x19, #3648]
+  16ebc0: 28 01 40 39  	ldrb	w8, [x9] // debug_mdl+0x2
+  16ebc4: 7f 2e 07 f9  	str	xzr, [x19, #3672]
+  16ebc8: 7f 32 07 f9  	str	xzr, [x19, #3680]
+  16ebcc: 7f 96 0e b9  	str	wzr, [x19, #3732]
+  16ebd0: 88 00 00 36  	tbz	w8, #0, 0x16ebe0 <cam_eeprom_component_bind+0x1f8>
+  16ebd4: 08 00 00 90  	adrp	x8, 0x16e000 <cam_eeprom_component_bind+0x1ec> // debug_priority+0x0
+  16ebd8: 08 01 40 b9  	ldr	w8, [x8] // debug_priority+0x0
+  16ebdc: 28 08 00 34  	cbz	w8, 0x16ece0 <cam_eeprom_component_bind+0x2f8>
+  16ebe0: 68 6e 40 b9  	ldr	w8, [x19, #108]
+  16ebe4: 1f 3d 00 71  	cmp	w8, #15
+  16ebe8: 48 09 00 54  	b.hi	0x16ed10 <cam_eeprom_component_bind+0x328>
+  16ebec: 09 05 80 52  	mov	w9, #40
+  16ebf0: 0a 00 00 90  	adrp	x10, 0x16e000 <cam_eeprom_component_bind+0x208> // +0x2497f8
+  16ebf4: 4a 01 00 91  	add	x10, x10, #0 // +0x2497f8
+  16ebf8: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x210> // '&x->wait'
+  16ebfc: 08 29 09 9b  	madd	x8, x8, x9, x10
+  16ec00: 02 00 00 90  	adrp	x2, 0x16e000 <cam_eeprom_component_bind+0x218> // +0x249c88
+  16ec04: 21 00 00 91  	add	x1, x1, #0 // '&x->wait'
+  16ec08: 42 00 00 91  	add	x2, x2, #0 // +0x249c88
+  16ec0c: 00 41 00 91  	add	x0, x8, #16
+  16ec10: 13 01 00 f9  	str	x19, [x8]
+  16ec14: 1f 09 00 b9  	str	wzr, [x8, #8]
+  16ec18: 00 00 00 94  	bl	0x16ec18 <cam_eeprom_component_bind+0x230> // __init_swait_queue_head+0x0
+  16ec1c: 61 6e 40 b9  	ldr	w1, [x19, #108]
+  16ec20: e0 03 14 aa  	mov	x0, x20
+  16ec24: 00 00 00 94  	bl	0x16ec24 <cam_eeprom_component_bind+0x23c> // meizu_create_eeprom_dev+0x0
+  16ec28: 66 6e 40 b9  	ldr	w6, [x19, #108]
+  16ec2c: f5 03 00 2a  	mov	w21, w0
+  16ec30: df 10 00 71  	cmp	w6, #4
+  16ec34: a8 02 00 54  	b.hi	0x16ec88 <cam_eeprom_component_bind+0x2a0>
+  16ec38: 08 00 00 90  	adrp	x8, 0x16e000 <cam_eeprom_component_bind+0x250> // ''
+  16ec3c: 08 01 00 91  	add	x8, x8, #0 // ''
+  16ec40: 89 00 00 10  	adr	x9, #16
+  16ec44: 0a 69 66 38  	ldrb	w10, [x8, x6]
+  16ec48: 29 09 0a 8b  	add	x9, x9, x10, lsl #2
+  16ec4c: 20 01 1f d6  	br	x9
+  16ec50: 9f 24 03 d5  	hint	#36
+  16ec54: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x26c> // 'rcam_otp'
+  16ec58: 21 00 00 91  	add	x1, x1, #0 // 'rcam_otp'
+  16ec5c: 1e 00 00 14  	b	0x16ecd4 <cam_eeprom_component_bind+0x2ec>
+  16ec60: 9f 24 03 d5  	hint	#36
+  16ec64: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x27c> // 'rcam2_otp'
+  16ec68: 21 00 00 91  	add	x1, x1, #0 // 'rcam2_otp'
+  16ec6c: 1a 00 00 14  	b	0x16ecd4 <cam_eeprom_component_bind+0x2ec>
+  16ec70: 9f 24 03 d5  	hint	#36
+  16ec74: 08 00 00 90  	adrp	x8, 0x16e000 <cam_eeprom_component_bind+0x28c> // gt_e_ctrl+0x0
+  16ec78: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x290> // 'tof_otp'
+  16ec7c: 21 00 00 91  	add	x1, x1, #0 // 'tof_otp'
+  16ec80: 13 01 00 f9  	str	x19, [x8] // gt_e_ctrl+0x0
+  16ec84: 14 00 00 14  	b	0x16ecd4 <cam_eeprom_component_bind+0x2ec>
+  16ec88: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x2a0> // '\x016%s: %s: %s: %d Camera[%d] create sys fail'
+  16ec8c: 02 00 00 90  	adrp	x2, 0x16e000 <cam_eeprom_component_bind+0x2a4> // 'CAM_ERR'
+  16ec90: 03 00 00 90  	adrp	x3, 0x16e000 <cam_eeprom_component_bind+0x2a8> // 'CAM-EEPROM'
+  16ec94: 04 00 00 90  	adrp	x4, 0x16e000 <cam_eeprom_component_bind+0x2ac> // 'cam_eeprom_component_bind'
+  16ec98: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Camera[%d] create sys fail'
+  16ec9c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  16eca0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  16eca4: 84 00 00 91  	add	x4, x4, #0 // 'cam_eeprom_component_bind'
+  16eca8: 60 00 80 52  	mov	w0, #3
+  16ecac: a5 4a 80 52  	mov	w5, #597
+  16ecb0: 00 00 00 94  	bl	0x16ecb0 <cam_eeprom_component_bind+0x2c8> // cam_print_log+0x0
+  16ecb4: af ff ff 17  	b	0x16eb70 <cam_eeprom_component_bind+0x188>
+  16ecb8: 9f 24 03 d5  	hint	#36
+  16ecbc: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x2d4> // 'fcam_otp'
+  16ecc0: 21 00 00 91  	add	x1, x1, #0 // 'fcam_otp'
+  16ecc4: 04 00 00 14  	b	0x16ecd4 <cam_eeprom_component_bind+0x2ec>
+  16ecc8: 9f 24 03 d5  	hint	#36
+  16eccc: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x2e4> // 'rcam3_otp'
+  16ecd0: 21 00 00 91  	add	x1, x1, #0 // 'rcam3_otp'
+  16ecd4: e0 03 14 aa  	mov	x0, x20
+  16ecd8: 00 00 00 94  	bl	0x16ecd8 <cam_eeprom_component_bind+0x2f0> // meizu_sysfslink_register_name+0x0
+  16ecdc: a5 ff ff 17  	b	0x16eb70 <cam_eeprom_component_bind+0x188>
+  16ece0: 01 00 00 90  	adrp	x1, 0x16e000 <cam_eeprom_component_bind+0x2f8> // '\x016%s: %s: %s: %d Component bound successfully'
+  16ece4: 02 00 00 90  	adrp	x2, 0x16e000 <cam_eeprom_component_bind+0x2fc> // 'CAM_DBG'
+  16ece8: 03 00 00 90  	adrp	x3, 0x16e000 <cam_eeprom_component_bind+0x300> // 'CAM-EEPROM'
+  16ecec: 04 00 00 90  	adrp	x4, 0x16e000 <cam_eeprom_component_bind+0x304> // 'cam_eeprom_component_bind'
+  16ecf0: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Component bound successfully'
+  16ecf4: 42 00 00 91  	add	x2, x2, #0 // 'CAM_DBG'
+  16ecf8: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  16ecfc: 84 00 00 91  	add	x4, x4, #0 // 'cam_eeprom_component_bind'
+  16ed00: 60 00 80 52  	mov	w0, #3
+  16ed04: 85 47 80 52  	mov	w5, #572
+  16ed08: 00 00 00 94  	bl	0x16ed08 <cam_eeprom_component_bind+0x320> // cam_print_log+0x0
+  16ed0c: b5 ff ff 17  	b	0x16ebe0 <cam_eeprom_component_bind+0x1f8>
+  16ed10: 40 a2 2a d4  	brk	#0x5512

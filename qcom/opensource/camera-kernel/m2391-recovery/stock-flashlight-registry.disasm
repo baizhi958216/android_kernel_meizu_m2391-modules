@@ -1,0 +1,61 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000196d94 <flashlight_dev_register>:
+  196d94: 3f 23 03 d5  	hint	#25
+  196d98: 5e 86 00 f8  	str	x30, [x18], #8
+  196d9c: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  196da0: f4 4f 01 a9  	stp	x20, x19, [sp, #16]
+  196da4: fd 03 00 91  	mov	x29, sp
+  196da8: f4 03 00 2a  	mov	w20, w0
+  196dac: 00 00 00 90  	adrp	x0, 0x196000 <flashlight_dev_register+0x18> // msm_flash_mutex+0x0
+  196db0: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  196db4: f3 03 01 aa  	mov	x19, x1
+  196db8: 00 00 00 94  	bl	0x196db8 <flashlight_dev_register+0x24> // mutex_lock+0x0
+  196dbc: 9f 0e 00 71  	cmp	w20, #3
+  196dc0: a2 01 00 54  	b.hs	0x196df4 <flashlight_dev_register+0x60>
+  196dc4: 00 00 00 90  	adrp	x0, 0x196000 <flashlight_dev_register+0x30> // msm_flash_mutex+0x0
+  196dc8: 08 00 00 90  	adrp	x8, 0x196000 <flashlight_dev_register+0x34> // meizu_flash_dev_ops+0x0
+  196dcc: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  196dd0: 08 01 00 91  	add	x8, x8, #0 // meizu_flash_dev_ops+0x0
+  196dd4: 13 59 34 f8  	str	x19, [x8, w20, uxtw #3]
+  196dd8: 00 00 00 94  	bl	0x196dd8 <flashlight_dev_register+0x44> // mutex_unlock+0x0
+  196ddc: f4 4f 41 a9  	ldp	x20, x19, [sp, #16]
+  196de0: e0 03 1f 2a  	mov	w0, wzr
+  196de4: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  196de8: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  196dec: bf 23 03 d5  	hint	#29
+  196df0: c0 03 5f d6  	ret
+  196df4: 40 a2 2a d4  	brk	#0x5512
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000196d34 <flashlight_dev_unregister>:
+  196d34: 3f 23 03 d5  	hint	#25
+  196d38: 5e 86 00 f8  	str	x30, [x18], #8
+  196d3c: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  196d40: f3 0b 00 f9  	str	x19, [sp, #16]
+  196d44: fd 03 00 91  	mov	x29, sp
+  196d48: f3 03 00 2a  	mov	w19, w0
+  196d4c: 00 00 00 90  	adrp	x0, 0x196000 <flashlight_dev_unregister+0x18> // msm_flash_mutex+0x0
+  196d50: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  196d54: 00 00 00 94  	bl	0x196d54 <flashlight_dev_unregister+0x20> // mutex_lock+0x0
+  196d58: 7f 0e 00 71  	cmp	w19, #3
+  196d5c: a2 01 00 54  	b.hs	0x196d90 <flashlight_dev_unregister+0x5c>
+  196d60: 00 00 00 90  	adrp	x0, 0x196000 <flashlight_dev_unregister+0x2c> // msm_flash_mutex+0x0
+  196d64: 08 00 00 90  	adrp	x8, 0x196000 <flashlight_dev_unregister+0x30> // meizu_flash_dev_ops+0x0
+  196d68: 00 00 00 91  	add	x0, x0, #0 // msm_flash_mutex+0x0
+  196d6c: 08 01 00 91  	add	x8, x8, #0 // meizu_flash_dev_ops+0x0
+  196d70: 1f 59 33 f8  	str	xzr, [x8, w19, uxtw #3]
+  196d74: 00 00 00 94  	bl	0x196d74 <flashlight_dev_unregister+0x40> // mutex_unlock+0x0
+  196d78: f3 0b 40 f9  	ldr	x19, [sp, #16]
+  196d7c: e0 03 1f 2a  	mov	w0, wzr
+  196d80: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  196d84: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  196d88: bf 23 03 d5  	hint	#29
+  196d8c: c0 03 5f d6  	ret
+  196d90: 40 a2 2a d4  	brk	#0x5512

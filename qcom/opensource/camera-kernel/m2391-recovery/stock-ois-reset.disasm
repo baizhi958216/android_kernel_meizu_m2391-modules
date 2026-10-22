@@ -1,0 +1,437 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000017830c <meizu_ois_reset_show>:
+  17830c: 3f 23 03 d5  	hint	#25
+  178310: 5e 86 00 f8  	str	x30, [x18], #8
+  178314: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  178318: f4 4f 01 a9  	stp	x20, x19, [sp, #16]
+  17831c: fd 03 00 91  	mov	x29, sp
+  178320: 14 00 00 90  	adrp	x20, 0x178000 <meizu_ois_reset_show+0x14> // cali_exec_result+0x0
+  178324: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_show+0x18> // 'meizu_ois_reset_show'
+  178328: f3 03 02 aa  	mov	x19, x2
+  17832c: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_show+0x20> // '\x016%s: %s: %s: %d %s(), cali_exec_result: %d\n'
+  178330: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_show+0x24> // 'CAM_INFO'
+  178334: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_show+0x28> // 'CAM-OIS'
+  178338: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_show'
+  17833c: 87 02 40 b9  	ldr	w7, [x20] // cali_exec_result+0x0
+  178340: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s(), cali_exec_result: %d\n'
+  178344: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  178348: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17834c: 60 00 80 52  	mov	w0, #3
+  178350: e5 67 80 52  	mov	w5, #831
+  178354: e6 03 04 aa  	mov	x6, x4
+  178358: 00 00 00 94  	bl	0x178358 <meizu_ois_reset_show+0x4c> // cam_print_log+0x0
+  17835c: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_show+0x50> // '%d \n'
+  178360: 82 02 40 b9  	ldr	w2, [x20] // cali_exec_result+0x0
+  178364: 21 00 00 91  	add	x1, x1, #0 // '%d \n'
+  178368: e0 03 13 aa  	mov	x0, x19
+  17836c: 00 00 00 94  	bl	0x17836c <meizu_ois_reset_show+0x60> // sprintf+0x0
+  178370: f4 4f 41 a9  	ldp	x20, x19, [sp, #16]
+  178374: 00 7c 40 93  	sxtw	x0, w0
+  178378: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  17837c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  178380: bf 23 03 d5  	hint	#29
+  178384: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000178388 <meizu_ois_reset_store>:
+  178388: 3f 23 03 d5  	hint	#25
+  17838c: ff c3 03 d1  	sub	sp, sp, #240
+  178390: 5e 86 00 f8  	str	x30, [x18], #8
+  178394: fd 7b 09 a9  	stp	x29, x30, [sp, #144]
+  178398: fd 43 02 91  	add	x29, sp, #144
+  17839c: fc 6f 0a a9  	stp	x28, x27, [sp, #160]
+  1783a0: fa 67 0b a9  	stp	x26, x25, [sp, #176]
+  1783a4: f8 5f 0c a9  	stp	x24, x23, [sp, #192]
+  1783a8: f6 57 0d a9  	stp	x22, x21, [sp, #208]
+  1783ac: f4 4f 0e a9  	stp	x20, x19, [sp, #224]
+  1783b0: e8 03 02 aa  	mov	x8, x2
+  1783b4: 09 41 38 d5  	mrs	x9, SP_EL0
+  1783b8: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x30> // '%d\n'
+  1783bc: f4 03 00 aa  	mov	x20, x0
+  1783c0: 29 f1 42 f9  	ldr	x9, [x9, #1504]
+  1783c4: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  1783c8: e2 53 00 91  	add	x2, sp, #20
+  1783cc: e0 03 08 aa  	mov	x0, x8
+  1783d0: f3 03 03 aa  	mov	x19, x3
+  1783d4: a9 83 1f f8  	stur	x9, [x29, #-8]
+  1783d8: ff 17 00 b9  	str	wzr, [sp, #20]
+  1783dc: ff ff 07 a9  	stp	xzr, xzr, [sp, #120]
+  1783e0: ff ff 06 a9  	stp	xzr, xzr, [sp, #104]
+  1783e4: ff ff 05 a9  	stp	xzr, xzr, [sp, #88]
+  1783e8: ff ff 04 a9  	stp	xzr, xzr, [sp, #72]
+  1783ec: ff ff 03 a9  	stp	xzr, xzr, [sp, #56]
+  1783f0: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  1783f4: ff 23 00 b9  	str	wzr, [sp, #32]
+  1783f8: ff 0f 00 f9  	str	xzr, [sp, #24]
+  1783fc: 00 00 00 94  	bl	0x1783fc <meizu_ois_reset_store+0x74> // sscanf+0x0
+  178400: e6 17 40 b9  	ldr	w6, [sp, #20]
+  178404: df 04 00 71  	cmp	w6, #1
+  178408: a1 1d 00 54  	b.ne	0x1787bc <meizu_ois_reset_store+0x434>
+  17840c: 15 00 00 90  	adrp	x21, 0x178000 <meizu_ois_reset_store+0x84> // 'CAM_INFO'
+  178410: 16 00 00 90  	adrp	x22, 0x178000 <meizu_ois_reset_store+0x88> // 'CAM-OIS'
+  178414: 17 00 00 90  	adrp	x23, 0x178000 <meizu_ois_reset_store+0x8c> // 'meizu_ois_reset_store'
+  178418: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x90> // '\x016%s: %s: %s: %d ois enable %d is ok\n'
+  17841c: b5 02 00 91  	add	x21, x21, #0 // 'CAM_INFO'
+  178420: d6 02 00 91  	add	x22, x22, #0 // 'CAM-OIS'
+  178424: f7 02 00 91  	add	x23, x23, #0 // 'meizu_ois_reset_store'
+  178428: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d ois enable %d is ok\n'
+  17842c: 60 00 80 52  	mov	w0, #3
+  178430: e2 03 15 aa  	mov	x2, x21
+  178434: e3 03 16 aa  	mov	x3, x22
+  178438: e4 03 17 aa  	mov	x4, x23
+  17843c: 85 6a 80 52  	mov	w5, #852
+  178440: 00 00 00 94  	bl	0x178440 <meizu_ois_reset_store+0xb8> // cam_print_log+0x0
+  178444: 94 4e 40 f9  	ldr	x20, [x20, #152]
+  178448: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0xc0> // '\x016%s: %s: %s: %d instance struct msm_ois_ctrl_t: 0x%p\n'
+  17844c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d instance struct msm_ois_ctrl_t: 0x%p\n'
+  178450: 60 00 80 52  	mov	w0, #3
+  178454: e2 03 15 aa  	mov	x2, x21
+  178458: e3 03 16 aa  	mov	x3, x22
+  17845c: e4 03 17 aa  	mov	x4, x23
+  178460: e5 6a 80 52  	mov	w5, #855
+  178464: e6 03 14 aa  	mov	x6, x20
+  178468: 00 00 00 94  	bl	0x178468 <meizu_ois_reset_store+0xe0> // cam_print_log+0x0
+  17846c: 34 1c 00 b4  	cbz	x20, 0x1787f0 <meizu_ois_reset_store+0x468>
+  178470: 9f fe 3f b1  	cmn	x20, #4095
+  178474: e2 1b 00 54  	b.hs	0x1787f0 <meizu_ois_reset_store+0x468>
+  178478: 86 26 4f b9  	ldr	w6, [x20, #3876]
+  17847c: df 0c 00 71  	cmp	w6, #3
+  178480: 41 1d 00 54  	b.ne	0x178828 <meizu_ois_reset_store+0x4a0>
+  178484: 17 00 00 90  	adrp	x23, 0x178000 <meizu_ois_reset_store+0xfc> // '\x016%s: %s: %s: %d 0x0300~0x0317  data[0x%x] 0x%x'
+  178488: 18 00 00 90  	adrp	x24, 0x178000 <meizu_ois_reset_store+0x100> // 'CAM_ERR'
+  17848c: 19 00 00 90  	adrp	x25, 0x178000 <meizu_ois_reset_store+0x104> // 'CAM-OIS'
+  178490: 1a 00 00 90  	adrp	x26, 0x178000 <meizu_ois_reset_store+0x108> // 'meizu_ois_reset_store'
+  178494: f3 07 00 f9  	str	x19, [sp, #8]
+  178498: fc 03 1f 2a  	mov	w28, wzr
+  17849c: 95 82 31 91  	add	x21, x20, #3168
+  1784a0: f3 02 80 92  	mov	x19, #-24
+  1784a4: f6 a3 00 91  	add	x22, sp, #40
+  1784a8: f7 02 00 91  	add	x23, x23, #0 // '\x016%s: %s: %s: %d 0x0300~0x0317  data[0x%x] 0x%x'
+  1784ac: 18 03 00 91  	add	x24, x24, #0 // 'CAM_ERR'
+  1784b0: 39 03 00 91  	add	x25, x25, #0 // 'CAM-OIS'
+  1784b4: 5a 03 00 91  	add	x26, x26, #0 // 'meizu_ois_reset_store'
+  1784b8: 7b 62 0c 91  	add	x27, x19, #792
+  1784bc: e0 03 15 aa  	mov	x0, x21
+  1784c0: e1 03 1b 2a  	mov	w1, w27
+  1784c4: e2 03 16 aa  	mov	x2, x22
+  1784c8: 43 00 80 52  	mov	w3, #2
+  1784cc: 24 00 80 52  	mov	w4, #1
+  1784d0: 25 00 80 52  	mov	w5, #1
+  1784d4: 00 00 00 94  	bl	0x1784d4 <meizu_ois_reset_store+0x14c> // camera_io_dev_read+0x0
+  1784d8: 1c 00 1c 2b  	adds	w28, w0, w28
+  1784dc: 64 1c 00 54  	b.mi	0x178868 <meizu_ois_reset_store+0x4e0>
+  1784e0: c7 46 40 b8  	ldr	w7, [x22], #4
+  1784e4: 60 00 80 52  	mov	w0, #3
+  1784e8: e1 03 17 aa  	mov	x1, x23
+  1784ec: e2 03 18 aa  	mov	x2, x24
+  1784f0: e3 03 19 aa  	mov	x3, x25
+  1784f4: e4 03 1a aa  	mov	x4, x26
+  1784f8: c5 6d 80 52  	mov	w5, #878
+  1784fc: e6 03 1b 2a  	mov	w6, w27
+  178500: 00 00 00 94  	bl	0x178500 <meizu_ois_reset_store+0x178> // cam_print_log+0x0
+  178504: 00 2b 91 52  	mov	w0, #35160
+  178508: 20 08 a0 72  	movk	w0, #65, lsl #16
+  17850c: 00 00 00 94  	bl	0x17850c <meizu_ois_reset_store+0x184> // __const_udelay+0x0
+  178510: 00 2b 91 52  	mov	w0, #35160
+  178514: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178518: 00 00 00 94  	bl	0x178518 <meizu_ois_reset_store+0x190> // __const_udelay+0x0
+  17851c: 00 2b 91 52  	mov	w0, #35160
+  178520: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178524: 00 00 00 94  	bl	0x178524 <meizu_ois_reset_store+0x19c> // __const_udelay+0x0
+  178528: 00 2b 91 52  	mov	w0, #35160
+  17852c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178530: 00 00 00 94  	bl	0x178530 <meizu_ois_reset_store+0x1a8> // __const_udelay+0x0
+  178534: 00 2b 91 52  	mov	w0, #35160
+  178538: 20 08 a0 72  	movk	w0, #65, lsl #16
+  17853c: 00 00 00 94  	bl	0x17853c <meizu_ois_reset_store+0x1b4> // __const_udelay+0x0
+  178540: 00 2b 91 52  	mov	w0, #35160
+  178544: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178548: 00 00 00 94  	bl	0x178548 <meizu_ois_reset_store+0x1c0> // __const_udelay+0x0
+  17854c: 00 2b 91 52  	mov	w0, #35160
+  178550: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178554: 00 00 00 94  	bl	0x178554 <meizu_ois_reset_store+0x1cc> // __const_udelay+0x0
+  178558: 00 2b 91 52  	mov	w0, #35160
+  17855c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178560: 00 00 00 94  	bl	0x178560 <meizu_ois_reset_store+0x1d8> // __const_udelay+0x0
+  178564: 00 2b 91 52  	mov	w0, #35160
+  178568: 20 08 a0 72  	movk	w0, #65, lsl #16
+  17856c: 00 00 00 94  	bl	0x17856c <meizu_ois_reset_store+0x1e4> // __const_udelay+0x0
+  178570: 00 2b 91 52  	mov	w0, #35160
+  178574: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178578: 00 00 00 94  	bl	0x178578 <meizu_ois_reset_store+0x1f0> // __const_udelay+0x0
+  17857c: 73 06 00 b1  	adds	x19, x19, #1
+  178580: c3 f9 ff 54  	b.lo	0x1784b8 <meizu_ois_reset_store+0x130>
+  178584: e2 63 00 91  	add	x2, sp, #24
+  178588: e0 03 15 aa  	mov	x0, x21
+  17858c: 01 48 80 52  	mov	w1, #576
+  178590: 43 00 80 52  	mov	w3, #2
+  178594: 24 00 80 52  	mov	w4, #1
+  178598: 25 00 80 52  	mov	w5, #1
+  17859c: f3 63 00 91  	add	x19, sp, #24
+  1785a0: 00 00 00 94  	bl	0x1785a0 <meizu_ois_reset_store+0x218> // camera_io_dev_read+0x0
+  1785a4: 62 02 7e b2  	orr	x2, x19, #0x4
+  1785a8: e0 03 15 aa  	mov	x0, x21
+  1785ac: 21 48 80 52  	mov	w1, #577
+  1785b0: 43 00 80 52  	mov	w3, #2
+  1785b4: 24 00 80 52  	mov	w4, #1
+  1785b8: 25 00 80 52  	mov	w5, #1
+  1785bc: 00 00 00 94  	bl	0x1785bc <meizu_ois_reset_store+0x234> // camera_io_dev_read+0x0
+  1785c0: 62 22 00 91  	add	x2, x19, #8
+  1785c4: e0 03 15 aa  	mov	x0, x21
+  1785c8: 41 48 80 52  	mov	w1, #578
+  1785cc: 43 00 80 52  	mov	w3, #2
+  1785d0: 24 00 80 52  	mov	w4, #1
+  1785d4: 25 00 80 52  	mov	w5, #1
+  1785d8: 00 00 00 94  	bl	0x1785d8 <meizu_ois_reset_store+0x250> // camera_io_dev_read+0x0
+  1785dc: f6 57 43 29  	ldp	w22, w21, [sp, #24]
+  1785e0: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x258> // '\x016%s: %s: %s: %d 0x0300~0x0317  data1 0x%x 0x%x 0x%x'
+  1785e4: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_store+0x25c> // 'CAM_ERR'
+  1785e8: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_store+0x260> // 'CAM-OIS'
+  1785ec: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_store+0x264> // 'meizu_ois_reset_store'
+  1785f0: f3 23 40 b9  	ldr	w19, [sp, #32]
+  1785f4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d 0x0300~0x0317  data1 0x%x 0x%x 0x%x'
+  1785f8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1785fc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  178600: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_store'
+  178604: 60 00 80 52  	mov	w0, #3
+  178608: a5 70 80 52  	mov	w5, #901
+  17860c: e6 03 16 2a  	mov	w6, w22
+  178610: e7 03 15 2a  	mov	w7, w21
+  178614: f3 03 00 b9  	str	w19, [sp]
+  178618: 00 00 00 94  	bl	0x178618 <meizu_ois_reset_store+0x290> // cam_print_log+0x0
+  17861c: 96 14 00 35  	cbnz	w22, 0x1788ac <meizu_ois_reset_store+0x524>
+  178620: bf 06 00 71  	cmp	w21, #1
+  178624: 41 14 00 54  	b.ne	0x1788ac <meizu_ois_reset_store+0x524>
+  178628: 7f 06 00 71  	cmp	w19, #1
+  17862c: 01 14 00 54  	b.ne	0x1788ac <meizu_ois_reset_store+0x524>
+  178630: e0 03 14 aa  	mov	x0, x20
+  178634: 41 00 80 52  	mov	w1, #2
+  178638: 22 00 80 52  	mov	w2, #1
+  17863c: c3 06 80 52  	mov	w3, #54
+  178640: 24 10 80 52  	mov	w4, #129
+  178644: 25 00 80 52  	mov	w5, #1
+  178648: 00 00 00 94  	bl	0x178648 <meizu_ois_reset_store+0x2c0> // camera_i2c_write_bytes+0x0
+  17864c: 60 13 f8 37  	tbnz	w0, #31, 0x1788b8 <meizu_ois_reset_store+0x530>
+  178650: f3 6a 83 92  	mov	x19, #-7000
+  178654: 00 2b 91 52  	mov	w0, #35160
+  178658: 20 08 a0 72  	movk	w0, #65, lsl #16
+  17865c: 00 00 00 94  	bl	0x17865c <meizu_ois_reset_store+0x2d4> // __const_udelay+0x0
+  178660: 73 06 00 b1  	adds	x19, x19, #1
+  178664: 83 ff ff 54  	b.lo	0x178654 <meizu_ois_reset_store+0x2cc>
+  178668: e0 03 14 aa  	mov	x0, x20
+  17866c: 41 00 80 52  	mov	w1, #2
+  178670: 22 00 80 52  	mov	w2, #1
+  178674: 63 00 80 52  	mov	w3, #3
+  178678: 24 00 80 52  	mov	w4, #1
+  17867c: 25 00 80 52  	mov	w5, #1
+  178680: 00 00 00 94  	bl	0x178680 <meizu_ois_reset_store+0x2f8> // camera_i2c_write_bytes+0x0
+  178684: 80 13 f8 37  	tbnz	w0, #31, 0x1788f4 <meizu_ois_reset_store+0x56c>
+  178688: f3 f9 80 92  	mov	x19, #-2000
+  17868c: 00 2b 91 52  	mov	w0, #35160
+  178690: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178694: 00 00 00 94  	bl	0x178694 <meizu_ois_reset_store+0x30c> // __const_udelay+0x0
+  178698: 73 06 00 b1  	adds	x19, x19, #1
+  17869c: 83 ff ff 54  	b.lo	0x17868c <meizu_ois_reset_store+0x304>
+  1786a0: 15 00 00 90  	adrp	x21, 0x178000 <meizu_ois_reset_store+0x318> // '\x016%s: %s: %s: %d 0x0300~0x0317  data[0x%x] 0x%x'
+  1786a4: 16 00 00 90  	adrp	x22, 0x178000 <meizu_ois_reset_store+0x31c> // 'CAM_ERR'
+  1786a8: 17 00 00 90  	adrp	x23, 0x178000 <meizu_ois_reset_store+0x320> // 'CAM-OIS'
+  1786ac: 18 00 00 90  	adrp	x24, 0x178000 <meizu_ois_reset_store+0x324> // 'meizu_ois_reset_store'
+  1786b0: f3 03 1f aa  	mov	x19, xzr
+  1786b4: fb a3 00 91  	add	x27, sp, #40
+  1786b8: b5 02 00 91  	add	x21, x21, #0 // '\x016%s: %s: %s: %d 0x0300~0x0317  data[0x%x] 0x%x'
+  1786bc: d6 02 00 91  	add	x22, x22, #0 // 'CAM_ERR'
+  1786c0: f7 02 00 91  	add	x23, x23, #0 // 'CAM-OIS'
+  1786c4: 18 03 00 91  	add	x24, x24, #0 // 'meizu_ois_reset_store'
+  1786c8: 79 7b 73 b8  	ldr	w25, [x27, x19, lsl #2]
+  1786cc: 7a 02 0c 91  	add	x26, x19, #768
+  1786d0: e0 03 14 aa  	mov	x0, x20
+  1786d4: 41 00 80 52  	mov	w1, #2
+  1786d8: 22 00 80 52  	mov	w2, #1
+  1786dc: e3 03 1a 2a  	mov	w3, w26
+  1786e0: 25 00 80 52  	mov	w5, #1
+  1786e4: e4 03 19 2a  	mov	w4, w25
+  1786e8: 00 00 00 94  	bl	0x1786e8 <meizu_ois_reset_store+0x360> // camera_i2c_write_bytes+0x0
+  1786ec: 20 12 f8 37  	tbnz	w0, #31, 0x178930 <meizu_ois_reset_store+0x5a8>
+  1786f0: 60 00 80 52  	mov	w0, #3
+  1786f4: e1 03 15 aa  	mov	x1, x21
+  1786f8: e2 03 16 aa  	mov	x2, x22
+  1786fc: e3 03 17 aa  	mov	x3, x23
+  178700: e4 03 18 aa  	mov	x4, x24
+  178704: 65 75 80 52  	mov	w5, #939
+  178708: e6 03 1a 2a  	mov	w6, w26
+  17870c: e7 03 19 2a  	mov	w7, w25
+  178710: 00 00 00 94  	bl	0x178710 <meizu_ois_reset_store+0x388> // cam_print_log+0x0
+  178714: 00 2b 91 52  	mov	w0, #35160
+  178718: 20 08 a0 72  	movk	w0, #65, lsl #16
+  17871c: 00 00 00 94  	bl	0x17871c <meizu_ois_reset_store+0x394> // __const_udelay+0x0
+  178720: 00 2b 91 52  	mov	w0, #35160
+  178724: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178728: 00 00 00 94  	bl	0x178728 <meizu_ois_reset_store+0x3a0> // __const_udelay+0x0
+  17872c: 00 2b 91 52  	mov	w0, #35160
+  178730: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178734: 00 00 00 94  	bl	0x178734 <meizu_ois_reset_store+0x3ac> // __const_udelay+0x0
+  178738: 00 2b 91 52  	mov	w0, #35160
+  17873c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178740: 00 00 00 94  	bl	0x178740 <meizu_ois_reset_store+0x3b8> // __const_udelay+0x0
+  178744: 00 2b 91 52  	mov	w0, #35160
+  178748: 20 08 a0 72  	movk	w0, #65, lsl #16
+  17874c: 00 00 00 94  	bl	0x17874c <meizu_ois_reset_store+0x3c4> // __const_udelay+0x0
+  178750: 00 2b 91 52  	mov	w0, #35160
+  178754: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178758: 00 00 00 94  	bl	0x178758 <meizu_ois_reset_store+0x3d0> // __const_udelay+0x0
+  17875c: 00 2b 91 52  	mov	w0, #35160
+  178760: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178764: 00 00 00 94  	bl	0x178764 <meizu_ois_reset_store+0x3dc> // __const_udelay+0x0
+  178768: 00 2b 91 52  	mov	w0, #35160
+  17876c: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178770: 00 00 00 94  	bl	0x178770 <meizu_ois_reset_store+0x3e8> // __const_udelay+0x0
+  178774: 00 2b 91 52  	mov	w0, #35160
+  178778: 20 08 a0 72  	movk	w0, #65, lsl #16
+  17877c: 00 00 00 94  	bl	0x17877c <meizu_ois_reset_store+0x3f4> // __const_udelay+0x0
+  178780: 00 2b 91 52  	mov	w0, #35160
+  178784: 20 08 a0 72  	movk	w0, #65, lsl #16
+  178788: 00 00 00 94  	bl	0x178788 <meizu_ois_reset_store+0x400> // __const_udelay+0x0
+  17878c: 73 06 00 91  	add	x19, x19, #1
+  178790: 7f 62 00 f1  	cmp	x19, #24
+  178794: a1 f9 ff 54  	b.ne	0x1786c8 <meizu_ois_reset_store+0x340>
+  178798: f3 f9 80 92  	mov	x19, #-2000
+  17879c: 00 2b 91 52  	mov	w0, #35160
+  1787a0: 20 08 a0 72  	movk	w0, #65, lsl #16
+  1787a4: 00 00 00 94  	bl	0x1787a4 <meizu_ois_reset_store+0x41c> // __const_udelay+0x0
+  1787a8: 73 06 00 b1  	adds	x19, x19, #1
+  1787ac: 83 ff ff 54  	b.lo	0x17879c <meizu_ois_reset_store+0x414>
+  1787b0: 08 00 00 90  	adrp	x8, 0x178000 <meizu_ois_reset_store+0x428> // cali_exec_result+0x0
+  1787b4: 1f 01 00 b9  	str	wzr, [x8] // cali_exec_result+0x0
+  1787b8: 6d 00 00 14  	b	0x17896c <meizu_ois_reset_store+0x5e4>
+  1787bc: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x434> // '\x016%s: %s: %s: %d ois enable %d is err!\n'
+  1787c0: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_store+0x438> // 'CAM_ERR'
+  1787c4: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_store+0x43c> // 'CAM-OIS'
+  1787c8: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_store+0x440> // 'meizu_ois_reset_store'
+  1787cc: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d ois enable %d is err!\n'
+  1787d0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1787d4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1787d8: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_store'
+  1787dc: 60 00 80 52  	mov	w0, #3
+  1787e0: 25 6a 80 52  	mov	w5, #849
+  1787e4: 00 00 00 94  	bl	0x1787e4 <meizu_ois_reset_store+0x45c> // cam_print_log+0x0
+  1787e8: a0 02 80 92  	mov	x0, #-22
+  1787ec: 61 00 00 14  	b	0x178970 <meizu_ois_reset_store+0x5e8>
+  1787f0: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x468> // '\x016%s: %s: %s: %d o_ctrl: 0x%p is err!\n'
+  1787f4: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_store+0x46c> // 'CAM_ERR'
+  1787f8: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_store+0x470> // 'CAM-OIS'
+  1787fc: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_store+0x474> // 'meizu_ois_reset_store'
+  178800: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d o_ctrl: 0x%p is err!\n'
+  178804: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  178808: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17880c: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_store'
+  178810: 60 00 80 52  	mov	w0, #3
+  178814: 25 6b 80 52  	mov	w5, #857
+  178818: e6 03 14 aa  	mov	x6, x20
+  17881c: 00 00 00 94  	bl	0x17881c <meizu_ois_reset_store+0x494> // cam_print_log+0x0
+  178820: a0 02 80 92  	mov	x0, #-22
+  178824: 53 00 00 14  	b	0x178970 <meizu_ois_reset_store+0x5e8>
+  178828: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x4a0> // '\x016%s: %s: %s: %d ois state %d is err!\n'
+  17882c: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_store+0x4a4> // 'CAM_ERR'
+  178830: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_store+0x4a8> // 'CAM-OIS'
+  178834: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_store+0x4ac> // 'meizu_ois_reset_store'
+  178838: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d ois state %d is err!\n'
+  17883c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  178840: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  178844: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_store'
+  178848: 60 00 80 52  	mov	w0, #3
+  17884c: c5 6b 80 52  	mov	w5, #862
+  178850: 00 00 00 94  	bl	0x178850 <meizu_ois_reset_store+0x4c8> // cam_print_log+0x0
+  178854: 08 00 00 90  	adrp	x8, 0x178000 <meizu_ois_reset_store+0x4cc> // cali_exec_result+0x0
+  178858: 09 00 80 12  	mov	w9, #-1
+  17885c: 80 00 80 92  	mov	x0, #-5
+  178860: 09 01 00 b9  	str	w9, [x8] // cali_exec_result+0x0
+  178864: 43 00 00 14  	b	0x178970 <meizu_ois_reset_store+0x5e8>
+  178868: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_store+0x4e0> // 'meizu_ois_reset_store'
+  17886c: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x4e4> // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  178870: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_store+0x4e8> // 'CAM_ERR'
+  178874: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_store+0x4ec> // 'CAM-OIS'
+  178878: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_store'
+  17887c: 67 62 0c 11  	add	w7, w19, #792
+  178880: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d %s: read reg:0x%x fail. return:%d.\n'
+  178884: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  178888: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17888c: 60 00 80 52  	mov	w0, #3
+  178890: 45 6d 80 52  	mov	w5, #874
+  178894: e6 03 04 aa  	mov	x6, x4
+  178898: fc 03 00 b9  	str	w28, [sp]
+  17889c: 00 00 00 94  	bl	0x17889c <meizu_ois_reset_store+0x514> // cam_print_log+0x0
+  1788a0: 08 00 00 90  	adrp	x8, 0x178000 <meizu_ois_reset_store+0x518> // cali_exec_result+0x0
+  1788a4: 29 00 80 12  	mov	w9, #-2
+  1788a8: 30 00 00 14  	b	0x178968 <meizu_ois_reset_store+0x5e0>
+  1788ac: 08 00 00 90  	adrp	x8, 0x178000 <meizu_ois_reset_store+0x524> // cali_exec_result+0x0
+  1788b0: 49 00 80 12  	mov	w9, #-3
+  1788b4: 2d 00 00 14  	b	0x178968 <meizu_ois_reset_store+0x5e0>
+  1788b8: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x530> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  1788bc: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_store+0x534> // 'CAM_ERR'
+  1788c0: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_store+0x538> // 'CAM-OIS'
+  1788c4: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_store+0x53c> // 'meizu_ois_reset_store'
+  1788c8: e6 03 00 2a  	mov	w6, w0
+  1788cc: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  1788d0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1788d4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1788d8: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_store'
+  1788dc: 60 00 80 52  	mov	w0, #3
+  1788e0: 05 72 80 52  	mov	w5, #912
+  1788e4: 00 00 00 94  	bl	0x1788e4 <meizu_ois_reset_store+0x55c> // cam_print_log+0x0
+  1788e8: 08 00 00 90  	adrp	x8, 0x178000 <meizu_ois_reset_store+0x560> // cali_exec_result+0x0
+  1788ec: 69 00 80 12  	mov	w9, #-4
+  1788f0: 1e 00 00 14  	b	0x178968 <meizu_ois_reset_store+0x5e0>
+  1788f4: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x56c> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  1788f8: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_store+0x570> // 'CAM_ERR'
+  1788fc: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_store+0x574> // 'CAM-OIS'
+  178900: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_store+0x578> // 'meizu_ois_reset_store'
+  178904: e6 03 00 2a  	mov	w6, w0
+  178908: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  17890c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  178910: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  178914: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_store'
+  178918: 60 00 80 52  	mov	w0, #3
+  17891c: 65 73 80 52  	mov	w5, #923
+  178920: 00 00 00 94  	bl	0x178920 <meizu_ois_reset_store+0x598> // cam_print_log+0x0
+  178924: 08 00 00 90  	adrp	x8, 0x178000 <meizu_ois_reset_store+0x59c> // cali_exec_result+0x0
+  178928: 89 00 80 12  	mov	w9, #-5
+  17892c: 0f 00 00 14  	b	0x178968 <meizu_ois_reset_store+0x5e0>
+  178930: 01 00 00 90  	adrp	x1, 0x178000 <meizu_ois_reset_store+0x5a8> // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  178934: 02 00 00 90  	adrp	x2, 0x178000 <meizu_ois_reset_store+0x5ac> // 'CAM_ERR'
+  178938: 03 00 00 90  	adrp	x3, 0x178000 <meizu_ois_reset_store+0x5b0> // 'CAM-OIS'
+  17893c: 04 00 00 90  	adrp	x4, 0x178000 <meizu_ois_reset_store+0x5b4> // 'meizu_ois_reset_store'
+  178940: e6 03 00 2a  	mov	w6, w0
+  178944: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d camera_io_dev_write failed %d'
+  178948: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  17894c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  178950: 84 00 00 91  	add	x4, x4, #0 // 'meizu_ois_reset_store'
+  178954: 60 00 80 52  	mov	w0, #3
+  178958: e5 74 80 52  	mov	w5, #935
+  17895c: 00 00 00 94  	bl	0x17895c <meizu_ois_reset_store+0x5d4> // cam_print_log+0x0
+  178960: 08 00 00 90  	adrp	x8, 0x178000 <meizu_ois_reset_store+0x5d8> // cali_exec_result+0x0
+  178964: a9 00 80 12  	mov	w9, #-6
+  178968: 09 01 00 b9  	str	w9, [x8] // cali_exec_result+0x0
+  17896c: e0 07 40 f9  	ldr	x0, [sp, #8]
+  178970: 08 41 38 d5  	mrs	x8, SP_EL0
+  178974: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  178978: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  17897c: 1f 01 09 eb  	cmp	x8, x9
+  178980: 61 01 00 54  	b.ne	0x1789ac <meizu_ois_reset_store+0x624>
+  178984: f4 4f 4e a9  	ldp	x20, x19, [sp, #224]
+  178988: f6 57 4d a9  	ldp	x22, x21, [sp, #208]
+  17898c: f8 5f 4c a9  	ldp	x24, x23, [sp, #192]
+  178990: fa 67 4b a9  	ldp	x26, x25, [sp, #176]
+  178994: fc 6f 4a a9  	ldp	x28, x27, [sp, #160]
+  178998: fd 7b 49 a9  	ldp	x29, x30, [sp, #144]
+  17899c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1789a0: ff c3 03 91  	add	sp, sp, #240
+  1789a4: bf 23 03 d5  	hint	#29
+  1789a8: c0 03 5f d6  	ret
+  1789ac: 00 00 00 94  	bl	0x1789ac <meizu_ois_reset_store+0x624> // __stack_chk_fail+0x0

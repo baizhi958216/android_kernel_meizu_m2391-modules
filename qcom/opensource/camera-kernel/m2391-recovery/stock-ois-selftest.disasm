@@ -1,0 +1,232 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001733e0 <mz_ois_self_test>:
+  1733e0: 3f 23 03 d5  	hint	#25
+  1733e4: ff c3 01 d1  	sub	sp, sp, #112
+  1733e8: 5e 86 00 f8  	str	x30, [x18], #8
+  1733ec: fd 7b 05 a9  	stp	x29, x30, [sp, #80]
+  1733f0: fd 43 01 91  	add	x29, sp, #80
+  1733f4: f4 4f 06 a9  	stp	x20, x19, [sp, #96]
+  1733f8: 08 41 38 d5  	mrs	x8, SP_EL0
+  1733fc: 09 00 00 90  	adrp	x9, 0x173000 <mz_ois_self_test+0x1c> // gr_o_ctrl+0x0
+  173400: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  173404: a8 83 1f f8  	stur	x8, [x29, #-8]
+  173408: 28 01 40 f9  	ldr	x8, [x9] // gr_o_ctrl+0x0
+  17340c: 13 81 31 91  	add	x19, x8, #3168
+  173410: 1f 01 00 f1  	cmp	x8, #0
+  173414: 64 1a 40 fa  	ccmp	x19, #0, #4, ne
+  173418: c1 01 00 54  	b.ne	0x173450 <mz_ois_self_test+0x70>
+  17341c: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x3c> // '\x016%s: %s: %s: %d [check ctrl] OIS ctrl is NULL'
+  173420: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x40> // 'CAM_ERR'
+  173424: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x44> // 'CAM-OIS'
+  173428: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x48> // 'mz_ois_self_test'
+  17342c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d [check ctrl] OIS ctrl is NULL'
+  173430: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  173434: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  173438: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_self_test'
+  17343c: 60 00 80 52  	mov	w0, #3
+  173440: 25 ce 80 52  	mov	w5, #1649
+  173444: 00 00 00 94  	bl	0x173444 <mz_ois_self_test+0x64> // cam_print_log+0x0
+  173448: 80 00 80 12  	mov	w0, #-5
+  17344c: aa 00 00 14  	b	0x1736f4 <mz_ois_self_test+0x314>
+  173450: 06 25 4f b9  	ldr	w6, [x8, #3876]
+  173454: bf ff 3e a9  	stp	xzr, xzr, [x29, #-24]
+  173458: ff ff 02 a9  	stp	xzr, xzr, [sp, #40]
+  17345c: ff 13 00 f9  	str	xzr, [sp, #32]
+  173460: df 04 00 71  	cmp	w6, #1
+  173464: c8 01 00 54  	b.hi	0x17349c <mz_ois_self_test+0xbc>
+  173468: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x88> // '\x016%s: %s: %s: %d Not in right state to control OIS: %d'
+  17346c: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x8c> // 'CAM_ERR'
+  173470: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x90> // 'CAM-OIS'
+  173474: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x94> // 'mz_ois_register_check'
+  173478: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Not in right state to control OIS: %d'
+  17347c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  173480: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  173484: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  173488: 60 00 80 52  	mov	w0, #3
+  17348c: 85 c2 80 52  	mov	w5, #1556
+  173490: 00 00 00 94  	bl	0x173490 <mz_ois_self_test+0xb0> // cam_print_log+0x0
+  173494: a0 02 80 12  	mov	w0, #-22
+  173498: 97 00 00 14  	b	0x1736f4 <mz_ois_self_test+0x314>
+  17349c: 29 00 80 d2  	mov	x9, #1
+  1734a0: 0b 10 80 d2  	mov	x11, #128
+  1734a4: 28 00 80 52  	mov	w8, #1
+  1734a8: 49 00 c0 f2  	movk	x9, #2, lsl #32
+  1734ac: ea 03 00 91  	mov	x10, sp
+  1734b0: 2b 00 c0 f2  	movk	x11, #1, lsl #32
+  1734b4: e1 43 00 91  	add	x1, sp, #16
+  1734b8: e0 03 13 aa  	mov	x0, x19
+  1734bc: ff 4b 00 79  	strh	wzr, [sp, #36]
+  1734c0: e8 23 00 b9  	str	w8, [sp, #32]
+  1734c4: ea 27 01 a9  	stp	x10, x9, [sp, #16]
+  1734c8: eb 7f 00 a9  	stp	x11, xzr, [sp]
+  1734cc: 00 00 00 94  	bl	0x1734cc <mz_ois_self_test+0xec> // camera_io_dev_write+0x0
+  1734d0: 00 06 f8 37  	tbnz	w0, #31, 0x173590 <mz_ois_self_test+0x1b0>
+  1734d4: a2 33 00 d1  	sub	x2, x29, #12
+  1734d8: e0 03 13 aa  	mov	x0, x19
+  1734dc: e1 03 1f 2a  	mov	w1, wzr
+  1734e0: 43 00 80 52  	mov	w3, #2
+  1734e4: 24 00 80 52  	mov	w4, #1
+  1734e8: 25 00 80 52  	mov	w5, #1
+  1734ec: 00 00 00 94  	bl	0x1734ec <mz_ois_self_test+0x10c> // camera_io_dev_read+0x0
+  1734f0: c0 06 f8 37  	tbnz	w0, #31, 0x1735c8 <mz_ois_self_test+0x1e8>
+  1734f4: a6 43 5f b8  	ldur	w6, [x29, #-12]
+  1734f8: df 04 00 71  	cmp	w6, #1
+  1734fc: e1 07 00 54  	b.ne	0x1735f8 <mz_ois_self_test+0x218>
+  173500: a2 63 00 d1  	sub	x2, x29, #24
+  173504: e0 03 13 aa  	mov	x0, x19
+  173508: 41 00 80 52  	mov	w1, #2
+  17350c: 43 00 80 52  	mov	w3, #2
+  173510: 24 00 80 52  	mov	w4, #1
+  173514: 25 00 80 52  	mov	w5, #1
+  173518: 00 00 00 94  	bl	0x173518 <mz_ois_self_test+0x138> // camera_io_dev_read+0x0
+  17351c: 80 08 f8 37  	tbnz	w0, #31, 0x17362c <mz_ois_self_test+0x24c>
+  173520: a6 83 5e b8  	ldur	w6, [x29, #-24]
+  173524: df 40 00 71  	cmp	w6, #16
+  173528: a1 09 00 54  	b.ne	0x17365c <mz_ois_self_test+0x27c>
+  17352c: a2 43 00 d1  	sub	x2, x29, #16
+  173530: e0 03 13 aa  	mov	x0, x19
+  173534: 41 10 80 52  	mov	w1, #130
+  173538: 43 00 80 52  	mov	w3, #2
+  17353c: 44 00 80 52  	mov	w4, #2
+  173540: 25 00 80 52  	mov	w5, #1
+  173544: 00 00 00 94  	bl	0x173544 <mz_ois_self_test+0x164> // camera_io_dev_read+0x0
+  173548: 40 0a f8 37  	tbnz	w0, #31, 0x173690 <mz_ois_self_test+0x2b0>
+  17354c: a2 53 00 d1  	sub	x2, x29, #20
+  173550: e0 03 13 aa  	mov	x0, x19
+  173554: 81 10 80 52  	mov	w1, #132
+  173558: 43 00 80 52  	mov	w3, #2
+  17355c: 44 00 80 52  	mov	w4, #2
+  173560: 25 00 80 52  	mov	w5, #1
+  173564: b4 03 5f b8  	ldur	w20, [x29, #-16]
+  173568: 00 00 00 94  	bl	0x173568 <mz_ois_self_test+0x188> // camera_io_dev_read+0x0
+  17356c: a0 0a f8 37  	tbnz	w0, #31, 0x1736c0 <mz_ois_self_test+0x2e0>
+  173570: 00 d7 95 52  	mov	w0, #44728
+  173574: b3 c3 5e b8  	ldur	w19, [x29, #-20]
+  173578: e0 28 a0 72  	movk	w0, #327, lsl #16
+  17357c: 00 00 00 94  	bl	0x17357c <mz_ois_self_test+0x19c> // __const_udelay+0x0
+  173580: 14 0d 00 34  	cbz	w20, 0x173720 <mz_ois_self_test+0x340>
+  173584: f3 0c 00 34  	cbz	w19, 0x173720 <mz_ois_self_test+0x340>
+  173588: e0 03 1f 2a  	mov	w0, wzr
+  17358c: 5a 00 00 14  	b	0x1736f4 <mz_ois_self_test+0x314>
+  173590: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x1b0> // '\x016%s: %s: %s: %d sensor write i2c failed %d, line:%d.'
+  173594: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x1b4> // 'CAM_ERR'
+  173598: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x1b8> // 'CAM-ACTUATOR'
+  17359c: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x1bc> // 'mz_ois_register_check'
+  1735a0: e6 03 00 2a  	mov	w6, w0
+  1735a4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d sensor write i2c failed %d, line:%d.'
+  1735a8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1735ac: 63 00 00 91  	add	x3, x3, #0 // 'CAM-ACTUATOR'
+  1735b0: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  1735b4: 60 00 80 52  	mov	w0, #3
+  1735b8: 85 c4 80 52  	mov	w5, #1572
+  1735bc: 87 c4 80 52  	mov	w7, #1572
+  1735c0: 00 00 00 94  	bl	0x1735c0 <mz_ois_self_test+0x1e0> // cam_print_log+0x0
+  1735c4: 4b 00 00 14  	b	0x1736f0 <mz_ois_self_test+0x310>
+  1735c8: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x1e8> // '\x016%s: %s: %s: %d [check en] Read I2C Fail (%d)'
+  1735cc: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x1ec> // 'CAM_ERR'
+  1735d0: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x1f0> // 'CAM-OIS'
+  1735d4: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x1f4> // 'mz_ois_register_check'
+  1735d8: e6 03 00 2a  	mov	w6, w0
+  1735dc: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d [check en] Read I2C Fail (%d)'
+  1735e0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1735e4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1735e8: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  1735ec: 60 00 80 52  	mov	w0, #3
+  1735f0: e5 c5 80 52  	mov	w5, #1583
+  1735f4: 3e 00 00 14  	b	0x1736ec <mz_ois_self_test+0x30c>
+  1735f8: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x218> // '\x016%s: %s: %s: %d OIS is OFF (%d)'
+  1735fc: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x21c> // 'CAM_ERR'
+  173600: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x220> // 'CAM-OIS'
+  173604: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x224> // 'mz_ois_register_check'
+  173608: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OIS is OFF (%d)'
+  17360c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  173610: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  173614: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  173618: 60 00 80 52  	mov	w0, #3
+  17361c: 45 c6 80 52  	mov	w5, #1586
+  173620: 00 00 00 94  	bl	0x173620 <mz_ois_self_test+0x240> // cam_print_log+0x0
+  173624: 20 00 80 12  	mov	w0, #-2
+  173628: 33 00 00 14  	b	0x1736f4 <mz_ois_self_test+0x314>
+  17362c: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x24c> // '\x016%s: %s: %s: %d [check fw] Read I2C Fail (%d)'
+  173630: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x250> // 'CAM_ERR'
+  173634: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x254> // 'CAM-OIS'
+  173638: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x258> // 'mz_ois_register_check'
+  17363c: e6 03 00 2a  	mov	w6, w0
+  173640: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d [check fw] Read I2C Fail (%d)'
+  173644: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  173648: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17364c: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  173650: 60 00 80 52  	mov	w0, #3
+  173654: a5 c7 80 52  	mov	w5, #1597
+  173658: 25 00 00 14  	b	0x1736ec <mz_ois_self_test+0x30c>
+  17365c: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x27c> // '\x016%s: %s: %s: %d OIS is disable (%d)'
+  173660: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x280> // 'CAM_ERR'
+  173664: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x284> // 'CAM-OIS'
+  173668: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x288> // 'mz_ois_register_check'
+  17366c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OIS is disable (%d)'
+  173670: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  173674: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  173678: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  17367c: 60 00 80 52  	mov	w0, #3
+  173680: 05 c8 80 52  	mov	w5, #1600
+  173684: 00 00 00 94  	bl	0x173684 <mz_ois_self_test+0x2a4> // cam_print_log+0x0
+  173688: 40 00 80 12  	mov	w0, #-3
+  17368c: 1a 00 00 14  	b	0x1736f4 <mz_ois_self_test+0x314>
+  173690: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x2b0> // '\x016%s: %s: %s: %d [check x] Read I2C Fail (%d)'
+  173694: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x2b4> // 'CAM_ERR'
+  173698: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x2b8> // 'CAM-OIS'
+  17369c: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x2bc> // 'mz_ois_register_check'
+  1736a0: e6 03 00 2a  	mov	w6, w0
+  1736a4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d [check x] Read I2C Fail (%d)'
+  1736a8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1736ac: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1736b0: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  1736b4: 60 00 80 52  	mov	w0, #3
+  1736b8: 85 c9 80 52  	mov	w5, #1612
+  1736bc: 0c 00 00 14  	b	0x1736ec <mz_ois_self_test+0x30c>
+  1736c0: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x2e0> // '\x016%s: %s: %s: %d [check y] Read I2C Fail (%d)'
+  1736c4: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x2e4> // 'CAM_ERR'
+  1736c8: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x2e8> // 'CAM-OIS'
+  1736cc: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x2ec> // 'mz_ois_register_check'
+  1736d0: e6 03 00 2a  	mov	w6, w0
+  1736d4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d [check y] Read I2C Fail (%d)'
+  1736d8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1736dc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  1736e0: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  1736e4: 60 00 80 52  	mov	w0, #3
+  1736e8: 45 cb 80 52  	mov	w5, #1626
+  1736ec: 00 00 00 94  	bl	0x1736ec <mz_ois_self_test+0x30c> // cam_print_log+0x0
+  1736f0: 00 00 80 12  	mov	w0, #-1
+  1736f4: 08 41 38 d5  	mrs	x8, SP_EL0
+  1736f8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  1736fc: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  173700: 1f 01 09 eb  	cmp	x8, x9
+  173704: 01 03 00 54  	b.ne	0x173764 <mz_ois_self_test+0x384>
+  173708: f4 4f 46 a9  	ldp	x20, x19, [sp, #96]
+  17370c: fd 7b 45 a9  	ldp	x29, x30, [sp, #80]
+  173710: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  173714: ff c3 01 91  	add	sp, sp, #112
+  173718: bf 23 03 d5  	hint	#29
+  17371c: c0 03 5f d6  	ret
+  173720: 7f 02 00 71  	cmp	w19, #0
+  173724: 01 00 00 90  	adrp	x1, 0x173000 <mz_ois_self_test+0x344> // '\x016%s: %s: %s: %d [check val] Read gyro value Fail (X=%d, Y=%d)'
+  173728: e7 17 9f 1a  	cset	w7, eq
+  17372c: 9f 02 00 71  	cmp	w20, #0
+  173730: 02 00 00 90  	adrp	x2, 0x173000 <mz_ois_self_test+0x350> // 'CAM_ERR'
+  173734: 03 00 00 90  	adrp	x3, 0x173000 <mz_ois_self_test+0x354> // 'CAM-OIS'
+  173738: 04 00 00 90  	adrp	x4, 0x173000 <mz_ois_self_test+0x358> // 'mz_ois_register_check'
+  17373c: e6 17 9f 1a  	cset	w6, eq
+  173740: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d [check val] Read gyro value Fail (X=%d, Y=%d)'
+  173744: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  173748: 63 00 00 91  	add	x3, x3, #0 // 'CAM-OIS'
+  17374c: 84 00 00 91  	add	x4, x4, #0 // 'mz_ois_register_check'
+  173750: 60 00 80 52  	mov	w0, #3
+  173754: 85 cc 80 52  	mov	w5, #1636
+  173758: 00 00 00 94  	bl	0x173758 <mz_ois_self_test+0x378> // cam_print_log+0x0
+  17375c: 60 00 80 12  	mov	w0, #-4
+  173760: e5 ff ff 17  	b	0x1736f4 <mz_ois_self_test+0x314>
+  173764: 00 00 00 94  	bl	0x173764 <mz_ois_self_test+0x384> // __stack_chk_fail+0x0

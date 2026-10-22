@@ -1,0 +1,453 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001a0628 <show_update_enable>:
+  1a0628: 3f 23 03 d5  	hint	#25
+  1a062c: ff c3 02 d1  	sub	sp, sp, #176
+  1a0630: 5e 86 00 f8  	str	x30, [x18], #8
+  1a0634: fd 7b 09 a9  	stp	x29, x30, [sp, #144]
+  1a0638: fd 43 02 91  	add	x29, sp, #144
+  1a063c: f4 4f 0a a9  	stp	x20, x19, [sp, #160]
+  1a0640: 08 41 38 d5  	mrs	x8, SP_EL0
+  1a0644: f3 03 02 aa  	mov	x19, x2
+  1a0648: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  1a064c: a8 83 1f f8  	stur	x8, [x29, #-8]
+  1a0650: 08 4c 40 f9  	ldr	x8, [x0, #152]
+  1a0654: 88 05 00 b4  	cbz	x8, 0x1a0704 <show_update_enable+0xdc>
+  1a0658: 09 59 47 f9  	ldr	x9, [x8, #3760]
+  1a065c: 49 05 00 b4  	cbz	x9, 0x1a0704 <show_update_enable+0xdc>
+  1a0660: 08 6d 40 b9  	ldr	w8, [x8, #108]
+  1a0664: ff f3 07 b8  	stur	wzr, [sp, #127]
+  1a0668: ff 7f 07 a9  	stp	xzr, xzr, [sp, #112]
+  1a066c: ff 7f 06 a9  	stp	xzr, xzr, [sp, #96]
+  1a0670: 1f 05 01 71  	cmp	w8, #65
+  1a0674: ff 7f 05 a9  	stp	xzr, xzr, [sp, #80]
+  1a0678: ff 7f 04 a9  	stp	xzr, xzr, [sp, #64]
+  1a067c: ff 7f 03 a9  	stp	xzr, xzr, [sp, #48]
+  1a0680: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  1a0684: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+  1a0688: ff 7f 00 a9  	stp	xzr, xzr, [sp]
+  1a068c: 62 07 00 54  	b.hs	0x1a0778 <show_update_enable+0x150>
+  1a0690: 09 80 8c 52  	mov	w9, #25600
+  1a0694: 00 00 00 90  	adrp	x0, 0x1a0000 <show_update_enable+0x6c> // 'camera'
+  1a0698: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  1a069c: e3 03 00 91  	mov	x3, sp
+  1a06a0: 02 7d 09 9b  	mul	x2, x8, x9
+  1a06a4: e1 03 1f 2a  	mov	w1, wzr
+  1a06a8: 64 10 80 52  	mov	w4, #131
+  1a06ac: 00 00 00 94  	bl	0x1a06ac <show_update_enable+0x84> // sd_partition_rw+0x0
+  1a06b0: e6 03 42 39  	ldrb	w6, [sp, #128]
+  1a06b4: 01 00 00 90  	adrp	x1, 0x1a0000 <show_update_enable+0x8c> // '\x016%s: %s: %s: %d OTP update_flag:%d\n'
+  1a06b8: 02 00 00 90  	adrp	x2, 0x1a0000 <show_update_enable+0x90> // 'CAM_ERR'
+  1a06bc: 03 00 00 90  	adrp	x3, 0x1a0000 <show_update_enable+0x94> // 'CAM-EEPROM'
+  1a06c0: 04 00 00 90  	adrp	x4, 0x1a0000 <show_update_enable+0x98> // 'show_update_enable'
+  1a06c4: 14 00 00 90  	adrp	x20, 0x1a0000 <show_update_enable+0x9c> // +0x24a990
+  1a06c8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OTP update_flag:%d\n'
+  1a06cc: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1a06d0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  1a06d4: 84 00 00 91  	add	x4, x4, #0 // 'show_update_enable'
+  1a06d8: 60 00 80 52  	mov	w0, #3
+  1a06dc: c5 45 80 52  	mov	w5, #558
+  1a06e0: 86 02 00 39  	strb	w6, [x20] // +0x24a990
+  1a06e4: 00 00 00 94  	bl	0x1a06e4 <show_update_enable+0xbc> // cam_print_log+0x0
+  1a06e8: 01 00 00 90  	adrp	x1, 0x1a0000 <show_update_enable+0xc0> // '%d.\n'
+  1a06ec: 82 02 40 39  	ldrb	w2, [x20] // +0x24a990
+  1a06f0: 21 00 00 91  	add	x1, x1, #0 // '%d.\n'
+  1a06f4: e0 03 13 aa  	mov	x0, x19
+  1a06f8: 00 00 00 94  	bl	0x1a06f8 <show_update_enable+0xd0> // sprintf+0x0
+  1a06fc: 00 7c 40 93  	sxtw	x0, w0
+  1a0700: 13 00 00 14  	b	0x1a074c <show_update_enable+0x124>
+  1a0704: 01 00 00 90  	adrp	x1, 0x1a0000 <show_update_enable+0xdc> // '\x016%s: %s: %s: %d fail,otp data is null, line:%d.'
+  1a0708: 02 00 00 90  	adrp	x2, 0x1a0000 <show_update_enable+0xe0> // 'CAM_ERR'
+  1a070c: 03 00 00 90  	adrp	x3, 0x1a0000 <show_update_enable+0xe4> // 'CAM-EEPROM'
+  1a0710: 04 00 00 90  	adrp	x4, 0x1a0000 <show_update_enable+0xe8> // 'show_update_enable'
+  1a0714: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d fail,otp data is null, line:%d.'
+  1a0718: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1a071c: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  1a0720: 84 00 00 91  	add	x4, x4, #0 // 'show_update_enable'
+  1a0724: 60 00 80 52  	mov	w0, #3
+  1a0728: 25 45 80 52  	mov	w5, #553
+  1a072c: 26 45 80 52  	mov	w6, #553
+  1a0730: 00 00 00 94  	bl	0x1a0730 <show_update_enable+0x108> // cam_print_log+0x0
+  1a0734: c9 ad 8e 52  	mov	w9, #30062
+  1a0738: 48 01 80 52  	mov	w8, #10
+  1a073c: 89 8d ad 72  	movk	w9, #27756, lsl #16
+  1a0740: a0 00 80 52  	mov	w0, #5
+  1a0744: 68 0a 00 79  	strh	w8, [x19, #4]
+  1a0748: 69 02 00 b9  	str	w9, [x19]
+  1a074c: 08 41 38 d5  	mrs	x8, SP_EL0
+  1a0750: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  1a0754: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  1a0758: 1f 01 09 eb  	cmp	x8, x9
+  1a075c: 81 01 00 54  	b.ne	0x1a078c <show_update_enable+0x164>
+  1a0760: f4 4f 4a a9  	ldp	x20, x19, [sp, #160]
+  1a0764: fd 7b 49 a9  	ldp	x29, x30, [sp, #144]
+  1a0768: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1a076c: ff c3 02 91  	add	sp, sp, #176
+  1a0770: bf 23 03 d5  	hint	#29
+  1a0774: c0 03 5f d6  	ret
+  1a0778: 00 00 00 90  	adrp	x0, 0x1a0000 <show_update_enable+0x150> // '\x013out of private partition range\n'
+  1a077c: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  1a0780: 00 00 00 94  	bl	0x1a0780 <show_update_enable+0x158> // _printk+0x0
+  1a0784: e6 03 1f 2a  	mov	w6, wzr
+  1a0788: cb ff ff 17  	b	0x1a06b4 <show_update_enable+0x8c>
+  1a078c: 00 00 00 94  	bl	0x1a078c <show_update_enable+0x164> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000001a0790 <store_update_enable>:
+  1a0790: 3f 23 03 d5  	hint	#25
+  1a0794: 5e 86 00 f8  	str	x30, [x18], #8
+  1a0798: fd 7b bd a9  	stp	x29, x30, [sp, #-48]!
+  1a079c: f5 0b 00 f9  	str	x21, [sp, #16]
+  1a07a0: fd 03 00 91  	mov	x29, sp
+  1a07a4: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  1a07a8: f3 03 03 aa  	mov	x19, x3
+  1a07ac: 15 4c 40 f9  	ldr	x21, [x0, #152]
+  1a07b0: 55 03 00 b4  	cbz	x21, 0x1a0818 <store_update_enable+0x88>
+  1a07b4: a8 5a 47 f9  	ldr	x8, [x21, #3760]
+  1a07b8: 08 03 00 b4  	cbz	x8, 0x1a0818 <store_update_enable+0x88>
+  1a07bc: 14 00 00 90  	adrp	x20, 0x1a0000 <store_update_enable+0x2c> // +0x24a990
+  1a07c0: 01 00 00 90  	adrp	x1, 0x1a0000 <store_update_enable+0x30> // '%d\n'
+  1a07c4: 94 02 00 91  	add	x20, x20, #0 // +0x24a990
+  1a07c8: 21 00 00 91  	add	x1, x1, #0 // '%d\n'
+  1a07cc: e0 03 02 aa  	mov	x0, x2
+  1a07d0: e2 03 14 aa  	mov	x2, x20
+  1a07d4: 00 00 00 94  	bl	0x1a07d4 <store_update_enable+0x44> // sscanf+0x0
+  1a07d8: 01 00 00 90  	adrp	x1, 0x1a0000 <store_update_enable+0x48> // '\x016%s: %s: %s: %d OTP update_flag:%d\n'
+  1a07dc: 02 00 00 90  	adrp	x2, 0x1a0000 <store_update_enable+0x4c> // 'CAM_ERR'
+  1a07e0: 03 00 00 90  	adrp	x3, 0x1a0000 <store_update_enable+0x50> // 'CAM-EEPROM'
+  1a07e4: 04 00 00 90  	adrp	x4, 0x1a0000 <store_update_enable+0x54> // 'store_update_enable'
+  1a07e8: 86 02 40 39  	ldrb	w6, [x20]
+  1a07ec: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OTP update_flag:%d\n'
+  1a07f0: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1a07f4: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  1a07f8: 84 00 00 91  	add	x4, x4, #0 // 'store_update_enable'
+  1a07fc: 60 00 80 52  	mov	w0, #3
+  1a0800: c5 47 80 52  	mov	w5, #574
+  1a0804: 00 00 00 94  	bl	0x1a0804 <store_update_enable+0x74> // cam_print_log+0x0
+  1a0808: a0 6e 40 b9  	ldr	w0, [x21, #108]
+  1a080c: 81 02 40 39  	ldrb	w1, [x20]
+  1a0810: 00 00 00 94  	bl	0x1a0810 <store_update_enable+0x80> // reset_partition_force_flag+0x0
+  1a0814: 0d 00 00 14  	b	0x1a0848 <store_update_enable+0xb8>
+  1a0818: 01 00 00 90  	adrp	x1, 0x1a0000 <store_update_enable+0x88> // '\x016%s: %s: %s: %d fail,otp data is null, line:%d.'
+  1a081c: 02 00 00 90  	adrp	x2, 0x1a0000 <store_update_enable+0x8c> // 'CAM_ERR'
+  1a0820: 03 00 00 90  	adrp	x3, 0x1a0000 <store_update_enable+0x90> // 'CAM-EEPROM'
+  1a0824: 04 00 00 90  	adrp	x4, 0x1a0000 <store_update_enable+0x94> // 'store_update_enable'
+  1a0828: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d fail,otp data is null, line:%d.'
+  1a082c: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  1a0830: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  1a0834: 84 00 00 91  	add	x4, x4, #0 // 'store_update_enable'
+  1a0838: 60 00 80 52  	mov	w0, #3
+  1a083c: 25 47 80 52  	mov	w5, #569
+  1a0840: 26 47 80 52  	mov	w6, #569
+  1a0844: 00 00 00 94  	bl	0x1a0844 <store_update_enable+0xb4> // cam_print_log+0x0
+  1a0848: e0 03 13 aa  	mov	x0, x19
+  1a084c: f5 0b 40 f9  	ldr	x21, [sp, #16]
+  1a0850: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  1a0854: fd 7b c3 a8  	ldp	x29, x30, [sp], #48
+  1a0858: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  1a085c: bf 23 03 d5  	hint	#29
+  1a0860: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019dfc8 <reset_partition_force_flag>:
+  19dfc8: 3f 23 03 d5  	hint	#25
+  19dfcc: ff 03 03 d1  	sub	sp, sp, #192
+  19dfd0: 5e 86 00 f8  	str	x30, [x18], #8
+  19dfd4: fd 7b 09 a9  	stp	x29, x30, [sp, #144]
+  19dfd8: fd 43 02 91  	add	x29, sp, #144
+  19dfdc: f5 53 00 f9  	str	x21, [sp, #160]
+  19dfe0: f4 4f 0b a9  	stp	x20, x19, [sp, #176]
+  19dfe4: 08 41 38 d5  	mrs	x8, SP_EL0
+  19dfe8: f3 03 00 2a  	mov	w19, w0
+  19dfec: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19dff0: a8 83 1f f8  	stur	x8, [x29, #-8]
+  19dff4: 28 1c 00 12  	and	w8, w1, #0xff
+  19dff8: 1f 05 00 71  	cmp	w8, #1
+  19dffc: ff f3 07 b8  	stur	wzr, [sp, #127]
+  19e000: ff 7f 07 a9  	stp	xzr, xzr, [sp, #112]
+  19e004: ff 7f 06 a9  	stp	xzr, xzr, [sp, #96]
+  19e008: ff 7f 05 a9  	stp	xzr, xzr, [sp, #80]
+  19e00c: ff 7f 04 a9  	stp	xzr, xzr, [sp, #64]
+  19e010: ff 7f 03 a9  	stp	xzr, xzr, [sp, #48]
+  19e014: ff 7f 02 a9  	stp	xzr, xzr, [sp, #32]
+  19e018: ff 7f 01 a9  	stp	xzr, xzr, [sp, #16]
+  19e01c: ff 7f 00 a9  	stp	xzr, xzr, [sp]
+  19e020: e1 02 00 54  	b.ne	0x19e07c <reset_partition_force_flag+0xb4>
+  19e024: 7f 06 01 71  	cmp	w19, #65
+  19e028: 02 06 00 54  	b.hs	0x19e0e8 <reset_partition_force_flag+0x120>
+  19e02c: 08 80 8c 52  	mov	w8, #25600
+  19e030: 15 00 00 90  	adrp	x21, 0x19e000 <reset_partition_force_flag+0x68> // 'camera'
+  19e034: b5 02 00 91  	add	x21, x21, #0 // 'camera'
+  19e038: e3 03 00 91  	mov	x3, sp
+  19e03c: 74 7e 08 1b  	mul	w20, w19, w8
+  19e040: e0 03 15 aa  	mov	x0, x21
+  19e044: e1 03 1f 2a  	mov	w1, wzr
+  19e048: 64 10 80 52  	mov	w4, #131
+  19e04c: e2 03 14 aa  	mov	x2, x20
+  19e050: 00 00 00 94  	bl	0x19e050 <reset_partition_force_flag+0x88> // sd_partition_rw+0x0
+  19e054: 28 00 80 52  	mov	w8, #1
+  19e058: e3 03 00 91  	mov	x3, sp
+  19e05c: e0 03 15 aa  	mov	x0, x21
+  19e060: 21 00 80 52  	mov	w1, #1
+  19e064: e2 03 14 aa  	mov	x2, x20
+  19e068: 64 10 80 52  	mov	w4, #131
+  19e06c: e8 03 02 39  	strb	w8, [sp, #128]
+  19e070: 00 00 00 94  	bl	0x19e070 <reset_partition_force_flag+0xa8> // sd_partition_rw+0x0
+  19e074: a0 00 80 52  	mov	w0, #5
+  19e078: 00 00 00 94  	bl	0x19e078 <reset_partition_force_flag+0xb0> // msleep+0x0
+  19e07c: 7f 06 01 71  	cmp	w19, #65
+  19e080: c2 02 00 54  	b.hs	0x19e0d8 <reset_partition_force_flag+0x110>
+  19e084: 08 80 8c 52  	mov	w8, #25600
+  19e088: 00 00 00 90  	adrp	x0, 0x19e000 <reset_partition_force_flag+0xc0> // 'camera'
+  19e08c: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19e090: e3 03 00 91  	mov	x3, sp
+  19e094: 62 7e 08 1b  	mul	w2, w19, w8
+  19e098: e1 03 1f 2a  	mov	w1, wzr
+  19e09c: 64 10 80 52  	mov	w4, #131
+  19e0a0: 00 00 00 94  	bl	0x19e0a0 <reset_partition_force_flag+0xd8> // sd_partition_rw+0x0
+  19e0a4: e0 03 42 39  	ldrb	w0, [sp, #128]
+  19e0a8: 08 41 38 d5  	mrs	x8, SP_EL0
+  19e0ac: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  19e0b0: a9 83 5f f8  	ldur	x9, [x29, #-8]
+  19e0b4: 1f 01 09 eb  	cmp	x8, x9
+  19e0b8: a1 02 00 54  	b.ne	0x19e10c <reset_partition_force_flag+0x144>
+  19e0bc: f4 4f 4b a9  	ldp	x20, x19, [sp, #176]
+  19e0c0: fd 7b 49 a9  	ldp	x29, x30, [sp, #144]
+  19e0c4: f5 53 40 f9  	ldr	x21, [sp, #160]
+  19e0c8: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19e0cc: ff 03 03 91  	add	sp, sp, #192
+  19e0d0: bf 23 03 d5  	hint	#29
+  19e0d4: c0 03 5f d6  	ret
+  19e0d8: 00 00 00 90  	adrp	x0, 0x19e000 <reset_partition_force_flag+0x110> // '\x013out of private partition range\n'
+  19e0dc: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19e0e0: 00 00 00 94  	bl	0x19e0e0 <reset_partition_force_flag+0x118> // _printk+0x0
+  19e0e4: f0 ff ff 17  	b	0x19e0a4 <reset_partition_force_flag+0xdc>
+  19e0e8: 14 00 00 90  	adrp	x20, 0x19e000 <reset_partition_force_flag+0x120> // '\x013out of private partition range\n'
+  19e0ec: 94 02 00 91  	add	x20, x20, #0 // '\x013out of private partition range\n'
+  19e0f0: e0 03 14 aa  	mov	x0, x20
+  19e0f4: 00 00 00 94  	bl	0x19e0f4 <reset_partition_force_flag+0x12c> // _printk+0x0
+  19e0f8: 28 00 80 52  	mov	w8, #1
+  19e0fc: e0 03 14 aa  	mov	x0, x20
+  19e100: e8 03 02 39  	strb	w8, [sp, #128]
+  19e104: 00 00 00 94  	bl	0x19e104 <reset_partition_force_flag+0x13c> // _printk+0x0
+  19e108: db ff ff 17  	b	0x19e074 <reset_partition_force_flag+0xac>
+  19e10c: 00 00 00 94  	bl	0x19e10c <reset_partition_force_flag+0x144> // __stack_chk_fail+0x0
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019f9c4 <show_cam_otp>:
+  19f9c4: 3f 23 03 d5  	hint	#25
+  19f9c8: 5e 86 00 f8  	str	x30, [x18], #8
+  19f9cc: fd 7b be a9  	stp	x29, x30, [sp, #-32]!
+  19f9d0: f4 4f 01 a9  	stp	x20, x19, [sp, #16]
+  19f9d4: fd 03 00 91  	mov	x29, sp
+  19f9d8: 08 4c 40 f9  	ldr	x8, [x0, #152]
+  19f9dc: f3 03 02 aa  	mov	x19, x2
+  19f9e0: e8 01 00 b4  	cbz	x8, 0x19fa1c <show_cam_otp+0x58>
+  19f9e4: 08 59 47 f9  	ldr	x8, [x8, #3760]
+  19f9e8: a8 01 00 b4  	cbz	x8, 0x19fa1c <show_cam_otp+0x58>
+  19f9ec: 14 00 00 90  	adrp	x20, 0x19f000 <show_cam_otp+0x28> // +0x67b50
+  19f9f0: 94 02 00 91  	add	x20, x20, #0 // +0x67b50
+  19f9f4: 80 06 40 29  	ldp	w0, w1, [x20]
+  19f9f8: 82 0e 41 29  	ldp	w2, w3, [x20, #8]
+  19f9fc: 00 00 00 94  	bl	0x19f9fc <show_cam_otp+0x38> // cam_eeprom_check_partition+0x0
+  19fa00: 01 00 00 90  	adrp	x1, 0x19f000 <show_cam_otp+0x3c> // '%d.\n'
+  19fa04: 82 02 40 b9  	ldr	w2, [x20]
+  19fa08: 21 00 00 91  	add	x1, x1, #0 // '%d.\n'
+  19fa0c: e0 03 13 aa  	mov	x0, x19
+  19fa10: 00 00 00 94  	bl	0x19fa10 <show_cam_otp+0x4c> // sprintf+0x0
+  19fa14: 00 7c 40 93  	sxtw	x0, w0
+  19fa18: 13 00 00 14  	b	0x19fa64 <show_cam_otp+0xa0>
+  19fa1c: 01 00 00 90  	adrp	x1, 0x19f000 <show_cam_otp+0x58> // '\x016%s: %s: %s: %d fail,otp data is null, line:%d.'
+  19fa20: 02 00 00 90  	adrp	x2, 0x19f000 <show_cam_otp+0x5c> // 'CAM_ERR'
+  19fa24: 03 00 00 90  	adrp	x3, 0x19f000 <show_cam_otp+0x60> // 'CAM-EEPROM'
+  19fa28: 04 00 00 90  	adrp	x4, 0x19f000 <show_cam_otp+0x64> // 'show_cam_otp'
+  19fa2c: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d fail,otp data is null, line:%d.'
+  19fa30: 42 00 00 91  	add	x2, x2, #0 // 'CAM_ERR'
+  19fa34: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19fa38: 84 00 00 91  	add	x4, x4, #0 // 'show_cam_otp'
+  19fa3c: 60 00 80 52  	mov	w0, #3
+  19fa40: 05 42 80 52  	mov	w5, #528
+  19fa44: 06 42 80 52  	mov	w6, #528
+  19fa48: 00 00 00 94  	bl	0x19fa48 <show_cam_otp+0x84> // cam_print_log+0x0
+  19fa4c: c9 ad 8e 52  	mov	w9, #30062
+  19fa50: 48 01 80 52  	mov	w8, #10
+  19fa54: 89 8d ad 72  	movk	w9, #27756, lsl #16
+  19fa58: a0 00 80 52  	mov	w0, #5
+  19fa5c: 68 0a 00 79  	strh	w8, [x19, #4]
+  19fa60: 69 02 00 b9  	str	w9, [x19]
+  19fa64: f4 4f 41 a9  	ldp	x20, x19, [sp, #16]
+  19fa68: fd 7b c2 a8  	ldp	x29, x30, [sp], #32
+  19fa6c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19fa70: bf 23 03 d5  	hint	#29
+  19fa74: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019fa78 <store_cam_otp>:
+  19fa78: 3f 23 03 d5  	hint	#25
+  19fa7c: ff c3 00 d1  	sub	sp, sp, #48
+  19fa80: 5e 86 00 f8  	str	x30, [x18], #8
+  19fa84: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  19fa88: fd 43 00 91  	add	x29, sp, #16
+  19fa8c: f4 4f 02 a9  	stp	x20, x19, [sp, #32]
+  19fa90: 14 00 00 90  	adrp	x20, 0x19f000 <store_cam_otp+0x18> // +0x67b50
+  19fa94: 01 00 00 90  	adrp	x1, 0x19f000 <store_cam_otp+0x1c> // '%d %d %d %d\n'
+  19fa98: 94 02 00 91  	add	x20, x20, #0 // +0x67b50
+  19fa9c: f3 03 03 aa  	mov	x19, x3
+  19faa0: e0 03 02 aa  	mov	x0, x2
+  19faa4: 83 12 00 91  	add	x3, x20, #4
+  19faa8: 84 22 00 91  	add	x4, x20, #8
+  19faac: 85 32 00 91  	add	x5, x20, #12
+  19fab0: 21 00 00 91  	add	x1, x1, #0 // '%d %d %d %d\n'
+  19fab4: e2 03 14 aa  	mov	x2, x20
+  19fab8: 00 00 00 94  	bl	0x19fab8 <store_cam_otp+0x40> // sscanf+0x0
+  19fabc: 86 1e 40 29  	ldp	w6, w7, [x20]
+  19fac0: 88 26 41 29  	ldp	w8, w9, [x20, #8]
+  19fac4: 01 00 00 90  	adrp	x1, 0x19f000 <store_cam_otp+0x4c> // '\x016%s: %s: %s: %d OTP index:%d size:%d start:%d end:%d'
+  19fac8: 02 00 00 90  	adrp	x2, 0x19f000 <store_cam_otp+0x50> // 'CAM_INFO'
+  19facc: 03 00 00 90  	adrp	x3, 0x19f000 <store_cam_otp+0x54> // 'CAM-EEPROM'
+  19fad0: 04 00 00 90  	adrp	x4, 0x19f000 <store_cam_otp+0x58> // 'store_cam_otp'
+  19fad4: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d OTP index:%d size:%d start:%d end:%d'
+  19fad8: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  19fadc: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19fae0: 84 00 00 91  	add	x4, x4, #0 // 'store_cam_otp'
+  19fae4: 60 00 80 52  	mov	w0, #3
+  19fae8: c5 43 80 52  	mov	w5, #542
+  19faec: e9 0b 00 b9  	str	w9, [sp, #8]
+  19faf0: e8 03 00 b9  	str	w8, [sp]
+  19faf4: 00 00 00 94  	bl	0x19faf4 <store_cam_otp+0x7c> // cam_print_log+0x0
+  19faf8: e0 03 13 aa  	mov	x0, x19
+  19fafc: f4 4f 42 a9  	ldp	x20, x19, [sp, #32]
+  19fb00: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  19fb04: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19fb08: ff c3 00 91  	add	sp, sp, #48
+  19fb0c: bf 23 03 d5  	hint	#29
+  19fb10: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000019de18 <cam_eeprom_check_partition>:
+  19de18: 3f 23 03 d5  	hint	#25
+  19de1c: 5e 86 00 f8  	str	x30, [x18], #8
+  19de20: fd 7b ba a9  	stp	x29, x30, [sp, #-96]!
+  19de24: fc 6f 01 a9  	stp	x28, x27, [sp, #16]
+  19de28: fd 03 00 91  	mov	x29, sp
+  19de2c: fa 67 02 a9  	stp	x26, x25, [sp, #32]
+  19de30: f8 5f 03 a9  	stp	x24, x23, [sp, #48]
+  19de34: f6 57 04 a9  	stp	x22, x21, [sp, #64]
+  19de38: f4 4f 05 a9  	stp	x20, x19, [sp, #80]
+  19de3c: f7 03 01 2a  	mov	w23, w1
+  19de40: f8 03 00 2a  	mov	w24, w0
+  19de44: f5 7e 40 93  	sxtw	x21, w23
+  19de48: f3 03 02 2a  	mov	w19, w2
+  19de4c: e0 03 15 aa  	mov	x0, x21
+  19de50: 79 00 02 4b  	sub	w25, w3, w2
+  19de54: 00 00 00 94  	bl	0x19de54 <cam_eeprom_check_partition+0x3c> // vzalloc+0x0
+  19de58: f4 03 00 aa  	mov	x20, x0
+  19de5c: e0 03 15 aa  	mov	x0, x21
+  19de60: 00 00 00 94  	bl	0x19de60 <cam_eeprom_check_partition+0x48> // vzalloc+0x0
+  19de64: f5 03 00 aa  	mov	x21, x0
+  19de68: 1f 07 01 71  	cmp	w24, #65
+  19de6c: 62 09 00 54  	b.hs	0x19df98 <cam_eeprom_check_partition+0x180>
+  19de70: 08 80 8c 52  	mov	w8, #25600
+  19de74: 00 00 00 90  	adrp	x0, 0x19d000 <cam_eeprom_check_partition+0x5c> // 'camera'
+  19de78: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19de7c: e1 03 1f 2a  	mov	w1, wzr
+  19de80: 02 7f 08 1b  	mul	w2, w24, w8
+  19de84: e3 03 14 aa  	mov	x3, x20
+  19de88: 64 17 80 52  	mov	w4, #187
+  19de8c: 00 00 00 94  	bl	0x19de8c <cam_eeprom_check_partition+0x74> // sd_partition_rw+0x0
+  19de90: f6 03 00 2a  	mov	w22, w0
+  19de94: 01 00 00 90  	adrp	x1, 0x19d000 <cam_eeprom_check_partition+0x7c> // '\x016%s: %s: %s: %d Dual cam cali flag : %d'
+  19de98: 02 00 00 90  	adrp	x2, 0x19d000 <cam_eeprom_check_partition+0x80> // 'CAM_INFO'
+  19de9c: 03 00 00 90  	adrp	x3, 0x19d000 <cam_eeprom_check_partition+0x84> // 'CAM-EEPROM'
+  19dea0: 04 00 00 90  	adrp	x4, 0x19d000 <cam_eeprom_check_partition+0x88> // 'cam_eeprom_check_partition'
+  19dea4: 86 0e 42 39  	ldrb	w6, [x20, #131]
+  19dea8: 21 00 00 91  	add	x1, x1, #0 // '\x016%s: %s: %s: %d Dual cam cali flag : %d'
+  19deac: 42 00 00 91  	add	x2, x2, #0 // 'CAM_INFO'
+  19deb0: 63 00 00 91  	add	x3, x3, #0 // 'CAM-EEPROM'
+  19deb4: 84 00 00 91  	add	x4, x4, #0 // 'cam_eeprom_check_partition'
+  19deb8: 60 00 80 52  	mov	w0, #3
+  19debc: 45 02 80 52  	mov	w5, #18
+  19dec0: 3c 07 00 11  	add	w28, w25, #1
+  19dec4: 00 00 00 94  	bl	0x19dec4 <cam_eeprom_check_partition+0xac> // cam_print_log+0x0
+  19dec8: 08 2b 00 11  	add	w8, w24, #10
+  19decc: 1f 05 01 71  	cmp	w8, #65
+  19ded0: e2 06 00 54  	b.hs	0x19dfac <cam_eeprom_check_partition+0x194>
+  19ded4: 89 12 48 78  	ldurh	w9, [x20, #129]
+  19ded8: 0a 80 8c 52  	mov	w10, #25600
+  19dedc: 00 00 00 90  	adrp	x0, 0x19d000 <cam_eeprom_check_partition+0xc4> // 'camera'
+  19dee0: e1 03 1f 2a  	mov	w1, wzr
+  19dee4: 02 7d 0a 1b  	mul	w2, w8, w10
+  19dee8: 00 00 00 91  	add	x0, x0, #0 // 'camera'
+  19deec: 3f 01 17 6b  	cmp	w9, w23
+  19def0: e3 03 15 aa  	mov	x3, x21
+  19def4: 29 b1 97 1a  	csel	w9, w9, w23, lt
+  19def8: 24 7d 40 93  	sxtw	x4, w9
+  19defc: 00 00 00 94  	bl	0x19defc <cam_eeprom_check_partition+0xe4> // sd_partition_rw+0x0
+  19df00: f7 03 00 2a  	mov	w23, w0
+  19df04: 9f 07 00 71  	cmp	w28, #1
+  19df08: ab 02 00 54  	b.lt	0x19df5c <cam_eeprom_check_partition+0x144>
+  19df0c: 18 00 00 90  	adrp	x24, 0x19d000 <cam_eeprom_check_partition+0xf4> // '\x016%s: %s: %s: %d REG[%04X] DATA[%02X]'
+  19df10: 19 00 00 90  	adrp	x25, 0x19d000 <cam_eeprom_check_partition+0xf8> // 'CAM_INFO'
+  19df14: 1a 00 00 90  	adrp	x26, 0x19d000 <cam_eeprom_check_partition+0xfc> // 'CAM-EEPROM'
+  19df18: 1b 00 00 90  	adrp	x27, 0x19d000 <cam_eeprom_check_partition+0x100> // 'cam_eeprom_check_partition'
+  19df1c: 18 03 00 91  	add	x24, x24, #0 // '\x016%s: %s: %s: %d REG[%04X] DATA[%02X]'
+  19df20: 39 03 00 91  	add	x25, x25, #0 // 'CAM_INFO'
+  19df24: 5a 03 00 91  	add	x26, x26, #0 // 'CAM-EEPROM'
+  19df28: 7b 03 00 91  	add	x27, x27, #0 // 'cam_eeprom_check_partition'
+  19df2c: a7 ca 73 38  	ldrb	w7, [x21, w19, sxtw]
+  19df30: 60 00 80 52  	mov	w0, #3
+  19df34: e1 03 18 aa  	mov	x1, x24
+  19df38: e2 03 19 aa  	mov	x2, x25
+  19df3c: e3 03 1a aa  	mov	x3, x26
+  19df40: e4 03 1b aa  	mov	x4, x27
+  19df44: 25 03 80 52  	mov	w5, #25
+  19df48: e6 03 13 2a  	mov	w6, w19
+  19df4c: 00 00 00 94  	bl	0x19df4c <cam_eeprom_check_partition+0x134> // cam_print_log+0x0
+  19df50: 9c 07 00 f1  	subs	x28, x28, #1
+  19df54: 73 06 00 11  	add	w19, w19, #1
+  19df58: a1 fe ff 54  	b.ne	0x19df2c <cam_eeprom_check_partition+0x114>
+  19df5c: e0 03 14 aa  	mov	x0, x20
+  19df60: f3 02 16 2a  	orr	w19, w23, w22
+  19df64: 00 00 00 94  	bl	0x19df64 <cam_eeprom_check_partition+0x14c> // vfree+0x0
+  19df68: e0 03 15 aa  	mov	x0, x21
+  19df6c: 00 00 00 94  	bl	0x19df6c <cam_eeprom_check_partition+0x154> // vfree+0x0
+  19df70: e0 03 13 2a  	mov	w0, w19
+  19df74: f4 4f 45 a9  	ldp	x20, x19, [sp, #80]
+  19df78: f6 57 44 a9  	ldp	x22, x21, [sp, #64]
+  19df7c: f8 5f 43 a9  	ldp	x24, x23, [sp, #48]
+  19df80: fa 67 42 a9  	ldp	x26, x25, [sp, #32]
+  19df84: fc 6f 41 a9  	ldp	x28, x27, [sp, #16]
+  19df88: fd 7b c6 a8  	ldp	x29, x30, [sp], #96
+  19df8c: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  19df90: bf 23 03 d5  	hint	#29
+  19df94: c0 03 5f d6  	ret
+  19df98: 00 00 00 90  	adrp	x0, 0x19d000 <cam_eeprom_check_partition+0x180> // '\x013out of private partition range\n'
+  19df9c: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19dfa0: 00 00 00 94  	bl	0x19dfa0 <cam_eeprom_check_partition+0x188> // _printk+0x0
+  19dfa4: b6 02 80 12  	mov	w22, #-22
+  19dfa8: bb ff ff 17  	b	0x19de94 <cam_eeprom_check_partition+0x7c>
+  19dfac: 00 00 00 90  	adrp	x0, 0x19d000 <cam_eeprom_check_partition+0x194> // '\x013out of private partition range\n'
+  19dfb0: 00 00 00 91  	add	x0, x0, #0 // '\x013out of private partition range\n'
+  19dfb4: 00 00 00 94  	bl	0x19dfb4 <cam_eeprom_check_partition+0x19c> // _printk+0x0
+  19dfb8: b7 02 80 12  	mov	w23, #-22
+  19dfbc: 9f 07 00 71  	cmp	w28, #1
+  19dfc0: 6a fa ff 54  	b.ge	0x19df0c <cam_eeprom_check_partition+0xf4>
+  19dfc4: e6 ff ff 17  	b	0x19df5c <cam_eeprom_check_partition+0x144>

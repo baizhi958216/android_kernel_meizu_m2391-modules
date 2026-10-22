@@ -1,0 +1,171 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/camera.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000014f440 <meizu_get_af_pos>:
+  14f440: 3f 23 03 d5  	hint	#25
+  14f444: ff c3 00 d1  	sub	sp, sp, #48
+  14f448: 5e 86 00 f8  	str	x30, [x18], #8
+  14f44c: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  14f450: fd 43 00 91  	add	x29, sp, #16
+  14f454: f3 13 00 f9  	str	x19, [sp, #32]
+  14f458: e8 03 02 2a  	mov	w8, w2
+  14f45c: 09 41 38 d5  	mrs	x9, SP_EL0
+  14f460: f3 03 01 aa  	mov	x19, x1
+  14f464: 29 f1 42 f9  	ldr	x9, [x9, #1504]
+  14f468: 00 a0 00 91  	add	x0, x0, #40
+  14f46c: e2 13 00 91  	add	x2, sp, #4
+  14f470: e1 03 08 2a  	mov	w1, w8
+  14f474: 23 00 80 52  	mov	w3, #1
+  14f478: 44 00 80 52  	mov	w4, #2
+  14f47c: 25 00 80 52  	mov	w5, #1
+  14f480: e9 07 00 f9  	str	x9, [sp, #8]
+  14f484: ff 07 00 b9  	str	wzr, [sp, #4]
+  14f488: 00 00 00 94  	bl	0x14f488 <meizu_get_af_pos+0x48>
+  14f48c: 40 02 f8 37  	tbnz	w0, #31, 0x14f4d4 <meizu_get_af_pos+0x94>
+  14f490: e8 07 40 b9  	ldr	w8, [sp, #4]
+  14f494: 01 00 00 90  	adrp	x1, 0x14f000 <meizu_get_af_pos+0x54>
+  14f498: 02 00 00 90  	adrp	x2, 0x14f000 <meizu_get_af_pos+0x58>
+  14f49c: 03 00 00 90  	adrp	x3, 0x14f000 <meizu_get_af_pos+0x5c>
+  14f4a0: 04 00 00 90  	adrp	x4, 0x14f000 <meizu_get_af_pos+0x60>
+  14f4a4: 21 00 00 91  	add	x1, x1, #0
+  14f4a8: 06 3d 00 13  	sxth	w6, w8
+  14f4ac: 42 00 00 91  	add	x2, x2, #0
+  14f4b0: 63 00 00 91  	add	x3, x3, #0
+  14f4b4: 84 00 00 91  	add	x4, x4, #0
+  14f4b8: 60 00 80 52  	mov	w0, #3
+  14f4bc: 65 93 80 52  	mov	w5, #1179
+  14f4c0: e7 03 06 2a  	mov	w7, w6
+  14f4c4: 68 02 00 79  	strh	w8, [x19]
+  14f4c8: 00 00 00 94  	bl	0x14f4c8 <meizu_get_af_pos+0x88>
+  14f4cc: e0 03 1f 2a  	mov	w0, wzr
+  14f4d0: 0f 00 00 14  	b	0x14f50c <meizu_get_af_pos+0xcc>
+  14f4d4: 01 00 00 90  	adrp	x1, 0x14f000 <meizu_get_af_pos+0x94>
+  14f4d8: 02 00 00 90  	adrp	x2, 0x14f000 <meizu_get_af_pos+0x98>
+  14f4dc: 03 00 00 90  	adrp	x3, 0x14f000 <meizu_get_af_pos+0x9c>
+  14f4e0: 04 00 00 90  	adrp	x4, 0x14f000 <meizu_get_af_pos+0xa0>
+  14f4e4: e6 03 00 2a  	mov	w6, w0
+  14f4e8: 21 00 00 91  	add	x1, x1, #0
+  14f4ec: 42 00 00 91  	add	x2, x2, #0
+  14f4f0: 63 00 00 91  	add	x3, x3, #0
+  14f4f4: 84 00 00 91  	add	x4, x4, #0
+  14f4f8: 60 00 80 52  	mov	w0, #3
+  14f4fc: 85 92 80 52  	mov	w5, #1172
+  14f500: 87 92 80 52  	mov	w7, #1172
+  14f504: 00 00 00 94  	bl	0x14f504 <meizu_get_af_pos+0xc4>
+  14f508: a0 02 80 12  	mov	w0, #-22
+  14f50c: 08 41 38 d5  	mrs	x8, SP_EL0
+  14f510: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  14f514: e9 07 40 f9  	ldr	x9, [sp, #8]
+  14f518: 1f 01 09 eb  	cmp	x8, x9
+  14f51c: e1 00 00 54  	b.ne	0x14f538 <meizu_get_af_pos+0xf8>
+  14f520: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  14f524: f3 13 40 f9  	ldr	x19, [sp, #32]
+  14f528: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  14f52c: ff c3 00 91  	add	sp, sp, #48
+  14f530: bf 23 03 d5  	hint	#29
+  14f534: c0 03 5f d6  	ret
+  14f538: 00 00 00 94  	bl	0x14f538 <meizu_get_af_pos+0xf8>
+
+000000000014f600 <meizu_get_auxaf_pos>:
+  14f600: 3f 23 03 d5  	hint	#25
+  14f604: ff c3 00 d1  	sub	sp, sp, #48
+  14f608: 5e 86 00 f8  	str	x30, [x18], #8
+  14f60c: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  14f610: fd 43 00 91  	add	x29, sp, #16
+  14f614: f3 13 00 f9  	str	x19, [sp, #32]
+  14f618: 08 41 38 d5  	mrs	x8, SP_EL0
+  14f61c: f3 03 01 aa  	mov	x19, x1
+  14f620: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  14f624: 00 a0 00 91  	add	x0, x0, #40
+  14f628: e2 13 00 91  	add	x2, sp, #4
+  14f62c: 61 00 80 52  	mov	w1, #3
+  14f630: 23 00 80 52  	mov	w3, #1
+  14f634: 44 00 80 52  	mov	w4, #2
+  14f638: 25 00 80 52  	mov	w5, #1
+  14f63c: e8 07 00 f9  	str	x8, [sp, #8]
+  14f640: ff 07 00 b9  	str	wzr, [sp, #4]
+  14f644: 00 00 00 94  	bl	0x14f644 <meizu_get_auxaf_pos+0x44>
+  14f648: a0 00 f8 37  	tbnz	w0, #31, 0x14f65c <meizu_get_auxaf_pos+0x5c>
+  14f64c: e8 07 40 b9  	ldr	w8, [sp, #4]
+  14f650: e0 03 1f 2a  	mov	w0, wzr
+  14f654: 68 02 00 79  	strh	w8, [x19]
+  14f658: 0f 00 00 14  	b	0x14f694 <meizu_get_auxaf_pos+0x94>
+  14f65c: 01 00 00 90  	adrp	x1, 0x14f000 <meizu_get_auxaf_pos+0x5c>
+  14f660: 02 00 00 90  	adrp	x2, 0x14f000 <meizu_get_auxaf_pos+0x60>
+  14f664: 03 00 00 90  	adrp	x3, 0x14f000 <meizu_get_auxaf_pos+0x64>
+  14f668: 04 00 00 90  	adrp	x4, 0x14f000 <meizu_get_auxaf_pos+0x68>
+  14f66c: e6 03 00 2a  	mov	w6, w0
+  14f670: 21 00 00 91  	add	x1, x1, #0
+  14f674: 42 00 00 91  	add	x2, x2, #0
+  14f678: 63 00 00 91  	add	x3, x3, #0
+  14f67c: 84 00 00 91  	add	x4, x4, #0
+  14f680: 60 00 80 52  	mov	w0, #3
+  14f684: 45 98 80 52  	mov	w5, #1218
+  14f688: 47 98 80 52  	mov	w7, #1218
+  14f68c: 00 00 00 94  	bl	0x14f68c <meizu_get_auxaf_pos+0x8c>
+  14f690: a0 02 80 12  	mov	w0, #-22
+  14f694: 08 41 38 d5  	mrs	x8, SP_EL0
+  14f698: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  14f69c: e9 07 40 f9  	ldr	x9, [sp, #8]
+  14f6a0: 1f 01 09 eb  	cmp	x8, x9
+  14f6a4: e1 00 00 54  	b.ne	0x14f6c0 <meizu_get_auxaf_pos+0xc0>
+  14f6a8: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  14f6ac: f3 13 40 f9  	ldr	x19, [sp, #32]
+  14f6b0: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  14f6b4: ff c3 00 91  	add	sp, sp, #48
+  14f6b8: bf 23 03 d5  	hint	#29
+  14f6bc: c0 03 5f d6  	ret
+  14f6c0: 00 00 00 94  	bl	0x14f6c0 <meizu_get_auxaf_pos+0xc0>
+
+000000000014f788 <meizu_get_aux2af_pos>:
+  14f788: 3f 23 03 d5  	hint	#25
+  14f78c: ff c3 00 d1  	sub	sp, sp, #48
+  14f790: 5e 86 00 f8  	str	x30, [x18], #8
+  14f794: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+  14f798: fd 43 00 91  	add	x29, sp, #16
+  14f79c: f3 13 00 f9  	str	x19, [sp, #32]
+  14f7a0: 08 41 38 d5  	mrs	x8, SP_EL0
+  14f7a4: f3 03 01 aa  	mov	x19, x1
+  14f7a8: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  14f7ac: 00 a0 00 91  	add	x0, x0, #40
+  14f7b0: e2 13 00 91  	add	x2, sp, #4
+  14f7b4: 61 00 80 52  	mov	w1, #3
+  14f7b8: 23 00 80 52  	mov	w3, #1
+  14f7bc: 44 00 80 52  	mov	w4, #2
+  14f7c0: 25 00 80 52  	mov	w5, #1
+  14f7c4: e8 07 00 f9  	str	x8, [sp, #8]
+  14f7c8: ff 07 00 b9  	str	wzr, [sp, #4]
+  14f7cc: 00 00 00 94  	bl	0x14f7cc <meizu_get_aux2af_pos+0x44>
+  14f7d0: a0 00 f8 37  	tbnz	w0, #31, 0x14f7e4 <meizu_get_aux2af_pos+0x5c>
+  14f7d4: e8 07 40 b9  	ldr	w8, [sp, #4]
+  14f7d8: e0 03 1f 2a  	mov	w0, wzr
+  14f7dc: 68 02 00 79  	strh	w8, [x19]
+  14f7e0: 0f 00 00 14  	b	0x14f81c <meizu_get_aux2af_pos+0x94>
+  14f7e4: 01 00 00 90  	adrp	x1, 0x14f000 <meizu_get_aux2af_pos+0x5c>
+  14f7e8: 02 00 00 90  	adrp	x2, 0x14f000 <meizu_get_aux2af_pos+0x60>
+  14f7ec: 03 00 00 90  	adrp	x3, 0x14f000 <meizu_get_aux2af_pos+0x64>
+  14f7f0: 04 00 00 90  	adrp	x4, 0x14f000 <meizu_get_aux2af_pos+0x68>
+  14f7f4: e6 03 00 2a  	mov	w6, w0
+  14f7f8: 21 00 00 91  	add	x1, x1, #0
+  14f7fc: 42 00 00 91  	add	x2, x2, #0
+  14f800: 63 00 00 91  	add	x3, x3, #0
+  14f804: 84 00 00 91  	add	x4, x4, #0
+  14f808: 60 00 80 52  	mov	w0, #3
+  14f80c: 85 9d 80 52  	mov	w5, #1260
+  14f810: 87 9d 80 52  	mov	w7, #1260
+  14f814: 00 00 00 94  	bl	0x14f814 <meizu_get_aux2af_pos+0x8c>
+  14f818: a0 02 80 12  	mov	w0, #-22
+  14f81c: 08 41 38 d5  	mrs	x8, SP_EL0
+  14f820: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+  14f824: e9 07 40 f9  	ldr	x9, [sp, #8]
+  14f828: 1f 01 09 eb  	cmp	x8, x9
+  14f82c: e1 00 00 54  	b.ne	0x14f848 <meizu_get_aux2af_pos+0xc0>
+  14f830: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+  14f834: f3 13 40 f9  	ldr	x19, [sp, #32]
+  14f838: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+  14f83c: ff c3 00 91  	add	sp, sp, #48
+  14f840: bf 23 03 d5  	hint	#29
+  14f844: c0 03 5f d6  	ret
+  14f848: 00 00 00 94  	bl	0x14f848 <meizu_get_aux2af_pos+0xc0>

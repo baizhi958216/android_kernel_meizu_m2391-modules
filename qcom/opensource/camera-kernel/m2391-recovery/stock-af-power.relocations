@@ -1,0 +1,2 @@
+0x14f3b4	R_AARCH64_CALL26	.text+0x14e164	cam_actuator_power_up
+0x14f3ec	R_AARCH64_CALL26	.text+0x14e6d8	cam_actuator_power_down
