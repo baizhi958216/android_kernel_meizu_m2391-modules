@@ -1,0 +1,2128 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/vl53l1.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000022d8 <stmvl53l1_ioctl>:
+    22d8: 3f 23 03 d5  	hint	#25
+    22dc: 5e 86 00 f8  	str	x30, [x18], #8
+    22e0: fd 7b bb a9  	stp	x29, x30, [sp, #-80]!
+    22e4: fc 67 01 a9  	stp	x28, x25, [sp, #16]
+    22e8: fd 03 00 91  	mov	x29, sp
+    22ec: f8 5f 02 a9  	stp	x24, x23, [sp, #32]
+    22f0: f6 57 03 a9  	stp	x22, x21, [sp, #48]
+    22f4: f4 4f 04 a9  	stp	x20, x19, [sp, #64]
+    22f8: ff 83 11 d1  	sub	sp, sp, #1120
+    22fc: 08 41 38 d5  	mrs	x8, SP_EL0
+    2300: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2304: a8 83 1f f8  	stur	x8, [x29, #-8]
+    2308: e8 ec 8e 92  	mov	x8, #-30568
+    230c: 18 6c 40 f9  	ldr	x24, [x0, #216]
+    2310: 16 03 08 ab  	adds	x22, x24, x8
+    2314: 20 06 00 54  	b.eq	0x23d8 <stmvl53l1_ioctl+0x100>
+    2318: f3 03 02 aa  	mov	x19, x2
+    231c: b5 02 80 12  	mov	w21, #-22
+    2320: 68 02 8e 52  	mov	w8, #28691
+    2324: 88 03 b8 72  	movk	w8, #49180, lsl #16
+    2328: 3f 00 08 6b  	cmp	w1, w8
+    232c: ac 05 00 54  	b.gt	0x23e0 <stmvl53l1_ioctl+0x108>
+    2330: a8 02 8e 52  	mov	w8, #28693
+    2334: 08 29 b0 72  	movk	w8, #33096, lsl #16
+    2338: 3f 00 08 6b  	cmp	w1, w8
+    233c: cd 08 00 54  	b.le	0x2454 <stmvl53l1_ioctl+0x17c>
+    2340: 88 01 8e 52  	mov	w8, #28684
+    2344: 88 02 b8 72  	movk	w8, #49172, lsl #16
+    2348: 3f 00 08 6b  	cmp	w1, w8
+    234c: ed 0e 00 54  	b.le	0x2528 <stmvl53l1_ioctl+0x250>
+    2350: a8 01 8e 52  	mov	w8, #28685
+    2354: 88 02 b8 72  	movk	w8, #49172, lsl #16
+    2358: 3f 00 08 6b  	cmp	w1, w8
+    235c: 20 2a 00 54  	b.eq	0x28a0 <stmvl53l1_ioctl+0x5c8>
+    2360: 68 01 8e 52  	mov	w8, #28683
+    2364: 88 03 b8 72  	movk	w8, #49180, lsl #16
+    2368: 3f 00 08 6b  	cmp	w1, w8
+    236c: 60 2f 00 54  	b.eq	0x2958 <stmvl53l1_ioctl+0x680>
+    2370: 08 02 8e 52  	mov	w8, #28688
+    2374: 88 03 b8 72  	movk	w8, #49180, lsl #16
+    2378: 3f 00 08 6b  	cmp	w1, w8
+    237c: 21 42 00 54  	b.ne	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2380: 14 03 03 d1  	sub	x20, x24, #192
+    2384: 08 41 38 d5  	mrs	x8, SP_EL0
+    2388: e0 03 14 aa  	mov	x0, x20
+    238c: 19 d9 45 b9  	ldr	w25, [x8, #1496]
+    2390: 00 00 00 94  	bl	0x2390 <stmvl53l1_ioctl+0xb8> // mutex_lock+0x0
+    2394: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    2398: e8 40 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    239c: 08 63 40 b9  	ldr	w8, [x24, #96]
+    23a0: a8 40 00 34  	cbz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    23a4: 08 63 4c 39  	ldrb	w8, [x24, #792]
+    23a8: 16 83 0b 91  	add	x22, x24, #736
+    23ac: 88 61 00 34  	cbz	w8, 0x2fdc <stmvl53l1_ioctl+0xd04>
+    23b0: c8 02 40 f9  	ldr	x8, [x22]
+    23b4: 1f 01 16 eb  	cmp	x8, x22
+    23b8: 00 70 00 54  	b.eq	0x31b8 <stmvl53l1_ioctl+0xee0>
+    23bc: 09 11 40 b9  	ldr	w9, [x8, #16]
+    23c0: 3f 01 19 6b  	cmp	w9, w25
+    23c4: c0 60 00 54  	b.eq	0x2fdc <stmvl53l1_ioctl+0xd04>
+    23c8: 08 01 40 f9  	ldr	x8, [x8]
+    23cc: 1f 01 16 eb  	cmp	x8, x22
+    23d0: 61 ff ff 54  	b.ne	0x23bc <stmvl53l1_ioctl+0xe4>
+    23d4: 79 03 00 14  	b	0x31b8 <stmvl53l1_ioctl+0xee0>
+    23d8: b5 02 80 12  	mov	w21, #-22
+    23dc: f9 01 00 14  	b	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    23e0: a8 02 8e 52  	mov	w8, #28693
+    23e4: 08 35 b8 72  	movk	w8, #49576, lsl #16
+    23e8: 3f 00 08 6b  	cmp	w1, w8
+    23ec: 4d 06 00 54  	b.le	0x24b4 <stmvl53l1_ioctl+0x1dc>
+    23f0: 3f 1c 40 71  	cmp	w1, #7, lsl #12         // =28672
+    23f4: ad 11 00 54  	b.le	0x2628 <stmvl53l1_ioctl+0x350>
+    23f8: 68 02 8e 52  	mov	w8, #28691
+    23fc: 08 02 a8 72  	movk	w8, #16400, lsl #16
+    2400: 3f 00 08 6b  	cmp	w1, w8
+    2404: 40 2d 00 54  	b.eq	0x29ac <stmvl53l1_ioctl+0x6d4>
+    2408: a8 00 8e 52  	mov	w8, #28677
+    240c: 3f 00 08 6b  	cmp	w1, w8
+    2410: 00 2f 00 54  	b.eq	0x29f0 <stmvl53l1_ioctl+0x718>
+    2414: 28 00 8e 52  	mov	w8, #28673
+    2418: 3f 00 08 6b  	cmp	w1, w8
+    241c: 21 3d 00 54  	b.ne	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2420: 08 00 00 90  	adrp	x8, 0x2000 <stmvl53l1_ioctl+0x148> // vl53l1_ctx+0x8fe8
+    2424: 00 01 40 f9  	ldr	x0, [x8] // vl53l1_ctx+0x8fe8
+    2428: e0 00 00 b4  	cbz	x0, 0x2444 <stmvl53l1_ioctl+0x16c>
+    242c: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x154> // '%s %d VL53L1_IOCTL_START\n'
+    2430: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x158> // 'stmvl53l1_ioctl_handler'
+    2434: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_START\n'
+    2438: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    243c: 03 a8 81 52  	mov	w3, #3392
+    2440: 00 00 00 94  	bl	0x2440 <stmvl53l1_ioctl+0x168> // ipc_log_string+0x0
+    2444: e0 03 16 aa  	mov	x0, x22
+    2448: 00 00 00 94  	bl	0x2448 <stmvl53l1_ioctl+0x170> // +0x453c
+    244c: f5 03 00 2a  	mov	w21, w0
+    2450: dc 01 00 14  	b	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2454: 08 02 8e 52  	mov	w8, #28688
+    2458: 08 10 b0 72  	movk	w8, #32896, lsl #16
+    245c: 3f 00 08 6b  	cmp	w1, w8
+    2460: 0c 14 00 54  	b.gt	0x26e0 <stmvl53l1_ioctl+0x408>
+    2464: 68 00 8e 52  	mov	w8, #28675
+    2468: 88 00 b0 72  	movk	w8, #32772, lsl #16
+    246c: 3f 00 08 6b  	cmp	w1, w8
+    2470: 00 2e 00 54  	b.eq	0x2a30 <stmvl53l1_ioctl+0x758>
+    2474: e8 01 8e 52  	mov	w8, #28687
+    2478: 08 10 b0 72  	movk	w8, #32896, lsl #16
+    247c: 3f 00 08 6b  	cmp	w1, w8
+    2480: 01 3a 00 54  	b.ne	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2484: 14 03 03 d1  	sub	x20, x24, #192
+    2488: e0 03 14 aa  	mov	x0, x20
+    248c: 00 00 00 94  	bl	0x248c <stmvl53l1_ioctl+0x1b4> // mutex_lock+0x0
+    2490: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    2494: 08 39 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    2498: 01 33 04 91  	add	x1, x24, #268
+    249c: e0 03 13 aa  	mov	x0, x19
+    24a0: 02 10 80 52  	mov	w2, #128
+    24a4: 00 00 00 94  	bl	0x24a4 <stmvl53l1_ioctl+0x1cc> // +0x4aa0
+    24a8: e4 03 00 aa  	mov	x4, x0
+    24ac: 04 14 00 35  	cbnz	w4, 0x272c <stmvl53l1_ioctl+0x454>
+    24b0: 82 02 00 14  	b	0x2eb8 <stmvl53l1_ioctl+0xbe0>
+    24b4: 28 02 8e 52  	mov	w8, #28689
+    24b8: 88 33 b8 72  	movk	w8, #49564, lsl #16
+    24bc: 3f 00 08 6b  	cmp	w1, w8
+    24c0: cc 14 00 54  	b.gt	0x2758 <stmvl53l1_ioctl+0x480>
+    24c4: 88 02 8e 52  	mov	w8, #28692
+    24c8: 88 03 b8 72  	movk	w8, #49180, lsl #16
+    24cc: 3f 00 08 6b  	cmp	w1, w8
+    24d0: a0 2d 00 54  	b.eq	0x2a84 <stmvl53l1_ioctl+0x7ac>
+    24d4: 88 01 8e 52  	mov	w8, #28684
+    24d8: 08 22 b8 72  	movk	w8, #49424, lsl #16
+    24dc: 3f 00 08 6b  	cmp	w1, w8
+    24e0: 01 37 00 54  	b.ne	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    24e4: 17 00 00 90  	adrp	x23, 0x2000 <stmvl53l1_ioctl+0x20c> // vl53l1_ctx+0x8fe8
+    24e8: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    24ec: e0 00 00 b4  	cbz	x0, 0x2508 <stmvl53l1_ioctl+0x230>
+    24f0: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x218> // '%s %d VL53L1_IOCTL_REGISTER\n'
+    24f4: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x21c> // 'stmvl53l1_ioctl_handler'
+    24f8: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_REGISTER\n'
+    24fc: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    2500: e3 ab 81 52  	mov	w3, #3423
+    2504: 00 00 00 94  	bl	0x2504 <stmvl53l1_ioctl+0x22c> // ipc_log_string+0x0
+    2508: e0 a3 06 91  	add	x0, sp, #424
+    250c: e1 03 1f 2a  	mov	w1, wzr
+    2510: 02 22 80 52  	mov	w2, #272
+    2514: 00 00 00 94  	bl	0x2514 <stmvl53l1_ioctl+0x23c> // memset+0x0
+    2518: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    251c: 08 37 00 34  	cbz	w8, 0x2bfc <stmvl53l1_ioctl+0x924>
+    2520: 55 02 80 12  	mov	w21, #-19
+    2524: a7 01 00 14  	b	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2528: c8 02 8e 52  	mov	w8, #28694
+    252c: 08 29 b0 72  	movk	w8, #33096, lsl #16
+    2530: 3f 00 08 6b  	cmp	w1, w8
+    2534: 80 2d 00 54  	b.eq	0x2ae4 <stmvl53l1_ioctl+0x80c>
+    2538: c8 01 8e 52  	mov	w8, #28686
+    253c: 88 01 b8 72  	movk	w8, #49164, lsl #16
+    2540: 3f 00 08 6b  	cmp	w1, w8
+    2544: e1 33 00 54  	b.ne	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2548: 19 00 00 90  	adrp	x25, 0x2000 <stmvl53l1_ioctl+0x270> // vl53l1_ctx+0x8fe8
+    254c: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    2550: e0 00 00 b4  	cbz	x0, 0x256c <stmvl53l1_ioctl+0x294>
+    2554: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x27c> // '%s %d VL53L1_IOCTL_ROI\n'
+    2558: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x280> // 'stmvl53l1_ioctl_handler'
+    255c: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_ROI\n'
+    2560: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    2564: 23 ad 81 52  	mov	w3, #3433
+    2568: 00 00 00 94  	bl	0x2568 <stmvl53l1_ioctl+0x290> // ipc_log_string+0x0
+    256c: e0 a3 06 91  	add	x0, sp, #424
+    2570: e1 03 1f 2a  	mov	w1, wzr
+    2574: 82 55 80 52  	mov	w2, #684
+    2578: 00 00 00 94  	bl	0x2578 <stmvl53l1_ioctl+0x2a0> // memset+0x0
+    257c: 14 03 03 d1  	sub	x20, x24, #192
+    2580: e0 03 14 aa  	mov	x0, x20
+    2584: 00 00 00 94  	bl	0x2584 <stmvl53l1_ioctl+0x2ac> // mutex_lock+0x0
+    2588: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    258c: 48 31 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    2590: e0 a3 06 91  	add	x0, sp, #424
+    2594: e1 03 13 aa  	mov	x1, x19
+    2598: a2 00 80 52  	mov	w2, #5
+    259c: f7 a3 06 91  	add	x23, sp, #424
+    25a0: 00 00 00 94  	bl	0x25a0 <stmvl53l1_ioctl+0x2c8> // +0x48ec
+    25a4: c0 29 00 35  	cbnz	w0, 0x2adc <stmvl53l1_ioctl+0x804>
+    25a8: f5 b3 46 39  	ldrb	w21, [sp, #428]
+    25ac: bf aa 02 71  	cmp	w21, #170
+    25b0: 42 a6 00 54  	b.hs	0x3a78 <stmvl53l1_ioctl+0x17a0>
+    25b4: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    25b8: e8 66 00 34  	cbz	w8, 0x3294 <stmvl53l1_ioctl+0xfbc>
+    25bc: 08 83 4c 39  	ldrb	w8, [x24, #800]
+    25c0: 17 83 0c 91  	add	x23, x24, #800
+    25c4: e0 03 17 aa  	mov	x0, x23
+    25c8: 22 00 80 52  	mov	w2, #1
+    25cc: 73 12 00 91  	add	x19, x19, #4
+    25d0: bf 02 08 6b  	cmp	w21, w8
+    25d4: b6 32 88 1a  	csel	w22, w21, w8, lo
+    25d8: 35 00 80 52  	mov	w21, #1
+    25dc: d5 1e 1e 33  	bfi	w21, w22, #2, #8
+    25e0: e1 03 15 aa  	mov	x1, x21
+    25e4: 00 00 00 94  	bl	0x25e4 <stmvl53l1_ioctl+0x30c> // __check_object_size+0x0
+    25e8: e0 03 13 aa  	mov	x0, x19
+    25ec: e1 03 17 aa  	mov	x1, x23
+    25f0: e2 03 15 aa  	mov	x2, x21
+    25f4: 00 00 00 94  	bl	0x25f4 <stmvl53l1_ioctl+0x31c> // +0x4aa0
+    25f8: f5 03 00 aa  	mov	x21, x0
+    25fc: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    2600: c0 2d 00 b4  	cbz	x0, 0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    2604: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x32c> // '%s %d return %d of %d\n'
+    2608: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x330> // 'ctrl_roi'
+    260c: e5 02 40 39  	ldrb	w5, [x23]
+    2610: 21 00 00 91  	add	x1, x1, #0 // '%s %d return %d of %d\n'
+    2614: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_roi'
+    2618: e3 5c 81 52  	mov	w3, #2791
+    261c: e4 03 16 2a  	mov	w4, w22
+    2620: 00 00 00 94  	bl	0x2620 <stmvl53l1_ioctl+0x348> // ipc_log_string+0x0
+    2624: 65 01 00 14  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    2628: c8 02 8e 52  	mov	w8, #28694
+    262c: 08 35 b8 72  	movk	w8, #49576, lsl #16
+    2630: 3f 00 08 6b  	cmp	w1, w8
+    2634: 00 26 00 54  	b.eq	0x2af4 <stmvl53l1_ioctl+0x81c>
+    2638: 48 02 8e 52  	mov	w8, #28690
+    263c: 08 53 ba 72  	movk	w8, #53912, lsl #16
+    2640: 3f 00 08 6b  	cmp	w1, w8
+    2644: e1 2b 00 54  	b.ne	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2648: 17 00 00 90  	adrp	x23, 0x2000 <stmvl53l1_ioctl+0x370> // vl53l1_ctx+0x8fe8
+    264c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    2650: e0 00 00 b4  	cbz	x0, 0x266c <stmvl53l1_ioctl+0x394>
+    2654: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x37c> // '%s %d VL53L1_IOCTL_ZONE_CALIBRATION_DATA\n'
+    2658: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x380> // 'stmvl53l1_ioctl_handler'
+    265c: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_ZONE_CALIBRATION_DATA\n'
+    2660: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    2664: 23 b0 81 52  	mov	w3, #3457
+    2668: 00 00 00 94  	bl	0x2668 <stmvl53l1_ioctl+0x390> // ipc_log_string+0x0
+    266c: 14 03 03 d1  	sub	x20, x24, #192
+    2670: e0 03 14 aa  	mov	x0, x20
+    2674: 00 00 00 94  	bl	0x2674 <stmvl53l1_ioctl+0x39c> // mutex_lock+0x0
+    2678: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    267c: c8 29 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    2680: 16 33 17 91  	add	x22, x24, #1484
+    2684: e1 03 13 aa  	mov	x1, x19
+    2688: e0 03 16 aa  	mov	x0, x22
+    268c: 82 00 80 52  	mov	w2, #4
+    2690: 00 00 00 94  	bl	0x2690 <stmvl53l1_ioctl+0x3b8> // +0x48ec
+    2694: f5 03 00 aa  	mov	x21, x0
+    2698: 55 65 00 35  	cbnz	w21, 0x3340 <stmvl53l1_ioctl+0x1068>
+    269c: c8 02 40 b9  	ldr	w8, [x22]
+    26a0: 28 4c 00 34  	cbz	w8, 0x3024 <stmvl53l1_ioctl+0xd4c>
+    26a4: e8 6f 82 92  	mov	x8, #-4992
+    26a8: 00 53 17 91  	add	x0, x24, #1492
+    26ac: 01 03 08 8b  	add	x1, x24, x8
+    26b0: 02 52 82 52  	mov	w2, #4752
+    26b4: 15 43 17 91  	add	x21, x24, #1488
+    26b8: 00 00 00 94  	bl	0x26b8 <stmvl53l1_ioctl+0x3e0> // memcpy+0x0
+    26bc: 28 20 80 52  	mov	w8, #257
+    26c0: 09 cb 45 b9  	ldr	w9, [x24, #1480]
+    26c4: c8 95 bd 72  	movk	w8, #60590, lsl #16
+    26c8: 60 12 00 91  	add	x0, x19, #4
+    26cc: e1 03 15 aa  	mov	x1, x21
+    26d0: 82 52 82 52  	mov	w2, #4756
+    26d4: 09 d3 05 b9  	str	w9, [x24, #1488]
+    26d8: 08 d7 05 b9  	str	w8, [x24, #1492]
+    26dc: e5 01 00 14  	b	0x2e70 <stmvl53l1_ioctl+0xb98>
+    26e0: 28 02 8e 52  	mov	w8, #28689
+    26e4: 08 10 b0 72  	movk	w8, #32896, lsl #16
+    26e8: 3f 00 08 6b  	cmp	w1, w8
+    26ec: 40 23 00 54  	b.eq	0x2b54 <stmvl53l1_ioctl+0x87c>
+    26f0: a8 02 8e 52  	mov	w8, #28693
+    26f4: 08 29 b0 72  	movk	w8, #33096, lsl #16
+    26f8: 3f 00 08 6b  	cmp	w1, w8
+    26fc: 21 26 00 54  	b.ne	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2700: 14 03 03 d1  	sub	x20, x24, #192
+    2704: e0 03 14 aa  	mov	x0, x20
+    2708: 00 00 00 94  	bl	0x2708 <stmvl53l1_ioctl+0x430> // mutex_lock+0x0
+    270c: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    2710: 28 25 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    2714: 01 33 04 91  	add	x1, x24, #268
+    2718: e0 03 13 aa  	mov	x0, x19
+    271c: 02 10 80 52  	mov	w2, #128
+    2720: 00 00 00 94  	bl	0x2720 <stmvl53l1_ioctl+0x448> // +0x4aa0
+    2724: e4 03 00 aa  	mov	x4, x0
+    2728: a4 3a 00 34  	cbz	w4, 0x2e7c <stmvl53l1_ioctl+0xba4>
+    272c: 08 00 00 90  	adrp	x8, 0x2000 <stmvl53l1_ioctl+0x454> // vl53l1_ctx+0x8fe8
+    2730: 00 01 40 f9  	ldr	x0, [x8] // vl53l1_ctx+0x8fe8
+    2734: 40 1d 00 b4  	cbz	x0, 0x2adc <stmvl53l1_ioctl+0x804>
+    2738: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x460> // '%s %d copy to user fail %d'
+    273c: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x464> // 'ctrl_mz_data_common'
+    2740: 21 00 00 91  	add	x1, x1, #0 // '%s %d copy to user fail %d'
+    2744: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_mz_data_common'
+    2748: 23 34 81 52  	mov	w3, #2465
+    274c: 00 00 00 94  	bl	0x274c <stmvl53l1_ioctl+0x474> // ipc_log_string+0x0
+    2750: b5 01 80 12  	mov	w21, #-14
+    2754: 19 01 00 14  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    2758: 48 02 8e 52  	mov	w8, #28690
+    275c: 88 33 b8 72  	movk	w8, #49564, lsl #16
+    2760: 3f 00 08 6b  	cmp	w1, w8
+    2764: 40 20 00 54  	b.eq	0x2b6c <stmvl53l1_ioctl+0x894>
+    2768: a8 02 8e 52  	mov	w8, #28693
+    276c: 08 35 b8 72  	movk	w8, #49576, lsl #16
+    2770: 3f 00 08 6b  	cmp	w1, w8
+    2774: 61 22 00 54  	b.ne	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2778: 17 00 00 90  	adrp	x23, 0x2000 <stmvl53l1_ioctl+0x4a0> // vl53l1_ctx+0x8fe8
+    277c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    2780: e0 00 00 b4  	cbz	x0, 0x279c <stmvl53l1_ioctl+0x4c4>
+    2784: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x4ac> // '%s %d VL53L1_IOCTL_SAVE_CALIBRATION_DATA\n'
+    2788: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x4b0> // 'stmvl53l1_ioctl_handler'
+    278c: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_SAVE_CALIBRATION_DATA\n'
+    2790: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    2794: 43 a9 81 52  	mov	w3, #3402
+    2798: 00 00 00 94  	bl	0x2798 <stmvl53l1_ioctl+0x4c0> // ipc_log_string+0x0
+    279c: e0 a3 06 91  	add	x0, sp, #424
+    27a0: e1 03 1f 2a  	mov	w1, wzr
+    27a4: 02 35 80 52  	mov	w2, #424
+    27a8: 00 00 00 94  	bl	0x27a8 <stmvl53l1_ioctl+0x4d0> // memset+0x0
+    27ac: 14 03 03 d1  	sub	x20, x24, #192
+    27b0: e0 03 14 aa  	mov	x0, x20
+    27b4: 00 00 00 94  	bl	0x27b4 <stmvl53l1_ioctl+0x4dc> // mutex_lock+0x0
+    27b8: e0 23 00 91  	add	x0, sp, #8
+    27bc: e1 03 1f 2a  	mov	w1, wzr
+    27c0: 02 34 80 52  	mov	w2, #416
+    27c4: 00 00 00 94  	bl	0x27c4 <stmvl53l1_ioctl+0x4ec> // memset+0x0
+    27c8: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    27cc: 48 1f 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    27d0: e0 a3 06 91  	add	x0, sp, #424
+    27d4: e1 03 13 aa  	mov	x1, x19
+    27d8: 82 00 80 52  	mov	w2, #4
+    27dc: f5 a3 06 91  	add	x21, sp, #424
+    27e0: 00 00 00 94  	bl	0x27e0 <stmvl53l1_ioctl+0x508> // +0x48ec
+    27e4: f3 03 00 aa  	mov	x19, x0
+    27e8: b3 5c 00 35  	cbnz	w19, 0x337c <stmvl53l1_ioctl+0x10a4>
+    27ec: b3 02 7e b2  	orr	x19, x21, #0x4
+    27f0: e1 03 1f 2a  	mov	w1, wzr
+    27f4: e0 03 13 aa  	mov	x0, x19
+    27f8: 02 33 80 52  	mov	w2, #408
+    27fc: 00 00 00 94  	bl	0x27fc <stmvl53l1_ioctl+0x524> // memset+0x0
+    2800: e9 e3 8e 92  	mov	x9, #-30496
+    2804: 28 00 80 52  	mov	w8, #1
+    2808: 15 03 09 8b  	add	x21, x24, x9
+    280c: e3 03 00 91  	mov	x3, sp
+    2810: e0 03 15 aa  	mov	x0, x21
+    2814: c1 0f 80 52  	mov	w1, #126
+    2818: 42 00 80 52  	mov	w2, #2
+    281c: 08 67 0c 39  	strb	w8, [x24, #793]
+    2820: ff 03 00 f9  	str	xzr, [sp]
+    2824: 00 00 00 94  	bl	0x2824 <stmvl53l1_ioctl+0x54c> // VL53L1_read_nvm_raw_data+0x0
+    2828: f9 03 40 f9  	ldr	x25, [sp]
+    282c: 1f 1c 00 72  	tst	w0, #0xff
+    2830: 1f 67 0c 39  	strb	wzr, [x24, #793]
+    2834: 01 63 00 54  	b.ne	0x3494 <stmvl53l1_ioctl+0x11bc>
+    2838: e0 03 15 aa  	mov	x0, x21
+    283c: e1 03 13 aa  	mov	x1, x19
+    2840: 00 00 00 94  	bl	0x2840 <stmvl53l1_ioctl+0x568> // VL53L1_GetCalibrationData+0x0
+    2844: e0 23 00 91  	add	x0, sp, #8
+    2848: e1 03 13 aa  	mov	x1, x19
+    284c: 02 33 80 52  	mov	w2, #408
+    2850: 00 00 00 94  	bl	0x2850 <stmvl53l1_ioctl+0x578> // memcpy+0x0
+    2854: e2 23 00 91  	add	x2, sp, #8
+    2858: 20 00 80 52  	mov	w0, #1
+    285c: 21 21 80 52  	mov	w1, #265
+    2860: 03 34 80 52  	mov	w3, #416
+    2864: f9 d3 00 f9  	str	x25, [sp, #416]
+    2868: 00 00 00 94  	bl	0x2868 <stmvl53l1_ioctl+0x590> // private_slot_rw+0x0
+    286c: f3 03 00 2a  	mov	w19, w0
+    2870: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    2874: 33 68 f8 37  	tbnz	w19, #31, 0x3578 <stmvl53l1_ioctl+0x12a0>
+    2878: 00 c6 00 b4  	cbz	x0, 0x4138 <stmvl53l1_ioctl+0x1e60>
+    287c: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x5a4> // 'stmvl53l1_slot_rw'
+    2880: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x5a8> // '%s %d %s : read/write slot succeed, ret = %d'
+    2884: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_slot_rw'
+    2888: 21 00 00 91  	add	x1, x1, #0 // '%s %d %s : read/write slot succeed, ret = %d'
+    288c: a3 66 81 52  	mov	w3, #2869
+    2890: e4 03 02 aa  	mov	x4, x2
+    2894: e5 03 13 2a  	mov	w5, w19
+    2898: 00 00 00 94  	bl	0x2898 <stmvl53l1_ioctl+0x5c0> // ipc_log_string+0x0
+    289c: 27 06 00 14  	b	0x4138 <stmvl53l1_ioctl+0x1e60>
+    28a0: 17 00 00 90  	adrp	x23, 0x2000 <stmvl53l1_ioctl+0x5c8> // vl53l1_ctx+0x8fe8
+    28a4: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    28a8: e0 00 00 b4  	cbz	x0, 0x28c4 <stmvl53l1_ioctl+0x5ec>
+    28ac: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x5d4> // '%s %d VL53L1_IOCTL_PARAMETER\n'
+    28b0: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x5d8> // 'stmvl53l1_ioctl_handler'
+    28b4: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_PARAMETER\n'
+    28b8: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    28bc: 83 ac 81 52  	mov	w3, #3428
+    28c0: 00 00 00 94  	bl	0x28c0 <stmvl53l1_ioctl+0x5e8> // ipc_log_string+0x0
+    28c4: 14 03 03 d1  	sub	x20, x24, #192
+    28c8: ff bb 01 b9  	str	wzr, [sp, #440]
+    28cc: e0 03 14 aa  	mov	x0, x20
+    28d0: ff ff 1a a9  	stp	xzr, xzr, [sp, #424]
+    28d4: 00 00 00 94  	bl	0x28d4 <stmvl53l1_ioctl+0x5fc> // mutex_lock+0x0
+    28d8: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    28dc: c8 16 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    28e0: e0 a3 06 91  	add	x0, sp, #424
+    28e4: e1 03 13 aa  	mov	x1, x19
+    28e8: 82 02 80 52  	mov	w2, #20
+    28ec: 00 00 00 94  	bl	0x28ec <stmvl53l1_ioctl+0x614> // +0x48ec
+    28f0: ff bb 01 b9  	str	wzr, [sp, #440]
+    28f4: 40 0f 00 35  	cbnz	w0, 0x2adc <stmvl53l1_ioctl+0x804>
+    28f8: e4 af 41 b9  	ldr	w4, [sp, #428]
+    28fc: 88 08 00 51  	sub	w8, w4, #2
+    2900: 1f 51 00 71  	cmp	w8, #20
+    2904: 28 c4 00 54  	b.hi	0x4188 <stmvl53l1_ioctl+0x1eb0>
+    2908: 09 00 00 90  	adrp	x9, 0x2000 <stmvl53l1_ioctl+0x630> // '\x10'
+    290c: 29 01 00 91  	add	x9, x9, #0 // '\x10'
+    2910: 0a 00 00 10  	adr	x10, #0
+    2914: 2b 79 a8 b8  	ldrsw	x11, [x9, x8, lsl #2]
+    2918: 4a 01 0b 8b  	add	x10, x10, x11
+    291c: 40 01 1f d6  	br	x10
+    2920: 9f 24 03 d5  	hint	#36
+    2924: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    2928: 68 a4 00 34  	cbz	w8, 0x3db4 <stmvl53l1_ioctl+0x1adc>
+    292c: 04 8f 40 b9  	ldr	w4, [x24, #140]
+    2930: ff bb 01 b9  	str	wzr, [sp, #440]
+    2934: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    2938: e4 b3 01 b9  	str	w4, [sp, #432]
+    293c: 80 88 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    2940: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x668> // '%s %d get crosstalk enable %d'
+    2944: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x66c> // 'ctrl_param_crosstalk_enable'
+    2948: 21 00 00 91  	add	x1, x1, #0 // '%s %d get crosstalk enable %d'
+    294c: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_crosstalk_enable'
+    2950: 63 95 80 52  	mov	w3, #1195
+    2954: 3b 04 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    2958: 14 03 03 d1  	sub	x20, x24, #192
+    295c: e0 03 14 aa  	mov	x0, x20
+    2960: 00 00 00 94  	bl	0x2960 <stmvl53l1_ioctl+0x688> // mutex_lock+0x0
+    2964: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    2968: 68 12 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    296c: 01 c3 03 91  	add	x1, x24, #240
+    2970: e0 03 13 aa  	mov	x0, x19
+    2974: 82 03 80 52  	mov	w2, #28
+    2978: 00 00 00 94  	bl	0x2978 <stmvl53l1_ioctl+0x6a0> // +0x4aa0
+    297c: e4 03 00 aa  	mov	x4, x0
+    2980: c4 bd 00 34  	cbz	w4, 0x4138 <stmvl53l1_ioctl+0x1e60>
+    2984: 08 00 00 90  	adrp	x8, 0x2000 <stmvl53l1_ioctl+0x6ac> // vl53l1_ctx+0x8fe8
+    2988: 00 01 40 f9  	ldr	x0, [x8] // vl53l1_ctx+0x8fe8
+    298c: 80 0a 00 b4  	cbz	x0, 0x2adc <stmvl53l1_ioctl+0x804>
+    2990: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x6b8> // '%s %d copy to user fail %d'
+    2994: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x6bc> // 'ctrl_getdata'
+    2998: 21 00 00 91  	add	x1, x1, #0 // '%s %d copy to user fail %d'
+    299c: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_getdata'
+    29a0: 43 27 81 52  	mov	w3, #2362
+    29a4: 00 00 00 94  	bl	0x29a4 <stmvl53l1_ioctl+0x6cc> // ipc_log_string+0x0
+    29a8: 4d 00 00 14  	b	0x2adc <stmvl53l1_ioctl+0x804>
+    29ac: 19 00 00 90  	adrp	x25, 0x2000 <stmvl53l1_ioctl+0x6d4> // vl53l1_ctx+0x8fe8
+    29b0: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    29b4: e0 00 00 b4  	cbz	x0, 0x29d0 <stmvl53l1_ioctl+0x6f8>
+    29b8: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x6e0> // '%s %d VL53L1_IOCTL_PERFORM_CALIBRATION\n'
+    29bc: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x6e4> // 'stmvl53l1_ioctl_handler'
+    29c0: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_PERFORM_CALIBRATION\n'
+    29c4: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    29c8: 23 af 81 52  	mov	w3, #3449
+    29cc: 00 00 00 94  	bl	0x29cc <stmvl53l1_ioctl+0x6f4> // ipc_log_string+0x0
+    29d0: 14 03 03 d1  	sub	x20, x24, #192
+    29d4: ff ff 1a a9  	stp	xzr, xzr, [sp, #424]
+    29d8: e0 03 14 aa  	mov	x0, x20
+    29dc: 00 00 00 94  	bl	0x29dc <stmvl53l1_ioctl+0x704> // mutex_lock+0x0
+    29e0: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    29e4: 08 1a 00 34  	cbz	w8, 0x2d24 <stmvl53l1_ioctl+0xa4c>
+    29e8: 55 02 80 12  	mov	w21, #-19
+    29ec: 2a 06 00 14  	b	0x4294 <stmvl53l1_ioctl+0x1fbc>
+    29f0: 08 00 00 90  	adrp	x8, 0x2000 <stmvl53l1_ioctl+0x718> // vl53l1_ctx+0x8fe8
+    29f4: 00 01 40 f9  	ldr	x0, [x8] // vl53l1_ctx+0x8fe8
+    29f8: e0 00 00 b4  	cbz	x0, 0x2a14 <stmvl53l1_ioctl+0x73c>
+    29fc: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x724> // '%s %d VL53L1_IOCTL_STOP\n'
+    2a00: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x728> // 'stmvl53l1_ioctl_handler'
+    2a04: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_STOP\n'
+    2a08: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    2a0c: a3 a8 81 52  	mov	w3, #3397
+    2a10: 00 00 00 94  	bl	0x2a10 <stmvl53l1_ioctl+0x738> // ipc_log_string+0x0
+    2a14: 13 03 03 d1  	sub	x19, x24, #192
+    2a18: e0 03 13 aa  	mov	x0, x19
+    2a1c: 00 00 00 94  	bl	0x2a1c <stmvl53l1_ioctl+0x744> // mutex_lock+0x0
+    2a20: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    2a24: 28 19 00 34  	cbz	w8, 0x2d48 <stmvl53l1_ioctl+0xa70>
+    2a28: 55 02 80 12  	mov	w21, #-19
+    2a2c: 6a 01 00 14  	b	0x2fd4 <stmvl53l1_ioctl+0xcfc>
+    2a30: 14 03 03 d1  	sub	x20, x24, #192
+    2a34: e0 03 14 aa  	mov	x0, x20
+    2a38: 00 00 00 94  	bl	0x2a38 <stmvl53l1_ioctl+0x760> // mutex_lock+0x0
+    2a3c: e9 e3 8e 92  	mov	x9, #-30496
+    2a40: 28 00 80 52  	mov	w8, #1
+    2a44: 00 03 09 8b  	add	x0, x24, x9
+    2a48: e3 a3 06 91  	add	x3, sp, #424
+    2a4c: c1 0f 80 52  	mov	w1, #126
+    2a50: 42 00 80 52  	mov	w2, #2
+    2a54: 08 67 0c 39  	strb	w8, [x24, #793]
+    2a58: ff d7 00 f9  	str	xzr, [sp, #424]
+    2a5c: 00 00 00 94  	bl	0x2a5c <stmvl53l1_ioctl+0x784> // VL53L1_read_nvm_raw_data+0x0
+    2a60: e8 d7 40 f9  	ldr	x8, [sp, #424]
+    2a64: 1f 1c 00 72  	tst	w0, #0xff
+    2a68: e8 07 00 f9  	str	x8, [sp, #8]
+    2a6c: 1f 67 0c 39  	strb	wzr, [x24, #793]
+    2a70: 41 3d 00 54  	b.ne	0x3218 <stmvl53l1_ioctl+0xf40>
+    2a74: e1 23 00 91  	add	x1, sp, #8
+    2a78: e0 03 13 aa  	mov	x0, x19
+    2a7c: 02 01 80 52  	mov	w2, #8
+    2a80: e2 00 00 14  	b	0x2e08 <stmvl53l1_ioctl+0xb30>
+    2a84: 15 00 00 90  	adrp	x21, 0x2000 <stmvl53l1_ioctl+0x7ac> // vl53l1_ctx+0x8fe8
+    2a88: a0 02 40 f9  	ldr	x0, [x21] // vl53l1_ctx+0x8fe8
+    2a8c: e0 00 00 b4  	cbz	x0, 0x2aa8 <stmvl53l1_ioctl+0x7d0>
+    2a90: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x7b8> // '%s %d VL53L1_IOCTL_AUTONOMOUS_CONFIG\n'
+    2a94: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x7bc> // 'stmvl53l1_ioctl_handler'
+    2a98: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_AUTONOMOUS_CONFIG\n'
+    2a9c: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    2aa0: a3 af 81 52  	mov	w3, #3453
+    2aa4: 00 00 00 94  	bl	0x2aa4 <stmvl53l1_ioctl+0x7cc> // ipc_log_string+0x0
+    2aa8: 14 03 03 d1  	sub	x20, x24, #192
+    2aac: ff c3 01 b9  	str	wzr, [sp, #448]
+    2ab0: e0 03 14 aa  	mov	x0, x20
+    2ab4: ff 7f 1b a9  	stp	xzr, xzr, [sp, #432]
+    2ab8: ff d7 00 f9  	str	xzr, [sp, #424]
+    2abc: 00 00 00 94  	bl	0x2abc <stmvl53l1_ioctl+0x7e4> // mutex_lock+0x0
+    2ac0: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    2ac4: 88 07 00 35  	cbnz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    2ac8: e0 a3 06 91  	add	x0, sp, #424
+    2acc: e1 03 13 aa  	mov	x1, x19
+    2ad0: 82 03 80 52  	mov	w2, #28
+    2ad4: 00 00 00 94  	bl	0x2ad4 <stmvl53l1_ioctl+0x7fc> // +0x48ec
+    2ad8: 00 20 00 34  	cbz	w0, 0x2ed8 <stmvl53l1_ioctl+0xc00>
+    2adc: b5 01 80 12  	mov	w21, #-14
+    2ae0: 36 00 00 14  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    2ae4: e0 03 16 aa  	mov	x0, x22
+    2ae8: e1 03 13 aa  	mov	x1, x19
+    2aec: 22 00 80 52  	mov	w2, #1
+    2af0: 1c 00 00 14  	b	0x2b60 <stmvl53l1_ioctl+0x888>
+    2af4: 17 00 00 90  	adrp	x23, 0x2000 <stmvl53l1_ioctl+0x81c> // vl53l1_ctx+0x8fe8
+    2af8: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    2afc: e0 00 00 b4  	cbz	x0, 0x2b18 <stmvl53l1_ioctl+0x840>
+    2b00: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x828> // '%s %d VL53L1_IOCTL_LOAD_CALIBRATION_DATA\n'
+    2b04: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x82c> // 'stmvl53l1_ioctl_handler'
+    2b08: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_LOAD_CALIBRATION_DATA\n'
+    2b0c: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    2b10: e3 a9 81 52  	mov	w3, #3407
+    2b14: 00 00 00 94  	bl	0x2b14 <stmvl53l1_ioctl+0x83c> // ipc_log_string+0x0
+    2b18: e0 a3 06 91  	add	x0, sp, #424
+    2b1c: e1 03 1f 2a  	mov	w1, wzr
+    2b20: 02 35 80 52  	mov	w2, #424
+    2b24: 00 00 00 94  	bl	0x2b24 <stmvl53l1_ioctl+0x84c> // memset+0x0
+    2b28: e0 23 00 91  	add	x0, sp, #8
+    2b2c: e1 03 1f 2a  	mov	w1, wzr
+    2b30: 02 34 80 52  	mov	w2, #416
+    2b34: 00 00 00 94  	bl	0x2b34 <stmvl53l1_ioctl+0x85c> // memset+0x0
+    2b38: 14 03 03 d1  	sub	x20, x24, #192
+    2b3c: e0 03 14 aa  	mov	x0, x20
+    2b40: 00 00 00 94  	bl	0x2b40 <stmvl53l1_ioctl+0x868> // mutex_lock+0x0
+    2b44: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    2b48: c8 10 00 34  	cbz	w8, 0x2d60 <stmvl53l1_ioctl+0xa88>
+    2b4c: 55 02 80 12  	mov	w21, #-19
+    2b50: b0 00 00 14  	b	0x2e10 <stmvl53l1_ioctl+0xb38>
+    2b54: e0 03 16 aa  	mov	x0, x22
+    2b58: e1 03 13 aa  	mov	x1, x19
+    2b5c: e2 03 1f 2a  	mov	w2, wzr
+    2b60: 00 00 00 94  	bl	0x2b60 <stmvl53l1_ioctl+0x888> // +0x5488
+    2b64: f5 03 00 2a  	mov	w21, w0
+    2b68: 16 00 00 14  	b	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2b6c: 16 00 00 90  	adrp	x22, 0x2000 <stmvl53l1_ioctl+0x894> // vl53l1_ctx+0x8fe8
+    2b70: c0 02 40 f9  	ldr	x0, [x22] // vl53l1_ctx+0x8fe8
+    2b74: e0 00 00 b4  	cbz	x0, 0x2b90 <stmvl53l1_ioctl+0x8b8>
+    2b78: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x8a0> // '%s %d VL53L1_IOCTL_CALIBRATION_DATA\n'
+    2b7c: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x8a4> // 'stmvl53l1_ioctl_handler'
+    2b80: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_IOCTL_CALIBRATION_DATA\n'
+    2b84: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_ioctl_handler'
+    2b88: a3 ae 81 52  	mov	w3, #3445
+    2b8c: 00 00 00 94  	bl	0x2b8c <stmvl53l1_ioctl+0x8b4> // ipc_log_string+0x0
+    2b90: e0 a3 06 91  	add	x0, sp, #424
+    2b94: e1 03 1f 2a  	mov	w1, wzr
+    2b98: 82 33 80 52  	mov	w2, #412
+    2b9c: 00 00 00 94  	bl	0x2b9c <stmvl53l1_ioctl+0x8c4> // memset+0x0
+    2ba0: 14 03 03 d1  	sub	x20, x24, #192
+    2ba4: e0 03 14 aa  	mov	x0, x20
+    2ba8: 00 00 00 94  	bl	0x2ba8 <stmvl53l1_ioctl+0x8d0> // mutex_lock+0x0
+    2bac: 08 83 53 38  	ldurb	w8, [x24, #-200]
+    2bb0: 68 13 00 34  	cbz	w8, 0x2e1c <stmvl53l1_ioctl+0xb44>
+    2bb4: 55 02 80 12  	mov	w21, #-19
+    2bb8: e0 03 14 aa  	mov	x0, x20
+    2bbc: 00 00 00 94  	bl	0x2bbc <stmvl53l1_ioctl+0x8e4> // mutex_unlock+0x0
+    2bc0: 08 41 38 d5  	mrs	x8, SP_EL0
+    2bc4: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    2bc8: a9 83 5f f8  	ldur	x9, [x29, #-8]
+    2bcc: 1f 01 09 eb  	cmp	x8, x9
+    2bd0: 61 c1 00 54  	b.ne	0x43fc <stmvl53l1_ioctl+0x2124>
+    2bd4: a0 7e 40 93  	sxtw	x0, w21
+    2bd8: ff 83 11 91  	add	sp, sp, #1120
+    2bdc: f4 4f 44 a9  	ldp	x20, x19, [sp, #64]
+    2be0: f6 57 43 a9  	ldp	x22, x21, [sp, #48]
+    2be4: f8 5f 42 a9  	ldp	x24, x23, [sp, #32]
+    2be8: fc 67 41 a9  	ldp	x28, x25, [sp, #16]
+    2bec: fd 7b c5 a8  	ldp	x29, x30, [sp], #80
+    2bf0: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    2bf4: bf 23 03 d5  	hint	#29
+    2bf8: c0 03 5f d6  	ret
+    2bfc: e0 a3 06 91  	add	x0, sp, #424
+    2c00: e1 03 13 aa  	mov	x1, x19
+    2c04: 02 02 80 52  	mov	w2, #16
+    2c08: 00 00 00 94  	bl	0x2c08 <stmvl53l1_ioctl+0x930> // +0x48ec
+    2c0c: 80 3d 00 b5  	cbnz	x0, 0x33bc <stmvl53l1_ioctl+0x10e4>
+    2c10: e4 b3 41 b9  	ldr	w4, [sp, #432]
+    2c14: 9f 04 04 71  	cmp	w4, #257
+    2c18: 82 46 00 54  	b.hs	0x34e8 <stmvl53l1_ioctl+0x1210>
+    2c1c: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    2c20: 94 40 00 91  	add	x20, x4, #16
+    2c24: a8 01 00 35  	cbnz	w8, 0x2c58 <stmvl53l1_ioctl+0x980>
+    2c28: e0 a3 06 91  	add	x0, sp, #424
+    2c2c: e1 03 14 aa  	mov	x1, x20
+    2c30: e2 03 1f 2a  	mov	w2, wzr
+    2c34: 00 00 00 94  	bl	0x2c34 <stmvl53l1_ioctl+0x95c> // __check_object_size+0x0
+    2c38: e0 a3 06 91  	add	x0, sp, #424
+    2c3c: e1 03 13 aa  	mov	x1, x19
+    2c40: e2 03 14 aa  	mov	x2, x20
+    2c44: 00 00 00 94  	bl	0x2c44 <stmvl53l1_ioctl+0x96c> // +0x48ec
+    2c48: a0 80 00 b5  	cbnz	x0, 0x3c5c <stmvl53l1_ioctl+0x1984>
+    2c4c: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    2c50: 68 34 00 34  	cbz	w8, 0x32dc <stmvl53l1_ioctl+0x1004>
+    2c54: e4 b3 41 b9  	ldr	w4, [sp, #432]
+    2c58: e8 a3 06 91  	add	x8, sp, #424
+    2c5c: e1 5b 43 79  	ldrh	w1, [sp, #428]
+    2c60: 02 41 00 91  	add	x2, x8, #16
+    2c64: e0 03 16 aa  	mov	x0, x22
+    2c68: e3 03 04 2a  	mov	w3, w4
+    2c6c: 00 00 00 94  	bl	0x2c6c <stmvl53l1_ioctl+0x994> // +0x95c8
+    2c70: 88 01 80 12  	mov	w8, #-13
+    2c74: 1f 00 00 71  	cmp	w0, #0
+    2c78: f5 03 00 2a  	mov	w21, w0
+    2c7c: f6 03 88 1a  	csel	w22, wzr, w8, eq
+    2c80: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    2c84: f6 b7 01 b9  	str	w22, [sp, #436]
+    2c88: 40 01 00 b4  	cbz	x0, 0x2cb0 <stmvl53l1_ioctl+0x9d8>
+    2c8c: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0x9b4> // '%s %d rd %x %d bytes status %d\n'
+    2c90: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0x9b8> // 'ctrl_reg_access'
+    2c94: e4 af 41 b9  	ldr	w4, [sp, #428]
+    2c98: 21 00 00 91  	add	x1, x1, #0 // '%s %d rd %x %d bytes status %d\n'
+    2c9c: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    2ca0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_reg_access'
+    2ca4: 43 18 81 52  	mov	w3, #2242
+    2ca8: e6 03 16 2a  	mov	w6, w22
+    2cac: 00 00 00 94  	bl	0x2cac <stmvl53l1_ioctl+0x9d4> // ipc_log_string+0x0
+    2cb0: 95 00 00 34  	cbz	w21, 0x2cc0 <stmvl53l1_ioctl+0x9e8>
+    2cb4: 95 00 80 12  	mov	w21, #-5
+    2cb8: 14 02 80 52  	mov	w20, #16
+    2cbc: 16 57 02 39  	strb	w22, [x24, #149]
+    2cc0: e0 a3 06 91  	add	x0, sp, #424
+    2cc4: e1 03 14 aa  	mov	x1, x20
+    2cc8: 22 00 80 52  	mov	w2, #1
+    2ccc: 00 00 00 94  	bl	0x2ccc <stmvl53l1_ioctl+0x9f4> // __check_object_size+0x0
+    2cd0: e1 a3 06 91  	add	x1, sp, #424
+    2cd4: e0 03 13 aa  	mov	x0, x19
+    2cd8: e2 03 14 aa  	mov	x2, x20
+    2cdc: 00 00 00 94  	bl	0x2cdc <stmvl53l1_ioctl+0xa04> // +0x4aa0
+    2ce0: 00 f7 ff b4  	cbz	x0, 0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2ce4: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    2ce8: 00 01 00 b4  	cbz	x0, 0x2d08 <stmvl53l1_ioctl+0xa30>
+    2cec: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0xa14> // '%s %d %d, fail\n'
+    2cf0: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0xa18> // 'ctrl_reg_access'
+    2cf4: 21 00 00 91  	add	x1, x1, #0 // '%s %d %d, fail\n'
+    2cf8: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_reg_access'
+    2cfc: a3 19 81 52  	mov	w3, #2253
+    2d00: a4 19 81 52  	mov	w4, #2253
+    2d04: 00 00 00 94  	bl	0x2d04 <stmvl53l1_ioctl+0xa2c> // ipc_log_string+0x0
+    2d08: 00 00 00 90  	adrp	x0, 0x2000 <stmvl53l1_ioctl+0xa30> // '\x013[ST dToF] %s %d : %d, fail\n'
+    2d0c: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0xa34> // 'ctrl_reg_access'
+    2d10: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : %d, fail\n'
+    2d14: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_reg_access'
+    2d18: a2 19 81 52  	mov	w2, #2253
+    2d1c: a3 19 81 52  	mov	w3, #2253
+    2d20: b6 01 00 14  	b	0x33f8 <stmvl53l1_ioctl+0x1120>
+    2d24: 28 00 80 52  	mov	w8, #1
+    2d28: e0 a3 06 91  	add	x0, sp, #424
+    2d2c: e1 03 13 aa  	mov	x1, x19
+    2d30: 02 02 80 52  	mov	w2, #16
+    2d34: 08 c7 02 39  	strb	w8, [x24, #177]
+    2d38: 00 00 00 94  	bl	0x2d38 <stmvl53l1_ioctl+0xa60> // +0x48ec
+    2d3c: 00 0f 00 34  	cbz	w0, 0x2f1c <stmvl53l1_ioctl+0xc44>
+    2d40: b5 01 80 12  	mov	w21, #-14
+    2d44: 54 05 00 14  	b	0x4294 <stmvl53l1_ioctl+0x1fbc>
+    2d48: 08 63 40 b9  	ldr	w8, [x24, #96]
+    2d4c: 28 14 00 34  	cbz	w8, 0x2fd0 <stmvl53l1_ioctl+0xcf8>
+    2d50: e0 03 16 aa  	mov	x0, x22
+    2d54: 00 00 00 94  	bl	0x2d54 <stmvl53l1_ioctl+0xa7c> // +0x1238
+    2d58: f5 03 00 2a  	mov	w21, w0
+    2d5c: 9e 00 00 14  	b	0x2fd4 <stmvl53l1_ioctl+0xcfc>
+    2d60: e0 a3 06 91  	add	x0, sp, #424
+    2d64: e1 03 13 aa  	mov	x1, x19
+    2d68: 82 00 80 52  	mov	w2, #4
+    2d6c: f6 a3 06 91  	add	x22, sp, #424
+    2d70: 00 00 00 94  	bl	0x2d70 <stmvl53l1_ioctl+0xa98> // +0x48ec
+    2d74: f5 03 00 aa  	mov	x21, x0
+    2d78: 75 34 00 35  	cbnz	w21, 0x3404 <stmvl53l1_ioctl+0x112c>
+    2d7c: d5 02 7e b2  	orr	x21, x22, #0x4
+    2d80: e1 03 1f 2a  	mov	w1, wzr
+    2d84: e0 03 15 aa  	mov	x0, x21
+    2d88: 02 33 80 52  	mov	w2, #408
+    2d8c: 00 00 00 94  	bl	0x2d8c <stmvl53l1_ioctl+0xab4> // memset+0x0
+    2d90: e0 23 00 91  	add	x0, sp, #8
+    2d94: e1 03 1f 2a  	mov	w1, wzr
+    2d98: 02 34 80 52  	mov	w2, #416
+    2d9c: 00 00 00 94  	bl	0x2d9c <stmvl53l1_ioctl+0xac4> // memset+0x0
+    2da0: e2 23 00 91  	add	x2, sp, #8
+    2da4: e0 03 1f 2a  	mov	w0, wzr
+    2da8: 21 21 80 52  	mov	w1, #265
+    2dac: 03 34 80 52  	mov	w3, #416
+    2db0: 00 00 00 94  	bl	0x2db0 <stmvl53l1_ioctl+0xad8> // private_slot_rw+0x0
+    2db4: f6 03 00 2a  	mov	w22, w0
+    2db8: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    2dbc: b6 3b f8 37  	tbnz	w22, #31, 0x3530 <stmvl53l1_ioctl+0x1258>
+    2dc0: 20 01 00 b4  	cbz	x0, 0x2de4 <stmvl53l1_ioctl+0xb0c>
+    2dc4: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0xaec> // 'stmvl53l1_slot_rw'
+    2dc8: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0xaf0> // '%s %d %s : read/write slot succeed, ret = %d'
+    2dcc: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_slot_rw'
+    2dd0: 21 00 00 91  	add	x1, x1, #0 // '%s %d %s : read/write slot succeed, ret = %d'
+    2dd4: a3 66 81 52  	mov	w3, #2869
+    2dd8: e4 03 02 aa  	mov	x4, x2
+    2ddc: e5 03 16 2a  	mov	w5, w22
+    2de0: 00 00 00 94  	bl	0x2de0 <stmvl53l1_ioctl+0xb08> // ipc_log_string+0x0
+    2de4: e8 d3 40 f9  	ldr	x8, [sp, #416]
+    2de8: e1 23 00 91  	add	x1, sp, #8
+    2dec: e0 03 15 aa  	mov	x0, x21
+    2df0: 02 33 80 52  	mov	w2, #408
+    2df4: e8 a7 01 f9  	str	x8, [sp, #840]
+    2df8: 00 00 00 94  	bl	0x2df8 <stmvl53l1_ioctl+0xb20> // memcpy+0x0
+    2dfc: e1 a3 06 91  	add	x1, sp, #424
+    2e00: e0 03 13 aa  	mov	x0, x19
+    2e04: 02 35 80 52  	mov	w2, #424
+    2e08: 00 00 00 94  	bl	0x2e08 <stmvl53l1_ioctl+0xb30> // +0x4aa0
+    2e0c: f5 03 00 aa  	mov	x21, x0
+    2e10: e0 03 14 aa  	mov	x0, x20
+    2e14: 00 00 00 94  	bl	0x2e14 <stmvl53l1_ioctl+0xb3c> // mutex_unlock+0x0
+    2e18: 6a ff ff 17  	b	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    2e1c: e0 a3 06 91  	add	x0, sp, #424
+    2e20: e1 03 13 aa  	mov	x1, x19
+    2e24: 82 00 80 52  	mov	w2, #4
+    2e28: 00 00 00 94  	bl	0x2e28 <stmvl53l1_ioctl+0xb50> // +0x48ec
+    2e2c: f5 03 00 aa  	mov	x21, x0
+    2e30: f5 30 00 35  	cbnz	w21, 0x344c <stmvl53l1_ioctl+0x1174>
+    2e34: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    2e38: 08 12 00 34  	cbz	w8, 0x3078 <stmvl53l1_ioctl+0xda0>
+    2e3c: e8 a3 06 91  	add	x8, sp, #424
+    2e40: e1 03 1f 2a  	mov	w1, wzr
+    2e44: 15 01 7e b2  	orr	x21, x8, #0x4
+    2e48: 02 33 80 52  	mov	w2, #408
+    2e4c: e0 03 15 aa  	mov	x0, x21
+    2e50: 00 00 00 94  	bl	0x2e50 <stmvl53l1_ioctl+0xb78> // memset+0x0
+    2e54: e8 e3 8e 92  	mov	x8, #-30496
+    2e58: e1 03 15 aa  	mov	x1, x21
+    2e5c: 00 03 08 8b  	add	x0, x24, x8
+    2e60: 00 00 00 94  	bl	0x2e60 <stmvl53l1_ioctl+0xb88> // VL53L1_GetCalibrationData+0x0
+    2e64: 60 12 00 91  	add	x0, x19, #4
+    2e68: e1 03 15 aa  	mov	x1, x21
+    2e6c: 02 33 80 52  	mov	w2, #408
+    2e70: 00 00 00 94  	bl	0x2e70 <stmvl53l1_ioctl+0xb98> // +0x4aa0
+    2e74: f5 03 00 2a  	mov	w21, w0
+    2e78: 50 ff ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    2e7c: 60 02 02 91  	add	x0, x19, #128
+    2e80: 01 33 08 91  	add	x1, x24, #524
+    2e84: 02 19 80 52  	mov	w2, #200
+    2e88: 00 00 00 94  	bl	0x2e88 <stmvl53l1_ioctl+0xbb0> // +0x4aa0
+    2e8c: e4 03 00 aa  	mov	x4, x0
+    2e90: 44 01 00 34  	cbz	w4, 0x2eb8 <stmvl53l1_ioctl+0xbe0>
+    2e94: 08 00 00 90  	adrp	x8, 0x2000 <stmvl53l1_ioctl+0xbbc> // vl53l1_ctx+0x8fe8
+    2e98: 00 01 40 f9  	ldr	x0, [x8] // vl53l1_ctx+0x8fe8
+    2e9c: 00 e2 ff b4  	cbz	x0, 0x2adc <stmvl53l1_ioctl+0x804>
+    2ea0: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0xbc8> // '%s %d copy to user fail %d'
+    2ea4: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0xbcc> // 'ctrl_mz_data_common'
+    2ea8: 21 00 00 91  	add	x1, x1, #0 // '%s %d copy to user fail %d'
+    2eac: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_mz_data_common'
+    2eb0: 43 35 81 52  	mov	w3, #2474
+    2eb4: 26 fe ff 17  	b	0x274c <stmvl53l1_ioctl+0x474>
+    2eb8: 08 63 40 b9  	ldr	w8, [x24, #96]
+    2ebc: c8 e7 ff 34  	cbz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    2ec0: 08 83 40 b9  	ldr	w8, [x24, #128]
+    2ec4: 08 0d 00 51  	sub	w8, w8, #3
+    2ec8: 1f 09 00 31  	cmn	w8, #2
+    2ecc: e8 00 80 12  	mov	w8, #-8
+    2ed0: 15 31 9f 1a  	csel	w21, w8, wzr, lo
+    2ed4: 39 ff ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    2ed8: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    2edc: 68 1c 00 34  	cbz	w8, 0x3268 <stmvl53l1_ioctl+0xf90>
+    2ee0: 08 67 58 b9  	ldr	w8, [x24, #6244]
+    2ee4: e1 a3 06 91  	add	x1, sp, #424
+    2ee8: e0 03 13 aa  	mov	x0, x19
+    2eec: 82 03 80 52  	mov	w2, #28
+    2ef0: e8 af 01 b9  	str	w8, [sp, #428]
+    2ef4: 08 7b 58 b9  	ldr	w8, [x24, #6264]
+    2ef8: 09 3b 4c f9  	ldr	x9, [x24, #6256]
+    2efc: 0a 37 4c f9  	ldr	x10, [x24, #6248]
+    2f00: e8 c3 01 b9  	str	w8, [sp, #448]
+    2f04: ea 27 1b a9  	stp	x10, x9, [sp, #432]
+    2f08: 00 00 00 94  	bl	0x2f08 <stmvl53l1_ioctl+0xc30> // +0x4aa0
+    2f0c: a8 01 80 12  	mov	w8, #-14
+    2f10: 1f 00 00 71  	cmp	w0, #0
+    2f14: f5 03 88 1a  	csel	w21, wzr, w8, eq
+    2f18: 28 ff ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    2f1c: 08 63 40 b9  	ldr	w8, [x24, #96]
+    2f20: 68 5d 00 35  	cbnz	w8, 0x3acc <stmvl53l1_ioctl+0x17f4>
+    2f24: 08 1f 43 b9  	ldr	w8, [x24, #796]
+    2f28: a8 00 00 34  	cbz	w8, 0x2f3c <stmvl53l1_ioctl+0xc64>
+    2f2c: 00 03 53 f8  	ldur	x0, [x24, #-208]
+    2f30: 00 00 00 94  	bl	0x2f30 <stmvl53l1_ioctl+0xc58> // stmvl53l1_reset_release_i2c+0x0
+    2f34: 80 71 00 35  	cbnz	w0, 0x3d64 <stmvl53l1_ioctl+0x1a8c>
+    2f38: 1f 1f 03 b9  	str	wzr, [x24, #796]
+    2f3c: e8 e3 8e 92  	mov	x8, #-30496
+    2f40: 13 03 08 8b  	add	x19, x24, x8
+    2f44: e0 03 13 aa  	mov	x0, x19
+    2f48: 00 00 00 94  	bl	0x2f48 <stmvl53l1_ioctl+0xc70> // VL53L1_StaticInit+0x0
+    2f4c: 1f 1c 00 72  	tst	w0, #0xff
+    2f50: 61 61 00 54  	b.ne	0x3b7c <stmvl53l1_ioctl+0x18a4>
+    2f54: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    2f58: 1f 19 00 71  	cmp	w8, #6
+    2f5c: 68 33 00 54  	b.hi	0x35c8 <stmvl53l1_ioctl+0x12f0>
+    2f60: 09 00 00 90  	adrp	x9, 0x2000 <stmvl53l1_ioctl+0xc88> // '\x10'
+    2f64: 29 01 00 91  	add	x9, x9, #0 // '\x10'
+    2f68: 0a 00 00 10  	adr	x10, #0
+    2f6c: 2b 79 a8 b8  	ldrsw	x11, [x9, x8, lsl #2]
+    2f70: 4a 01 0b 8b  	add	x10, x10, x11
+    2f74: 40 01 1f d6  	br	x10
+    2f78: 9f 24 03 d5  	hint	#36
+    2f7c: e0 03 13 aa  	mov	x0, x19
+    2f80: 00 00 00 94  	bl	0x2f80 <stmvl53l1_ioctl+0xca8> // VL53L1_PerformRefSpadManagement+0x0
+    2f84: 1f 1c 00 72  	tst	w0, #0xff
+    2f88: c0 33 00 54  	b.eq	0x3600 <stmvl53l1_ioctl+0x1328>
+    2f8c: f3 03 00 2a  	mov	w19, w0
+    2f90: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    2f94: 75 1e 00 13  	sxtb	w21, w19
+    2f98: 00 01 00 b4  	cbz	x0, 0x2fb8 <stmvl53l1_ioctl+0xce0>
+    2f9c: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0xcc4> // '%s %d VL53L1_PerformRefSpadManagement fail => %d'
+    2fa0: 02 00 00 90  	adrp	x2, 0x2000 <stmvl53l1_ioctl+0xcc8> // 'ctrl_perform_calibration_ref_spad_lock'
+    2fa4: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_PerformRefSpadManagement fail => %d'
+    2fa8: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_calibration_ref_spad_lock'
+    2fac: e3 81 81 52  	mov	w3, #3087
+    2fb0: e4 03 15 2a  	mov	w4, w21
+    2fb4: 00 00 00 94  	bl	0x2fb4 <stmvl53l1_ioctl+0xcdc> // ipc_log_string+0x0
+    2fb8: 00 00 00 90  	adrp	x0, 0x2000 <stmvl53l1_ioctl+0xce0> // '\x013[ST dToF] %s %d : VL53L1_PerformRefSpadManagement fail => %d'
+    2fbc: 01 00 00 90  	adrp	x1, 0x2000 <stmvl53l1_ioctl+0xce4> // 'ctrl_perform_calibration_ref_spad_lock'
+    2fc0: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_PerformRefSpadManagement fail => %d'
+    2fc4: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_calibration_ref_spad_lock'
+    2fc8: e2 81 81 52  	mov	w2, #3087
+    2fcc: a6 04 00 14  	b	0x4264 <stmvl53l1_ioctl+0x1f8c>
+    2fd0: f5 01 80 12  	mov	w21, #-16
+    2fd4: e0 03 13 aa  	mov	x0, x19
+    2fd8: f9 fe ff 17  	b	0x2bbc <stmvl53l1_ioctl+0x8e4>
+    2fdc: e0 03 14 aa  	mov	x0, x20
+    2fe0: 00 00 00 94  	bl	0x2fe0 <stmvl53l1_ioctl+0xd08> // mutex_unlock+0x0
+    2fe4: e0 03 14 aa  	mov	x0, x20
+    2fe8: 00 00 00 94  	bl	0x2fe8 <stmvl53l1_ioctl+0xd10> // mutex_lock+0x0
+    2fec: 08 63 4c 39  	ldrb	w8, [x24, #792]
+    2ff0: c8 08 00 34  	cbz	w8, 0x3108 <stmvl53l1_ioctl+0xe30>
+    2ff4: c8 02 40 f9  	ldr	x8, [x22]
+    2ff8: 1f 01 16 eb  	cmp	x8, x22
+    2ffc: e0 00 00 54  	b.eq	0x3018 <stmvl53l1_ioctl+0xd40>
+    3000: 09 11 40 b9  	ldr	w9, [x8, #16]
+    3004: 3f 01 19 6b  	cmp	w9, w25
+    3008: 00 08 00 54  	b.eq	0x3108 <stmvl53l1_ioctl+0xe30>
+    300c: 08 01 40 f9  	ldr	x8, [x8]
+    3010: 1f 01 16 eb  	cmp	x8, x22
+    3014: 61 ff ff 54  	b.ne	0x3000 <stmvl53l1_ioctl+0xd28>
+    3018: e0 03 14 aa  	mov	x0, x20
+    301c: 00 00 00 94  	bl	0x301c <stmvl53l1_ioctl+0xd44> // mutex_unlock+0x0
+    3020: 60 00 00 14  	b	0x31a0 <stmvl53l1_ioctl+0xec8>
+    3024: 08 63 40 b9  	ldr	w8, [x24, #96]
+    3028: 28 57 00 35  	cbnz	w8, 0x3b0c <stmvl53l1_ioctl+0x1834>
+    302c: 00 43 17 91  	add	x0, x24, #1488
+    3030: 61 12 00 91  	add	x1, x19, #4
+    3034: 82 52 82 52  	mov	w2, #4756
+    3038: 00 00 00 94  	bl	0x3038 <stmvl53l1_ioctl+0xd60> // +0x48ec
+    303c: 00 63 00 35  	cbnz	w0, 0x3c9c <stmvl53l1_ioctl+0x19c4>
+    3040: 08 d7 45 b9  	ldr	w8, [x24, #1492]
+    3044: 29 20 80 52  	mov	w9, #257
+    3048: c9 95 bd 72  	movk	w9, #60590, lsl #16
+    304c: 1f 01 09 6b  	cmp	w8, w9
+    3050: 21 66 00 54  	b.ne	0x3d14 <stmvl53l1_ioctl+0x1a3c>
+    3054: e8 6f 82 92  	mov	x8, #-4992
+    3058: 01 53 17 91  	add	x1, x24, #1492
+    305c: 00 03 08 8b  	add	x0, x24, x8
+    3060: 02 52 82 52  	mov	w2, #4752
+    3064: 00 00 00 94  	bl	0x3064 <stmvl53l1_ioctl+0xd8c> // memcpy+0x0
+    3068: 08 d3 45 b9  	ldr	w8, [x24, #1488]
+    306c: f5 03 1f 2a  	mov	w21, wzr
+    3070: 08 cb 05 b9  	str	w8, [x24, #1480]
+    3074: d1 fe ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3078: 08 63 40 b9  	ldr	w8, [x24, #96]
+    307c: 48 56 00 35  	cbnz	w8, 0x3b44 <stmvl53l1_ioctl+0x186c>
+    3080: e8 a3 06 91  	add	x8, sp, #424
+    3084: 61 12 00 91  	add	x1, x19, #4
+    3088: 15 01 7e b2  	orr	x21, x8, #0x4
+    308c: 02 33 80 52  	mov	w2, #408
+    3090: e0 03 15 aa  	mov	x0, x21
+    3094: 00 00 00 94  	bl	0x3094 <stmvl53l1_ioctl+0xdbc> // +0x48ec
+    3098: e0 61 00 35  	cbnz	w0, 0x3cd4 <stmvl53l1_ioctl+0x19fc>
+    309c: e8 e3 8e 92  	mov	x8, #-30496
+    30a0: e1 03 15 aa  	mov	x1, x21
+    30a4: 00 03 08 8b  	add	x0, x24, x8
+    30a8: 00 00 00 94  	bl	0x30a8 <stmvl53l1_ioctl+0xdd0> // VL53L1_SetCalibrationData+0x0
+    30ac: 1f 1c 00 72  	tst	w0, #0xff
+    30b0: 40 84 00 54  	b.eq	0x4138 <stmvl53l1_ioctl+0x1e60>
+    30b4: f3 03 00 2a  	mov	w19, w0
+    30b8: c0 02 40 f9  	ldr	x0, [x22] // vl53l1_ctx+0x8fe8
+    30bc: 75 1e 00 13  	sxtb	w21, w19
+    30c0: 00 01 00 b4  	cbz	x0, 0x30e0 <stmvl53l1_ioctl+0xe08>
+    30c4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0xdec> // '%s %d VL53L1_SetCalibrationData fail %d'
+    30c8: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0xdf0> // 'ctrl_calibration_data'
+    30cc: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_SetCalibrationData fail %d'
+    30d0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_calibration_data'
+    30d4: a3 77 81 52  	mov	w3, #3005
+    30d8: e4 03 15 2a  	mov	w4, w21
+    30dc: 00 00 00 94  	bl	0x30dc <stmvl53l1_ioctl+0xe04> // ipc_log_string+0x0
+    30e0: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0xe08> // '\x013[ST dToF] %s %d : VL53L1_SetCalibrationData fail %d'
+    30e4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0xe0c> // 'ctrl_calibration_data'
+    30e8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_SetCalibrationData fail %d'
+    30ec: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_calibration_data'
+    30f0: a2 77 81 52  	mov	w2, #3005
+    30f4: e3 03 15 2a  	mov	w3, w21
+    30f8: 00 00 00 94  	bl	0x30f8 <stmvl53l1_ioctl+0xe20> // _printk+0x0
+    30fc: 95 00 80 12  	mov	w21, #-5
+    3100: 13 57 02 39  	strb	w19, [x24, #149]
+    3104: ad fe ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3108: e0 03 14 aa  	mov	x0, x20
+    310c: 00 00 00 94  	bl	0x310c <stmvl53l1_ioctl+0xe34> // mutex_unlock+0x0
+    3110: e0 a3 06 91  	add	x0, sp, #424
+    3114: e1 03 1f 2a  	mov	w1, wzr
+    3118: ff 7f 1c a9  	stp	xzr, xzr, [sp, #448]
+    311c: ff 7f 1b a9  	stp	xzr, xzr, [sp, #432]
+    3120: ff d7 00 f9  	str	xzr, [sp, #424]
+    3124: 00 00 00 94  	bl	0x3124 <stmvl53l1_ioctl+0xe4c> // init_wait_entry+0x0
+    3128: 15 03 0c 91  	add	x21, x24, #768
+    312c: e1 a3 06 91  	add	x1, sp, #424
+    3130: e0 03 15 aa  	mov	x0, x21
+    3134: 42 20 80 52  	mov	w2, #258
+    3138: 00 00 00 94  	bl	0x3138 <stmvl53l1_ioctl+0xe60> // prepare_to_wait_event+0x0
+    313c: f7 03 00 aa  	mov	x23, x0
+    3140: e0 03 14 aa  	mov	x0, x20
+    3144: 00 00 00 94  	bl	0x3144 <stmvl53l1_ioctl+0xe6c> // mutex_lock+0x0
+    3148: 08 63 4c 39  	ldrb	w8, [x24, #792]
+    314c: 68 01 00 34  	cbz	w8, 0x3178 <stmvl53l1_ioctl+0xea0>
+    3150: c8 02 40 f9  	ldr	x8, [x22]
+    3154: 1f 01 16 eb  	cmp	x8, x22
+    3158: a0 01 00 54  	b.eq	0x318c <stmvl53l1_ioctl+0xeb4>
+    315c: 09 11 40 b9  	ldr	w9, [x8, #16]
+    3160: 3f 01 19 6b  	cmp	w9, w25
+    3164: a0 00 00 54  	b.eq	0x3178 <stmvl53l1_ioctl+0xea0>
+    3168: 08 01 40 f9  	ldr	x8, [x8]
+    316c: 1f 01 16 eb  	cmp	x8, x22
+    3170: 61 ff ff 54  	b.ne	0x315c <stmvl53l1_ioctl+0xe84>
+    3174: 06 00 00 14  	b	0x318c <stmvl53l1_ioctl+0xeb4>
+    3178: e0 03 14 aa  	mov	x0, x20
+    317c: 00 00 00 94  	bl	0x317c <stmvl53l1_ioctl+0xea4> // mutex_unlock+0x0
+    3180: 77 61 00 b5  	cbnz	x23, 0x3dac <stmvl53l1_ioctl+0x1ad4>
+    3184: 00 00 00 94  	bl	0x3184 <stmvl53l1_ioctl+0xeac> // schedule+0x0
+    3188: e9 ff ff 17  	b	0x312c <stmvl53l1_ioctl+0xe54>
+    318c: e0 03 14 aa  	mov	x0, x20
+    3190: 00 00 00 94  	bl	0x3190 <stmvl53l1_ioctl+0xeb8> // mutex_unlock+0x0
+    3194: e1 a3 06 91  	add	x1, sp, #424
+    3198: e0 03 15 aa  	mov	x0, x21
+    319c: 00 00 00 94  	bl	0x319c <stmvl53l1_ioctl+0xec4> // finish_wait+0x0
+    31a0: f5 03 1f 2a  	mov	w21, wzr
+    31a4: e0 03 14 aa  	mov	x0, x20
+    31a8: 00 00 00 94  	bl	0x31a8 <stmvl53l1_ioctl+0xed0> // mutex_lock+0x0
+    31ac: 08 63 40 b9  	ldr	w8, [x24, #96]
+    31b0: 28 d0 ff 34  	cbz	w8, 0x2bb4 <stmvl53l1_ioctl+0x8dc>
+    31b4: 35 d0 ff 35  	cbnz	w21, 0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    31b8: 01 c3 03 91  	add	x1, x24, #240
+    31bc: e0 03 13 aa  	mov	x0, x19
+    31c0: 82 03 80 52  	mov	w2, #28
+    31c4: 00 00 00 94  	bl	0x31c4 <stmvl53l1_ioctl+0xeec> // +0x4aa0
+    31c8: f5 03 00 aa  	mov	x21, x0
+    31cc: 75 cf ff 35  	cbnz	w21, 0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    31d0: 08 00 00 90  	adrp	x8, 0x3000 <stmvl53l1_ioctl+0xef8> // kmalloc_caches+0x38
+    31d4: 01 98 81 52  	mov	w1, #3264
+    31d8: 02 03 80 52  	mov	w2, #24
+    31dc: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x38
+    31e0: 00 00 00 94  	bl	0x31e0 <stmvl53l1_ioctl+0xf08> // kmem_cache_alloc_trace+0x0
+    31e4: e0 1e 00 b4  	cbz	x0, 0x35c0 <stmvl53l1_ioctl+0x12e8>
+    31e8: 19 10 00 b9  	str	w25, [x0, #16]
+    31ec: e1 03 16 aa  	mov	x1, x22
+    31f0: d7 02 40 f9  	ldr	x23, [x22]
+    31f4: f3 03 00 aa  	mov	x19, x0
+    31f8: e2 03 17 aa  	mov	x2, x23
+    31fc: 00 00 00 94  	bl	0x31fc <stmvl53l1_ioctl+0xf24> // __list_add_valid+0x0
+    3200: f5 03 1f 2a  	mov	w21, wzr
+    3204: a0 cd 07 36  	tbz	w0, #0, 0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3208: f3 06 00 f9  	str	x19, [x23, #8]
+    320c: 77 5a 00 a9  	stp	x23, x22, [x19]
+    3210: d3 02 00 f9  	str	x19, [x22]
+    3214: 69 fe ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3218: 08 00 00 90  	adrp	x8, 0x3000 <stmvl53l1_ioctl+0xf40> // vl53l1_ctx+0x8fe8
+    321c: 15 1c 00 13  	sxtb	w21, w0
+    3220: 08 01 40 f9  	ldr	x8, [x8] // vl53l1_ctx+0x8fe8
+    3224: 28 01 00 b4  	cbz	x8, 0x3248 <stmvl53l1_ioctl+0xf70>
+    3228: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0xf50> // '%s %d VL53L1_GetUID rc = %d\n'
+    322c: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0xf54> // 'ctrl_mz_data_blocking_nvm'
+    3230: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_GetUID rc = %d\n'
+    3234: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_mz_data_blocking_nvm'
+    3238: e0 03 08 aa  	mov	x0, x8
+    323c: 63 a5 81 52  	mov	w3, #3371
+    3240: e4 03 15 2a  	mov	w4, w21
+    3244: 00 00 00 94  	bl	0x3244 <stmvl53l1_ioctl+0xf6c> // ipc_log_string+0x0
+    3248: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0xf70> // '\x013[ST dToF] %s %d : VL53L1_GetUID rc = %d\n'
+    324c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0xf74> // 'ctrl_mz_data_blocking_nvm'
+    3250: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_GetUID rc = %d\n'
+    3254: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_mz_data_blocking_nvm'
+    3258: 62 a5 81 52  	mov	w2, #3371
+    325c: e3 03 15 2a  	mov	w3, w21
+    3260: 00 00 00 94  	bl	0x3260 <stmvl53l1_ioctl+0xf88> // _printk+0x0
+    3264: 04 fe ff 17  	b	0x2a74 <stmvl53l1_ioctl+0x79c>
+    3268: 08 63 40 b9  	ldr	w8, [x24, #96]
+    326c: 48 6e 00 35  	cbnz	w8, 0x4034 <stmvl53l1_ioctl+0x1d5c>
+    3270: e8 af 41 b9  	ldr	w8, [sp, #428]
+    3274: f5 03 1f 2a  	mov	w21, wzr
+    3278: 08 67 18 b9  	str	w8, [x24, #6244]
+    327c: ea 27 5b a9  	ldp	x10, x9, [sp, #432]
+    3280: e8 c3 41 b9  	ldr	w8, [sp, #448]
+    3284: 0a 37 0c f9  	str	x10, [x24, #6248]
+    3288: 08 7b 18 b9  	str	w8, [x24, #6264]
+    328c: 09 3b 0c f9  	str	x9, [x24, #6256]
+    3290: 4a fe ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3294: 08 63 40 b9  	ldr	w8, [x24, #96]
+    3298: a8 6e 00 35  	cbnz	w8, 0x406c <stmvl53l1_ioctl+0x1d94>
+    329c: a8 f6 7e d3  	lsl	x8, x21, #2
+    32a0: e0 a3 06 91  	add	x0, sp, #424
+    32a4: 16 15 00 91  	add	x22, x8, #5
+    32a8: e2 03 1f 2a  	mov	w2, wzr
+    32ac: e1 03 16 aa  	mov	x1, x22
+    32b0: 00 00 00 94  	bl	0x32b0 <stmvl53l1_ioctl+0xfd8> // __check_object_size+0x0
+    32b4: e0 a3 06 91  	add	x0, sp, #424
+    32b8: e1 03 13 aa  	mov	x1, x19
+    32bc: e2 03 16 aa  	mov	x2, x22
+    32c0: 00 00 00 94  	bl	0x32c0 <stmvl53l1_ioctl+0xfe8> // +0x48ec
+    32c4: 40 6f 00 35  	cbnz	w0, 0x40ac <stmvl53l1_ioctl+0x1dd4>
+    32c8: e1 02 7e b2  	orr	x1, x23, #0x4
+    32cc: 00 83 0c 91  	add	x0, x24, #800
+    32d0: a2 54 80 52  	mov	w2, #677
+    32d4: 00 00 00 94  	bl	0x32d4 <stmvl53l1_ioctl+0xffc> // memcpy+0x0
+    32d8: 98 03 00 14  	b	0x4138 <stmvl53l1_ioctl+0x1e60>
+    32dc: e8 e3 8e 92  	mov	x8, #-30496
+    32e0: e9 a3 06 91  	add	x9, sp, #424
+    32e4: 00 03 08 8b  	add	x0, x24, x8
+    32e8: e1 af 41 b9  	ldr	w1, [sp, #428]
+    32ec: 22 41 00 91  	add	x2, x9, #16
+    32f0: e3 b3 41 b9  	ldr	w3, [sp, #432]
+    32f4: 00 00 00 94  	bl	0x32f4 <stmvl53l1_ioctl+0x101c> // VL53L1_WriteMulti+0x0
+    32f8: f6 03 00 2a  	mov	w22, w0
+    32fc: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3300: c6 1e 00 13  	sxtb	w6, w22
+    3304: e6 b7 01 b9  	str	w6, [sp, #436]
+    3308: 20 01 00 b4  	cbz	x0, 0x332c <stmvl53l1_ioctl+0x1054>
+    330c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1034> // '%s %d wr %x %d bytes statu %d\n'
+    3310: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1038> // 'ctrl_reg_access'
+    3314: e4 af 41 b9  	ldr	w4, [sp, #428]
+    3318: 21 00 00 91  	add	x1, x1, #0 // '%s %d wr %x %d bytes statu %d\n'
+    331c: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3320: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_reg_access'
+    3324: 43 17 81 52  	mov	w3, #2234
+    3328: 00 00 00 94  	bl	0x3328 <stmvl53l1_ioctl+0x1050> // ipc_log_string+0x0
+    332c: df 1e 00 72  	tst	w22, #0xff
+    3330: 21 cc ff 54  	b.ne	0x2cb4 <stmvl53l1_ioctl+0x9dc>
+    3334: f5 03 1f 2a  	mov	w21, wzr
+    3338: 14 02 80 52  	mov	w20, #16
+    333c: 61 fe ff 17  	b	0x2cc0 <stmvl53l1_ioctl+0x9e8>
+    3340: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3344: 00 01 00 b4  	cbz	x0, 0x3364 <stmvl53l1_ioctl+0x108c>
+    3348: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1070> // '%s %d fail to detect read or write %d'
+    334c: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1074> // 'ctrl_zone_calibration_data'
+    3350: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to detect read or write %d'
+    3354: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_zone_calibration_data'
+    3358: 23 7b 81 52  	mov	w3, #3033
+    335c: e4 03 15 2a  	mov	w4, w21
+    3360: 00 00 00 94  	bl	0x3360 <stmvl53l1_ioctl+0x1088> // ipc_log_string+0x0
+    3364: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x108c> // '\x013[ST dToF] %s %d : fail to detect read or write %d'
+    3368: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1090> // 'ctrl_zone_calibration_data'
+    336c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to detect read or write %d'
+    3370: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_zone_calibration_data'
+    3374: 22 7b 81 52  	mov	w2, #3033
+    3378: 43 00 00 14  	b	0x3484 <stmvl53l1_ioctl+0x11ac>
+    337c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3380: 00 01 00 b4  	cbz	x0, 0x33a0 <stmvl53l1_ioctl+0x10c8>
+    3384: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x10ac> // '%s %d fail to detect read or write %d'
+    3388: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x10b0> // 'save_calibration_data'
+    338c: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to detect read or write %d'
+    3390: 42 00 00 91  	add	x2, x2, #0 // 'save_calibration_data'
+    3394: 83 69 81 52  	mov	w3, #2892
+    3398: e4 03 13 2a  	mov	w4, w19
+    339c: 00 00 00 94  	bl	0x339c <stmvl53l1_ioctl+0x10c4> // ipc_log_string+0x0
+    33a0: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x10c8> // '\x013[ST dToF] %s %d : fail to detect read or write %d'
+    33a4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x10cc> // 'save_calibration_data'
+    33a8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to detect read or write %d'
+    33ac: 21 00 00 91  	add	x1, x1, #0 // 'save_calibration_data'
+    33b0: 82 69 81 52  	mov	w2, #2892
+    33b4: e3 03 13 2a  	mov	w3, w19
+    33b8: 34 00 00 14  	b	0x3488 <stmvl53l1_ioctl+0x11b0>
+    33bc: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    33c0: 00 01 00 b4  	cbz	x0, 0x33e0 <stmvl53l1_ioctl+0x1108>
+    33c4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x10ec> // '%s %d %d, fail\n'
+    33c8: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x10f0> // 'ctrl_reg_access'
+    33cc: 21 00 00 91  	add	x1, x1, #0 // '%s %d %d, fail\n'
+    33d0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_reg_access'
+    33d4: 03 14 81 52  	mov	w3, #2208
+    33d8: 04 14 81 52  	mov	w4, #2208
+    33dc: 00 00 00 94  	bl	0x33dc <stmvl53l1_ioctl+0x1104> // ipc_log_string+0x0
+    33e0: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1108> // '\x013[ST dToF] %s %d : %d, fail\n'
+    33e4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x110c> // 'ctrl_reg_access'
+    33e8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : %d, fail\n'
+    33ec: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_reg_access'
+    33f0: 02 14 81 52  	mov	w2, #2208
+    33f4: 03 14 81 52  	mov	w3, #2208
+    33f8: 00 00 00 94  	bl	0x33f8 <stmvl53l1_ioctl+0x1120> // _printk+0x0
+    33fc: b5 01 80 12  	mov	w21, #-14
+    3400: f0 fd ff 17  	b	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    3404: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3408: 00 01 00 b4  	cbz	x0, 0x3428 <stmvl53l1_ioctl+0x1150>
+    340c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1134> // '%s %d fail to detect read or write %d'
+    3410: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1138> // 'load_calibration_data'
+    3414: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to detect read or write %d'
+    3418: 42 00 00 91  	add	x2, x2, #0 // 'load_calibration_data'
+    341c: a3 6f 81 52  	mov	w3, #2941
+    3420: e4 03 15 2a  	mov	w4, w21
+    3424: 00 00 00 94  	bl	0x3424 <stmvl53l1_ioctl+0x114c> // ipc_log_string+0x0
+    3428: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1150> // '\x013[ST dToF] %s %d : fail to detect read or write %d'
+    342c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1154> // 'load_calibration_data'
+    3430: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to detect read or write %d'
+    3434: 21 00 00 91  	add	x1, x1, #0 // 'load_calibration_data'
+    3438: a2 6f 81 52  	mov	w2, #2941
+    343c: e3 03 15 2a  	mov	w3, w21
+    3440: 00 00 00 94  	bl	0x3440 <stmvl53l1_ioctl+0x1168> // _printk+0x0
+    3444: b5 01 80 12  	mov	w21, #-14
+    3448: 72 fe ff 17  	b	0x2e10 <stmvl53l1_ioctl+0xb38>
+    344c: c0 02 40 f9  	ldr	x0, [x22] // vl53l1_ctx+0x8fe8
+    3450: 00 01 00 b4  	cbz	x0, 0x3470 <stmvl53l1_ioctl+0x1198>
+    3454: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x117c> // '%s %d fail to detect read or write %d'
+    3458: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1180> // 'ctrl_calibration_data'
+    345c: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to detect read or write %d'
+    3460: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_calibration_data'
+    3464: c3 73 81 52  	mov	w3, #2974
+    3468: e4 03 15 2a  	mov	w4, w21
+    346c: 00 00 00 94  	bl	0x346c <stmvl53l1_ioctl+0x1194> // ipc_log_string+0x0
+    3470: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1198> // '\x013[ST dToF] %s %d : fail to detect read or write %d'
+    3474: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x119c> // 'ctrl_calibration_data'
+    3478: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to detect read or write %d'
+    347c: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_calibration_data'
+    3480: c2 73 81 52  	mov	w2, #2974
+    3484: e3 03 15 2a  	mov	w3, w21
+    3488: 00 00 00 94  	bl	0x3488 <stmvl53l1_ioctl+0x11b0> // _printk+0x0
+    348c: b5 01 80 12  	mov	w21, #-14
+    3490: ca fd ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3494: f6 03 00 2a  	mov	w22, w0
+    3498: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    349c: d3 1e 00 13  	sxtb	w19, w22
+    34a0: 00 01 00 b4  	cbz	x0, 0x34c0 <stmvl53l1_ioctl+0x11e8>
+    34a4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x11cc> // '%s %d VL53L1_GetUID fail %d'
+    34a8: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x11d0> // 'save_calibration_data'
+    34ac: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_GetUID fail %d'
+    34b0: 42 00 00 91  	add	x2, x2, #0 // 'save_calibration_data'
+    34b4: c3 6a 81 52  	mov	w3, #2902
+    34b8: e4 03 13 2a  	mov	w4, w19
+    34bc: 00 00 00 94  	bl	0x34bc <stmvl53l1_ioctl+0x11e4> // ipc_log_string+0x0
+    34c0: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x11e8> // '\x013[ST dToF] %s %d : VL53L1_GetUID fail %d'
+    34c4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x11ec> // 'save_calibration_data'
+    34c8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_GetUID fail %d'
+    34cc: 21 00 00 91  	add	x1, x1, #0 // 'save_calibration_data'
+    34d0: c2 6a 81 52  	mov	w2, #2902
+    34d4: e3 03 13 2a  	mov	w3, w19
+    34d8: 00 00 00 94  	bl	0x34d8 <stmvl53l1_ioctl+0x1200> // _printk+0x0
+    34dc: 95 00 80 12  	mov	w21, #-5
+    34e0: 16 57 02 39  	strb	w22, [x24, #149]
+    34e4: b5 fd ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    34e8: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    34ec: 00 01 00 b4  	cbz	x0, 0x350c <stmvl53l1_ioctl+0x1234>
+    34f0: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1218> // '%s %d reg len %d > size limit\n'
+    34f4: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x121c> // 'ctrl_reg_access'
+    34f8: 21 00 00 91  	add	x1, x1, #0 // '%s %d reg len %d > size limit\n'
+    34fc: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_reg_access'
+    3500: a3 14 81 52  	mov	w3, #2213
+    3504: 00 00 00 94  	bl	0x3504 <stmvl53l1_ioctl+0x122c> // ipc_log_string+0x0
+    3508: e4 b3 41 b9  	ldr	w4, [sp, #432]
+    350c: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1234> // '\x013[ST dToF] %s %d : reg len %d > size limit\n'
+    3510: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1238> // 'ctrl_reg_access'
+    3514: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : reg len %d > size limit\n'
+    3518: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_reg_access'
+    351c: a2 14 81 52  	mov	w2, #2213
+    3520: e3 03 04 2a  	mov	w3, w4
+    3524: 00 00 00 94  	bl	0x3524 <stmvl53l1_ioctl+0x124c> // _printk+0x0
+    3528: b5 02 80 12  	mov	w21, #-22
+    352c: a5 fd ff 17  	b	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    3530: 20 01 00 b4  	cbz	x0, 0x3554 <stmvl53l1_ioctl+0x127c>
+    3534: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x125c> // 'stmvl53l1_slot_rw'
+    3538: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1260> // '%s %d %s : read/write slot error, ret = %d'
+    353c: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_slot_rw'
+    3540: 21 00 00 91  	add	x1, x1, #0 // '%s %d %s : read/write slot error, ret = %d'
+    3544: 63 66 81 52  	mov	w3, #2867
+    3548: e4 03 02 aa  	mov	x4, x2
+    354c: e5 03 16 2a  	mov	w5, w22
+    3550: 00 00 00 94  	bl	0x3550 <stmvl53l1_ioctl+0x1278> // ipc_log_string+0x0
+    3554: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x127c> // 'stmvl53l1_slot_rw'
+    3558: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1280> // '\x013[ST dToF] %s %d : %s : read/write slot error, ret = %d'
+    355c: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_slot_rw'
+    3560: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : %s : read/write slot error, ret = %d'
+    3564: 62 66 81 52  	mov	w2, #2867
+    3568: e3 03 01 aa  	mov	x3, x1
+    356c: e4 03 16 2a  	mov	w4, w22
+    3570: 00 00 00 94  	bl	0x3570 <stmvl53l1_ioctl+0x1298> // _printk+0x0
+    3574: 1c fe ff 17  	b	0x2de4 <stmvl53l1_ioctl+0xb0c>
+    3578: 20 01 00 b4  	cbz	x0, 0x359c <stmvl53l1_ioctl+0x12c4>
+    357c: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x12a4> // 'stmvl53l1_slot_rw'
+    3580: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x12a8> // '%s %d %s : read/write slot error, ret = %d'
+    3584: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_slot_rw'
+    3588: 21 00 00 91  	add	x1, x1, #0 // '%s %d %s : read/write slot error, ret = %d'
+    358c: 63 66 81 52  	mov	w3, #2867
+    3590: e4 03 02 aa  	mov	x4, x2
+    3594: e5 03 13 2a  	mov	w5, w19
+    3598: 00 00 00 94  	bl	0x3598 <stmvl53l1_ioctl+0x12c0> // ipc_log_string+0x0
+    359c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x12c4> // 'stmvl53l1_slot_rw'
+    35a0: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x12c8> // '\x013[ST dToF] %s %d : %s : read/write slot error, ret = %d'
+    35a4: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_slot_rw'
+    35a8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : %s : read/write slot error, ret = %d'
+    35ac: 62 66 81 52  	mov	w2, #2867
+    35b0: e3 03 01 aa  	mov	x3, x1
+    35b4: e4 03 13 2a  	mov	w4, w19
+    35b8: 00 00 00 94  	bl	0x35b8 <stmvl53l1_ioctl+0x12e0> // _printk+0x0
+    35bc: df 02 00 14  	b	0x4138 <stmvl53l1_ioctl+0x1e60>
+    35c0: 75 01 80 12  	mov	w21, #-12
+    35c4: 7d fd ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    35c8: b5 02 80 12  	mov	w21, #-22
+    35cc: 2a 03 00 14  	b	0x4274 <stmvl53l1_ioctl+0x1f9c>
+    35d0: 9f 24 03 d5  	hint	#36
+    35d4: e8 c3 46 39  	ldrb	w8, [sp, #432]
+    35d8: e0 03 16 aa  	mov	x0, x22
+    35dc: 08 83 00 b9  	str	w8, [x24, #128]
+    35e0: 00 00 00 94  	bl	0x35e0 <stmvl53l1_ioctl+0x1308> // +0x5860
+    35e4: f5 03 00 2a  	mov	w21, w0
+    35e8: 60 64 00 35  	cbnz	w0, 0x4274 <stmvl53l1_ioctl+0x1f9c>
+    35ec: e1 af 41 b9  	ldr	w1, [sp, #428]
+    35f0: e0 03 13 aa  	mov	x0, x19
+    35f4: 00 00 00 94  	bl	0x35f4 <stmvl53l1_ioctl+0x131c> // VL53L1_PerformXTalkCalibration+0x0
+    35f8: 1f 1c 00 72  	tst	w0, #0xff
+    35fc: 41 61 00 54  	b.ne	0x4224 <stmvl53l1_ioctl+0x1f4c>
+    3600: f5 03 1f 2a  	mov	w21, wzr
+    3604: 1c 03 00 14  	b	0x4274 <stmvl53l1_ioctl+0x1f9c>
+    3608: 9f 24 03 d5  	hint	#36
+    360c: e8 af 41 b9  	ldr	w8, [sp, #428]
+    3610: 1f 0d 00 71  	cmp	w8, #3
+    3614: e1 2d 00 54  	b.ne	0x3bd0 <stmvl53l1_ioctl+0x18f8>
+    3618: 9f 24 03 d5  	hint	#36
+    361c: e1 a3 06 91  	add	x1, sp, #424
+    3620: e0 03 16 aa  	mov	x0, x22
+    3624: 00 00 00 94  	bl	0x3624 <stmvl53l1_ioctl+0x134c> // +0x5fe4
+    3628: f5 03 00 2a  	mov	w21, w0
+    362c: 12 03 00 14  	b	0x4274 <stmvl53l1_ioctl+0x1f9c>
+    3630: 9f 24 03 d5  	hint	#36
+    3634: 28 00 80 52  	mov	w8, #1
+    3638: e0 03 16 aa  	mov	x0, x22
+    363c: 08 67 0c 39  	strb	w8, [x24, #793]
+    3640: 00 00 00 94  	bl	0x3640 <stmvl53l1_ioctl+0x1368> // +0x5860
+    3644: f5 03 00 2a  	mov	w21, w0
+    3648: 60 61 00 35  	cbnz	w0, 0x4274 <stmvl53l1_ioctl+0x1f9c>
+    364c: e1 af 41 b9  	ldr	w1, [sp, #428]
+    3650: e0 03 13 aa  	mov	x0, x19
+    3654: 00 00 00 94  	bl	0x3654 <stmvl53l1_ioctl+0x137c> // VL53L1_PerformOffsetSimpleCalibration+0x0
+    3658: 1f 1c 00 72  	tst	w0, #0xff
+    365c: 1f 67 0c 39  	strb	wzr, [x24, #793]
+    3660: a0 60 00 54  	b.eq	0x4274 <stmvl53l1_ioctl+0x1f9c>
+    3664: f3 03 00 2a  	mov	w19, w0
+    3668: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    366c: 75 1e 00 13  	sxtb	w21, w19
+    3670: 00 01 00 b4  	cbz	x0, 0x3690 <stmvl53l1_ioctl+0x13b8>
+    3674: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x139c> // '%s %d VL53L1_PerformOffsetSimpleCalibration fail => %d'
+    3678: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x13a0> // 'ctrl_perform_simple_calibration_offset_lock'
+    367c: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_PerformOffsetSimpleCalibration fail => %d'
+    3680: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_simple_calibration_offset_lock'
+    3684: c3 92 81 52  	mov	w3, #3222
+    3688: e4 03 15 2a  	mov	w4, w21
+    368c: 00 00 00 94  	bl	0x368c <stmvl53l1_ioctl+0x13b4> // ipc_log_string+0x0
+    3690: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x13b8> // '\x013[ST dToF] %s %d : VL53L1_PerformOffsetSimpleCalibration fail => %d'
+    3694: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x13bc> // 'ctrl_perform_simple_calibration_offset_lock'
+    3698: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_PerformOffsetSimpleCalibration fail => %d'
+    369c: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_simple_calibration_offset_lock'
+    36a0: c2 92 81 52  	mov	w2, #3222
+    36a4: f0 02 00 14  	b	0x4264 <stmvl53l1_ioctl+0x1f8c>
+    36a8: 9f 24 03 d5  	hint	#36
+    36ac: 28 00 80 52  	mov	w8, #1
+    36b0: e0 03 16 aa  	mov	x0, x22
+    36b4: 08 67 0c 39  	strb	w8, [x24, #793]
+    36b8: 00 00 00 94  	bl	0x36b8 <stmvl53l1_ioctl+0x13e0> // +0x5860
+    36bc: f5 03 00 2a  	mov	w21, w0
+    36c0: a0 5d 00 35  	cbnz	w0, 0x4274 <stmvl53l1_ioctl+0x1f9c>
+    36c4: e1 af 41 b9  	ldr	w1, [sp, #428]
+    36c8: e0 03 13 aa  	mov	x0, x19
+    36cc: 00 00 00 94  	bl	0x36cc <stmvl53l1_ioctl+0x13f4> // VL53L1_PerformOffsetPerVcselCalibration+0x0
+    36d0: 1f 1c 00 72  	tst	w0, #0xff
+    36d4: 1f 67 0c 39  	strb	wzr, [x24, #793]
+    36d8: e0 5c 00 54  	b.eq	0x4274 <stmvl53l1_ioctl+0x1f9c>
+    36dc: f3 03 00 2a  	mov	w19, w0
+    36e0: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    36e4: 75 1e 00 13  	sxtb	w21, w19
+    36e8: 00 01 00 b4  	cbz	x0, 0x3708 <stmvl53l1_ioctl+0x1430>
+    36ec: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1414> // '%s %d VL53L1_PerformOffsetPerVcselCalibration fail => %d'
+    36f0: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1418> // 'ctrl_perform_per_vcsel_calibration_offset_lock'
+    36f4: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_PerformOffsetPerVcselCalibration fail => %d'
+    36f8: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_per_vcsel_calibration_offset_lock'
+    36fc: 23 96 81 52  	mov	w3, #3249
+    3700: e4 03 15 2a  	mov	w4, w21
+    3704: 00 00 00 94  	bl	0x3704 <stmvl53l1_ioctl+0x142c> // ipc_log_string+0x0
+    3708: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1430> // '\x013[ST dToF] %s %d : VL53L1_PerformOffsetPerVcselCalibration fail => %d'
+    370c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1434> // 'ctrl_perform_per_vcsel_calibration_offset_lock'
+    3710: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_PerformOffsetPerVcselCalibration fail => %d'
+    3714: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_per_vcsel_calibration_offset_lock'
+    3718: 22 96 81 52  	mov	w2, #3249
+    371c: d2 02 00 14  	b	0x4264 <stmvl53l1_ioctl+0x1f8c>
+    3720: 9f 24 03 d5  	hint	#36
+    3724: 28 00 80 52  	mov	w8, #1
+    3728: e0 03 16 aa  	mov	x0, x22
+    372c: 08 67 0c 39  	strb	w8, [x24, #793]
+    3730: 00 00 00 94  	bl	0x3730 <stmvl53l1_ioctl+0x1458> // +0x5860
+    3734: f5 03 00 2a  	mov	w21, w0
+    3738: e0 59 00 35  	cbnz	w0, 0x4274 <stmvl53l1_ioctl+0x1f9c>
+    373c: e0 03 13 aa  	mov	x0, x19
+    3740: 00 00 00 94  	bl	0x3740 <stmvl53l1_ioctl+0x1468> // VL53L1_PerformOffsetZeroDistanceCalibration+0x0
+    3744: 1f 1c 00 72  	tst	w0, #0xff
+    3748: 1f 67 0c 39  	strb	wzr, [x24, #793]
+    374c: 40 59 00 54  	b.eq	0x4274 <stmvl53l1_ioctl+0x1f9c>
+    3750: f3 03 00 2a  	mov	w19, w0
+    3754: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    3758: 75 1e 00 13  	sxtb	w21, w19
+    375c: 00 01 00 b4  	cbz	x0, 0x377c <stmvl53l1_ioctl+0x14a4>
+    3760: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1488> // '%s %d VL53L1_PerformOffsetZeroDistanceCalibration fail => %d'
+    3764: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x148c> // 'ctrl_perform_zero_distance_calibration_offset_lock'
+    3768: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_PerformOffsetZeroDistanceCalibration fail => %d'
+    376c: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_zero_distance_calibration_offset_lock'
+    3770: 63 99 81 52  	mov	w3, #3275
+    3774: e4 03 15 2a  	mov	w4, w21
+    3778: 00 00 00 94  	bl	0x3778 <stmvl53l1_ioctl+0x14a0> // ipc_log_string+0x0
+    377c: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x14a4> // '\x013[ST dToF] %s %d : VL53L1_PerformOffsetZeroDistanceCalibration fail => %d'
+    3780: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x14a8> // 'ctrl_perform_zero_distance_calibration_offset_lock'
+    3784: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_PerformOffsetZeroDistanceCalibration fail => %d'
+    3788: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_zero_distance_calibration_offset_lock'
+    378c: 62 99 81 52  	mov	w2, #3275
+    3790: b5 02 00 14  	b	0x4264 <stmvl53l1_ioctl+0x1f8c>
+    3794: 9f 24 03 d5  	hint	#36
+    3798: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    379c: e8 32 00 34  	cbz	w8, 0x3df8 <stmvl53l1_ioctl+0x1b20>
+    37a0: 04 83 40 b9  	ldr	w4, [x24, #128]
+    37a4: ff bb 01 b9  	str	wzr, [sp, #440]
+    37a8: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    37ac: e4 b3 01 b9  	str	w4, [sp, #432]
+    37b0: e0 14 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    37b4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x14dc> // '%s %d get preset mode %d'
+    37b8: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x14e0> // 'ctrl_param_preset_mode'
+    37bc: 21 00 00 91  	add	x1, x1, #0 // '%s %d get preset mode %d'
+    37c0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_preset_mode'
+    37c4: 83 8b 80 52  	mov	w3, #1116
+    37c8: 9e 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    37cc: 9f 24 03 d5  	hint	#36
+    37d0: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    37d4: 08 33 00 34  	cbz	w8, 0x3e34 <stmvl53l1_ioctl+0x1b5c>
+    37d8: 04 5f 40 b9  	ldr	w4, [x24, #92]
+    37dc: ff bb 01 b9  	str	wzr, [sp, #440]
+    37e0: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    37e4: e4 b3 01 b9  	str	w4, [sp, #432]
+    37e8: 20 13 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    37ec: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1514> // '%s %d get poll delay ms %d'
+    37f0: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1518> // 'ctrl_param_poll_delay_ms'
+    37f4: 21 00 00 91  	add	x1, x1, #0 // '%s %d get poll delay ms %d'
+    37f8: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_poll_delay_ms'
+    37fc: 63 71 80 52  	mov	w3, #907
+    3800: 90 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    3804: 9f 24 03 d5  	hint	#36
+    3808: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    380c: 08 32 00 34  	cbz	w8, 0x3e4c <stmvl53l1_ioctl+0x1b74>
+    3810: 04 87 40 b9  	ldr	w4, [x24, #132]
+    3814: ff bb 01 b9  	str	wzr, [sp, #440]
+    3818: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    381c: e4 b3 01 b9  	str	w4, [sp, #432]
+    3820: 60 11 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    3824: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x154c> // '%s %d get timing budget %d'
+    3828: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1550> // 'ctrl_param_timing_budget'
+    382c: 21 00 00 91  	add	x1, x1, #0 // '%s %d get timing budget %d'
+    3830: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_timing_budget'
+    3834: 63 76 80 52  	mov	w3, #947
+    3838: 82 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    383c: 9f 24 03 d5  	hint	#36
+    3840: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    3844: 28 32 00 34  	cbz	w8, 0x3e88 <stmvl53l1_ioctl+0x1bb0>
+    3848: 04 8b 40 b9  	ldr	w4, [x24, #136]
+    384c: ff bb 01 b9  	str	wzr, [sp, #440]
+    3850: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3854: e4 b3 01 b9  	str	w4, [sp, #432]
+    3858: a0 0f 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    385c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1584> // '%s %d get distance mode %d'
+    3860: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1588> // 'ctrl_param_distance_mode'
+    3864: 21 00 00 91  	add	x1, x1, #0 // '%s %d get distance mode %d'
+    3868: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_distance_mode'
+    386c: 03 91 80 52  	mov	w3, #1160
+    3870: 74 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    3874: 9f 24 03 d5  	hint	#36
+    3878: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    387c: 48 32 00 34  	cbz	w8, 0x3ec4 <stmvl53l1_ioctl+0x1bec>
+    3880: 04 93 40 b9  	ldr	w4, [x24, #144]
+    3884: ff bb 01 b9  	str	wzr, [sp, #440]
+    3888: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    388c: e4 b3 01 b9  	str	w4, [sp, #432]
+    3890: e0 0d 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    3894: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x15bc> // '%s %d get output mode %d'
+    3898: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x15c0> // 'ctrl_param_output_mode'
+    389c: 21 00 00 91  	add	x1, x1, #0 // '%s %d get output mode %d'
+    38a0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_output_mode'
+    38a4: 43 9a 80 52  	mov	w3, #1234
+    38a8: 66 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    38ac: 9f 24 03 d5  	hint	#36
+    38b0: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    38b4: 68 32 00 34  	cbz	w8, 0x3f00 <stmvl53l1_ioctl+0x1c28>
+    38b8: 04 53 42 39  	ldrb	w4, [x24, #148]
+    38bc: ff bb 01 b9  	str	wzr, [sp, #440]
+    38c0: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    38c4: e4 b3 01 b9  	str	w4, [sp, #432]
+    38c8: 20 0c 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    38cc: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x15f4> // '%s %d get force device on enable %d'
+    38d0: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x15f8> // 'ctrl_param_force_device_on_en'
+    38d4: 21 00 00 91  	add	x1, x1, #0 // '%s %d get force device on enable %d'
+    38d8: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_force_device_on_en'
+    38dc: 83 9f 80 52  	mov	w3, #1276
+    38e0: 58 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    38e4: 9f 24 03 d5  	hint	#36
+    38e8: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    38ec: 28 0c 00 34  	cbz	w8, 0x3a70 <stmvl53l1_ioctl+0x1798>
+    38f0: 04 57 c2 39  	ldrsb	w4, [x24, #149]
+    38f4: ff bb 01 b9  	str	wzr, [sp, #440]
+    38f8: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    38fc: e4 b3 01 b9  	str	w4, [sp, #432]
+    3900: 60 0a 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    3904: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x162c> // '%s %d get last error %d'
+    3908: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1630> // 'ctrl_param_last_error'
+    390c: 21 00 00 91  	add	x1, x1, #0 // '%s %d get last error %d'
+    3910: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_last_error'
+    3914: 83 44 81 52  	mov	w3, #2596
+    3918: 4a 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    391c: 9f 24 03 d5  	hint	#36
+    3920: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    3924: c8 30 00 34  	cbz	w8, 0x3f3c <stmvl53l1_ioctl+0x1c64>
+    3928: 04 9b 40 b9  	ldr	w4, [x24, #152]
+    392c: ff bb 01 b9  	str	wzr, [sp, #440]
+    3930: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3934: e4 b3 01 b9  	str	w4, [sp, #432]
+    3938: a0 08 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    393c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1664> // '%s %d get offset correction mode %d'
+    3940: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1668> // 'ctrl_param_offset_correction_mode'
+    3944: 21 00 00 91  	add	x1, x1, #0 // '%s %d get offset correction mode %d'
+    3948: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_offset_correction_mode'
+    394c: c3 a4 80 52  	mov	w3, #1318
+    3950: 3c 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    3954: 9f 24 03 d5  	hint	#36
+    3958: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    395c: a8 08 00 34  	cbz	w8, 0x3a70 <stmvl53l1_ioctl+0x1798>
+    3960: 08 ab 40 b9  	ldr	w8, [x24, #168]
+    3964: f5 03 1f 2a  	mov	w21, wzr
+    3968: e8 b3 01 b9  	str	w8, [sp, #432]
+    396c: 08 af 40 b9  	ldr	w8, [x24, #172]
+    3970: e8 b7 01 b9  	str	w8, [sp, #436]
+    3974: e9 01 00 14  	b	0x4118 <stmvl53l1_ioctl+0x1e40>
+    3978: 9f 24 03 d5  	hint	#36
+    397c: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    3980: c8 2f 00 34  	cbz	w8, 0x3f78 <stmvl53l1_ioctl+0x1ca0>
+    3984: 04 9f 40 b9  	ldr	w4, [x24, #156]
+    3988: ff bb 01 b9  	str	wzr, [sp, #440]
+    398c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3990: e4 b3 01 b9  	str	w4, [sp, #432]
+    3994: c0 05 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    3998: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x16c0> // '%s %d get dmax reflectance %d'
+    399c: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x16c4> // 'ctrl_param_dmax_reflectance'
+    39a0: 21 00 00 91  	add	x1, x1, #0 // '%s %d get dmax reflectance %d'
+    39a4: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_dmax_reflectance'
+    39a8: 23 48 81 52  	mov	w3, #2625
+    39ac: 25 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    39b0: 9f 24 03 d5  	hint	#36
+    39b4: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    39b8: e8 2f 00 34  	cbz	w8, 0x3fb4 <stmvl53l1_ioctl+0x1cdc>
+    39bc: 04 a3 40 b9  	ldr	w4, [x24, #160]
+    39c0: ff bb 01 b9  	str	wzr, [sp, #440]
+    39c4: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    39c8: e4 b3 01 b9  	str	w4, [sp, #432]
+    39cc: 00 04 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    39d0: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x16f8> // '%s %d get dmax mode %d'
+    39d4: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x16fc> // 'ctrl_param_dmax_mode'
+    39d8: 21 00 00 91  	add	x1, x1, #0 // '%s %d get dmax mode %d'
+    39dc: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_dmax_mode'
+    39e0: e3 d9 80 52  	mov	w3, #1743
+    39e4: 17 00 00 14  	b	0x3a40 <stmvl53l1_ioctl+0x1768>
+    39e8: 9f 24 03 d5  	hint	#36
+    39ec: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    39f0: 08 04 00 35  	cbnz	w8, 0x3a70 <stmvl53l1_ioctl+0x1798>
+    39f4: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    39f8: e0 03 16 aa  	mov	x0, x22
+    39fc: e2 b7 41 b9  	ldr	w2, [sp, #436]
+    3a00: 00 00 00 94  	bl	0x3a00 <stmvl53l1_ioctl+0x1728> // +0x5318
+    3a04: f5 03 00 2a  	mov	w21, w0
+    3a08: c4 01 00 14  	b	0x4118 <stmvl53l1_ioctl+0x1e40>
+    3a0c: 9f 24 03 d5  	hint	#36
+    3a10: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    3a14: e8 2e 00 34  	cbz	w8, 0x3ff0 <stmvl53l1_ioctl+0x1d18>
+    3a18: 04 a7 40 b9  	ldr	w4, [x24, #164]
+    3a1c: ff bb 01 b9  	str	wzr, [sp, #440]
+    3a20: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3a24: e4 b3 01 b9  	str	w4, [sp, #432]
+    3a28: 20 01 00 b4  	cbz	x0, 0x3a4c <stmvl53l1_ioctl+0x1774>
+    3a2c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1754> // '%s %d get smudge correction mode %d'
+    3a30: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1758> // 'ctrl_param_smudge_correction_mode'
+    3a34: 21 00 00 91  	add	x1, x1, #0 // '%s %d get smudge correction mode %d'
+    3a38: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_smudge_correction_mode'
+    3a3c: 83 ef 80 52  	mov	w3, #1916
+    3a40: 00 00 00 94  	bl	0x3a40 <stmvl53l1_ioctl+0x1768> // ipc_log_string+0x0
+    3a44: f5 03 1f 2a  	mov	w21, wzr
+    3a48: b4 01 00 14  	b	0x4118 <stmvl53l1_ioctl+0x1e40>
+    3a4c: f5 03 1f 2a  	mov	w21, wzr
+    3a50: b2 01 00 14  	b	0x4118 <stmvl53l1_ioctl+0x1e40>
+    3a54: 9f 24 03 d5  	hint	#36
+    3a58: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    3a5c: a8 00 00 34  	cbz	w8, 0x3a70 <stmvl53l1_ioctl+0x1798>
+    3a60: 08 c3 42 39  	ldrb	w8, [x24, #176]
+    3a64: f5 03 1f 2a  	mov	w21, wzr
+    3a68: e8 b3 01 b9  	str	w8, [sp, #432]
+    3a6c: ab 01 00 14  	b	0x4118 <stmvl53l1_ioctl+0x1e40>
+    3a70: b5 02 80 12  	mov	w21, #-22
+    3a74: 51 fc ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3a78: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    3a7c: 40 01 00 b4  	cbz	x0, 0x3aa4 <stmvl53l1_ioctl+0x17cc>
+    3a80: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x17a8> // '%s %d invalid roi spec cnt=%d > %d'
+    3a84: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x17ac> // 'ctrl_roi'
+    3a88: 21 00 00 91  	add	x1, x1, #0 // '%s %d invalid roi spec cnt=%d > %d'
+    3a8c: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_roi'
+    3a90: 03 5b 81 52  	mov	w3, #2776
+    3a94: e4 03 15 2a  	mov	w4, w21
+    3a98: 25 15 80 52  	mov	w5, #169
+    3a9c: 00 00 00 94  	bl	0x3a9c <stmvl53l1_ioctl+0x17c4> // ipc_log_string+0x0
+    3aa0: f5 b3 46 39  	ldrb	w21, [sp, #428]
+    3aa4: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x17cc> // '\x013[ST dToF] %s %d : invalid roi spec cnt=%d > %d'
+    3aa8: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x17d0> // 'ctrl_roi'
+    3aac: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : invalid roi spec cnt=%d > %d'
+    3ab0: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_roi'
+    3ab4: 02 5b 81 52  	mov	w2, #2776
+    3ab8: e3 03 15 2a  	mov	w3, w21
+    3abc: 24 15 80 52  	mov	w4, #169
+    3ac0: 00 00 00 94  	bl	0x3ac0 <stmvl53l1_ioctl+0x17e8> // _printk+0x0
+    3ac4: b5 02 80 12  	mov	w21, #-22
+    3ac8: 3c fc ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3acc: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    3ad0: e0 00 00 b4  	cbz	x0, 0x3aec <stmvl53l1_ioctl+0x1814>
+    3ad4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x17fc> // "%s %d can't perform calibration while ranging\n"
+    3ad8: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1800> // 'ctrl_perform_calibration'
+    3adc: 21 00 00 91  	add	x1, x1, #0 // "%s %d can't perform calibration while ranging\n"
+    3ae0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_calibration'
+    3ae4: c3 9c 81 52  	mov	w3, #3302
+    3ae8: 00 00 00 94  	bl	0x3ae8 <stmvl53l1_ioctl+0x1810> // ipc_log_string+0x0
+    3aec: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1814> // "\x013[ST dToF] %s %d : can't perform calibration while ranging\n"
+    3af0: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1818> // 'ctrl_perform_calibration'
+    3af4: 00 00 00 91  	add	x0, x0, #0 // "\x013[ST dToF] %s %d : can't perform calibration while ranging\n"
+    3af8: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_calibration'
+    3afc: c2 9c 81 52  	mov	w2, #3302
+    3b00: 00 00 00 94  	bl	0x3b00 <stmvl53l1_ioctl+0x1828> // _printk+0x0
+    3b04: f5 01 80 12  	mov	w21, #-16
+    3b08: e3 01 00 14  	b	0x4294 <stmvl53l1_ioctl+0x1fbc>
+    3b0c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3b10: e0 00 00 b4  	cbz	x0, 0x3b2c <stmvl53l1_ioctl+0x1854>
+    3b14: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x183c> // "%s %d can't set calib data while ranging\n"
+    3b18: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1840> // 'ctrl_zone_calibration_data'
+    3b1c: 21 00 00 91  	add	x1, x1, #0 // "%s %d can't set calib data while ranging\n"
+    3b20: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_zone_calibration_data'
+    3b24: c3 7d 81 52  	mov	w3, #3054
+    3b28: 00 00 00 94  	bl	0x3b28 <stmvl53l1_ioctl+0x1850> // ipc_log_string+0x0
+    3b2c: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1854> // "\x013[ST dToF] %s %d : can't set calib data while ranging\n"
+    3b30: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1858> // 'ctrl_zone_calibration_data'
+    3b34: 00 00 00 91  	add	x0, x0, #0 // "\x013[ST dToF] %s %d : can't set calib data while ranging\n"
+    3b38: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_zone_calibration_data'
+    3b3c: c2 7d 81 52  	mov	w2, #3054
+    3b40: 58 01 00 14  	b	0x40a0 <stmvl53l1_ioctl+0x1dc8>
+    3b44: c0 02 40 f9  	ldr	x0, [x22] // vl53l1_ctx+0x8fe8
+    3b48: e0 00 00 b4  	cbz	x0, 0x3b64 <stmvl53l1_ioctl+0x188c>
+    3b4c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1874> // "%s %d can't set calib data while ranging\n"
+    3b50: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1878> // 'ctrl_calibration_data'
+    3b54: 21 00 00 91  	add	x1, x1, #0 // "%s %d can't set calib data while ranging\n"
+    3b58: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_calibration_data'
+    3b5c: 23 76 81 52  	mov	w3, #2993
+    3b60: 00 00 00 94  	bl	0x3b60 <stmvl53l1_ioctl+0x1888> // ipc_log_string+0x0
+    3b64: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x188c> // "\x013[ST dToF] %s %d : can't set calib data while ranging\n"
+    3b68: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1890> // 'ctrl_calibration_data'
+    3b6c: 00 00 00 91  	add	x0, x0, #0 // "\x013[ST dToF] %s %d : can't set calib data while ranging\n"
+    3b70: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_calibration_data'
+    3b74: 22 76 81 52  	mov	w2, #2993
+    3b78: 4a 01 00 14  	b	0x40a0 <stmvl53l1_ioctl+0x1dc8>
+    3b7c: f7 03 00 2a  	mov	w23, w0
+    3b80: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    3b84: f3 1e 00 13  	sxtb	w19, w23
+    3b88: 00 01 00 b4  	cbz	x0, 0x3ba8 <stmvl53l1_ioctl+0x18d0>
+    3b8c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x18b4> // '%s %d VL53L1_StaticInit fail => %d'
+    3b90: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x18b8> // 'ctrl_perform_calibration'
+    3b94: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_StaticInit fail => %d'
+    3b98: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_calibration'
+    3b9c: 03 9e 81 52  	mov	w3, #3312
+    3ba0: e4 03 13 2a  	mov	w4, w19
+    3ba4: 00 00 00 94  	bl	0x3ba4 <stmvl53l1_ioctl+0x18cc> // ipc_log_string+0x0
+    3ba8: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x18d0> // '\x013[ST dToF] %s %d : VL53L1_StaticInit fail => %d'
+    3bac: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x18d4> // 'ctrl_perform_calibration'
+    3bb0: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_StaticInit fail => %d'
+    3bb4: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_calibration'
+    3bb8: 02 9e 81 52  	mov	w2, #3312
+    3bbc: e3 03 13 2a  	mov	w3, w19
+    3bc0: 00 00 00 94  	bl	0x3bc0 <stmvl53l1_ioctl+0x18e8> // _printk+0x0
+    3bc4: 95 00 80 12  	mov	w21, #-5
+    3bc8: 17 57 02 39  	strb	w23, [x24, #149]
+    3bcc: b2 01 00 14  	b	0x4294 <stmvl53l1_ioctl+0x1fbc>
+    3bd0: 08 05 00 51  	sub	w8, w8, #1
+    3bd4: 09 1d 00 12  	and	w9, w8, #0xff
+    3bd8: 3f 0d 00 71  	cmp	w9, #3
+    3bdc: c2 2f 00 54  	b.hs	0x41d4 <stmvl53l1_ioctl+0x1efc>
+    3be0: 29 00 80 52  	mov	w9, #1
+    3be4: 6a e3 8e 92  	mov	x10, #-30492
+    3be8: 2b 00 80 52  	mov	w11, #1
+    3bec: 09 79 1f 33  	bfi	w9, w8, #1, #31
+    3bf0: e0 03 13 aa  	mov	x0, x19
+    3bf4: 09 6b 2a 38  	strb	w9, [x24, x10]
+    3bf8: 0b 67 0c 39  	strb	w11, [x24, #793]
+    3bfc: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    3c00: e2 b7 41 b9  	ldr	w2, [sp, #436]
+    3c04: 00 00 00 94  	bl	0x3c04 <stmvl53l1_ioctl+0x192c> // VL53L1_PerformOffsetCalibration+0x0
+    3c08: f5 03 1f 2a  	mov	w21, wzr
+    3c0c: 1f 1c 00 72  	tst	w0, #0xff
+    3c10: 1f 67 0c 39  	strb	wzr, [x24, #793]
+    3c14: 00 33 00 54  	b.eq	0x4274 <stmvl53l1_ioctl+0x1f9c>
+    3c18: f3 03 00 2a  	mov	w19, w0
+    3c1c: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    3c20: 75 1e 00 13  	sxtb	w21, w19
+    3c24: 00 01 00 b4  	cbz	x0, 0x3c44 <stmvl53l1_ioctl+0x196c>
+    3c28: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1950> // '%s %d VL53L1_PerformOffsetCalibration fail => %d'
+    3c2c: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1954> // 'ctrl_perform_calibration_offset_lock'
+    3c30: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_PerformOffsetCalibration fail => %d'
+    3c34: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_calibration_offset_lock'
+    3c38: 83 8f 81 52  	mov	w3, #3196
+    3c3c: e4 03 15 2a  	mov	w4, w21
+    3c40: 00 00 00 94  	bl	0x3c40 <stmvl53l1_ioctl+0x1968> // ipc_log_string+0x0
+    3c44: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x196c> // '\x013[ST dToF] %s %d : VL53L1_PerformOffsetCalibration fail => %d'
+    3c48: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1970> // 'ctrl_perform_calibration_offset_lock'
+    3c4c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_PerformOffsetCalibration fail => %d'
+    3c50: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_calibration_offset_lock'
+    3c54: 82 8f 81 52  	mov	w2, #3196
+    3c58: 83 01 00 14  	b	0x4264 <stmvl53l1_ioctl+0x1f8c>
+    3c5c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3c60: e0 00 00 b4  	cbz	x0, 0x3c7c <stmvl53l1_ioctl+0x19a4>
+    3c64: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x198c> // '%s %d  data cpy fail\n'
+    3c68: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1990> // 'ctrl_reg_access'
+    3c6c: 21 00 00 91  	add	x1, x1, #0 // '%s %d  data cpy fail\n'
+    3c70: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_reg_access'
+    3c74: a3 15 81 52  	mov	w3, #2221
+    3c78: 00 00 00 94  	bl	0x3c78 <stmvl53l1_ioctl+0x19a0> // ipc_log_string+0x0
+    3c7c: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x19a4> // '\x013[ST dToF] %s %d :  data cpy fail\n'
+    3c80: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x19a8> // 'ctrl_reg_access'
+    3c84: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d :  data cpy fail\n'
+    3c88: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_reg_access'
+    3c8c: a2 15 81 52  	mov	w2, #2221
+    3c90: 00 00 00 94  	bl	0x3c90 <stmvl53l1_ioctl+0x19b8> // _printk+0x0
+    3c94: b5 01 80 12  	mov	w21, #-14
+    3c98: ca fb ff 17  	b	0x2bc0 <stmvl53l1_ioctl+0x8e8>
+    3c9c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3ca0: e0 00 00 b4  	cbz	x0, 0x3cbc <stmvl53l1_ioctl+0x19e4>
+    3ca4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x19cc> // '%s %d fail to copy calib data'
+    3ca8: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x19d0> // 'ctrl_zone_calibration_data'
+    3cac: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to copy calib data'
+    3cb0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_zone_calibration_data'
+    3cb4: 83 7e 81 52  	mov	w3, #3060
+    3cb8: 00 00 00 94  	bl	0x3cb8 <stmvl53l1_ioctl+0x19e0> // ipc_log_string+0x0
+    3cbc: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x19e4> // '\x013[ST dToF] %s %d : fail to copy calib data'
+    3cc0: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x19e8> // 'ctrl_zone_calibration_data'
+    3cc4: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to copy calib data'
+    3cc8: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_zone_calibration_data'
+    3ccc: 82 7e 81 52  	mov	w2, #3060
+    3cd0: 0e 00 00 14  	b	0x3d08 <stmvl53l1_ioctl+0x1a30>
+    3cd4: c0 02 40 f9  	ldr	x0, [x22] // vl53l1_ctx+0x8fe8
+    3cd8: e0 00 00 b4  	cbz	x0, 0x3cf4 <stmvl53l1_ioctl+0x1a1c>
+    3cdc: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1a04> // '%s %d fail to copy calib data'
+    3ce0: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1a08> // 'ctrl_calibration_data'
+    3ce4: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to copy calib data'
+    3ce8: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_calibration_data'
+    3cec: e3 76 81 52  	mov	w3, #2999
+    3cf0: 00 00 00 94  	bl	0x3cf0 <stmvl53l1_ioctl+0x1a18> // ipc_log_string+0x0
+    3cf4: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1a1c> // '\x013[ST dToF] %s %d : fail to copy calib data'
+    3cf8: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1a20> // 'ctrl_calibration_data'
+    3cfc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to copy calib data'
+    3d00: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_calibration_data'
+    3d04: e2 76 81 52  	mov	w2, #2999
+    3d08: 00 00 00 94  	bl	0x3d08 <stmvl53l1_ioctl+0x1a30> // _printk+0x0
+    3d0c: b5 01 80 12  	mov	w21, #-14
+    3d10: aa fb ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3d14: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3d18: 00 01 00 b4  	cbz	x0, 0x3d38 <stmvl53l1_ioctl+0x1a60>
+    3d1c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1a44> // '%s %d VL53L1_SetZoneCalibrationData fail %d'
+    3d20: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1a48> // 'ctrl_zone_calibration_data'
+    3d24: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_SetZoneCalibrationData fail %d'
+    3d28: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_zone_calibration_data'
+    3d2c: 83 7f 81 52  	mov	w3, #3068
+    3d30: 64 00 80 12  	mov	w4, #-4
+    3d34: 00 00 00 94  	bl	0x3d34 <stmvl53l1_ioctl+0x1a5c> // ipc_log_string+0x0
+    3d38: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1a60> // '\x013[ST dToF] %s %d : VL53L1_SetZoneCalibrationData fail %d'
+    3d3c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1a64> // 'ctrl_zone_calibration_data'
+    3d40: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_SetZoneCalibrationData fail %d'
+    3d44: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_zone_calibration_data'
+    3d48: 82 7f 81 52  	mov	w2, #3068
+    3d4c: 63 00 80 12  	mov	w3, #-4
+    3d50: 00 00 00 94  	bl	0x3d50 <stmvl53l1_ioctl+0x1a78> // _printk+0x0
+    3d54: 88 1f 80 52  	mov	w8, #252
+    3d58: 95 00 80 12  	mov	w21, #-5
+    3d5c: 08 57 02 39  	strb	w8, [x24, #149]
+    3d60: 96 fb ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    3d64: f5 03 00 2a  	mov	w21, w0
+    3d68: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    3d6c: 00 01 00 b4  	cbz	x0, 0x3d8c <stmvl53l1_ioctl+0x1ab4>
+    3d70: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1a98> // '%s %d reset release fail rc=%d\n'
+    3d74: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1a9c> // 'reset_release'
+    3d78: 21 00 00 91  	add	x1, x1, #0 // '%s %d reset release fail rc=%d\n'
+    3d7c: 42 00 00 91  	add	x2, x2, #0 // 'reset_release'
+    3d80: e3 33 80 52  	mov	w3, #415
+    3d84: e4 03 15 2a  	mov	w4, w21
+    3d88: 00 00 00 94  	bl	0x3d88 <stmvl53l1_ioctl+0x1ab0> // ipc_log_string+0x0
+    3d8c: 00 00 00 90  	adrp	x0, 0x3000 <stmvl53l1_ioctl+0x1ab4> // '\x013[ST dToF] %s %d : reset release fail rc=%d\n'
+    3d90: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1ab8> // 'reset_release'
+    3d94: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : reset release fail rc=%d\n'
+    3d98: 21 00 00 91  	add	x1, x1, #0 // 'reset_release'
+    3d9c: e2 33 80 52  	mov	w2, #415
+    3da0: e3 03 15 2a  	mov	w3, w21
+    3da4: 00 00 00 94  	bl	0x3da4 <stmvl53l1_ioctl+0x1acc> // _printk+0x0
+    3da8: 3b 01 00 14  	b	0x4294 <stmvl53l1_ioctl+0x1fbc>
+    3dac: f5 03 17 2a  	mov	w21, w23
+    3db0: fd fc ff 17  	b	0x31a4 <stmvl53l1_ioctl+0xecc>
+    3db4: 08 63 40 b9  	ldr	w8, [x24, #96]
+    3db8: 68 27 00 35  	cbnz	w8, 0x42a4 <stmvl53l1_ioctl+0x1fcc>
+    3dbc: f6 b3 41 b9  	ldr	w22, [sp, #432]
+    3dc0: df 06 00 71  	cmp	w22, #1
+    3dc4: 48 2d 00 54  	b.hi	0x436c <stmvl53l1_ioctl+0x2094>
+    3dc8: f5 03 1f 2a  	mov	w21, wzr
+    3dcc: 16 8f 00 b9  	str	w22, [x24, #140]
+    3dd0: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3dd4: 20 1a 00 b4  	cbz	x0, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3dd8: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3ddc: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1b04> // '%s %d rc %d req %d now %d'
+    3de0: 06 8f 40 b9  	ldr	w6, [x24, #140]
+    3de4: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1b0c> // 'ctrl_param_crosstalk_enable'
+    3de8: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3dec: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_crosstalk_enable'
+    3df0: 63 95 80 52  	mov	w3, #1195
+    3df4: c7 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3df8: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    3dfc: e0 03 16 aa  	mov	x0, x22
+    3e00: 00 00 00 94  	bl	0x3e00 <stmvl53l1_ioctl+0x1b28> // +0x4d28
+    3e04: e8 02 40 f9  	ldr	x8, [x23] // vl53l1_ctx+0x8fe8
+    3e08: f5 03 00 2a  	mov	w21, w0
+    3e0c: 68 18 00 b4  	cbz	x8, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3e10: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3e14: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1b3c> // '%s %d rc %d req %d now %d'
+    3e18: 06 83 40 b9  	ldr	w6, [x24, #128]
+    3e1c: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1b44> // 'ctrl_param_preset_mode'
+    3e20: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3e24: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_preset_mode'
+    3e28: e0 03 08 aa  	mov	x0, x8
+    3e2c: 83 8b 80 52  	mov	w3, #1116
+    3e30: b8 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3e34: e8 b3 41 b9  	ldr	w8, [sp, #432]
+    3e38: 1f 05 00 71  	cmp	w8, #1
+    3e3c: 6b 15 00 54  	b.lt	0x40e8 <stmvl53l1_ioctl+0x1e10>
+    3e40: f5 03 1f 2a  	mov	w21, wzr
+    3e44: 08 5f 00 b9  	str	w8, [x24, #92]
+    3e48: a9 00 00 14  	b	0x40ec <stmvl53l1_ioctl+0x1e14>
+    3e4c: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    3e50: e0 03 16 aa  	mov	x0, x22
+    3e54: 00 00 00 94  	bl	0x3e54 <stmvl53l1_ioctl+0x1b7c> // +0x4c14
+    3e58: e8 02 40 f9  	ldr	x8, [x23] // vl53l1_ctx+0x8fe8
+    3e5c: f5 03 00 2a  	mov	w21, w0
+    3e60: c8 15 00 b4  	cbz	x8, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3e64: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3e68: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1b90> // '%s %d rc %d req %d now %d'
+    3e6c: 06 87 40 b9  	ldr	w6, [x24, #132]
+    3e70: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1b98> // 'ctrl_param_timing_budget'
+    3e74: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3e78: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_timing_budget'
+    3e7c: e0 03 08 aa  	mov	x0, x8
+    3e80: 63 76 80 52  	mov	w3, #947
+    3e84: a3 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3e88: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    3e8c: e0 03 16 aa  	mov	x0, x22
+    3e90: 00 00 00 94  	bl	0x3e90 <stmvl53l1_ioctl+0x1bb8> // +0x4e10
+    3e94: e8 02 40 f9  	ldr	x8, [x23] // vl53l1_ctx+0x8fe8
+    3e98: f5 03 00 2a  	mov	w21, w0
+    3e9c: e8 13 00 b4  	cbz	x8, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3ea0: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3ea4: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1bcc> // '%s %d rc %d req %d now %d'
+    3ea8: 06 8b 40 b9  	ldr	w6, [x24, #136]
+    3eac: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1bd4> // 'ctrl_param_distance_mode'
+    3eb0: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3eb4: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_distance_mode'
+    3eb8: e0 03 08 aa  	mov	x0, x8
+    3ebc: 03 91 80 52  	mov	w3, #1160
+    3ec0: 94 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3ec4: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    3ec8: e0 03 16 aa  	mov	x0, x22
+    3ecc: 00 00 00 94  	bl	0x3ecc <stmvl53l1_ioctl+0x1bf4> // +0x4ef0
+    3ed0: e8 02 40 f9  	ldr	x8, [x23] // vl53l1_ctx+0x8fe8
+    3ed4: f5 03 00 2a  	mov	w21, w0
+    3ed8: 08 12 00 b4  	cbz	x8, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3edc: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3ee0: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1c08> // '%s %d rc %d req %d now %d'
+    3ee4: 06 93 40 b9  	ldr	w6, [x24, #144]
+    3ee8: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1c10> // 'ctrl_param_output_mode'
+    3eec: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3ef0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_output_mode'
+    3ef4: e0 03 08 aa  	mov	x0, x8
+    3ef8: 43 9a 80 52  	mov	w3, #1234
+    3efc: 85 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3f00: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    3f04: e0 03 16 aa  	mov	x0, x22
+    3f08: 00 00 00 94  	bl	0x3f08 <stmvl53l1_ioctl+0x1c30> // +0x4fd0
+    3f0c: e8 02 40 f9  	ldr	x8, [x23] // vl53l1_ctx+0x8fe8
+    3f10: f5 03 00 2a  	mov	w21, w0
+    3f14: 28 10 00 b4  	cbz	x8, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3f18: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3f1c: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1c44> // '%s %d rc %d req %d now %d'
+    3f20: 06 53 42 39  	ldrb	w6, [x24, #148]
+    3f24: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1c4c> // 'ctrl_param_force_device_on_en'
+    3f28: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3f2c: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_force_device_on_en'
+    3f30: e0 03 08 aa  	mov	x0, x8
+    3f34: 83 9f 80 52  	mov	w3, #1276
+    3f38: 76 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3f3c: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    3f40: e0 03 16 aa  	mov	x0, x22
+    3f44: 00 00 00 94  	bl	0x3f44 <stmvl53l1_ioctl+0x1c6c> // +0x5158
+    3f48: e8 02 40 f9  	ldr	x8, [x23] // vl53l1_ctx+0x8fe8
+    3f4c: f5 03 00 2a  	mov	w21, w0
+    3f50: 48 0e 00 b4  	cbz	x8, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3f54: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3f58: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1c80> // '%s %d rc %d req %d now %d'
+    3f5c: 06 9b 40 b9  	ldr	w6, [x24, #152]
+    3f60: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1c88> // 'ctrl_param_offset_correction_mode'
+    3f64: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3f68: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_offset_correction_mode'
+    3f6c: e0 03 08 aa  	mov	x0, x8
+    3f70: c3 a4 80 52  	mov	w3, #1318
+    3f74: 67 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3f78: 08 63 40 b9  	ldr	w8, [x24, #96]
+    3f7c: 48 1b 00 35  	cbnz	w8, 0x42e4 <stmvl53l1_ioctl+0x200c>
+    3f80: e8 b3 41 b9  	ldr	w8, [sp, #432]
+    3f84: f5 03 1f 2a  	mov	w21, wzr
+    3f88: 08 9f 00 b9  	str	w8, [x24, #156]
+    3f8c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    3f90: 40 0c 00 b4  	cbz	x0, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3f94: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3f98: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1cc0> // '%s %d rc %d req %d now %d'
+    3f9c: 06 9f 40 b9  	ldr	w6, [x24, #156]
+    3fa0: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1cc8> // 'ctrl_param_dmax_reflectance'
+    3fa4: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3fa8: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_dmax_reflectance'
+    3fac: c3 48 81 52  	mov	w3, #2630
+    3fb0: 58 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3fb4: e1 b3 41 b9  	ldr	w1, [sp, #432]
+    3fb8: e0 03 16 aa  	mov	x0, x22
+    3fbc: 00 00 00 94  	bl	0x3fbc <stmvl53l1_ioctl+0x1ce4> // +0x5238
+    3fc0: e8 02 40 f9  	ldr	x8, [x23] // vl53l1_ctx+0x8fe8
+    3fc4: f5 03 00 2a  	mov	w21, w0
+    3fc8: 88 0a 00 b4  	cbz	x8, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    3fcc: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    3fd0: 01 00 00 90  	adrp	x1, 0x3000 <stmvl53l1_ioctl+0x1cf8> // '%s %d rc %d req %d now %d'
+    3fd4: 06 a3 40 b9  	ldr	w6, [x24, #160]
+    3fd8: 02 00 00 90  	adrp	x2, 0x3000 <stmvl53l1_ioctl+0x1d00> // 'ctrl_param_dmax_mode'
+    3fdc: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    3fe0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_dmax_mode'
+    3fe4: e0 03 08 aa  	mov	x0, x8
+    3fe8: e3 d9 80 52  	mov	w3, #1743
+    3fec: 49 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    3ff0: 08 63 40 b9  	ldr	w8, [x24, #96]
+    3ff4: c8 19 00 35  	cbnz	w8, 0x432c <stmvl53l1_ioctl+0x2054>
+    3ff8: f6 b3 41 b9  	ldr	w22, [sp, #432]
+    3ffc: df 0e 00 71  	cmp	w22, #3
+    4000: a8 1d 00 54  	b.hi	0x43b4 <stmvl53l1_ioctl+0x20dc>
+    4004: f5 03 1f 2a  	mov	w21, wzr
+    4008: 16 a7 00 b9  	str	w22, [x24, #164]
+    400c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    4010: 40 08 00 b4  	cbz	x0, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    4014: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    4018: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1d40> // '%s %d rc %d req %d now %d'
+    401c: 06 a7 40 b9  	ldr	w6, [x24, #164]
+    4020: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1d48> // 'ctrl_param_smudge_correction_mode'
+    4024: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    4028: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_smudge_correction_mode'
+    402c: 83 ef 80 52  	mov	w3, #1916
+    4030: 38 00 00 14  	b	0x4110 <stmvl53l1_ioctl+0x1e38>
+    4034: a0 02 40 f9  	ldr	x0, [x21] // vl53l1_ctx+0x8fe8
+    4038: e0 00 00 b4  	cbz	x0, 0x4054 <stmvl53l1_ioctl+0x1d7c>
+    403c: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1d64> // "%s %d can't change config while ranging\n"
+    4040: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1d68> // 'ctrl_autonomous_config'
+    4044: 21 00 00 91  	add	x1, x1, #0 // "%s %d can't change config while ranging\n"
+    4048: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_autonomous_config'
+    404c: a3 63 81 52  	mov	w3, #2845
+    4050: 00 00 00 94  	bl	0x4050 <stmvl53l1_ioctl+0x1d78> // ipc_log_string+0x0
+    4054: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x1d7c> // "\x013[ST dToF] %s %d : can't change config while ranging\n"
+    4058: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1d80> // 'ctrl_autonomous_config'
+    405c: 00 00 00 91  	add	x0, x0, #0 // "\x013[ST dToF] %s %d : can't change config while ranging\n"
+    4060: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_autonomous_config'
+    4064: a2 63 81 52  	mov	w2, #2845
+    4068: 0e 00 00 14  	b	0x40a0 <stmvl53l1_ioctl+0x1dc8>
+    406c: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    4070: e0 00 00 b4  	cbz	x0, 0x408c <stmvl53l1_ioctl+0x1db4>
+    4074: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1d9c> // "%s %d can't set roi while ranging\n"
+    4078: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1da0> // 'ctrl_roi'
+    407c: 21 00 00 91  	add	x1, x1, #0 // "%s %d can't set roi while ranging\n"
+    4080: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_roi'
+    4084: 83 5d 81 52  	mov	w3, #2796
+    4088: 00 00 00 94  	bl	0x4088 <stmvl53l1_ioctl+0x1db0> // ipc_log_string+0x0
+    408c: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x1db4> // "\x013[ST dToF] %s %d : can't set roi while ranging\n"
+    4090: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1db8> // 'ctrl_roi'
+    4094: 00 00 00 91  	add	x0, x0, #0 // "\x013[ST dToF] %s %d : can't set roi while ranging\n"
+    4098: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_roi'
+    409c: 82 5d 81 52  	mov	w2, #2796
+    40a0: 00 00 00 94  	bl	0x40a0 <stmvl53l1_ioctl+0x1dc8> // _printk+0x0
+    40a4: f5 01 80 12  	mov	w21, #-16
+    40a8: c4 fa ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    40ac: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    40b0: 00 01 00 b4  	cbz	x0, 0x40d0 <stmvl53l1_ioctl+0x1df8>
+    40b4: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1ddc> // '%s %d get %d roi fm user fail'
+    40b8: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1de0> // 'ctrl_roi'
+    40bc: 21 00 00 91  	add	x1, x1, #0 // '%s %d get %d roi fm user fail'
+    40c0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_roi'
+    40c4: 83 5e 81 52  	mov	w3, #2804
+    40c8: e4 03 15 2a  	mov	w4, w21
+    40cc: 00 00 00 94  	bl	0x40cc <stmvl53l1_ioctl+0x1df4> // ipc_log_string+0x0
+    40d0: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x1df8> // '\x013[ST dToF] %s %d : get %d roi fm user fail'
+    40d4: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1dfc> // 'ctrl_roi'
+    40d8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : get %d roi fm user fail'
+    40dc: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_roi'
+    40e0: 82 5e 81 52  	mov	w2, #2804
+    40e4: e8 fc ff 17  	b	0x3484 <stmvl53l1_ioctl+0x11ac>
+    40e8: b5 02 80 12  	mov	w21, #-22
+    40ec: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    40f0: 40 01 00 b4  	cbz	x0, 0x4118 <stmvl53l1_ioctl+0x1e40>
+    40f4: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1e1c> // '%s %d rc %d req %d now %d'
+    40f8: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1e20> // 'ctrl_param_poll_delay_ms'
+    40fc: e5 b3 41 b9  	ldr	w5, [sp, #432]
+    4100: 21 00 00 91  	add	x1, x1, #0 // '%s %d rc %d req %d now %d'
+    4104: 06 5f 40 b9  	ldr	w6, [x24, #92]
+    4108: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_param_poll_delay_ms'
+    410c: 63 71 80 52  	mov	w3, #907
+    4110: e4 03 15 2a  	mov	w4, w21
+    4114: 00 00 00 94  	bl	0x4114 <stmvl53l1_ioctl+0x1e3c> // ipc_log_string+0x0
+    4118: e8 ab 41 b9  	ldr	w8, [sp, #424]
+    411c: e8 54 ff 34  	cbz	w8, 0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    4120: d5 54 ff 35  	cbnz	w21, 0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    4124: e1 a3 06 91  	add	x1, sp, #424
+    4128: e0 03 13 aa  	mov	x0, x19
+    412c: 82 02 80 52  	mov	w2, #20
+    4130: 00 00 00 94  	bl	0x4130 <stmvl53l1_ioctl+0x1e58> // +0x4aa0
+    4134: 60 00 00 35  	cbnz	w0, 0x4140 <stmvl53l1_ioctl+0x1e68>
+    4138: f5 03 1f 2a  	mov	w21, wzr
+    413c: 9f fa ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    4140: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    4144: 00 01 00 b4  	cbz	x0, 0x4164 <stmvl53l1_ioctl+0x1e8c>
+    4148: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1e70> // '%s %d copy to user fail %d\n'
+    414c: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1e74> // 'ctrl_params'
+    4150: 21 00 00 91  	add	x1, x1, #0 // '%s %d copy to user fail %d\n'
+    4154: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_params'
+    4158: e3 55 81 52  	mov	w3, #2735
+    415c: a4 01 80 12  	mov	w4, #-14
+    4160: 00 00 00 94  	bl	0x4160 <stmvl53l1_ioctl+0x1e88> // ipc_log_string+0x0
+    4164: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x1e8c> // '\x013[ST dToF] %s %d : copy to user fail %d\n'
+    4168: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1e90> // 'ctrl_params'
+    416c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : copy to user fail %d\n'
+    4170: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_params'
+    4174: e2 55 81 52  	mov	w2, #2735
+    4178: a3 01 80 12  	mov	w3, #-14
+    417c: b5 01 80 12  	mov	w21, #-14
+    4180: 00 00 00 94  	bl	0x4180 <stmvl53l1_ioctl+0x1ea8> // _printk+0x0
+    4184: 8d fa ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    4188: 9f 24 03 d5  	hint	#36
+    418c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    4190: 00 01 00 b4  	cbz	x0, 0x41b0 <stmvl53l1_ioctl+0x1ed8>
+    4194: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1ebc> // '%s %d unknown or unsupported %d\n'
+    4198: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1ec0> // 'ctrl_params'
+    419c: 21 00 00 91  	add	x1, x1, #0 // '%s %d unknown or unsupported %d\n'
+    41a0: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_params'
+    41a4: e3 54 81 52  	mov	w3, #2727
+    41a8: 00 00 00 94  	bl	0x41a8 <stmvl53l1_ioctl+0x1ed0> // ipc_log_string+0x0
+    41ac: e4 af 41 b9  	ldr	w4, [sp, #428]
+    41b0: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x1ed8> // '\x013[ST dToF] %s %d : unknown or unsupported %d\n'
+    41b4: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1edc> // 'ctrl_params'
+    41b8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : unknown or unsupported %d\n'
+    41bc: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_params'
+    41c0: e2 54 81 52  	mov	w2, #2727
+    41c4: e3 03 04 2a  	mov	w3, w4
+    41c8: 00 00 00 94  	bl	0x41c8 <stmvl53l1_ioctl+0x1ef0> // _printk+0x0
+    41cc: b5 02 80 12  	mov	w21, #-22
+    41d0: 7a fa ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    41d4: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    41d8: 00 01 00 b4  	cbz	x0, 0x41f8 <stmvl53l1_ioctl+0x1f20>
+    41dc: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1f04> // '%s %d VL53L1_SetOffsetCalibrationMode fail => %d'
+    41e0: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1f08> // 'ctrl_perform_calibration_offset_lock'
+    41e4: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_SetOffsetCalibrationMode fail => %d'
+    41e8: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_calibration_offset_lock'
+    41ec: 03 8e 81 52  	mov	w3, #3184
+    41f0: 64 00 80 12  	mov	w4, #-4
+    41f4: 00 00 00 94  	bl	0x41f4 <stmvl53l1_ioctl+0x1f1c> // ipc_log_string+0x0
+    41f8: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x1f20> // '\x013[ST dToF] %s %d : VL53L1_SetOffsetCalibrationMode fail => %d'
+    41fc: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1f24> // 'ctrl_perform_calibration_offset_lock'
+    4200: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_SetOffsetCalibrationMode fail => %d'
+    4204: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_calibration_offset_lock'
+    4208: 02 8e 81 52  	mov	w2, #3184
+    420c: 63 00 80 12  	mov	w3, #-4
+    4210: 00 00 00 94  	bl	0x4210 <stmvl53l1_ioctl+0x1f38> // _printk+0x0
+    4214: 88 1f 80 52  	mov	w8, #252
+    4218: 95 00 80 12  	mov	w21, #-5
+    421c: 08 57 02 39  	strb	w8, [x24, #149]
+    4220: 15 00 00 14  	b	0x4274 <stmvl53l1_ioctl+0x1f9c>
+    4224: f3 03 00 2a  	mov	w19, w0
+    4228: 20 03 40 f9  	ldr	x0, [x25] // vl53l1_ctx+0x8fe8
+    422c: 75 1e 00 13  	sxtb	w21, w19
+    4230: 00 01 00 b4  	cbz	x0, 0x4250 <stmvl53l1_ioctl+0x1f78>
+    4234: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1f5c> // '%s %d VL53L1_PerformXTalkCalibration fail => %d'
+    4238: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1f60> // 'ctrl_perform_calibration_crosstalk_lock'
+    423c: 21 00 00 91  	add	x1, x1, #0 // '%s %d VL53L1_PerformXTalkCalibration fail => %d'
+    4240: 42 00 00 91  	add	x2, x2, #0 // 'ctrl_perform_calibration_crosstalk_lock'
+    4244: 83 84 81 52  	mov	w3, #3108
+    4248: e4 03 15 2a  	mov	w4, w21
+    424c: 00 00 00 94  	bl	0x424c <stmvl53l1_ioctl+0x1f74> // ipc_log_string+0x0
+    4250: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x1f78> // '\x013[ST dToF] %s %d : VL53L1_PerformXTalkCalibration fail => %d'
+    4254: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1f7c> // 'ctrl_perform_calibration_crosstalk_lock'
+    4258: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : VL53L1_PerformXTalkCalibration fail => %d'
+    425c: 21 00 00 91  	add	x1, x1, #0 // 'ctrl_perform_calibration_crosstalk_lock'
+    4260: 82 84 81 52  	mov	w2, #3108
+    4264: e3 03 15 2a  	mov	w3, w21
+    4268: 00 00 00 94  	bl	0x4268 <stmvl53l1_ioctl+0x1f90> // _printk+0x0
+    426c: 95 00 80 12  	mov	w21, #-5
+    4270: 13 57 02 39  	strb	w19, [x24, #149]
+    4274: 08 1f 43 b9  	ldr	w8, [x24, #796]
+    4278: e8 00 00 35  	cbnz	w8, 0x4294 <stmvl53l1_ioctl+0x1fbc>
+    427c: 08 53 42 39  	ldrb	w8, [x24, #148]
+    4280: a8 00 00 35  	cbnz	w8, 0x4294 <stmvl53l1_ioctl+0x1fbc>
+    4284: 00 03 53 f8  	ldur	x0, [x24, #-208]
+    4288: 00 00 00 94  	bl	0x4288 <stmvl53l1_ioctl+0x1fb0> // stmvl53l1_reset_hold_i2c+0x0
+    428c: 28 00 80 52  	mov	w8, #1
+    4290: 08 1f 03 b9  	str	w8, [x24, #796]
+    4294: 28 00 80 52  	mov	w8, #1
+    4298: 1f c7 02 39  	strb	wzr, [x24, #177]
+    429c: 08 57 00 b9  	str	w8, [x24, #84]
+    42a0: 46 fa ff 17  	b	0x2bb8 <stmvl53l1_ioctl+0x8e0>
+    42a4: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    42a8: e0 00 00 b4  	cbz	x0, 0x42c4 <stmvl53l1_ioctl+0x1fec>
+    42ac: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1fd4> // "%s %d can't change crosstalk enable while ranging\n"
+    42b0: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x1fd8> // 'stmvl53l1_set_crosstalk_enable'
+    42b4: 21 00 00 91  	add	x1, x1, #0 // "%s %d can't change crosstalk enable while ranging\n"
+    42b8: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_set_crosstalk_enable'
+    42bc: c3 93 80 52  	mov	w3, #1182
+    42c0: 00 00 00 94  	bl	0x42c0 <stmvl53l1_ioctl+0x1fe8> // ipc_log_string+0x0
+    42c4: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x1fec> // "\x013[ST dToF] %s %d : can't change crosstalk enable while ranging\n"
+    42c8: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x1ff0> // 'stmvl53l1_set_crosstalk_enable'
+    42cc: 00 00 00 91  	add	x0, x0, #0 // "\x013[ST dToF] %s %d : can't change crosstalk enable while ranging\n"
+    42d0: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_set_crosstalk_enable'
+    42d4: c2 93 80 52  	mov	w2, #1182
+    42d8: 00 00 00 94  	bl	0x42d8 <stmvl53l1_ioctl+0x2000> // _printk+0x0
+    42dc: f5 01 80 12  	mov	w21, #-16
+    42e0: bc fe ff 17  	b	0x3dd0 <stmvl53l1_ioctl+0x1af8>
+    42e4: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    42e8: e0 00 00 b4  	cbz	x0, 0x4304 <stmvl53l1_ioctl+0x202c>
+    42ec: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x2014> // "%s %d can't change dmax reflectance while ranging\n"
+    42f0: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x2018> // 'stmvl53l1_set_dmax_reflectance'
+    42f4: 21 00 00 91  	add	x1, x1, #0 // "%s %d can't change dmax reflectance while ranging\n"
+    42f8: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_set_dmax_reflectance'
+    42fc: 63 ce 80 52  	mov	w3, #1651
+    4300: 00 00 00 94  	bl	0x4300 <stmvl53l1_ioctl+0x2028> // ipc_log_string+0x0
+    4304: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x202c> // "\x013[ST dToF] %s %d : can't change dmax reflectance while ranging\n"
+    4308: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x2030> // 'stmvl53l1_set_dmax_reflectance'
+    430c: 00 00 00 91  	add	x0, x0, #0 // "\x013[ST dToF] %s %d : can't change dmax reflectance while ranging\n"
+    4310: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_set_dmax_reflectance'
+    4314: 62 ce 80 52  	mov	w2, #1651
+    4318: 00 00 00 94  	bl	0x4318 <stmvl53l1_ioctl+0x2040> // _printk+0x0
+    431c: f5 01 80 12  	mov	w21, #-16
+    4320: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    4324: 80 e3 ff b5  	cbnz	x0, 0x3f94 <stmvl53l1_ioctl+0x1cbc>
+    4328: 7c ff ff 17  	b	0x4118 <stmvl53l1_ioctl+0x1e40>
+    432c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    4330: e0 00 00 b4  	cbz	x0, 0x434c <stmvl53l1_ioctl+0x2074>
+    4334: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x205c> // "%s %d can't change smudge corr mode while ranging\n"
+    4338: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x2060> // 'stmvl53l1_set_smudge_correction_mode'
+    433c: 21 00 00 91  	add	x1, x1, #0 // "%s %d can't change smudge corr mode while ranging\n"
+    4340: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_set_smudge_correction_mode'
+    4344: e3 ec 80 52  	mov	w3, #1895
+    4348: 00 00 00 94  	bl	0x4348 <stmvl53l1_ioctl+0x2070> // ipc_log_string+0x0
+    434c: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x2074> // "\x013[ST dToF] %s %d : can't change smudge corr mode while ranging\n"
+    4350: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x2078> // 'stmvl53l1_set_smudge_correction_mode'
+    4354: 00 00 00 91  	add	x0, x0, #0 // "\x013[ST dToF] %s %d : can't change smudge corr mode while ranging\n"
+    4358: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_set_smudge_correction_mode'
+    435c: e2 ec 80 52  	mov	w2, #1895
+    4360: 00 00 00 94  	bl	0x4360 <stmvl53l1_ioctl+0x2088> // _printk+0x0
+    4364: f5 01 80 12  	mov	w21, #-16
+    4368: 29 ff ff 17  	b	0x400c <stmvl53l1_ioctl+0x1d34>
+    436c: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    4370: 00 01 00 b4  	cbz	x0, 0x4390 <stmvl53l1_ioctl+0x20b8>
+    4374: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x209c> // '%s %d invalid crosstalk enable %d\n'
+    4378: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x20a0> // 'stmvl53l1_set_crosstalk_enable'
+    437c: 21 00 00 91  	add	x1, x1, #0 // '%s %d invalid crosstalk enable %d\n'
+    4380: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_set_crosstalk_enable'
+    4384: 83 94 80 52  	mov	w3, #1188
+    4388: e4 03 16 2a  	mov	w4, w22
+    438c: 00 00 00 94  	bl	0x438c <stmvl53l1_ioctl+0x20b4> // ipc_log_string+0x0
+    4390: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x20b8> // '\x013[ST dToF] %s %d : invalid crosstalk enable %d\n'
+    4394: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x20bc> // 'stmvl53l1_set_crosstalk_enable'
+    4398: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : invalid crosstalk enable %d\n'
+    439c: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_set_crosstalk_enable'
+    43a0: 82 94 80 52  	mov	w2, #1188
+    43a4: e3 03 16 2a  	mov	w3, w22
+    43a8: 00 00 00 94  	bl	0x43a8 <stmvl53l1_ioctl+0x20d0> // _printk+0x0
+    43ac: b5 02 80 12  	mov	w21, #-22
+    43b0: 88 fe ff 17  	b	0x3dd0 <stmvl53l1_ioctl+0x1af8>
+    43b4: e0 02 40 f9  	ldr	x0, [x23] // vl53l1_ctx+0x8fe8
+    43b8: 00 01 00 b4  	cbz	x0, 0x43d8 <stmvl53l1_ioctl+0x2100>
+    43bc: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x20e4> // '%s %d invalid smudge correction mode %d\n'
+    43c0: 02 00 00 90  	adrp	x2, 0x4000 <stmvl53l1_ioctl+0x20e8> // 'stmvl53l1_set_smudge_correction_mode'
+    43c4: 21 00 00 91  	add	x1, x1, #0 // '%s %d invalid smudge correction mode %d\n'
+    43c8: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_set_smudge_correction_mode'
+    43cc: 63 ee 80 52  	mov	w3, #1907
+    43d0: e4 03 16 2a  	mov	w4, w22
+    43d4: 00 00 00 94  	bl	0x43d4 <stmvl53l1_ioctl+0x20fc> // ipc_log_string+0x0
+    43d8: 00 00 00 90  	adrp	x0, 0x4000 <stmvl53l1_ioctl+0x2100> // '\x013[ST dToF] %s %d : invalid smudge correction mode %d\n'
+    43dc: 01 00 00 90  	adrp	x1, 0x4000 <stmvl53l1_ioctl+0x2104> // 'stmvl53l1_set_smudge_correction_mode'
+    43e0: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : invalid smudge correction mode %d\n'
+    43e4: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_set_smudge_correction_mode'
+    43e8: 62 ee 80 52  	mov	w2, #1907
+    43ec: e3 03 16 2a  	mov	w3, w22
+    43f0: 00 00 00 94  	bl	0x43f0 <stmvl53l1_ioctl+0x2118> // _printk+0x0
+    43f4: b5 02 80 12  	mov	w21, #-22
+    43f8: 05 ff ff 17  	b	0x400c <stmvl53l1_ioctl+0x1d34>
+    43fc: 00 00 00 94  	bl	0x43fc <stmvl53l1_ioctl+0x2124> // __stack_chk_fail+0x0

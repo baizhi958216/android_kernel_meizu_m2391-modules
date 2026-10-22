@@ -1,0 +1,743 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/vl53l1.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+000000000000a580 <stmvl53l1_probe>:
+    a580: 3f 23 03 d5  	hint	#25
+    a584: ff c3 01 d1  	sub	sp, sp, #112
+    a588: 5e 86 00 f8  	str	x30, [x18], #8
+    a58c: fd 7b 01 a9  	stp	x29, x30, [sp, #16]
+    a590: fd 43 00 91  	add	x29, sp, #16
+    a594: fb 13 00 f9  	str	x27, [sp, #32]
+    a598: fa 67 03 a9  	stp	x26, x25, [sp, #48]
+    a59c: f8 5f 04 a9  	stp	x24, x23, [sp, #64]
+    a5a0: f6 57 05 a9  	stp	x22, x21, [sp, #80]
+    a5a4: f4 4f 06 a9  	stp	x20, x19, [sp, #96]
+    a5a8: 08 41 38 d5  	mrs	x8, SP_EL0
+    a5ac: 09 00 00 90  	adrp	x9, 0xa000 <stmvl53l1_probe+0x2c> // s_module_load_state+0x0
+    a5b0: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    a5b4: e8 07 00 f9  	str	x8, [sp, #8]
+    a5b8: 28 01 40 b9  	ldr	w8, [x9] // s_module_load_state+0x0
+    a5bc: 88 04 00 34  	cbz	w8, 0xa64c <stmvl53l1_probe+0xcc>
+    a5c0: 1b 00 00 90  	adrp	x27, 0xa000 <stmvl53l1_probe+0x40> // vl53l1_ctx+0x8fe8
+    a5c4: f5 03 00 aa  	mov	x21, x0
+    a5c8: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    a5cc: 20 01 00 b4  	cbz	x0, 0xa5f0 <stmvl53l1_probe+0x70>
+    a5d0: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x50> // '%s %d Enter %s : 0x%02x\n'
+    a5d4: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x54> // 'stmvl53l1_probe'
+    a5d8: a4 12 00 91  	add	x4, x21, #4
+    a5dc: a5 06 40 79  	ldrh	w5, [x21, #2]
+    a5e0: 21 00 00 91  	add	x1, x1, #0 // '%s %d Enter %s : 0x%02x\n'
+    a5e4: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_probe'
+    a5e8: 23 39 80 52  	mov	w3, #457
+    a5ec: 00 00 00 94  	bl	0xa5ec <stmvl53l1_probe+0x6c> // ipc_log_string+0x0
+    a5f0: b3 0e 40 f9  	ldr	x19, [x21, #24]
+    a5f4: 20 ea 90 d2  	mov	x0, #34641
+    a5f8: 20 d9 b9 f2  	movk	x0, #52937, lsl #16
+    a5fc: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x7c> // +0x5c0
+    a600: c0 8c dc f2  	movk	x0, #58470, lsl #32
+    a604: 42 00 00 91  	add	x2, x2, #0 // +0x5c0
+    a608: 68 0a 40 f9  	ldr	x8, [x19, #16]
+    a60c: 20 0e ed f2  	movk	x0, #26737, lsl #48
+    a610: 14 11 40 f9  	ldr	x20, [x8, #32]
+    a614: e1 03 14 aa  	mov	x1, x20
+    a618: 00 00 00 94  	bl	0xa618 <stmvl53l1_probe+0x98> // __cfi_slowpath_diag+0x0
+    a61c: e0 03 13 aa  	mov	x0, x19
+    a620: 80 02 3f d6  	blr	x20
+    a624: e8 03 20 2a  	mvn	w8, w0
+    a628: 1f 05 0f 72  	tst	w8, #0x60000
+    a62c: 41 01 00 54  	b.ne	0xa654 <stmvl53l1_probe+0xd4>
+    a630: 00 fe 91 52  	mov	w0, #36848
+    a634: 01 b8 81 52  	mov	w1, #3520
+    a638: 82 00 80 52  	mov	w2, #4
+    a63c: 00 00 00 94  	bl	0xa63c <stmvl53l1_probe+0xbc> // kmalloc_order_trace+0x0
+    a640: a0 02 00 b5  	cbnz	x0, 0xa694 <stmvl53l1_probe+0x114>
+    a644: 60 01 80 12  	mov	w0, #-12
+    a648: 04 00 00 14  	b	0xa658 <stmvl53l1_probe+0xd8>
+    a64c: 80 40 80 12  	mov	w0, #-517
+    a650: 02 00 00 14  	b	0xa658 <stmvl53l1_probe+0xd8>
+    a654: 80 00 80 12  	mov	w0, #-5
+    a658: 08 41 38 d5  	mrs	x8, SP_EL0
+    a65c: 08 f1 42 f9  	ldr	x8, [x8, #1504]
+    a660: e9 07 40 f9  	ldr	x9, [sp, #8]
+    a664: 1f 01 09 eb  	cmp	x8, x9
+    a668: c1 54 00 54  	b.ne	0xb100 <stmvl53l1_probe+0xb80>
+    a66c: f4 4f 46 a9  	ldp	x20, x19, [sp, #96]
+    a670: f6 57 45 a9  	ldp	x22, x21, [sp, #80]
+    a674: f8 5f 44 a9  	ldp	x24, x23, [sp, #64]
+    a678: fa 67 43 a9  	ldp	x26, x25, [sp, #48]
+    a67c: fd 7b 41 a9  	ldp	x29, x30, [sp, #16]
+    a680: fb 13 40 f9  	ldr	x27, [sp, #32]
+    a684: 5e 8e 5f f8  	ldr	x30, [x18, #-8]!
+    a688: ff c3 01 91  	add	sp, sp, #112
+    a68c: bf 23 03 d5  	hint	#29
+    a690: c0 03 5f d6  	ret
+    a694: 08 00 00 90  	adrp	x8, 0xa000 <stmvl53l1_probe+0x114> // kmalloc_caches+0x38
+    a698: f3 03 00 aa  	mov	x19, x0
+    a69c: 01 b8 81 52  	mov	w1, #3520
+    a6a0: 02 08 80 52  	mov	w2, #64
+    a6a4: 00 01 40 f9  	ldr	x0, [x8] // kmalloc_caches+0x38
+    a6a8: 00 00 00 94  	bl	0xa6a8 <stmvl53l1_probe+0x128> // kmem_cache_alloc_trace+0x0
+    a6ac: 08 00 80 12  	mov	w8, #-1
+    a6b0: 0b 00 00 90  	adrp	x11, 0xa000 <stmvl53l1_probe+0x130> // +0x10
+    a6b4: ca fa df 92  	mov	x10, #-281294588084225
+    a6b8: f4 03 00 aa  	mov	x20, x0
+    a6bc: 09 00 80 92  	mov	x9, #-1
+    a6c0: 0a 00 e0 f2  	movk	x10, #0, lsl #48
+    a6c4: 08 34 00 b9  	str	w8, [x0, #52]
+    a6c8: f7 03 00 aa  	mov	x23, x0
+    a6cc: b8 82 00 91  	add	x24, x21, #32
+    a6d0: 68 01 40 b9  	ldr	w8, [x11] // +0x10
+    a6d4: 16 90 00 91  	add	x22, x0, #36
+    a6d8: 1f a4 01 a9  	stp	xzr, x9, [x0, #24]
+    a6dc: 60 4e 3b f9  	str	x0, [x19, #30360]
+    a6e0: ea 8e 02 f8  	str	x10, [x23, #40]!
+    a6e4: 15 4c 00 a9  	stp	x21, x19, [x0]
+    a6e8: ff 07 00 b9  	str	wzr, [sp, #4]
+    a6ec: 48 04 00 35  	cbnz	w8, 0xa774 <stmvl53l1_probe+0x1f4>
+    a6f0: a8 8a 41 f9  	ldr	x8, [x21, #784]
+    a6f4: 48 05 00 b4  	cbz	x8, 0xa79c <stmvl53l1_probe+0x21c>
+    a6f8: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x178> // 'tof_rgltr'
+    a6fc: e0 03 18 aa  	mov	x0, x24
+    a700: 21 00 00 91  	add	x1, x1, #0 // 'tof_rgltr'
+    a704: 00 00 00 94  	bl	0xa704 <stmvl53l1_probe+0x184> // regulator_get+0x0
+    a708: 1f fc 3f b1  	cmn	x0, #4095
+    a70c: 80 0e 00 f9  	str	x0, [x20, #24]
+    a710: e3 01 00 54  	b.lo	0xa74c <stmvl53l1_probe+0x1cc>
+    a714: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    a718: e0 00 00 b4  	cbz	x0, 0xa734 <stmvl53l1_probe+0x1b4>
+    a71c: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x19c> // '%s %d failed to get vdd'
+    a720: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x1a0> // 'stmvl53l1_parse_tree'
+    a724: 21 00 00 91  	add	x1, x1, #0 // '%s %d failed to get vdd'
+    a728: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    a72c: 23 2d 80 52  	mov	w3, #361
+    a730: 00 00 00 94  	bl	0xa730 <stmvl53l1_probe+0x1b0> // ipc_log_string+0x0
+    a734: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x1b4> // '\x013[ST dToF] %s %d : failed to get vdd'
+    a738: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x1b8> // 'stmvl53l1_parse_tree'
+    a73c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : failed to get vdd'
+    a740: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    a744: 22 2d 80 52  	mov	w2, #361
+    a748: 00 00 00 94  	bl	0xa748 <stmvl53l1_probe+0x1c8> // _printk+0x0
+    a74c: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x1cc> // 'reg'
+    a750: a0 8a 41 f9  	ldr	x0, [x21, #784]
+    a754: 21 00 00 91  	add	x1, x1, #0 // 'reg'
+    a758: e2 13 00 91  	add	x2, sp, #4
+    a75c: 23 00 80 52  	mov	w3, #1
+    a760: e4 03 1f aa  	mov	x4, xzr
+    a764: 00 00 00 94  	bl	0xa764 <stmvl53l1_probe+0x1e4> // of_property_read_variable_u32_array+0x0
+    a768: 20 0d f8 37  	tbnz	w0, #31, 0xa90c <stmvl53l1_probe+0x38c>
+    a76c: f9 07 40 b9  	ldr	w25, [sp, #4]
+    a770: 7c 00 00 14  	b	0xa960 <stmvl53l1_probe+0x3e0>
+    a774: 08 00 00 90  	adrp	x8, 0xa000 <stmvl53l1_probe+0x1f4> // +0x438
+    a778: 09 00 00 90  	adrp	x9, 0xa000 <stmvl53l1_probe+0x1f8> // +0x43c
+    a77c: 0a 00 00 90  	adrp	x10, 0xa000 <stmvl53l1_probe+0x1fc> // +0x440
+    a780: 2b 05 80 52  	mov	w11, #41
+    a784: 08 01 40 b9  	ldr	w8, [x8] // +0x438
+    a788: 29 01 40 b9  	ldr	w9, [x9] // +0x43c
+    a78c: 4a 01 40 b9  	ldr	w10, [x10] // +0x440
+    a790: ab 06 00 79  	strh	w11, [x21, #2]
+    a794: 89 22 04 29  	stp	w9, w8, [x20, #32]
+    a798: 8a 2a 00 b9  	str	w10, [x20, #40]
+    a79c: 88 c2 40 39  	ldrb	w8, [x20, #48]
+    a7a0: 89 26 40 b9  	ldr	w9, [x20, #36]
+    a7a4: 08 79 1e 12  	and	w8, w8, #0xfffffffd
+    a7a8: 3f 05 00 31  	cmn	w9, #1
+    a7ac: 88 c2 00 39  	strb	w8, [x20, #48]
+    a7b0: 21 02 00 54  	b.ne	0xa7f4 <stmvl53l1_probe+0x274>
+    a7b4: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    a7b8: e0 00 00 b4  	cbz	x0, 0xa7d4 <stmvl53l1_probe+0x254>
+    a7bc: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x23c> // '%s %d reset gpio is required'
+    a7c0: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x240> // 'get_xsdn'
+    a7c4: 21 00 00 91  	add	x1, x1, #0 // '%s %d reset gpio is required'
+    a7c8: 42 00 00 91  	add	x2, x2, #0 // 'get_xsdn'
+    a7cc: 83 17 80 52  	mov	w3, #188
+    a7d0: 00 00 00 94  	bl	0xa7d0 <stmvl53l1_probe+0x250> // ipc_log_string+0x0
+    a7d4: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x254> // '\x013[ST dToF] %s %d : reset gpio is required'
+    a7d8: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x258> // 'get_xsdn'
+    a7dc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : reset gpio is required'
+    a7e0: 21 00 00 91  	add	x1, x1, #0 // 'get_xsdn'
+    a7e4: 82 17 80 52  	mov	w2, #188
+    a7e8: 00 00 00 94  	bl	0xa7e8 <stmvl53l1_probe+0x268> // _printk+0x0
+    a7ec: 59 02 80 12  	mov	w25, #-19
+    a7f0: b9 00 00 14  	b	0xaad4 <stmvl53l1_probe+0x554>
+    a7f4: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x274> // 'xsdn-gpio'
+    a7f8: a0 8a 41 f9  	ldr	x0, [x21, #784]
+    a7fc: 21 00 00 91  	add	x1, x1, #0 // 'xsdn-gpio'
+    a800: e2 03 1f 2a  	mov	w2, wzr
+    a804: e3 03 1f aa  	mov	x3, xzr
+    a808: 00 00 00 94  	bl	0xa808 <stmvl53l1_probe+0x288> // of_get_named_gpio_flags+0x0
+    a80c: c8 02 40 b9  	ldr	w8, [x22]
+    a810: f9 03 00 2a  	mov	w25, w0
+    a814: 1f 01 08 71  	cmp	w8, #512
+    a818: 62 05 00 54  	b.hs	0xa8c4 <stmvl53l1_probe+0x344>
+    a81c: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    a820: d9 02 00 b9  	str	w25, [x22]
+    a824: 00 01 00 b4  	cbz	x0, 0xa844 <stmvl53l1_probe+0x2c4>
+    a828: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x2a8> // '%s %d reset_gpio = %d'
+    a82c: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x2ac> // 'get_xsdn'
+    a830: 21 00 00 91  	add	x1, x1, #0 // '%s %d reset_gpio = %d'
+    a834: 42 00 00 91  	add	x2, x2, #0 // 'get_xsdn'
+    a838: 03 19 80 52  	mov	w3, #200
+    a83c: e4 03 19 2a  	mov	w4, w25
+    a840: 00 00 00 94  	bl	0xa840 <stmvl53l1_probe+0x2c0> // ipc_log_string+0x0
+    a844: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x2c4> // '\x013[ST dToF] %s %d : reset_gpio = %d'
+    a848: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x2c8> // 'get_xsdn'
+    a84c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : reset_gpio = %d'
+    a850: 21 00 00 91  	add	x1, x1, #0 // 'get_xsdn'
+    a854: 02 19 80 52  	mov	w2, #200
+    a858: e3 03 19 2a  	mov	w3, w25
+    a85c: 00 00 00 94  	bl	0xa85c <stmvl53l1_probe+0x2dc> // _printk+0x0
+    a860: 03 00 00 90  	adrp	x3, 0xa000 <stmvl53l1_probe+0x2e0> // 'vl53l1_xsdn'
+    a864: c1 02 40 b9  	ldr	w1, [x22]
+    a868: 63 00 00 91  	add	x3, x3, #0 // 'vl53l1_xsdn'
+    a86c: e0 03 18 aa  	mov	x0, x24
+    a870: e2 03 1f aa  	mov	x2, xzr
+    a874: 00 00 00 94  	bl	0xa874 <stmvl53l1_probe+0x2f4> // devm_gpio_request_one+0x0
+    a878: f9 03 00 2a  	mov	w25, w0
+    a87c: 60 12 f8 36  	tbz	w0, #31, 0xaac8 <stmvl53l1_probe+0x548>
+    a880: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    a884: 00 01 00 b4  	cbz	x0, 0xa8a4 <stmvl53l1_probe+0x324>
+    a888: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x308> // '%s %d fail to request xsdn, rc = %d'
+    a88c: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x30c> // 'get_xsdn'
+    a890: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to request xsdn, rc = %d'
+    a894: 42 00 00 91  	add	x2, x2, #0 // 'get_xsdn'
+    a898: 83 19 80 52  	mov	w3, #204
+    a89c: e4 03 19 2a  	mov	w4, w25
+    a8a0: 00 00 00 94  	bl	0xa8a0 <stmvl53l1_probe+0x320> // ipc_log_string+0x0
+    a8a4: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x324> // '\x013[ST dToF] %s %d : fail to request xsdn, rc = %d'
+    a8a8: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x328> // 'get_xsdn'
+    a8ac: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to request xsdn, rc = %d'
+    a8b0: 21 00 00 91  	add	x1, x1, #0 // 'get_xsdn'
+    a8b4: 82 19 80 52  	mov	w2, #204
+    a8b8: e3 03 19 2a  	mov	w3, w25
+    a8bc: 00 00 00 94  	bl	0xa8bc <stmvl53l1_probe+0x33c> // _printk+0x0
+    a8c0: 85 00 00 14  	b	0xaad4 <stmvl53l1_probe+0x554>
+    a8c4: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    a8c8: 00 01 00 b4  	cbz	x0, 0xa8e8 <stmvl53l1_probe+0x368>
+    a8cc: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x34c> // '%s %d reset gpio invalid, xsdn_gpio = %d\n'
+    a8d0: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x350> // 'get_xsdn'
+    a8d4: 21 00 00 91  	add	x1, x1, #0 // '%s %d reset gpio invalid, xsdn_gpio = %d\n'
+    a8d8: 42 00 00 91  	add	x2, x2, #0 // 'get_xsdn'
+    a8dc: 63 18 80 52  	mov	w3, #195
+    a8e0: e4 03 19 2a  	mov	w4, w25
+    a8e4: 00 00 00 94  	bl	0xa8e4 <stmvl53l1_probe+0x364> // ipc_log_string+0x0
+    a8e8: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x368> // '\x013[ST dToF] %s %d : reset gpio invalid, xsdn_gpio = %d\n'
+    a8ec: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x36c> // 'get_xsdn'
+    a8f0: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : reset gpio invalid, xsdn_gpio = %d\n'
+    a8f4: 21 00 00 91  	add	x1, x1, #0 // 'get_xsdn'
+    a8f8: 62 18 80 52  	mov	w2, #195
+    a8fc: e3 03 19 2a  	mov	w3, w25
+    a900: 00 00 00 94  	bl	0xa900 <stmvl53l1_probe+0x380> // _printk+0x0
+    a904: b9 02 80 12  	mov	w25, #-22
+    a908: 73 00 00 14  	b	0xaad4 <stmvl53l1_probe+0x554>
+    a90c: f9 03 00 2a  	mov	w25, w0
+    a910: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    a914: 20 01 00 b4  	cbz	x0, 0xa938 <stmvl53l1_probe+0x3b8>
+    a918: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x398> // '%s %d Unable to find reg %d 0x%x'
+    a91c: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x39c> // 'stmvl53l1_parse_tree'
+    a920: 21 00 00 91  	add	x1, x1, #0 // '%s %d Unable to find reg %d 0x%x'
+    a924: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    a928: 43 2f 80 52  	mov	w3, #378
+    a92c: e4 03 19 2a  	mov	w4, w25
+    a930: 25 05 80 52  	mov	w5, #41
+    a934: 00 00 00 94  	bl	0xa934 <stmvl53l1_probe+0x3b4> // ipc_log_string+0x0
+    a938: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x3b8> // '\x014[ST dToF] %s %d : Unable to find reg %d 0x%x'
+    a93c: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x3bc> // 'stmvl53l1_parse_tree'
+    a940: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : Unable to find reg %d 0x%x'
+    a944: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    a948: 42 2f 80 52  	mov	w2, #378
+    a94c: e3 03 19 2a  	mov	w3, w25
+    a950: 24 05 80 52  	mov	w4, #41
+    a954: 39 05 80 52  	mov	w25, #41
+    a958: 00 00 00 94  	bl	0xa958 <stmvl53l1_probe+0x3d8> // _printk+0x0
+    a95c: f9 07 00 b9  	str	w25, [sp, #4]
+    a960: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x3e0> // 'xsdn-gpio'
+    a964: a0 8a 41 f9  	ldr	x0, [x21, #784]
+    a968: 21 00 00 91  	add	x1, x1, #0 // 'xsdn-gpio'
+    a96c: e2 03 16 aa  	mov	x2, x22
+    a970: 23 00 80 52  	mov	w3, #1
+    a974: e4 03 1f aa  	mov	x4, xzr
+    a978: b9 06 00 79  	strh	w25, [x21, #2]
+    a97c: 00 00 00 94  	bl	0xa97c <stmvl53l1_probe+0x3fc> // of_property_read_variable_u32_array+0x0
+    a980: c0 02 f8 36  	tbz	w0, #31, 0xa9d8 <stmvl53l1_probe+0x458>
+    a984: f9 03 00 2a  	mov	w25, w0
+    a988: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    a98c: 20 01 00 b4  	cbz	x0, 0xa9b0 <stmvl53l1_probe+0x430>
+    a990: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x410> // '%s %d Unable to find xsdn-gpio %d %d'
+    a994: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x414> // 'stmvl53l1_parse_tree'
+    a998: c5 02 40 b9  	ldr	w5, [x22]
+    a99c: 21 00 00 91  	add	x1, x1, #0 // '%s %d Unable to find xsdn-gpio %d %d'
+    a9a0: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    a9a4: 43 30 80 52  	mov	w3, #386
+    a9a8: e4 03 19 2a  	mov	w4, w25
+    a9ac: 00 00 00 94  	bl	0xa9ac <stmvl53l1_probe+0x42c> // ipc_log_string+0x0
+    a9b0: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x430> // '\x014[ST dToF] %s %d : Unable to find xsdn-gpio %d %d'
+    a9b4: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x434> // 'stmvl53l1_parse_tree'
+    a9b8: c4 02 40 b9  	ldr	w4, [x22]
+    a9bc: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : Unable to find xsdn-gpio %d %d'
+    a9c0: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    a9c4: 42 30 80 52  	mov	w2, #386
+    a9c8: e3 03 19 2a  	mov	w3, w25
+    a9cc: 00 00 00 94  	bl	0xa9cc <stmvl53l1_probe+0x44c> // _printk+0x0
+    a9d0: 08 00 80 12  	mov	w8, #-1
+    a9d4: c8 02 00 b9  	str	w8, [x22]
+    a9d8: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x458> // 'intr-gpio'
+    a9dc: a0 8a 41 f9  	ldr	x0, [x21, #784]
+    a9e0: 21 00 00 91  	add	x1, x1, #0 // 'intr-gpio'
+    a9e4: e2 03 17 aa  	mov	x2, x23
+    a9e8: 23 00 80 52  	mov	w3, #1
+    a9ec: e4 03 1f aa  	mov	x4, xzr
+    a9f0: 99 b2 00 91  	add	x25, x20, #44
+    a9f4: 00 00 00 94  	bl	0xa9f4 <stmvl53l1_probe+0x474> // of_property_read_variable_u32_array+0x0
+    a9f8: c0 02 f8 36  	tbz	w0, #31, 0xaa50 <stmvl53l1_probe+0x4d0>
+    a9fc: fa 03 00 2a  	mov	w26, w0
+    aa00: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    aa04: 20 01 00 b4  	cbz	x0, 0xaa28 <stmvl53l1_probe+0x4a8>
+    aa08: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x488> // '%s %d Unable to find intr-gpio %d %d'
+    aa0c: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x48c> // 'stmvl53l1_parse_tree'
+    aa10: e5 02 40 b9  	ldr	w5, [x23]
+    aa14: 21 00 00 91  	add	x1, x1, #0 // '%s %d Unable to find intr-gpio %d %d'
+    aa18: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    aa1c: 23 31 80 52  	mov	w3, #393
+    aa20: e4 03 1a 2a  	mov	w4, w26
+    aa24: 00 00 00 94  	bl	0xaa24 <stmvl53l1_probe+0x4a4> // ipc_log_string+0x0
+    aa28: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x4a8> // '\x014[ST dToF] %s %d : Unable to find intr-gpio %d %d'
+    aa2c: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x4ac> // 'stmvl53l1_parse_tree'
+    aa30: e4 02 40 b9  	ldr	w4, [x23]
+    aa34: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : Unable to find intr-gpio %d %d'
+    aa38: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    aa3c: 22 31 80 52  	mov	w2, #393
+    aa40: e3 03 1a 2a  	mov	w3, w26
+    aa44: 00 00 00 94  	bl	0xaa44 <stmvl53l1_probe+0x4c4> // _printk+0x0
+    aa48: 08 00 80 12  	mov	w8, #-1
+    aa4c: e8 02 00 b9  	str	w8, [x23]
+    aa50: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x4d0> // 'boot-reg'
+    aa54: a0 8a 41 f9  	ldr	x0, [x21, #784]
+    aa58: 21 00 00 91  	add	x1, x1, #0 // 'boot-reg'
+    aa5c: e2 03 19 aa  	mov	x2, x25
+    aa60: 23 00 80 52  	mov	w3, #1
+    aa64: e4 03 1f aa  	mov	x4, xzr
+    aa68: 00 00 00 94  	bl	0xaa68 <stmvl53l1_probe+0x4e8> // of_property_read_variable_u32_array+0x0
+    aa6c: 80 e9 ff 36  	tbz	w0, #31, 0xa79c <stmvl53l1_probe+0x21c>
+    aa70: fa 03 00 2a  	mov	w26, w0
+    aa74: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    aa78: 20 01 00 b4  	cbz	x0, 0xaa9c <stmvl53l1_probe+0x51c>
+    aa7c: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x4fc> // '%s %d Unable to find boot-reg %d %d'
+    aa80: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x500> // 'stmvl53l1_parse_tree'
+    aa84: 25 03 40 b9  	ldr	w5, [x25]
+    aa88: 21 00 00 91  	add	x1, x1, #0 // '%s %d Unable to find boot-reg %d %d'
+    aa8c: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    aa90: 03 32 80 52  	mov	w3, #400
+    aa94: e4 03 1a 2a  	mov	w4, w26
+    aa98: 00 00 00 94  	bl	0xaa98 <stmvl53l1_probe+0x518> // ipc_log_string+0x0
+    aa9c: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x51c> // '\x014[ST dToF] %s %d : Unable to find boot-reg %d %d'
+    aaa0: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x520> // 'stmvl53l1_parse_tree'
+    aaa4: 24 03 40 b9  	ldr	w4, [x25]
+    aaa8: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : Unable to find boot-reg %d %d'
+    aaac: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    aab0: 02 32 80 52  	mov	w2, #400
+    aab4: e3 03 1a 2a  	mov	w3, w26
+    aab8: 00 00 00 94  	bl	0xaab8 <stmvl53l1_probe+0x538> // _printk+0x0
+    aabc: 28 05 80 52  	mov	w8, #41
+    aac0: 28 03 00 b9  	str	w8, [x25]
+    aac4: 36 ff ff 17  	b	0xa79c <stmvl53l1_probe+0x21c>
+    aac8: 88 c2 40 39  	ldrb	w8, [x20, #48]
+    aacc: 08 01 1f 32  	orr	w8, w8, #0x2
+    aad0: 88 c2 00 39  	strb	w8, [x20, #48]
+    aad4: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    aad8: 00 01 00 b4  	cbz	x0, 0xaaf8 <stmvl53l1_probe+0x578>
+    aadc: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x55c> // '%s %d get_xsdn rc = %d\n'
+    aae0: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x560> // 'stmvl53l1_parse_tree'
+    aae4: 21 00 00 91  	add	x1, x1, #0 // '%s %d get_xsdn rc = %d\n'
+    aae8: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    aaec: e3 32 80 52  	mov	w3, #407
+    aaf0: e4 03 19 2a  	mov	w4, w25
+    aaf4: 00 00 00 94  	bl	0xaaf4 <stmvl53l1_probe+0x574> // ipc_log_string+0x0
+    aaf8: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x578> // '\x014[ST dToF] %s %d : get_xsdn rc = %d\n'
+    aafc: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x57c> // 'stmvl53l1_parse_tree'
+    ab00: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : get_xsdn rc = %d\n'
+    ab04: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    ab08: e2 32 80 52  	mov	w2, #407
+    ab0c: e3 03 19 2a  	mov	w3, w25
+    ab10: 00 00 00 94  	bl	0xab10 <stmvl53l1_probe+0x590> // _printk+0x0
+    ab14: f9 22 00 35  	cbnz	w25, 0xaf70 <stmvl53l1_probe+0x9f0>
+    ab18: 88 c2 40 39  	ldrb	w8, [x20, #48]
+    ab1c: 89 22 40 b9  	ldr	w9, [x20, #32]
+    ab20: 08 19 1f 12  	and	w8, w8, #0xfe
+    ab24: 3f 05 00 31  	cmn	w9, #1
+    ab28: 88 c2 00 39  	strb	w8, [x20, #48]
+    ab2c: 21 02 00 54  	b.ne	0xab70 <stmvl53l1_probe+0x5f0>
+    ab30: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    ab34: e0 00 00 b4  	cbz	x0, 0xab50 <stmvl53l1_probe+0x5d0>
+    ab38: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x5b8> // '%s %d pwren gpio disable'
+    ab3c: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x5bc> // 'get_pwren'
+    ab40: 21 00 00 91  	add	x1, x1, #0 // '%s %d pwren gpio disable'
+    ab44: 42 00 00 91  	add	x2, x2, #0 // 'get_pwren'
+    ab48: 43 1d 80 52  	mov	w3, #234
+    ab4c: 00 00 00 94  	bl	0xab4c <stmvl53l1_probe+0x5cc> // ipc_log_string+0x0
+    ab50: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x5d0> // '\x014[ST dToF] %s %d : pwren gpio disable'
+    ab54: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x5d4> // 'get_pwren'
+    ab58: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : pwren gpio disable'
+    ab5c: 21 00 00 91  	add	x1, x1, #0 // 'get_pwren'
+    ab60: 42 1d 80 52  	mov	w2, #234
+    ab64: 00 00 00 94  	bl	0xab64 <stmvl53l1_probe+0x5e4> // _printk+0x0
+    ab68: f9 03 1f 2a  	mov	w25, wzr
+    ab6c: 48 00 00 14  	b	0xac8c <stmvl53l1_probe+0x70c>
+    ab70: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x5f0> // 'pwren-gpio'
+    ab74: a0 8a 41 f9  	ldr	x0, [x21, #784]
+    ab78: 21 00 00 91  	add	x1, x1, #0 // 'pwren-gpio'
+    ab7c: e2 03 1f 2a  	mov	w2, wzr
+    ab80: e3 03 1f aa  	mov	x3, xzr
+    ab84: 00 00 00 94  	bl	0xab84 <stmvl53l1_probe+0x604> // of_get_named_gpio_flags+0x0
+    ab88: e4 03 00 2a  	mov	w4, w0
+    ab8c: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    ab90: 9f 00 08 71  	cmp	w4, #512
+    ab94: 84 22 00 b9  	str	w4, [x20, #32]
+    ab98: 22 05 00 54  	b.hs	0xac3c <stmvl53l1_probe+0x6bc>
+    ab9c: 00 01 00 b4  	cbz	x0, 0xabbc <stmvl53l1_probe+0x63c>
+    aba0: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x620> // '%s %d pwren_gpio = %d'
+    aba4: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x624> // 'get_pwren'
+    aba8: 21 00 00 91  	add	x1, x1, #0 // '%s %d pwren_gpio = %d'
+    abac: 42 00 00 91  	add	x2, x2, #0 // 'get_pwren'
+    abb0: 63 1e 80 52  	mov	w3, #243
+    abb4: 00 00 00 94  	bl	0xabb4 <stmvl53l1_probe+0x634> // ipc_log_string+0x0
+    abb8: 84 22 40 b9  	ldr	w4, [x20, #32]
+    abbc: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x63c> // '\x013[ST dToF] %s %d : pwren_gpio = %d'
+    abc0: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x640> // 'get_pwren'
+    abc4: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : pwren_gpio = %d'
+    abc8: 21 00 00 91  	add	x1, x1, #0 // 'get_pwren'
+    abcc: 62 1e 80 52  	mov	w2, #243
+    abd0: e3 03 04 2a  	mov	w3, w4
+    abd4: 00 00 00 94  	bl	0xabd4 <stmvl53l1_probe+0x654> // _printk+0x0
+    abd8: 03 00 00 90  	adrp	x3, 0xa000 <stmvl53l1_probe+0x658> // 'vl53l1_xsdn'
+    abdc: 81 22 40 b9  	ldr	w1, [x20, #32]
+    abe0: 63 00 00 91  	add	x3, x3, #0 // 'vl53l1_xsdn'
+    abe4: e0 03 18 aa  	mov	x0, x24
+    abe8: e2 03 1f aa  	mov	x2, xzr
+    abec: 00 00 00 94  	bl	0xabec <stmvl53l1_probe+0x66c> // devm_gpio_request_one+0x0
+    abf0: f9 03 00 2a  	mov	w25, w0
+    abf4: 60 04 f8 36  	tbz	w0, #31, 0xac80 <stmvl53l1_probe+0x700>
+    abf8: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    abfc: 00 01 00 b4  	cbz	x0, 0xac1c <stmvl53l1_probe+0x69c>
+    ac00: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x680> // '%s %d fail to request xsdn, rc = %d'
+    ac04: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x684> // 'get_pwren'
+    ac08: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to request xsdn, rc = %d'
+    ac0c: 42 00 00 91  	add	x2, x2, #0 // 'get_pwren'
+    ac10: e3 1e 80 52  	mov	w3, #247
+    ac14: e4 03 19 2a  	mov	w4, w25
+    ac18: 00 00 00 94  	bl	0xac18 <stmvl53l1_probe+0x698> // ipc_log_string+0x0
+    ac1c: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x69c> // '\x013[ST dToF] %s %d : fail to request xsdn, rc = %d'
+    ac20: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x6a0> // 'get_pwren'
+    ac24: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to request xsdn, rc = %d'
+    ac28: 21 00 00 91  	add	x1, x1, #0 // 'get_pwren'
+    ac2c: e2 1e 80 52  	mov	w2, #247
+    ac30: e3 03 19 2a  	mov	w3, w25
+    ac34: 00 00 00 94  	bl	0xac34 <stmvl53l1_probe+0x6b4> // _printk+0x0
+    ac38: 15 00 00 14  	b	0xac8c <stmvl53l1_probe+0x70c>
+    ac3c: 00 01 00 b4  	cbz	x0, 0xac5c <stmvl53l1_probe+0x6dc>
+    ac40: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x6c0> // '%s %d reset gpio invalid, pwren_gpio = %d\n'
+    ac44: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x6c4> // 'get_pwren'
+    ac48: 21 00 00 91  	add	x1, x1, #0 // '%s %d reset gpio invalid, pwren_gpio = %d\n'
+    ac4c: 42 00 00 91  	add	x2, x2, #0 // 'get_pwren'
+    ac50: 03 1e 80 52  	mov	w3, #240
+    ac54: 00 00 00 94  	bl	0xac54 <stmvl53l1_probe+0x6d4> // ipc_log_string+0x0
+    ac58: 84 22 40 b9  	ldr	w4, [x20, #32]
+    ac5c: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x6dc> // '\x013[ST dToF] %s %d : reset gpio invalid, pwren_gpio = %d\n'
+    ac60: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x6e0> // 'get_pwren'
+    ac64: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : reset gpio invalid, pwren_gpio = %d\n'
+    ac68: 21 00 00 91  	add	x1, x1, #0 // 'get_pwren'
+    ac6c: 02 1e 80 52  	mov	w2, #240
+    ac70: e3 03 04 2a  	mov	w3, w4
+    ac74: 00 00 00 94  	bl	0xac74 <stmvl53l1_probe+0x6f4> // _printk+0x0
+    ac78: b9 02 80 12  	mov	w25, #-22
+    ac7c: 04 00 00 14  	b	0xac8c <stmvl53l1_probe+0x70c>
+    ac80: 88 c2 40 39  	ldrb	w8, [x20, #48]
+    ac84: 08 01 00 32  	orr	w8, w8, #0x1
+    ac88: 88 c2 00 39  	strb	w8, [x20, #48]
+    ac8c: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    ac90: 00 01 00 b4  	cbz	x0, 0xacb0 <stmvl53l1_probe+0x730>
+    ac94: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x714> // '%s %d get_pwren rc = %d\n'
+    ac98: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x718> // 'stmvl53l1_parse_tree'
+    ac9c: 21 00 00 91  	add	x1, x1, #0 // '%s %d get_pwren rc = %d\n'
+    aca0: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    aca4: 83 33 80 52  	mov	w3, #412
+    aca8: e4 03 19 2a  	mov	w4, w25
+    acac: 00 00 00 94  	bl	0xacac <stmvl53l1_probe+0x72c> // ipc_log_string+0x0
+    acb0: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x730> // '\x014[ST dToF] %s %d : get_pwren rc = %d\n'
+    acb4: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x734> // 'stmvl53l1_parse_tree'
+    acb8: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : get_pwren rc = %d\n'
+    acbc: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    acc0: 82 33 80 52  	mov	w2, #412
+    acc4: e3 03 19 2a  	mov	w3, w25
+    acc8: 00 00 00 94  	bl	0xacc8 <stmvl53l1_probe+0x748> // _printk+0x0
+    accc: f9 02 00 35  	cbnz	w25, 0xad28 <stmvl53l1_probe+0x7a8>
+    acd0: 88 c2 40 39  	ldrb	w8, [x20, #48]
+    acd4: 89 2a 40 b9  	ldr	w9, [x20, #40]
+    acd8: 08 79 1d 12  	and	w8, w8, #0xfffffffb
+    acdc: 3f 05 00 31  	cmn	w9, #1
+    ace0: 88 c2 00 39  	strb	w8, [x20, #48]
+    ace4: 01 04 00 54  	b.ne	0xad64 <stmvl53l1_probe+0x7e4>
+    ace8: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    acec: e0 00 00 b4  	cbz	x0, 0xad08 <stmvl53l1_probe+0x788>
+    acf0: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x770> // '%s %d no interrupt gpio'
+    acf4: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x774> // 'get_intr'
+    acf8: 21 00 00 91  	add	x1, x1, #0 // '%s %d no interrupt gpio'
+    acfc: 42 00 00 91  	add	x2, x2, #0 // 'get_intr'
+    ad00: 03 23 80 52  	mov	w3, #280
+    ad04: 00 00 00 94  	bl	0xad04 <stmvl53l1_probe+0x784> // ipc_log_string+0x0
+    ad08: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x788> // '\x014[ST dToF] %s %d : no interrupt gpio'
+    ad0c: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x78c> // 'get_intr'
+    ad10: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : no interrupt gpio'
+    ad14: 21 00 00 91  	add	x1, x1, #0 // 'get_intr'
+    ad18: 02 23 80 52  	mov	w2, #280
+    ad1c: 00 00 00 94  	bl	0xad1c <stmvl53l1_probe+0x79c> // _printk+0x0
+    ad20: f9 03 1f 2a  	mov	w25, wzr
+    ad24: 6a 00 00 14  	b	0xaecc <stmvl53l1_probe+0x94c>
+    ad28: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    ad2c: e0 00 00 b4  	cbz	x0, 0xad48 <stmvl53l1_probe+0x7c8>
+    ad30: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x7b0> // '%s %d no pwren_gpio'
+    ad34: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x7b4> // 'stmvl53l1_parse_tree'
+    ad38: 21 00 00 91  	add	x1, x1, #0 // '%s %d no pwren_gpio'
+    ad3c: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    ad40: c3 33 80 52  	mov	w3, #414
+    ad44: 00 00 00 94  	bl	0xad44 <stmvl53l1_probe+0x7c4> // ipc_log_string+0x0
+    ad48: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x7c8> // '\x013[ST dToF] %s %d : no pwren_gpio'
+    ad4c: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x7cc> // 'stmvl53l1_parse_tree'
+    ad50: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : no pwren_gpio'
+    ad54: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    ad58: c2 33 80 52  	mov	w2, #414
+    ad5c: 00 00 00 94  	bl	0xad5c <stmvl53l1_probe+0x7dc> // _printk+0x0
+    ad60: 72 00 00 14  	b	0xaf28 <stmvl53l1_probe+0x9a8>
+    ad64: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x7e4> // 'intr-gpio'
+    ad68: a0 8a 41 f9  	ldr	x0, [x21, #784]
+    ad6c: 21 00 00 91  	add	x1, x1, #0 // 'intr-gpio'
+    ad70: e2 03 1f 2a  	mov	w2, wzr
+    ad74: e3 03 1f aa  	mov	x3, xzr
+    ad78: 00 00 00 94  	bl	0xad78 <stmvl53l1_probe+0x7f8> // of_get_named_gpio_flags+0x0
+    ad7c: e4 03 00 2a  	mov	w4, w0
+    ad80: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    ad84: 9f 00 08 71  	cmp	w4, #512
+    ad88: e4 02 00 b9  	str	w4, [x23]
+    ad8c: 82 02 00 54  	b.hs	0xaddc <stmvl53l1_probe+0x85c>
+    ad90: 00 01 00 b4  	cbz	x0, 0xadb0 <stmvl53l1_probe+0x830>
+    ad94: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x814> // '%s %d intr_gpio = %d'
+    ad98: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x818> // 'get_intr'
+    ad9c: 21 00 00 91  	add	x1, x1, #0 // '%s %d intr_gpio = %d'
+    ada0: 42 00 00 91  	add	x2, x2, #0 // 'get_intr'
+    ada4: 43 24 80 52  	mov	w3, #290
+    ada8: 00 00 00 94  	bl	0xada8 <stmvl53l1_probe+0x828> // ipc_log_string+0x0
+    adac: e4 02 40 b9  	ldr	w4, [x23]
+    adb0: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x830> // '\x013[ST dToF] %s %d : intr_gpio = %d'
+    adb4: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x834> // 'get_intr'
+    adb8: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : intr_gpio = %d'
+    adbc: 21 00 00 91  	add	x1, x1, #0 // 'get_intr'
+    adc0: 42 24 80 52  	mov	w2, #290
+    adc4: e3 03 04 2a  	mov	w3, w4
+    adc8: 00 00 00 94  	bl	0xadc8 <stmvl53l1_probe+0x848> // _printk+0x0
+    adcc: e0 02 40 b9  	ldr	w0, [x23]
+    add0: 80 02 00 35  	cbnz	w0, 0xae20 <stmvl53l1_probe+0x8a0>
+    add4: e1 03 1f 2a  	mov	w1, wzr
+    add8: 1e 00 00 14  	b	0xae50 <stmvl53l1_probe+0x8d0>
+    addc: 00 01 00 b4  	cbz	x0, 0xadfc <stmvl53l1_probe+0x87c>
+    ade0: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x860> // '%s %d interrupt gpio invalid, intr_gpio = %d\n'
+    ade4: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x864> // 'get_intr'
+    ade8: 21 00 00 91  	add	x1, x1, #0 // '%s %d interrupt gpio invalid, intr_gpio = %d\n'
+    adec: 42 00 00 91  	add	x2, x2, #0 // 'get_intr'
+    adf0: c3 23 80 52  	mov	w3, #286
+    adf4: 00 00 00 94  	bl	0xadf4 <stmvl53l1_probe+0x874> // ipc_log_string+0x0
+    adf8: e4 02 40 b9  	ldr	w4, [x23]
+    adfc: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x87c> // '\x013[ST dToF] %s %d : interrupt gpio invalid, intr_gpio = %d\n'
+    ae00: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x880> // 'get_intr'
+    ae04: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : interrupt gpio invalid, intr_gpio = %d\n'
+    ae08: 21 00 00 91  	add	x1, x1, #0 // 'get_intr'
+    ae0c: c2 23 80 52  	mov	w2, #286
+    ae10: e3 03 04 2a  	mov	w3, w4
+    ae14: 00 00 00 94  	bl	0xae14 <stmvl53l1_probe+0x894> // _printk+0x0
+    ae18: b9 02 80 12  	mov	w25, #-22
+    ae1c: 2c 00 00 14  	b	0xaecc <stmvl53l1_probe+0x94c>
+    ae20: 68 03 40 f9  	ldr	x8, [x27] // vl53l1_ctx+0x8fe8
+    ae24: 28 01 00 b4  	cbz	x8, 0xae48 <stmvl53l1_probe+0x8c8>
+    ae28: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x8a8> // '%s %d free vl53l1 interrupt gpio.'
+    ae2c: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x8ac> // 'get_intr'
+    ae30: 21 00 00 91  	add	x1, x1, #0 // '%s %d free vl53l1 interrupt gpio.'
+    ae34: 42 00 00 91  	add	x2, x2, #0 // 'get_intr'
+    ae38: e0 03 08 aa  	mov	x0, x8
+    ae3c: a3 24 80 52  	mov	w3, #293
+    ae40: 00 00 00 94  	bl	0xae40 <stmvl53l1_probe+0x8c0> // ipc_log_string+0x0
+    ae44: e0 02 40 b9  	ldr	w0, [x23]
+    ae48: 00 00 00 94  	bl	0xae48 <stmvl53l1_probe+0x8c8> // gpio_free+0x0
+    ae4c: e1 02 40 b9  	ldr	w1, [x23]
+    ae50: 03 00 00 90  	adrp	x3, 0xa000 <stmvl53l1_probe+0x8d0> // 'vl53l1_intr'
+    ae54: e0 03 18 aa  	mov	x0, x24
+    ae58: 63 00 00 91  	add	x3, x3, #0 // 'vl53l1_intr'
+    ae5c: 22 00 80 52  	mov	w2, #1
+    ae60: 00 00 00 94  	bl	0xae60 <stmvl53l1_probe+0x8e0> // devm_gpio_request_one+0x0
+    ae64: f9 03 00 2a  	mov	w25, w0
+    ae68: 40 02 f8 36  	tbz	w0, #31, 0xaeb0 <stmvl53l1_probe+0x930>
+    ae6c: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    ae70: 00 01 00 b4  	cbz	x0, 0xae90 <stmvl53l1_probe+0x910>
+    ae74: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x8f4> // '%s %d fail to request intr, rc = %d'
+    ae78: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x8f8> // 'get_intr'
+    ae7c: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to request intr, rc = %d'
+    ae80: 42 00 00 91  	add	x2, x2, #0 // 'get_intr'
+    ae84: 43 25 80 52  	mov	w3, #298
+    ae88: e4 03 19 2a  	mov	w4, w25
+    ae8c: 00 00 00 94  	bl	0xae8c <stmvl53l1_probe+0x90c> // ipc_log_string+0x0
+    ae90: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x910> // '\x013[ST dToF] %s %d : fail to request intr, rc = %d'
+    ae94: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x914> // 'get_intr'
+    ae98: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to request intr, rc = %d'
+    ae9c: 21 00 00 91  	add	x1, x1, #0 // 'get_intr'
+    aea0: 42 25 80 52  	mov	w2, #298
+    aea4: e3 03 19 2a  	mov	w3, w25
+    aea8: 00 00 00 94  	bl	0xaea8 <stmvl53l1_probe+0x928> // _printk+0x0
+    aeac: 08 00 00 14  	b	0xaecc <stmvl53l1_probe+0x94c>
+    aeb0: 80 2a 40 b9  	ldr	w0, [x20, #40]
+    aeb4: 00 00 00 94  	bl	0xaeb4 <stmvl53l1_probe+0x934> // gpio_to_desc+0x0
+    aeb8: 00 00 00 94  	bl	0xaeb8 <stmvl53l1_probe+0x938> // gpiod_to_irq+0x0
+    aebc: 88 c2 40 39  	ldrb	w8, [x20, #48]
+    aec0: 80 36 00 b9  	str	w0, [x20, #52]
+    aec4: 08 01 1e 32  	orr	w8, w8, #0x4
+    aec8: 88 c2 00 39  	strb	w8, [x20, #48]
+    aecc: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    aed0: 00 01 00 b4  	cbz	x0, 0xaef0 <stmvl53l1_probe+0x970>
+    aed4: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x954> // '%s %d get_intr rc = %d\n'
+    aed8: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x958> // 'stmvl53l1_parse_tree'
+    aedc: 21 00 00 91  	add	x1, x1, #0 // '%s %d get_intr rc = %d\n'
+    aee0: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_parse_tree'
+    aee4: 63 34 80 52  	mov	w3, #419
+    aee8: e4 03 19 2a  	mov	w4, w25
+    aeec: 00 00 00 94  	bl	0xaeec <stmvl53l1_probe+0x96c> // ipc_log_string+0x0
+    aef0: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0x970> // '\x014[ST dToF] %s %d : get_intr rc = %d\n'
+    aef4: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x974> // 'stmvl53l1_parse_tree'
+    aef8: 00 00 00 91  	add	x0, x0, #0 // '\x014[ST dToF] %s %d : get_intr rc = %d\n'
+    aefc: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_parse_tree'
+    af00: 62 34 80 52  	mov	w2, #419
+    af04: e3 03 19 2a  	mov	w3, w25
+    af08: 00 00 00 94  	bl	0xaf08 <stmvl53l1_probe+0x988> // _printk+0x0
+    af0c: 39 03 00 34  	cbz	w25, 0xaf70 <stmvl53l1_probe+0x9f0>
+    af10: 80 0e 40 f9  	ldr	x0, [x20, #24]
+    af14: 60 00 00 b4  	cbz	x0, 0xaf20 <stmvl53l1_probe+0x9a0>
+    af18: 00 00 00 94  	bl	0xaf18 <stmvl53l1_probe+0x998> // regulator_put+0x0
+    af1c: 9f 0e 00 f9  	str	xzr, [x20, #24]
+    af20: e0 03 14 aa  	mov	x0, x20
+    af24: 00 00 00 94  	bl	0xaf24 <stmvl53l1_probe+0x9a4> // +0xb5ec
+    af28: 88 c2 40 39  	ldrb	w8, [x20, #48]
+    af2c: e8 01 08 36  	tbz	w8, #1, 0xaf68 <stmvl53l1_probe+0x9e8>
+    af30: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    af34: 00 01 00 b4  	cbz	x0, 0xaf54 <stmvl53l1_probe+0x9d4>
+    af38: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x9b8> // '%s %d release xsdn_gpio %d'
+    af3c: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x9bc> // 'put_xsdn'
+    af40: c4 02 40 b9  	ldr	w4, [x22]
+    af44: 21 00 00 91  	add	x1, x1, #0 // '%s %d release xsdn_gpio %d'
+    af48: 42 00 00 91  	add	x2, x2, #0 // 'put_xsdn'
+    af4c: 83 1b 80 52  	mov	w3, #220
+    af50: 00 00 00 94  	bl	0xaf50 <stmvl53l1_probe+0x9d0> // ipc_log_string+0x0
+    af54: 80 26 40 b9  	ldr	w0, [x20, #36]
+    af58: 00 00 00 94  	bl	0xaf58 <stmvl53l1_probe+0x9d8> // gpio_free+0x0
+    af5c: 88 c2 40 39  	ldrb	w8, [x20, #48]
+    af60: 08 79 1e 12  	and	w8, w8, #0xfffffffd
+    af64: 88 c2 00 39  	strb	w8, [x20, #48]
+    af68: 08 00 80 12  	mov	w8, #-1
+    af6c: c8 02 00 b9  	str	w8, [x22]
+    af70: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    af74: 00 01 00 b4  	cbz	x0, 0xaf94 <stmvl53l1_probe+0xa14>
+    af78: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0x9f8> // '%s %d stmvl53l1_parse_tree rc = %d\n'
+    af7c: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0x9fc> // 'stmvl53l1_probe'
+    af80: 21 00 00 91  	add	x1, x1, #0 // '%s %d stmvl53l1_parse_tree rc = %d\n'
+    af84: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_probe'
+    af88: 43 3c 80 52  	mov	w3, #482
+    af8c: e4 03 19 2a  	mov	w4, w25
+    af90: 00 00 00 94  	bl	0xaf90 <stmvl53l1_probe+0xa10> // ipc_log_string+0x0
+    af94: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0xa14> // '\x013[ST dToF] %s %d : stmvl53l1_parse_tree rc = %d\n'
+    af98: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0xa18> // 'stmvl53l1_probe'
+    af9c: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : stmvl53l1_parse_tree rc = %d\n'
+    afa0: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_probe'
+    afa4: 42 3c 80 52  	mov	w2, #482
+    afa8: e3 03 19 2a  	mov	w3, w25
+    afac: 00 00 00 94  	bl	0xafac <stmvl53l1_probe+0xa2c> // _printk+0x0
+    afb0: 79 05 00 35  	cbnz	w25, 0xb05c <stmvl53l1_probe+0xadc>
+    afb4: e0 03 13 aa  	mov	x0, x19
+    afb8: 00 00 00 94  	bl	0xafb8 <stmvl53l1_probe+0xa38> // stmvl53l1_power_up_i2c+0x0
+    afbc: e0 03 13 aa  	mov	x0, x19
+    afc0: b3 5e 00 f9  	str	x19, [x21, #184]
+    afc4: 00 00 00 94  	bl	0xafc4 <stmvl53l1_probe+0xa44> // stmvl53l1_setup+0x0
+    afc8: 68 03 40 f9  	ldr	x8, [x27] // vl53l1_ctx+0x8fe8
+    afcc: f5 03 00 2a  	mov	w21, w0
+    afd0: 28 01 00 b4  	cbz	x8, 0xaff4 <stmvl53l1_probe+0xa74>
+    afd4: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0xa54> // '%s %d stmvl53l1_setup rc = %d\n'
+    afd8: 02 00 00 90  	adrp	x2, 0xa000 <stmvl53l1_probe+0xa58> // 'stmvl53l1_probe'
+    afdc: 21 00 00 91  	add	x1, x1, #0 // '%s %d stmvl53l1_setup rc = %d\n'
+    afe0: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_probe'
+    afe4: e0 03 08 aa  	mov	x0, x8
+    afe8: 23 3e 80 52  	mov	w3, #497
+    afec: e4 03 15 2a  	mov	w4, w21
+    aff0: 00 00 00 94  	bl	0xaff0 <stmvl53l1_probe+0xa70> // ipc_log_string+0x0
+    aff4: 00 00 00 90  	adrp	x0, 0xa000 <stmvl53l1_probe+0xa74> // '\x013[ST dToF] %s %d : stmvl53l1_setup rc = %d\n'
+    aff8: 01 00 00 90  	adrp	x1, 0xa000 <stmvl53l1_probe+0xa78> // 'stmvl53l1_probe'
+    affc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : stmvl53l1_setup rc = %d\n'
+    b000: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_probe'
+    b004: 22 3e 80 52  	mov	w2, #497
+    b008: e3 03 15 2a  	mov	w3, w21
+    b00c: 00 00 00 94  	bl	0xb00c <stmvl53l1_probe+0xa8c> // _printk+0x0
+    b010: 95 04 00 35  	cbnz	w21, 0xb0a0 <stmvl53l1_probe+0xb20>
+    b014: 28 00 80 52  	mov	w8, #1
+    b018: 88 12 00 b9  	str	w8, [x20, #16]
+    b01c: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    b020: e0 00 00 b4  	cbz	x0, 0xb03c <stmvl53l1_probe+0xabc>
+    b024: 01 00 00 90  	adrp	x1, 0xb000 <stmvl53l1_probe+0xaa4> // '%s %d vl53l1_probe End\n'
+    b028: 02 00 00 90  	adrp	x2, 0xb000 <stmvl53l1_probe+0xaa8> // 'stmvl53l1_probe'
+    b02c: 21 00 00 91  	add	x1, x1, #0 // '%s %d vl53l1_probe End\n'
+    b030: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_probe'
+    b034: e3 3f 80 52  	mov	w3, #511
+    b038: 00 00 00 94  	bl	0xb038 <stmvl53l1_probe+0xab8> // ipc_log_string+0x0
+    b03c: 00 00 00 90  	adrp	x0, 0xb000 <stmvl53l1_probe+0xabc> // '\x013[ST dToF] %s %d : vl53l1_probe End\n'
+    b040: 01 00 00 90  	adrp	x1, 0xb000 <stmvl53l1_probe+0xac0> // 'stmvl53l1_probe'
+    b044: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : vl53l1_probe End\n'
+    b048: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_probe'
+    b04c: e2 3f 80 52  	mov	w2, #511
+    b050: 00 00 00 94  	bl	0xb050 <stmvl53l1_probe+0xad0> // _printk+0x0
+    b054: e0 03 1f 2a  	mov	w0, wzr
+    b058: 80 fd ff 17  	b	0xa658 <stmvl53l1_probe+0xd8>
+    b05c: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    b060: 00 01 00 b4  	cbz	x0, 0xb080 <stmvl53l1_probe+0xb00>
+    b064: 01 00 00 90  	adrp	x1, 0xb000 <stmvl53l1_probe+0xae4> // '%s %d fail to stmvl53l1_parse_tree, rc = %d'
+    b068: 02 00 00 90  	adrp	x2, 0xb000 <stmvl53l1_probe+0xae8> // 'stmvl53l1_probe'
+    b06c: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to stmvl53l1_parse_tree, rc = %d'
+    b070: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_probe'
+    b074: 83 3c 80 52  	mov	w3, #484
+    b078: e4 03 19 2a  	mov	w4, w25
+    b07c: 00 00 00 94  	bl	0xb07c <stmvl53l1_probe+0xafc> // ipc_log_string+0x0
+    b080: 00 00 00 90  	adrp	x0, 0xb000 <stmvl53l1_probe+0xb00> // '\x013[ST dToF] %s %d : fail to stmvl53l1_parse_tree, rc = %d'
+    b084: 01 00 00 90  	adrp	x1, 0xb000 <stmvl53l1_probe+0xb04> // 'stmvl53l1_probe'
+    b088: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to stmvl53l1_parse_tree, rc = %d'
+    b08c: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_probe'
+    b090: 82 3c 80 52  	mov	w2, #484
+    b094: e3 03 19 2a  	mov	w3, w25
+    b098: 00 00 00 94  	bl	0xb098 <stmvl53l1_probe+0xb18> // _printk+0x0
+    b09c: 13 00 00 14  	b	0xb0e8 <stmvl53l1_probe+0xb68>
+    b0a0: 60 03 40 f9  	ldr	x0, [x27] // vl53l1_ctx+0x8fe8
+    b0a4: 00 01 00 b4  	cbz	x0, 0xb0c4 <stmvl53l1_probe+0xb44>
+    b0a8: 01 00 00 90  	adrp	x1, 0xb000 <stmvl53l1_probe+0xb28> // '%s %d fail to stmvl53l1_setup, rc = %d'
+    b0ac: 02 00 00 90  	adrp	x2, 0xb000 <stmvl53l1_probe+0xb2c> // 'stmvl53l1_probe'
+    b0b0: 21 00 00 91  	add	x1, x1, #0 // '%s %d fail to stmvl53l1_setup, rc = %d'
+    b0b4: 42 00 00 91  	add	x2, x2, #0 // 'stmvl53l1_probe'
+    b0b8: 63 3e 80 52  	mov	w3, #499
+    b0bc: e4 03 15 2a  	mov	w4, w21
+    b0c0: 00 00 00 94  	bl	0xb0c0 <stmvl53l1_probe+0xb40> // ipc_log_string+0x0
+    b0c4: 00 00 00 90  	adrp	x0, 0xb000 <stmvl53l1_probe+0xb44> // '\x013[ST dToF] %s %d : fail to stmvl53l1_setup, rc = %d'
+    b0c8: 01 00 00 90  	adrp	x1, 0xb000 <stmvl53l1_probe+0xb48> // 'stmvl53l1_probe'
+    b0cc: 00 00 00 91  	add	x0, x0, #0 // '\x013[ST dToF] %s %d : fail to stmvl53l1_setup, rc = %d'
+    b0d0: 21 00 00 91  	add	x1, x1, #0 // 'stmvl53l1_probe'
+    b0d4: 62 3e 80 52  	mov	w2, #499
+    b0d8: e3 03 15 2a  	mov	w3, w21
+    b0dc: 00 00 00 94  	bl	0xb0dc <stmvl53l1_probe+0xb5c> // _printk+0x0
+    b0e0: e0 03 14 aa  	mov	x0, x20
+    b0e4: 00 00 00 94  	bl	0xb0e4 <stmvl53l1_probe+0xb64> // +0xb340
+    b0e8: e0 03 13 aa  	mov	x0, x19
+    b0ec: 00 00 00 94  	bl	0xb0ec <stmvl53l1_probe+0xb6c> // kfree+0x0
+    b0f0: e0 03 14 aa  	mov	x0, x20
+    b0f4: 00 00 00 94  	bl	0xb0f4 <stmvl53l1_probe+0xb74> // kfree+0x0
+    b0f8: 00 00 80 12  	mov	w0, #-1
+    b0fc: 57 fd ff 17  	b	0xa658 <stmvl53l1_probe+0xd8>
+    b100: 00 00 00 94  	bl	0xb100 <stmvl53l1_probe+0xb80> // __stack_chk_fail+0x0

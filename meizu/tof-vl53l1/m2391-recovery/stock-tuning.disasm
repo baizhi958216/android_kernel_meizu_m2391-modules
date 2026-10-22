@@ -1,0 +1,303 @@
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/vl53l1.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000025b48 <VL53L1_init_xtalk_config_struct>:
+   25b48: 3f 23 03 d5  	hint	#25
+   25b4c: 08 14 40 79  	ldrh	w8, [x0, #10]
+   25b50: 0b 08 80 52  	mov	w11, #64
+   25b54: 28 00 00 b9  	str	w8, [x1]
+   25b58: 09 18 40 79  	ldrh	w9, [x0, #12]
+   25b5c: 29 08 00 79  	strh	w9, [x1, #4]
+   25b60: 0a 1c 40 79  	ldrh	w10, [x0, #14]
+   25b64: 2a 0c 00 79  	strh	w10, [x1, #6]
+   25b68: 0c 14 40 79  	ldrh	w12, [x0, #10]
+   25b6c: 2c 08 00 b9  	str	w12, [x1, #8]
+   25b70: 0c 18 40 79  	ldrh	w12, [x0, #12]
+   25b74: 2c 18 00 79  	strh	w12, [x1, #12]
+   25b78: 0c 1c 40 79  	ldrh	w12, [x0, #14]
+   25b7c: 3f 20 01 b8  	stur	wzr, [x1, #18]
+   25b80: 2b 58 00 39  	strb	w11, [x1, #22]
+   25b84: 2c 1c 00 79  	strh	w12, [x1, #14]
+   25b88: c8 00 00 35  	cbnz	w8, 0x25ba0 <VL53L1_init_xtalk_config_struct+0x58>
+   25b8c: a9 00 00 35  	cbnz	w9, 0x25ba0 <VL53L1_init_xtalk_config_struct+0x58>
+   25b90: 8a 00 00 35  	cbnz	w10, 0x25ba0 <VL53L1_init_xtalk_config_struct+0x58>
+   25b94: e8 03 1f 2a  	mov	w8, wzr
+   25b98: 3f 40 00 39  	strb	wzr, [x1, #16]
+   25b9c: 1d 00 00 14  	b	0x25c10 <VL53L1_init_xtalk_config_struct+0xc8>
+   25ba0: 29 3d 00 13  	sxth	w9, w9
+   25ba4: 4a 3d 00 13  	sxth	w10, w10
+   25ba8: 08 6d 1c 53  	lsl	w8, w8, #4
+   25bac: eb 43 09 4b  	neg	w11, w9, lsl #16
+   25bb0: ec 43 0a 4b  	neg	w12, w10, lsl #16
+   25bb4: 29 7d 1f 13  	asr	w9, w9, #31
+   25bb8: 4a 7d 1f 13  	asr	w10, w10, #31
+   25bbc: 29 2d 8b 0a  	and	w9, w9, w11, asr #11
+   25bc0: 4a 2d 8c 0a  	and	w10, w10, w12, asr #11
+   25bc4: 6b ba 89 52  	mov	w11, #19923
+   25bc8: 49 01 09 0b  	add	w9, w10, w9
+   25bcc: 4b 0c a2 72  	movk	w11, #4194, lsl #16
+   25bd0: 29 7d 2b 9b  	smull	x9, w9, w11
+   25bd4: 08 7d ab 9b  	umull	x8, w8, w11
+   25bd8: 2b 00 80 52  	mov	w11, #1
+   25bdc: 2a fd 7f d3  	lsr	x10, x9, #63
+   25be0: 29 fd 66 d3  	lsr	x9, x9, #38
+   25be4: 08 fd 66 d3  	lsr	x8, x8, #38
+   25be8: 29 01 0a 0b  	add	w9, w9, w10
+   25bec: 28 01 08 0b  	add	w8, w9, w8
+   25bf0: 09 02 80 52  	mov	w9, #16
+   25bf4: ea 05 80 52  	mov	w10, #47
+   25bf8: 2b 40 00 39  	strb	w11, [x1, #16]
+   25bfc: 09 65 1a 33  	bfi	w9, w8, #6, #26
+   25c00: 0a 65 1a 33  	bfi	w10, w8, #6, #26
+   25c04: 3f 01 00 71  	cmp	w9, #0
+   25c08: 48 b1 89 1a  	csel	w8, w10, w9, lt
+   25c0c: 08 7d 05 13  	asr	w8, w8, #5
+   25c10: c9 f9 9f d2  	mov	x9, #65486
+   25c14: e0 03 1f 2a  	mov	w0, wzr
+   25c18: 49 06 a0 f2  	movk	x9, #50, lsl #16
+   25c1c: 28 30 00 79  	strh	w8, [x1, #24]
+   25c20: 09 77 c1 f2  	movk	x9, #3000, lsl #32
+   25c24: 89 11 e0 f2  	movk	x9, #140, lsl #48
+   25c28: 29 a0 01 f8  	stur	x9, [x1, #26]
+   25c2c: bf 23 03 d5  	hint	#29
+   25c30: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/vl53l1.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000025c34 <VL53L1_init_xtalk_extract_config_struct>:
+   25c34: 3f 23 03 d5  	hint	#25
+   25c38: e8 03 00 aa  	mov	x8, x0
+   25c3c: 09 80 82 52  	mov	w9, #5120
+   25c40: 0b 53 87 d2  	mov	x11, #15000
+   25c44: ea 00 80 52  	mov	w10, #7
+   25c48: 0b fa c0 f2  	movk	x11, #2000, lsl #32
+   25c4c: 0c e2 84 52  	mov	w12, #10000
+   25c50: 09 01 00 79  	strh	w9, [x8]
+   25c54: 49 f7 9f d2  	mov	x9, #65466
+   25c58: c9 08 a0 f2  	movk	x9, #70, lsl #16
+   25c5c: e0 03 1f 2a  	mov	w0, wzr
+   25c60: 09 50 c0 f2  	movk	x9, #640, lsl #32
+   25c64: 0a 41 00 39  	strb	w10, [x8, #16]
+   25c68: 89 11 e0 f2  	movk	x9, #140, lsl #48
+   25c6c: 0b 41 00 f8  	stur	x11, [x8, #4]
+   25c70: 0c 0d 00 b9  	str	w12, [x8, #12]
+   25c74: 09 21 01 f8  	stur	x9, [x8, #18]
+   25c78: bf 23 03 d5  	hint	#29
+   25c7c: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/vl53l1.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000025cf8 <VL53L1_init_hist_post_process_config_struct>:
+   25cf8: 3f 23 03 d5  	hint	#25
+   25cfc: 89 20 80 52  	mov	w9, #260
+   25d00: 2a 00 8a 52  	mov	w10, #20481
+   25d04: 29 40 a0 72  	movk	w9, #513, lsl #16
+   25d08: e8 03 00 2a  	mov	w8, w0
+   25d0c: 8b 0c 80 52  	mov	w11, #100
+   25d10: e0 03 1f 2a  	mov	w0, wzr
+   25d14: 2a 08 00 79  	strh	w10, [x1, #4]
+   25d18: 0a 02 80 52  	mov	w10, #16
+   25d1c: 29 00 00 b9  	str	w9, [x1]
+   25d20: a9 07 82 52  	mov	w9, #4157
+   25d24: 2b 18 00 39  	strb	w11, [x1, #6]
+   25d28: 2a 0c 00 b9  	str	w10, [x1, #12]
+   25d2c: 8a 16 80 52  	mov	w10, #180
+   25d30: 29 10 00 79  	strh	w9, [x1, #8]
+   25d34: 29 00 80 52  	mov	w9, #1
+   25d38: 2b 14 00 b9  	str	w11, [x1, #20]
+   25d3c: 6b f8 80 52  	mov	w11, #1987
+   25d40: 2a a0 01 b8  	stur	w10, [x1, #26]
+   25d44: ca f9 9f d2  	mov	x10, #65486
+   25d48: 29 60 00 39  	strb	w9, [x1, #24]
+   25d4c: 09 01 91 d2  	mov	x9, #34824
+   25d50: 09 01 a0 f2  	movk	x9, #8, lsl #16
+   25d54: 4a 06 a0 f2  	movk	x10, #50, lsl #16
+   25d58: 09 00 c1 f2  	movk	x9, #2048, lsl #32
+   25d5c: 0a 77 c1 f2  	movk	x10, #3000, lsl #32
+   25d60: 8a 11 e0 f2  	movk	x10, #140, lsl #48
+   25d64: 28 a0 00 39  	strb	w8, [x1, #40]
+   25d68: 08 0a 80 52  	mov	w8, #80
+   25d6c: 2b 3c 00 79  	strh	w11, [x1, #30]
+   25d70: 29 10 00 f9  	str	x9, [x1, #32]
+   25d74: 49 06 80 52  	mov	w9, #50
+   25d78: 2a 40 03 f8  	stur	x10, [x1, #52]
+   25d7c: 28 f0 00 39  	strb	w8, [x1, #60]
+   25d80: 29 20 00 79  	strh	w9, [x1, #16]
+   25d84: 29 7c 00 79  	strh	w9, [x1, #62]
+   25d88: bf 23 03 d5  	hint	#29
+   25d8c: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/vl53l1.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+0000000000025dc0 <VL53L1_init_tuning_parm_storage_struct>:
+   25dc0: 3f 23 03 d5  	hint	#25
+   25dc4: e8 03 00 aa  	mov	x8, x0
+   25dc8: 09 04 80 52  	mov	w9, #32
+   25dcc: 8a f2 85 52  	mov	w10, #12180
+   25dd0: c9 01 a0 72  	movk	w9, #14, lsl #16
+   25dd4: 6c c0 80 d2  	mov	x12, #1539
+   25dd8: cb 41 81 d2  	mov	x11, #2574
+   25ddc: cc c0 a0 f2  	movk	x12, #1542, lsl #16
+   25de0: cb c0 a1 f2  	movk	x11, #3590, lsl #16
+   25de4: 0a 09 00 79  	strh	w10, [x8, #4]
+   25de8: ea 83 09 b2  	mov	x10, #36029346783166592
+   25dec: 09 01 00 b9  	str	w9, [x8]
+   25df0: e9 8f 0e b2  	mov	x9, #16888756304609340
+   25df4: 0a 01 c2 f2  	movk	x10, #4104, lsl #32
+   25df8: 09 10 e0 f2  	movk	x9, #128, lsl #48
+   25dfc: 2a 40 e0 f2  	movk	x10, #513, lsl #48
+   25e00: 4c 20 c4 f2  	movk	x12, #8450, lsl #32
+   25e04: 4b c1 c0 f2  	movk	x11, #1546, lsl #32
+   25e08: e0 03 1f 2a  	mov	w0, wzr
+   25e0c: 2b a1 e0 f2  	movk	x11, #1289, lsl #48
+   25e10: 1f 59 00 39  	strb	wzr, [x8, #22]
+   25e14: 09 a9 01 a9  	stp	x9, x10, [x8, #24]
+   25e18: 09 7d 80 d2  	mov	x9, #1000
+   25e1c: 0a 65 84 d2  	mov	x10, #9000
+   25e20: 0c e1 00 f8  	stur	x12, [x8, #14]
+   25e24: 0c 40 81 d2  	mov	x12, #2560
+   25e28: 09 53 c7 f2  	movk	x9, #15000, lsl #32
+   25e2c: 0a ee c2 f2  	movk	x10, #6000, lsl #32
+   25e30: 0c 80 a2 f2  	movk	x12, #5120, lsl #16
+   25e34: 0c 80 c2 f2  	movk	x12, #5120, lsl #32
+   25e38: 0b 61 00 f8  	stur	x11, [x8, #6]
+   25e3c: 2b 40 80 52  	mov	w11, #513
+   25e40: 0c 40 e1 f2  	movk	x12, #2560, lsl #48
+   25e44: 09 a9 03 a9  	stp	x9, x10, [x8, #56]
+   25e48: 09 fa 80 d2  	mov	x9, #2000
+   25e4c: 09 fa c0 f2  	movk	x9, #2000, lsl #32
+   25e50: 0a c3 9e d2  	mov	x10, #63000
+   25e54: 0b 51 00 79  	strh	w11, [x8, #40]
+   25e58: 0b 53 87 d2  	mov	x11, #15000
+   25e5c: 0c c1 02 f8  	stur	x12, [x8, #44]
+   25e60: 0c ee 82 d2  	mov	x12, #6000
+   25e64: 0b 65 c4 f2  	movk	x11, #9000, lsl #32
+   25e68: 0c 7d c0 f2  	movk	x12, #1000, lsl #32
+   25e6c: 8a 38 c1 f2  	movk	x10, #2500, lsl #32
+   25e70: 09 a5 05 a9  	stp	x9, x9, [x8, #88]
+   25e74: 29 00 80 52  	mov	w9, #1
+   25e78: 1f a9 00 39  	strb	wzr, [x8, #42]
+   25e7c: 0b b1 04 a9  	stp	x11, x12, [x8, #72]
+   25e80: 8b 38 81 d2  	mov	x11, #2500
+   25e84: 0a c1 06 f8  	stur	x10, [x8, #108]
+   25e88: 0a e8 83 52  	mov	w10, #8000
+   25e8c: 09 69 00 b9  	str	w9, [x8, #104]
+   25e90: 0b 59 c6 f2  	movk	x11, #13000, lsl #32
+   25e94: 09 11 02 39  	strb	w9, [x8, #132]
+   25e98: 09 fa 80 d2  	mov	x9, #2000
+   25e9c: c9 57 a1 f2  	movk	x9, #2750, lsl #16
+   25ea0: 0a c1 07 f8  	stur	x10, [x8, #124]
+   25ea4: 49 1f c0 f2  	movk	x9, #250, lsl #32
+   25ea8: 0a 53 87 52  	mov	w10, #15000
+   25eac: 09 7d e0 f2  	movk	x9, #1000, lsl #48
+   25eb0: 0b 41 07 f8  	stur	x11, [x8, #116]
+   25eb4: 0b 00 85 52  	mov	w11, #10240
+   25eb8: 1f e9 00 b9  	str	wzr, [x8, #232]
+   25ebc: 0a 89 00 b9  	str	w10, [x8, #136]
+   25ec0: 4a 9c 80 d2  	mov	x10, #1250
+   25ec4: 09 e1 08 f8  	stur	x9, [x8, #142]
+   25ec8: 89 1f 81 d2  	mov	x9, #2300
+   25ecc: 0b 69 00 79  	strh	w11, [x8, #52]
+   25ed0: cb 20 80 52  	mov	w11, #262
+   25ed4: ca da a0 f2  	movk	x10, #1750, lsl #16
+   25ed8: 89 1f c1 f2  	movk	x9, #2300, lsl #32
+   25edc: 4a 9c c0 f2  	movk	x10, #1250, lsl #32
+   25ee0: 49 7d e1 f2  	movk	x9, #3050, lsl #48
+   25ee4: ca da e0 f2  	movk	x10, #1750, lsl #48
+   25ee8: 0b 19 01 79  	strh	w11, [x8, #140]
+   25eec: 0b e7 9f d2  	mov	x11, #65336
+   25ef0: 0b 19 a0 f2  	movk	x11, #200, lsl #16
+   25ef4: 09 61 0a f8  	stur	x9, [x8, #166]
+   25ef8: 49 1f 80 d2  	mov	x9, #250
+   25efc: 4b 1f c0 f2  	movk	x11, #250, lsl #32
+   25f00: 0a 61 09 f8  	stur	x10, [x8, #150]
+   25f04: 0a 3f 82 d2  	mov	x10, #4600
+   25f08: 49 9c a0 f2  	movk	x9, #1250, lsl #16
+   25f0c: 4b 9c e0 f2  	movk	x11, #1250, lsl #48
+   25f10: 4a 7d a1 f2  	movk	x10, #3050, lsl #16
+   25f14: 49 96 c1 f2  	movk	x9, #3250, lsl #32
+   25f18: 0a 3f c2 f2  	movk	x10, #4600, lsl #32
+   25f1c: 89 32 e2 f2  	movk	x9, #4500, lsl #48
+   25f20: 0a 07 e3 f2  	movk	x10, #6200, lsl #48
+   25f24: 0b e1 09 f8  	stur	x11, [x8, #158]
+   25f28: 0b 66 c3 d2  	mov	x11, #29892972380160
+   25f2c: cb 05 e3 f2  	movk	x11, #6190, lsl #48
+   25f30: 09 e1 0b f8  	stur	x9, [x8, #190]
+   25f34: 49 e1 81 52  	mov	w9, #3850
+   25f38: 0a e1 0a f8  	stur	x10, [x8, #174]
+   25f3c: 0a e7 9f d2  	mov	x10, #65336
+   25f40: 0a 19 a0 f2  	movk	x10, #200, lsl #16
+   25f44: 0b 61 0b f8  	stur	x11, [x8, #182]
+   25f48: 4a 64 c1 f2  	movk	x10, #2850, lsl #32
+   25f4c: 4b e1 c1 d2  	mov	x11, #16535624089600
+   25f50: 09 61 0d f8  	stur	x9, [x8, #214]
+   25f54: 89 c2 83 52  	mov	w9, #7700
+   25f58: 8a 9c e1 f2  	movk	x10, #3300, lsl #48
+   25f5c: 0b 3f e2 f2  	movk	x11, #4600, lsl #48
+   25f60: 09 44 a2 72  	movk	w9, #4640, lsl #16
+   25f64: 0a 61 0c f8  	stur	x10, [x8, #198]
+   25f68: 0b e1 0c f8  	stur	x11, [x8, #206]
+   25f6c: 09 e1 0d f8  	stur	x9, [x8, #222]
+   25f70: bf 23 03 d5  	hint	#29
+   25f74: c0 03 5f d6  	ret
+
+vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/vl53l1.ko:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000000206d8 <VL53L1_dynamic_xtalk_correction_data_init>:
+   206d8: 3f 23 03 d5  	hint	#25
+   206dc: 89 db 82 52  	mov	w9, #5852
+   206e0: e8 03 00 aa  	mov	x8, x0
+   206e4: 8a 0c 80 52  	mov	w10, #100
+   206e8: cb df 82 52  	mov	w11, #5886
+   206ec: ec 83 08 32  	mov	w12, #16777472
+   206f0: 8d e0 82 52  	mov	w13, #5892
+   206f4: 0a 69 29 f8  	str	x10, [x8, x9]
+   206f8: 29 20 80 52  	mov	w9, #257
+   206fc: 0a 6e a0 d2  	mov	x10, #57671680
+   20700: 0c 69 2b b8  	str	w12, [x8, x11]
+   20704: 0a 05 c0 f2  	movk	x10, #40, lsl #32
+   20708: cb da 82 52  	mov	w11, #5846
+   2070c: 09 a9 2d 79  	strh	w9, [x8, #5844]
+   20710: 09 19 80 d2  	mov	x9, #200
+   20714: 09 00 c1 f2  	movk	x9, #2048, lsl #32
+   20718: 0a 69 2d f8  	str	x10, [x8, x13]
+   2071c: 8a dc 82 52  	mov	w10, #5860
+   20720: 1f 69 2b 38  	strb	wzr, [x8, x11]
+   20724: 8b 26 80 d2  	mov	x11, #308
+   20728: e0 03 1f 2a  	mov	w0, wzr
+   2072c: 09 75 0b f9  	str	x9, [x8, #5864]
+   20730: 89 df 82 52  	mov	w9, #5884
+   20734: 0b 00 c5 f2  	movk	x11, #10240, lsl #32
+   20738: 1f 69 2a 38  	strb	wzr, [x8, x10]
+   2073c: 0a 10 80 52  	mov	w10, #128
+   20740: 1f b1 2d 79  	strh	wzr, [x8, #5848]
+   20744: 1f 69 29 38  	strb	wzr, [x8, x9]
+   20748: 89 70 80 52  	mov	w9, #900
+   2074c: 0b 79 0b f9  	str	x11, [x8, #5872]
+   20750: 4b e0 82 52  	mov	w11, #5890
+   20754: 0a f9 16 b9  	str	w10, [x8, #5880]
+   20758: 0a fa 80 52  	mov	w10, #2000
+   2075c: 09 21 2e 79  	strh	w9, [x8, #5904]
+   20760: 09 af 84 52  	mov	w9, #9592
+   20764: 09 01 09 8b  	add	x9, x8, x9
+   20768: 1f 69 2b 38  	strb	wzr, [x8, x11]
+   2076c: 0a 0d 17 b9  	str	w10, [x8, #5900]
+   20770: 0a 15 17 b9  	str	w10, [x8, #5908]
+   20774: 1f 79 25 b9  	str	wzr, [x8, #9592]
+   20778: 3f 31 00 b8  	stur	wzr, [x9, #3]
+   2077c: 1f c1 12 f9  	str	xzr, [x8, #9600]
+   20780: 1f 8d 0b f9  	str	xzr, [x8, #5912]
+   20784: 1f 91 0b f9  	str	xzr, [x8, #5920]
+   20788: 1f 29 17 b9  	str	wzr, [x8, #5928]
+   2078c: bf 23 03 d5  	hint	#29
+   20790: c0 03 5f d6  	ret

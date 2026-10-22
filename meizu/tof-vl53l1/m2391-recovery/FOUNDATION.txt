@@ -1,0 +1,69 @@
+ST VL53L1 Linux driver foundation, API6.6.11 revision2576 (same version as stock).
+Original ST source distribution mirrored at:
+https://github.com/0wnerDied/Vl53L1_LinuxDriver/tree/f6dcdf88a65d3c5fb988e2302c0d7e335cfb90a3/vl53L1
+Each source/header retains its original copyright/license notice. Select the
+expressly offered BSD-3-Clause license for files with a proprietary alternative;
+no confidential-only file was imported. GPL-2.0+ OR BSD-3-Clause files retain
+their original dual notice. No VL53L3 compile option is enabled.
+
+The unchanged foundation full target compiles on prepared 5.15. Actual codegen
+matches480 original function/data records, including413 ST API routines exactly.
+The OEM platform, saved-calibration and tuning additions described below are
+recovered; AI and ST are selected together and the original packaged copies
+have been SHA256-verified into the rollback directory before cleanup.
+
+M2391 OEM integration recovered from original ELF
+-----------------------------------------------
+The OEM calibration commands are c1a87015 (save) and c1a87016 (load).
+Their userspace packet is 424 bytes: is_read at0, 408 opaque ST bytes at4,
+UID at416. Persistent slot265 stores416 bytes: calibration at0 and raw UID
+at408. Save reads current sensor UID (NVM words126..127) with delays allowed,
+then current calibration; it does not trust userspace calibration or return
+a packet. Load returns the slot record and does not program hardware.
+Original successful-command storage-error handling is retained and logged.
+Source static assertions protect all these sizes/offsets. Evidence is the
+annotated stock-oem-ioctl.disasm and stock-slot.disasm.
+
+Restored OEM IPC logging, including dual IPC/console errors; tof_rgltr supply
+name, named-GPIO phandle resolution, Meizu dtof input-device link, and the
+s_module_load_state zero => EPROBE_DEFER dependency. OF compatibles are not
+expanded: original AI table dtof,ai11ba_i2c does not match local DTS's
+adaps,ai11ba_i2c, so this existing board-description mismatch remains explicit.
+Both original and source ST OF table use st,stmvl53l1. No alternative chip
+or register sequence was substituted.
+
+Safety corrections to the licensed foundation: initialize kref before misc
+publication; publish controls only after device initialization; mark removed
+under the operation mutex before draining sysfs/misc/work without that mutex;
+open descriptors retain object references and reject hardware access after
+removal. IRQ/poll callbacks reject removed devices. Fix allocation check,
+input-allocation failure free, dev-ID allocation reservation, supply unwind,
+and drain polling work on failed setup as well as remove. Hardware/IRQ/GPIO
+resources are released before dropping the owner reference. Millisecond tick
+API now returns a real monotonic timestamp rather than the original trap.
+
+Full actual composite vl53l1.o Kbuild passed with the OEM command and lifecycle
+changes; no module was loaded and no sensor/partition IO performed. Independent root lifecycle/ioctl review and group-wide final checks passed.
+
+Final ioctl lifetime audit: START/STOP, simple read/blocking read, params, ROI,
+multi-zone common/blocking/additional, calibration get/set, perform-calibration,
+autonomous config and zone calibration each acquire work_mutex and test removed.
+New saved-calibration does the same before any NVM/I2C/slot access. Factory raw
+register access now uses a mutex wrapper around its removed check and all IO;
+its header is copied once, with only the validated <=256-byte payload copied
+subsequently, closing the reference driver's double-fetch size race. Probe
+preserves negative errno, especially EPROBE_DEFER from tof_rgltr/GPIO providers.
+
+Independent actual linked target static data audit: all40 original named data
+objects MATCH byte-for-byte and normalized relocations, including all22 sysfs
+attributes, both binary calibration attributes, fops, OF/I2C tables and PM ops.
+Details: stock-static-data-review.json. The five OEM tuning initialization
+functions match exact instructions after restoring25 tuned default macros.
+
+Final source integration: AI then ST groups selected for vendor_dlkm only,
+matching the original two packaged copies. Root independently reviewed all
+new lifecycle and calibration/register ioctl paths. AI natural GPL export ABI
+gate PASS, ST has no exports; complete-source group guard PASS. SHA256-verified
+originals remain in out/m2391-515-analysis/removed-stock-modules before their
+packaged copies and exact proprietary-files extraction entries were removed.
+recovery-status.csv existing two rows and removed.csv are updated.
