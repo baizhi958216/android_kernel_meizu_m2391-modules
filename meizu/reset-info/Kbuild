@@ -1,0 +1,2 @@
+obj-m += mz_rstinfo.o
+mz_rstinfo-y := mz_rstinfo_main.o mz_rstinfo_reason.o mz_rstinfo_ssr.o

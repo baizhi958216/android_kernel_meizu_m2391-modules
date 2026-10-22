@@ -1,0 +1,88 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
+/* Exact original reason strings and ordering, recovered ELF relocations. */
+static const char * const qpnp_on_seq_reason[] = {
+ "N/A",
+ "N/A",
+ "N/A",
+ "N/A",
+ "Triggered from Warm sequence",
+ "Triggered from PON sequence",
+ "Triggered from Shutdown sequence",
+ "Triggered from Hard reset sequence",
+};
+static const char * const qpnp_off_seq_reason[] = {
+ "N/A",
+ "N/A",
+ "Triggered from Raw_xvdd_rb event occured",
+ "Triggered from Raw_dvdd_rb event occured",
+ "Triggered from Immediate_xvdd_shutdown s2 Reset",
+ "Triggered from S3_RESET_FAULT_N",
+ "Triggered from S3_RESET_PBS_WATCHDOG_TO",
+ "Triggered from S3_RESET_PBS_NACK",
+ "Triggered from S3_RESET_KPDPWR_ANDOR_RESIN",
+ "Triggered from Fault-handling sequence",
+ "Triggered from Normal powering-off sequence",
+};
+static const char * const qpnp_pon_reason[] = {
+ "Triggered from Hard Reset",
+ "Triggered from SMPL (Sudden Momentary Power Loss)",
+ "Triggered from RTC (RTC Alarm Expiry)",
+ "Triggered from DC (DC Charger Insertion)",
+ "Triggered from USB (USB Charger Insertion)",
+ "Triggered from PON1 (Secondary PMIC)",
+ "Triggered from CBL (External Power Supply)",
+ "Triggered from KPD (Power Key Press)",
+};
+static const char * const qpnp_poff_warm_reason[] = {
+ "Triggered from SOFT (Software)",
+ "Triggered from PS_HOLD (PS_HOLD/MSM Controlled Shutdown)",
+ "Triggered from PMIC_WD (PMIC Watchdog)",
+ "Triggered from GP1 (Keypad_Reset1)",
+ "Triggered from GP2 (Keypad_Reset2)",
+ "Triggered from KPDPWR_AND_RESIN (Power Key and Reset Line)",
+ "Triggered from RESIN_N (Reset Line/Volume Down Key)",
+ "Triggered from KPDPWR_N (Long Power Key Hold)",
+};
+static const char * const qpnp_fault_reason[] = {
+ "Triggered from GP_FAULT0",
+ "Triggered from GP_FAULT1",
+ "Triggered from GP_FAULT2",
+ "Triggered from GP_FAULT3",
+ "Triggered from MBG_FAULT",
+ "Triggered from OVLO (Over Voltage Lock Out)",
+ "Triggered from UVLO (Under Voltage Lock Out)",
+ "Triggered from AVDD_RB",
+ "N/A",
+ "N/A",
+ "N/A",
+ "Triggered from FAULT_FAULT_N",
+ "Triggered from FAULT_PBS_WATCHDOG_TO",
+ "Triggered from FAULT_PBS_NACK",
+ "Triggered from FAULT_RESTART_PON",
+ "Triggered from OTST3 (Over Temperature)",
+};
+static const char * const reset_reason_str[] = {
+ "unknown reboot",
+ "normal reboot",
+ "panic reboot",
+ "soc error",
+ "hardware error",
+ "android reboot",
+ "android root",
+};
+static const char * const sm8550_pmic_str[] = {
+ "PMK8550(Azura)#A",
+ "PM8550(Humu)#B",
+ "PM8550VS_1(V6_C)#C",
+ "PM8550VS_2(V6_D)#D",
+ "PM8550VS_3(V6_E)#E",
+ "PM8550VE(V8_F)#F",
+ "PM8550VS_4(V6_G)#G",
+ "PM8550B(Kohala)#H",
+ "N/A",
+ "N/A",
+ "N/A",
+ "N/A",
+ "N/A",
+ "N/A",
+};
