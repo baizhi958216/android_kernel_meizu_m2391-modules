@@ -1,0 +1,7 @@
+{
+  "repository": "LineageOS/android_kernel_motorola_sm8550-modules",
+  "ref": "e1b7dc6e6c462351535a9a3ef8cf4719af1be4d1",
+  "path": "motorola/drivers/ese/st54spi_gpio/st54spi_gpio.c",
+  "license": "GPL-2.0 (retained original notice)",
+  "pristine_sha256": "8cd51a13385fed3d806a5d6e460c89688e4b187bb61b372448810301a442542c"
+}

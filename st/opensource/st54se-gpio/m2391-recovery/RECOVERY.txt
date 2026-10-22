@@ -1,0 +1,17 @@
+M2391 ST54 secure-element GPIO source recovery
+
+Licensed ST foundation has9 original function/data records exact and one probe
+anonymous metadata relocation difference; no missing function or exported ABI.
+GET ioctl0x4004eb01 returns raw GPIO level; SET0x4004eb02 takes scalar0/1 and
+unknown/invalid returns ENOIOCTLCMD. Node/class/OF remain st54spi_gpio and
+st,st54spi_gpio, property gpio-power_nreset. GPIO remains acquired/output-low
+on open, freed on release; probe does not write hardware.
+
+Corrected original devm allocation UAF using embedded structdevice and
+cdev_device_add parent references, plus explicit fd device references. Removal
+marks removing/drains operations under mutex, frees only ownedGPIO, unpublishes
+cdev/device and drops owner reference. Old ioctl returnsENODEV; old release
+cannot free a GPIO already released or owned by a newbind. The cdev-add failure
+path likewise marks/drains before releasing owner, even if open was dispatched.
+Independent root full-source lifetime/protocol review PASS. Full actual composite
+stm_st54se_gpio.o Kbuild PASS. No module exports. No hardwareIO performed.
