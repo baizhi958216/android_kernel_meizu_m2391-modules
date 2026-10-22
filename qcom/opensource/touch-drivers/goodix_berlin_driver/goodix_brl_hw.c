@@ -16,6 +16,7 @@
   *
   */
 #include "goodix_ts_core.h"
+#include <linux/of.h>
 
 /* berlin_A SPI mode setting */
 #define GOODIX_SPI_MODE_REG			0xC900
@@ -215,6 +216,15 @@ static int brl_power_on(struct goodix_ts_core *cd, bool on)
 	int iovdd_gpio = cd->board_data.iovdd_gpio;
 	int avdd_gpio = cd->board_data.avdd_gpio;
 	int reset_gpio = cd->board_data.reset_gpio;
+	int avdd_uv = REG_RESUME_MIN_VOLTAGE;
+
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	/* M2391 uses L9B (2.96--3.008 V), not the generic 3.2 V rail.
+	 * The stock brl_power_on requests a 3.0 V upper limit at .text+0x98d0.
+	 */
+	if (of_device_is_compatible(cd->bus->dev->of_node, "goodix,brl-d"))
+		avdd_uv = 3000000;
+#endif
 
 	if (on) {
 		if (iovdd_gpio > 0) {
@@ -243,8 +253,7 @@ static int brl_power_on(struct goodix_ts_core *cd, bool on)
 					ts_err("vdd regulator set_load failed ret=%d", ret);
 					return ret;
 				}
-				ret = regulator_set_voltage(cd->avdd, REG_RESUME_MIN_VOLTAGE,
-							REG_RESUME_MAX_VOLTAGE);
+				ret = regulator_set_voltage(cd->avdd, avdd_uv, avdd_uv);
 				if (ret) {
 					ts_err("vdd regulator set_vtg failed ret=%d", ret);
 					return ret;
