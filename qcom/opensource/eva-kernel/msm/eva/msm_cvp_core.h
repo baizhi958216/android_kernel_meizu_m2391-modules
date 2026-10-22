@@ -34,12 +34,20 @@ enum session_type {
 	MSM_CVP_MAX_DEVICES = MSM_CVP_UNKNOWN,
 };
 
-void *msm_cvp_open(int core_id, int session_type, struct task_struct *task);
-int msm_cvp_close(void *instance);
-int msm_cvp_suspend(int core_id);
-int msm_cvp_poll(void *instance, struct file *filp,
+void *msm_cvp_core_open(int core_id, int session_type, struct task_struct *task);
+int msm_cvp_core_close(void *instance);
+int msm_cvp_core_suspend(int core_id);
+int msm_cvp_core_poll(void *instance, struct file *filp,
 		struct poll_table_struct *pt);
-int msm_cvp_private(void *cvp_inst, unsigned int cmd,
+int msm_cvp_core_private(void *cvp_inst, unsigned int cmd,
 		struct eva_kmd_arg *arg);
+
+
+/* Public ABI forwarders stay in the original translation unit/type context. */
+void *cvp_handle_open(int core_id, int session_type, struct task_struct *task);
+int cvp_handle_close(void *instance);
+int cvp_handle_private(void *instance, unsigned int cmd, struct eva_kmd_arg *arg);
+int cvp_handle_poll(void *instance, struct file *filp, struct poll_table_struct *wait);
+int cvp_handle_suspend(int core_id);
 
 #endif

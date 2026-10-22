@@ -207,6 +207,9 @@ int msm_cvp_proc_oob(struct msm_cvp_inst* inst,
 			struct eva_kmd_hfi_packet* in_pkt);
 void msm_cvp_cache_operations(struct msm_cvp_smem *smem,
 			u32 type, u32 offset, u32 size);
+int msm_cvp_mark_user_persist(struct msm_cvp_inst *inst,
+			struct eva_kmd_hfi_packet *in_pkt,
+			unsigned int offset, unsigned int buf_num);
 int msm_cvp_unmap_user_persist(struct msm_cvp_inst *inst,
 			struct eva_kmd_hfi_packet *in_pkt,
 			unsigned int offset, unsigned int buf_num);

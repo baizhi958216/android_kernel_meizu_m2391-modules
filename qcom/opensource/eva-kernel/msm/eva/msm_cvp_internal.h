@@ -385,12 +385,20 @@ struct msm_cvp_core {
 	struct cvp_debug_log log;
 	struct idr sess_idr;
 	struct mutex idr_mtx;
+	/* Platform publication/teardown, private to this source driver. */
+	struct mutex stop_lock;
+	struct dentry *driver_debugfs_root;
+	struct cdev *public_cdev;
+	bool stopped, initialized, listed, sysfs_registered, devnum_registered;
 };
 
 struct msm_cvp_inst {
 	struct list_head list;
 	struct list_head dsp_list;
 	struct mutex sync_lock, lock;
+	struct mutex debugfs_lock;
+	struct mutex fence_thread_lock;
+	struct task_struct *fence_threads[3];
 	struct msm_cvp_core *core;
 	enum session_type session_type;
 	u32 process_id;
