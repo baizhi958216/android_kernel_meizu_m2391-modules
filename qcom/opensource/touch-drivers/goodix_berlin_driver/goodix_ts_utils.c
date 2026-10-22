@@ -174,7 +174,8 @@ int goodix_get_ic_type(struct device_node *node)
 	} else if (strstr(name_tmp, "9966") || strstr(name_tmp, "7986")) {
 		ts_info("ic type is BerlinB");
 		ret = IC_TYPE_BERLIN_B;
-	} else if (strstr(name_tmp, "9916")) {
+	} else if (strstr(name_tmp, "9916") ||
+		   of_device_is_compatible(node, "goodix,brl-d")) {
 		ts_info("ic type is BerlinD");
 		ret = IC_TYPE_BERLIN_D;
 	} else {

@@ -1249,6 +1249,10 @@ static int brl_event_handler(struct goodix_ts_core *cd,
 	}
 
 	event_status = pre_buf[0];
+#ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
+	/* Original brl_event_handler .text 0xc690 extracts header bit 3. */
+	ts_event->meizu_fod_pressed = !!(event_status & BIT(3));
+#endif
 	if (event_status & GOODIX_TOUCH_EVENT)
 		return goodix_touch_handler(cd, ts_event,
 					    pre_buf, pre_read_len);
