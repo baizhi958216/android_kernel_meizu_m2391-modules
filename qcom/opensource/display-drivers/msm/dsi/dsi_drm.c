@@ -15,6 +15,7 @@
 #include "sde_dbg.h"
 #include "msm_drv.h"
 #include "sde_encoder.h"
+#include <drm/drm_edid.h>
 
 #define to_dsi_bridge(x)     container_of((x), struct dsi_bridge, base)
 #define to_dsi_state(x)      container_of((x), struct dsi_connector_state, base)
@@ -161,7 +162,7 @@ static void dsi_convert_to_msm_mode(const struct dsi_display_mode *dsi_mode,
 		msm_mode->private_flags |= MSM_MODE_FLAG_SEAMLESS_DYN_CLK;
 }
 
-static int dsi_bridge_attach(struct drm_bridge *bridge,
+static int dsi_bridge_attach(struct drm_bridge *bridge, struct drm_encoder *encoder,
 			enum drm_bridge_attach_flags flags)
 {
 	struct dsi_bridge *c_bridge = to_dsi_bridge(bridge);
@@ -569,7 +570,7 @@ static bool dsi_bridge_mode_fixup(struct drm_bridge *bridge,
 	return true;
 }
 
-u32 dsi_drm_get_dfps_maxfps(void *display)
+static u32 dsi_drm_get_dfps_maxfps(void *display)
 {
 	u32 dfps_maxfps = 0;
 	struct dsi_display *dsi_display = display;
@@ -718,7 +719,7 @@ static const struct drm_bridge_funcs dsi_bridge_ops = {
 	.mode_set     = dsi_bridge_mode_set,
 };
 
-int dsi_conn_set_avr_step_info(struct dsi_panel *panel, void *info)
+static int dsi_conn_set_avr_step_info(struct dsi_panel *panel, void *info)
 {
 	u32 i;
 	int idx = 0;
@@ -1293,7 +1294,7 @@ int dsi_conn_post_kickoff(struct drm_connector *connector,
 	struct msm_display_conn_params *params)
 {
 	struct drm_encoder *encoder;
-	struct drm_bridge *bridge;
+	struct drm_bridge *bridge __free(drm_bridge_put) = NULL;
 	struct dsi_bridge *c_bridge;
 	struct dsi_display_mode adj_mode;
 	struct dsi_display *display;
@@ -1388,36 +1389,34 @@ struct dsi_bridge *dsi_drm_bridge_init(struct dsi_display *display,
 				       struct drm_device *dev,
 				       struct drm_encoder *encoder)
 {
-	int rc = 0;
+	struct device *owner = &display->pdev->dev;
 	struct dsi_bridge *bridge;
+	void *group;
+	int ret;
 
-	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
-	if (!bridge) {
-		rc = -ENOMEM;
-		goto error;
+	group = devres_open_group(owner, NULL, GFP_KERNEL);
+	if (!group)
+		return ERR_PTR(-ENOMEM);
+	bridge = devm_drm_bridge_alloc(owner, struct dsi_bridge, base, &dsi_bridge_ops);
+	devres_close_group(owner, group);
+	if (IS_ERR(bridge)) {
+		devres_release_group(owner, group);
+		return bridge;
 	}
-
 	bridge->display = display;
-	bridge->base.funcs = &dsi_bridge_ops;
-	bridge->base.encoder = encoder;
-
-	rc = drm_bridge_attach(encoder, &bridge->base, NULL,
-				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-	if (rc) {
-		DSI_ERR("failed to attach bridge, rc=%d\n", rc);
-		goto error_free_bridge;
+	bridge->resource_group = group;
+	ret = drm_bridge_attach(encoder, &bridge->base, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+	if (ret) {
+		devres_release_group(owner, group);
+		return ERR_PTR(ret);
 	}
-
 	return bridge;
-error_free_bridge:
-	kfree(bridge);
-error:
-	return ERR_PTR(rc);
 }
 
 void dsi_drm_bridge_cleanup(struct dsi_bridge *bridge)
 {
-	kfree(bridge);
+	if (bridge)
+		devres_release_group(&bridge->display->pdev->dev, bridge->resource_group);
 }
 
 static bool is_valid_poms_switch(struct dsi_display_mode *mode_a,
@@ -1537,7 +1536,7 @@ int dsi_conn_set_dyn_bit_clk(struct drm_connector *connector, uint64_t value)
 	display->dyn_bit_clk_pending = true;
 
 	SDE_EVT32(display->dyn_bit_clk);
-	DSI_DEBUG("update dynamic bit clock rate to %llu\n", display->dyn_bit_clk);
+	DSI_DEBUG("update dynamic bit clock rate to %u\n", display->dyn_bit_clk);
 
 	return 0;
 }

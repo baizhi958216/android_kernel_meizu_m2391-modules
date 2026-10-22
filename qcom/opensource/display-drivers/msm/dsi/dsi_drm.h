@@ -17,6 +17,7 @@
 
 struct dsi_bridge {
 	struct drm_bridge base;
+	void *resource_group;
 	u32 id;
 
 	struct dsi_display *display;
