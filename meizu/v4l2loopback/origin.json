@@ -1,0 +1,21 @@
+{
+  "license": "GPL-2.0-or-later (original source notices retained)",
+  "repository": "https://github.com/v4l2loopback/v4l2loopback",
+  "commit": "03590ca539dcf5920fcf864a95af02ea20aa63d2",
+  "files": [
+    "v4l2loopback.c",
+    "v4l2loopback.h",
+    "v4l2loopback_formats.h"
+  ],
+  "stock_recovered_changes": [
+    "compressed sizeimage uses >>5",
+    "capture dequeue permits non-mapped buffers",
+    "runtime version 0.12.7 and module version 0.12.5"
+  ],
+  "safety_changes": [
+    "checked copy_from_user and bounded card label/buffer count",
+    "serialized open/close/remove and initial publication",
+    "balanced failure ownership and sysfs/timer teardown"
+  ],
+  "exports": []
+}
