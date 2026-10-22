@@ -25,6 +25,7 @@
 #define _COMMON_H_
 
 #include <linux/cdev.h>
+#include <linux/rwsem.h>
 #include <linux/of_gpio.h>
 #include <linux/delay.h>
 #include <linux/ipc_logging.h>
@@ -291,6 +292,23 @@ struct nfc_dev {
 			 const size_t count, int max_retry_cnt);
 	int (*nfc_enable_intr)(struct nfc_dev *dev);
 	int (*nfc_disable_intr)(struct nfc_dev *dev);
+	/* Appended source-private lifetime and GPIO lease state. */
+	struct device lifetime_device;
+	struct rw_semaphore operation_sem;
+	struct mutex post_init_mutex;
+	struct mutex clock_mutex;
+	bool removing;
+	bool irq_requested;
+	bool cdev_registered;
+	bool irq_gpio_owned;
+	bool ven_gpio_owned;
+	bool dwl_gpio_owned;
+	bool clkreq_gpio_owned;
+	bool post_init_success;
+	u8 cold_reset_expected_oid;
+	spinlock_t cold_reset_lock;
+	u32 cold_reset_generation;
+	int cold_reset_response_error;
 };
 
 int nfc_dev_open(struct inode *inode, struct file *filp);
@@ -322,4 +340,37 @@ int nfc_clock_deselect(struct nfc_dev *nfc_dev);
 int nfc_post_init(struct nfc_dev *nfc_dev);
 int nfc_dynamic_protection_ioctl(struct nfc_dev *nfc_dev, unsigned long sec_zone_trans);
 bool nfc_hw_secure_check(void);
+void nfc_device_release(struct device *dev);
+
+/* M2391 module-wide diagnostic stream. Packet traces additionally keep the
+ * existing per-device IPC context; normal debug messages stay off console.
+ */
+extern void *nq_mod_ctx;
+#define nq_module_trace(fmt, ...) do { \
+	if (nq_mod_ctx) \
+		ipc_log_string(nq_mod_ctx, "%d: " fmt, __LINE__, ##__VA_ARGS__); \
+} while (0)
+#undef pr_debug
+#define pr_debug(fmt, ...) nq_module_trace(fmt, ##__VA_ARGS__)
+#undef pr_info
+#define pr_info(fmt, ...) do { \
+	nq_module_trace(fmt, ##__VA_ARGS__); \
+	printk(KERN_INFO "[NQ-NFC]: " fmt, ##__VA_ARGS__); \
+} while (0)
+#undef pr_err
+#define pr_err(fmt, ...) do { \
+	nq_module_trace(fmt, ##__VA_ARGS__); \
+	printk(KERN_ERR "[NQ-NFC]: " fmt, ##__VA_ARGS__); \
+} while (0)
+#undef pr_warn
+#define pr_warn(fmt, ...) do { \
+	nq_module_trace(fmt, ##__VA_ARGS__); \
+	printk(KERN_WARNING "[NQ-NFC]: " fmt, ##__VA_ARGS__); \
+} while (0)
+#undef dev_err
+#define dev_err(dev, fmt, ...) do { \
+	nq_module_trace(fmt, ##__VA_ARGS__); \
+	_dev_err(dev, fmt, ##__VA_ARGS__); \
+} while (0)
+
 #endif /* _COMMON_H_ */

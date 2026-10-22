@@ -75,6 +75,6 @@ struct cold_reset {
 
 struct nfc_dev;
 int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg);
-int read_cold_reset_rsp(struct nfc_dev *nfc_dev, char *header);
+int read_cold_reset_rsp(struct nfc_dev *nfc_dev, char *header, u32 generation);
 
 #endif

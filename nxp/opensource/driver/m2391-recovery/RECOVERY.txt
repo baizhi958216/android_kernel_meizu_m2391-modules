@@ -1,0 +1,44 @@
+M2391 NXP NCI source recovery (source selected)
+
+The existing licensed NXP driver provides every original49 function/data
+record (no missing implementation). Initial full-target comparison12 exact,
+37 differences; restoring module diagnostic context raised exact matches22.
+Remaining source safety changes are described below. Original OF/I2C tables,
+char node nq-nci/class qti-nfc, NFC/eSE power and cold-reset packet formats,
+secure state ClientEnv protocol, firmware version/session commands, LDO/clock
+properties and all userspace request structures remain from the real source.
+
+Recovered module IPC context nq-nfc,10pages, line-number diagnostics with
+[NQ-NFC] console severity and existing separate per-device packet logging.
+Context is created before driver registration and destroyed after driver exit;
+registration failure also drops the new context. No diagnostic stub is used.
+
+Lifetime fixes: embedded structdevice/cdev_device_add pins private memory for
+pending opens and retained descriptors; all hardware initialization precedes
+cdev publication. Operation read leases allow normal blocking read, flush and
+eSE ioctl response reads concurrently. Removal/failed publication first marks
+removing and wakes read/coldreset queues before waiting for exclusive drain;
+then drains IRQ, unpublishes cdev, releases owned GPIO/power/buffers and drops
+owner. Old descriptors retain state and refuse hardware access. post_init
+success and GPIO leases belong to the device rather than old module state;
+clock lookup is reused and dropped, and failed regulator vote cannot double-put.
+
+Cold-reset cancellation: reader never dereferences an ioctl-owned command buffer.
+A spinlock protects transaction generation, expected OID and response capacity;
+response reads snapshot those and NFC mode before allocation. Every header must
+complete all3bytes and payload length must be positive, fit the snapshot and
+transfer fully. Only the captured generation may publish status/clear pending;
+signal/removal retirement cannot ACK a later request. Completion status is read
+under the same lock. Header detection also requires ret>=3. Wire commands and
+successful response/status semantics are retained; cancellation/short-frame
+failures are handled explicitly. Secure/eSE-off ioctls stay concurrent, with
+separate post_init/clock mutexes rather than a global ioctl lock.
+
+Full actual5-C composite nxp-nci.o PASS; original and actual source ELF have zero
+exports. Independent root full publication/removal, coldreset snapshot/generation
+and protocol review PASS. Source group needs NFC_ROOT pointed at its mirrored
+source; build_external supplies that only for this group. Vendor-only mapping
+and complete-source group guard passed. Original vendor_dlkm SHA256
+0d4e31334e3dbe69eaec9b99fc0ecd20afaf47ad2cd1232185ec01f53d123459 was verified
+in out/m2391-515-analysis/removed-stock-modules before KO/extraction cleanup.
+No driver was loaded and no hardware/partition IO was executed.

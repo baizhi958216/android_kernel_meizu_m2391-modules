@@ -1,0 +1,37 @@
+[
+  {
+    "path": "nxp/opensource/driver/nfc/common.h",
+    "commit": "3c8fa672ddbcd245662a82578495c2a750dd19c0",
+    "sha256": "2d5915bc46f441cf3b272192a4eb296ae9136c5b6dac532a1598c6755fc9c790"
+  },
+  {
+    "path": "nxp/opensource/driver/nfc/common.c",
+    "commit": "3c8fa672ddbcd245662a82578495c2a750dd19c0",
+    "sha256": "b4887d337575c7748e7c58e08cac5b6897162da723352136fd7f83e6e9f3b8e3"
+  },
+  {
+    "path": "nxp/opensource/driver/nfc/common_nxp.c",
+    "commit": "3c8fa672ddbcd245662a82578495c2a750dd19c0",
+    "sha256": "7fb029d0b5868cc0b8dd56fd1b5cf86ce3530e5c48dacba625e8b296188c92c9"
+  },
+  {
+    "path": "nxp/opensource/driver/nfc/common_qcom.c",
+    "commit": "3c8fa672ddbcd245662a82578495c2a750dd19c0",
+    "sha256": "2b32500e7bd8445ebc24ad757515e65ac7dae6aa522c3d6f00cdb21f4a0a9954"
+  },
+  {
+    "path": "nxp/opensource/driver/nfc/i2c_drv.c",
+    "commit": "3c8fa672ddbcd245662a82578495c2a750dd19c0",
+    "sha256": "454b4fc8e31f1a55316b0331d7f9abfa43f7fb14317882e8187aa2d15094b405"
+  },
+  {
+    "path": "nxp/opensource/driver/nfc/ese_cold_reset.c",
+    "commit": "3c8fa672ddbcd245662a82578495c2a750dd19c0",
+    "sha256": "283aa248caea4bebcfe93639b6b4f3f972d63b0a8d511251ca97b4b87930d9f7"
+  },
+  {
+    "path": "nxp/opensource/driver/nfc/ese_cold_reset.h",
+    "commit": "3c8fa672ddbcd245662a82578495c2a750dd19c0",
+    "sha256": "8c31c45aaba5bcdd3e7afb19efcb42964d0eb4160db77567c283b3e518435f1c"
+  }
+]

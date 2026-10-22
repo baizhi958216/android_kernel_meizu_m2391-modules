@@ -103,91 +103,90 @@ static int send_ese_cmd(struct nfc_dev *nfc_dev)
  *
  * Return: 0 on pass and negative value on failure.
  */
-int read_cold_reset_rsp(struct nfc_dev *nfc_dev, char *header)
+int read_cold_reset_rsp(struct nfc_dev *chip, char *header, u32 generation)
 {
-	int ret = -EPERM;
-	struct cold_reset *cold_rst = &nfc_dev->cold_reset;
-	char *rsp_buf = NULL;
+	unsigned long flags;
+	u16 capacity;
+	u8 expected_oid;
+	bool nfc_enabled, complete = false;
+	u8 *response;
+	int rc = -EIO;
+	u8 payload_length;
 
-	if (cold_rst->rsp_len < COLD_RESET_RSP_LEN) {
-		dev_err(nfc_dev->nfc_device,
-				"%s: received cold reset rsp buffer length is invalid \n",
-				__func__);
-		return -EINVAL;
-        }
-
-	rsp_buf = kzalloc(cold_rst->rsp_len, GFP_DMA | GFP_KERNEL);
-	if (!rsp_buf)
-		return -ENOMEM;
-
-	/*
-	 * read header if NFC is disabled
-	 * for enable case, header is read by nfc read thread(for i2c)
+	/* Snapshot the transaction before allocating. An interrupted ioctl can
+	 * retire it and a later ioctl can change shared sizes while this read is
+	 * still performing I2C. Only the captured generation may receive its ACK.
 	 */
-	if ((!cold_rst->is_nfc_enabled) &&
-			(nfc_dev->interface == PLATFORM_IF_I2C)) {
-		ret = i2c_master_recv(nfc_dev->i2c_dev.client, rsp_buf, NCI_HDR_LEN);
-		if (ret <= 0) {
-			dev_err(nfc_dev->nfc_device,
-				"%s: failure to read cold reset rsp header\n",
-				 __func__);
-			ret = -EIO;
-			goto error;
+	spin_lock_irqsave(&chip->cold_reset_lock, flags);
+	if (!chip->cold_reset.rsp_pending ||
+			chip->cold_reset_generation != generation) {
+		spin_unlock_irqrestore(&chip->cold_reset_lock, flags);
+		return -ECANCELED;
+	}
+	capacity = chip->cold_reset.rsp_len;
+	expected_oid = chip->cold_reset_expected_oid;
+	nfc_enabled = READ_ONCE(chip->cold_reset.is_nfc_enabled);
+	spin_unlock_irqrestore(&chip->cold_reset_lock, flags);
+	if (capacity < COLD_RESET_RSP_LEN) {
+		rc = -EINVAL;
+		goto finish;
+	}
+	response = kzalloc(capacity, GFP_DMA | GFP_KERNEL);
+	if (!response) {
+		rc = -ENOMEM;
+		goto finish;
+	}
+	if (!nfc_enabled && chip->interface == PLATFORM_IF_I2C) {
+		rc = i2c_master_recv(chip->i2c_dev.client, response, NCI_HDR_LEN);
+		if (rc != NCI_HDR_LEN) {
+			rc = -EIO;
+			goto free_response;
 		}
-		/*
-		 * return failure, if packet is not a response packet or
-		 * if response's OID doesn't match with the CMD's OID
-		 */
-		if (!(rsp_buf[0] & NCI_RSP_PKT_TYPE) ||
-			(!cold_rst->cmd_buf) ||
-			(rsp_buf[1] != cold_rst->cmd_buf[1])) {
-
-			dev_err(nfc_dev->nfc_device,
-				"%s: - invalid cold reset response 0x%x 0x%x\n",
-					__func__, rsp_buf[0], rsp_buf[1]);
-			ret = -EINVAL;
-			goto error;
+		if (!(response[0] & NCI_RSP_PKT_TYPE) ||
+				response[1] != expected_oid) {
+			rc = -EINVAL;
+			goto free_response;
 		}
 	} else if (header) {
-		memcpy(rsp_buf, header, NCI_HDR_LEN);
+		memcpy(response, header, NCI_HDR_LEN);
 	} else {
-		dev_err(nfc_dev->nfc_device,
-				"%s: - invalid or NULL header\n", __func__);
-		ret = -EINVAL;
-		goto error;
+		rc = -EINVAL;
+		goto free_response;
 	}
-
-	if ((NCI_HDR_LEN + rsp_buf[NCI_PAYLOAD_LEN_IDX]) >
-						cold_rst->rsp_len) {
-		dev_err(nfc_dev->nfc_device,
-			"%s: - no space for cold_reset resp\n", __func__);
-		ret = -ENOMEM;
-		goto error;
+	payload_length = response[NCI_PAYLOAD_LEN_IDX];
+	if (!payload_length || payload_length > capacity - NCI_HDR_LEN) {
+		rc = -ENOMEM;
+		goto free_response;
 	}
-
-	if (nfc_dev->interface == PLATFORM_IF_I2C) {
-		ret = nfc_dev->nfc_read(nfc_dev,
-			     &rsp_buf[NCI_PAYLOAD_IDX],
-			     rsp_buf[NCI_PAYLOAD_LEN_IDX],
-			     NCI_CMD_RSP_TIMEOUT_MS);
-
-		if (ret <= 0) {
-			dev_err(nfc_dev->nfc_device,
-				"%s: failure to read cold reset rsp payload\n",
-				__func__);
-			ret = -EIO;
-			goto error;
+	if (chip->interface == PLATFORM_IF_I2C) {
+		rc = chip->nfc_read(chip, response + NCI_PAYLOAD_IDX,
+			payload_length, NCI_CMD_RSP_TIMEOUT_MS);
+		if (rc != payload_length) {
+			rc = -EIO;
+			goto free_response;
 		}
-		ret = cold_rst->status = rsp_buf[NCI_PAYLOAD_IDX];
-
+		rc = response[NCI_PAYLOAD_IDX];
 		pr_debug("nfc ese rsp hdr 0x%x 0x%x 0x%x, payload byte0 0x%x\n",
-				rsp_buf[0], rsp_buf[1], rsp_buf[2], rsp_buf[3]);
+			response[0], response[1], response[2], response[3]);
 	}
-
-error:
-	kfree(rsp_buf);
-
-	return ret;
+free_response:
+	kfree(response);
+finish:
+	spin_lock_irqsave(&chip->cold_reset_lock, flags);
+	if (chip->cold_reset_generation == generation &&
+			chip->cold_reset.rsp_pending) {
+		if (rc >= 0)
+			chip->cold_reset.status = rc;
+		chip->cold_reset_response_error = rc < 0 ? rc : 0;
+		WRITE_ONCE(chip->cold_reset.rsp_pending, false);
+		complete = true;
+	} else {
+		rc = -ECANCELED;
+	}
+	spin_unlock_irqrestore(&chip->cold_reset_lock, flags);
+	if (complete)
+		wake_up_interruptible(&chip->cold_reset.read_wq);
+	return rc;
 }
 
 
@@ -201,7 +200,10 @@ error:
 
 int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg)
 {
-	int ret;
+	int ret, response_status;
+	u16 response_length = 0;
+	u32 generation = 0;
+	unsigned long flags;
 	struct ese_ioctl_arg ioctl_arg;
 	struct ese_cold_reset_arg *cold_reset_arg = NULL;
 
@@ -265,7 +267,7 @@ int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg)
 		nfc_dev->cold_reset.cmd_buf[2] = COLD_RESET_CMD_PL_LEN;
 		nfc_dev->cold_reset.cmd_len = NCI_HDR_LEN +
 						COLD_RESET_CMD_PL_LEN;
-		nfc_dev->cold_reset.rsp_len = COLD_RESET_RSP_LEN;
+		response_length = COLD_RESET_RSP_LEN;
 		break;
 
 	case ESE_COLD_RESET_PROTECT_EN:
@@ -306,7 +308,7 @@ int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg)
 		nfc_dev->cold_reset.cmd_buf[2] = COLD_RESET_PROT_CMD_PL_LEN;
 		nfc_dev->cold_reset.cmd_len = NCI_HDR_LEN +
 						COLD_RESET_PROT_CMD_PL_LEN;
-		nfc_dev->cold_reset.rsp_len = COLD_RESET_PROT_RSP_LEN;
+		response_length = COLD_RESET_PROT_RSP_LEN;
 		if (cold_reset_arg->sub_cmd == ESE_COLD_RESET_PROTECT_EN)
 			nfc_dev->cold_reset.cmd_buf[3] = 0x1;
 		else
@@ -326,13 +328,21 @@ int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg)
 				nfc_dev->cold_reset.cmd_buf[1],
 				nfc_dev->cold_reset.cmd_buf[2]);
 
+	spin_lock_irqsave(&nfc_dev->cold_reset_lock, flags);
+	generation = ++nfc_dev->cold_reset_generation;
+	if (!generation)
+		generation = ++nfc_dev->cold_reset_generation;
+	nfc_dev->cold_reset.rsp_len = response_length;
+	nfc_dev->cold_reset_expected_oid = nfc_dev->cold_reset.cmd_buf[1];
+	nfc_dev->cold_reset_response_error = 0;
+	WRITE_ONCE(nfc_dev->cold_reset.rsp_pending, true);
+	spin_unlock_irqrestore(&nfc_dev->cold_reset_lock, flags);
 	ret = send_ese_cmd(nfc_dev);
 	if (ret <= 0) {
 		pr_err("failed to send ese command\n");
 		goto err;
 	}
 
-	nfc_dev->cold_reset.rsp_pending = true;
 
 	/* check if NFC is enabled */
 	if (nfc_dev->cold_reset.is_nfc_enabled) {
@@ -340,8 +350,11 @@ int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg)
 		 * nfc_read thread will initiate cold reset response
 		 * and it will signal for data available
 		 */
-		wait_event_interruptible(nfc_dev->cold_reset.read_wq,
-			!nfc_dev->cold_reset.rsp_pending);
+		ret = wait_event_interruptible(nfc_dev->cold_reset.read_wq,
+			!READ_ONCE(nfc_dev->cold_reset.rsp_pending) ||
+			READ_ONCE(nfc_dev->removing));
+		if (ret)
+			goto err;
 	} else {
 
 		/*
@@ -352,12 +365,10 @@ int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg)
 			ret =  is_nfc_data_available_for_read(nfc_dev);
 			if (ret <= 0) {
 				nfc_dev->nfc_disable_intr(nfc_dev);
-				nfc_dev->cold_reset.rsp_pending = false;
 				goto err;
 			}
 
-			ret = read_cold_reset_rsp(nfc_dev, NULL);
-			nfc_dev->cold_reset.rsp_pending = false;
+			ret = read_cold_reset_rsp(nfc_dev, NULL, generation);
 			if (ret < 0) {
 				pr_err("%s rsp read err\n", __func__);
 				goto err;
@@ -369,12 +380,30 @@ int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg)
 			 */
 			nfc_dev->nfc_enable_intr(nfc_dev);
 
-			wait_event_interruptible(
+			ret = wait_event_interruptible(
 				nfc_dev->cold_reset.read_wq,
-				!nfc_dev->cold_reset.rsp_pending);
+				!READ_ONCE(nfc_dev->cold_reset.rsp_pending) ||
+			READ_ONCE(nfc_dev->removing));
+			if (ret)
+				goto err;
 		}
 
 		nfc_dev->nfc_disable_intr(nfc_dev);
+	}
+
+	if (READ_ONCE(nfc_dev->removing)) {
+		ret = -ENODEV;
+		goto err;
+	}
+
+	spin_lock_irqsave(&nfc_dev->cold_reset_lock, flags);
+	response_status = nfc_dev->cold_reset_generation != generation ?
+		-ECANCELED : nfc_dev->cold_reset_response_error ?
+		nfc_dev->cold_reset_response_error : nfc_dev->cold_reset.status;
+	spin_unlock_irqrestore(&nfc_dev->cold_reset_lock, flags);
+	if (response_status < 0) {
+		ret = response_status;
+		goto err;
 	}
 
 	if (cold_reset_arg->sub_cmd == ESE_COLD_RESET_PROTECT_EN) {
@@ -387,9 +416,15 @@ int ese_cold_reset_ioctl(struct nfc_dev *nfc_dev, unsigned long arg)
 	} else
 		pr_debug("ese cmd is %d\n", cold_reset_arg->sub_cmd);
 
-	ret = nfc_dev->cold_reset.status;
+	ret = response_status;
 
 err:
+	spin_lock_irqsave(&nfc_dev->cold_reset_lock, flags);
+	if (generation && nfc_dev->cold_reset_generation == generation) {
+		++nfc_dev->cold_reset_generation;
+		WRITE_ONCE(nfc_dev->cold_reset.rsp_pending, false);
+	}
+	spin_unlock_irqrestore(&nfc_dev->cold_reset_lock, flags);
 	if (nfc_dev->cold_reset.cmd_buf != NULL) {
 		kfree(nfc_dev->cold_reset.cmd_buf);
 		nfc_dev->cold_reset.cmd_buf = NULL;

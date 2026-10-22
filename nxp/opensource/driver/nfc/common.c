@@ -206,90 +206,108 @@ int configure_gpio(unsigned int gpio, int flag)
 
 void gpio_free_all(struct nfc_dev *nfc_dev)
 {
-	struct platform_gpio *nfc_gpio = &nfc_dev->configs.gpio;
+	struct platform_gpio *gpio = &nfc_dev->configs.gpio;
 
-	if (gpio_is_valid(nfc_gpio->clkreq))
-		gpio_free(nfc_gpio->clkreq);
+	if (nfc_dev->clkreq_gpio_owned) {
+		gpio_free(gpio->clkreq);
+		nfc_dev->clkreq_gpio_owned = false;
+	}
+	if (nfc_dev->dwl_gpio_owned) {
+		gpio_free(gpio->dwl_req);
+		nfc_dev->dwl_gpio_owned = false;
+	}
+	if (nfc_dev->irq_gpio_owned) {
+		gpio_free(gpio->irq);
+		nfc_dev->irq_gpio_owned = false;
+	}
+	if (nfc_dev->ven_gpio_owned) {
+		gpio_free(gpio->ven);
+		nfc_dev->ven_gpio_owned = false;
+	}
+}
 
-	if (gpio_is_valid(nfc_gpio->dwl_req))
-		gpio_free(nfc_gpio->dwl_req);
+void nfc_device_release(struct device *dev)
+{
+	struct nfc_dev *chip = container_of(dev, struct nfc_dev, lifetime_device);
 
-	if (gpio_is_valid(nfc_gpio->irq))
-		gpio_free(nfc_gpio->irq);
-
-	if (gpio_is_valid(nfc_gpio->ven))
-		gpio_free(nfc_gpio->ven);
+	kfree(chip);
 }
 
 void nfc_misc_unregister(struct nfc_dev *nfc_dev, int count)
 {
-	pr_debug("%s: entry\n", __func__);
+	if (nfc_dev->cdev_registered) {
+		cdev_device_del(&nfc_dev->c_dev, &nfc_dev->lifetime_device);
+		nfc_dev->cdev_registered = false;
+		class_destroy(nfc_dev->nfc_class);
+		unregister_chrdev_region(nfc_dev->devno, count);
+	}
 	kfree(nfc_dev->kbuf);
-	device_destroy(nfc_dev->nfc_class, nfc_dev->devno);
-	cdev_del(&nfc_dev->c_dev);
-	class_destroy(nfc_dev->nfc_class);
-	unregister_chrdev_region(nfc_dev->devno, count);
-	if (nfc_dev->ipcl)
+	nfc_dev->kbuf = NULL;
+	if (nfc_dev->ipcl) {
 		ipc_log_context_destroy(nfc_dev->ipcl);
+		nfc_dev->ipcl = NULL;
+	}
 }
 
 int nfc_misc_register(struct nfc_dev *nfc_dev,
-		      const struct file_operations *nfc_fops, int count,
-		      char *devname, char *classname)
+		const struct file_operations *fops, int count,
+		char *name, char *classname)
 {
-	int ret = 0;
+	int rc;
 
-	ret = alloc_chrdev_region(&nfc_dev->devno, 0, count, devname);
-	if (ret < 0) {
-		pr_err("%s: failed to alloc chrdev region ret %d\n", __func__,
-		       ret);
-		return ret;
-	}
-	nfc_dev->nfc_class = class_create(THIS_MODULE, classname);
-	if (IS_ERR(nfc_dev->nfc_class)) {
-		ret = PTR_ERR(nfc_dev->nfc_class);
-		pr_err("%s: failed to register device class ret %d\n", __func__,
-		       ret);
-		unregister_chrdev_region(nfc_dev->devno, count);
-		return ret;
-	}
-	cdev_init(&nfc_dev->c_dev, nfc_fops);
-	ret = cdev_add(&nfc_dev->c_dev, nfc_dev->devno, count);
-	if (ret < 0) {
-		pr_err("%s: failed to add cdev ret %d\n", __func__, ret);
-		class_destroy(nfc_dev->nfc_class);
-		unregister_chrdev_region(nfc_dev->devno, count);
-		return ret;
-	}
-	nfc_dev->nfc_device = device_create(nfc_dev->nfc_class, NULL,
-					    nfc_dev->devno, nfc_dev, devname);
-	if (IS_ERR(nfc_dev->nfc_device)) {
-		ret = PTR_ERR(nfc_dev->nfc_device);
-		pr_err("%s: failed to create the device ret %d\n", __func__,
-		       ret);
-		cdev_del(&nfc_dev->c_dev);
-		class_destroy(nfc_dev->nfc_class);
-		unregister_chrdev_region(nfc_dev->devno, count);
-		return ret;
-	}
-	nfc_dev->ipcl = ipc_log_context_create(NUM_OF_IPC_LOG_PAGES,
-						dev_name(nfc_dev->nfc_device), 0);
-
+	/* This module has exactly one character minor. Initialize every object
+	 * used by an open before cdev_device_add can dispatch it.
+	 */
+	if (count != 1)
+		return -EINVAL;
 	nfc_dev->kbuflen = MAX_NCI_BUFFER_SIZE;
 	nfc_dev->kbuf = kzalloc(MAX_NCI_BUFFER_SIZE, GFP_KERNEL | GFP_DMA);
-	if (!nfc_dev->kbuf) {
-		nfc_misc_unregister(nfc_dev, count);
+	if (!nfc_dev->kbuf)
 		return -ENOMEM;
+	nfc_dev->ipcl = ipc_log_context_create(NUM_OF_IPC_LOG_PAGES, name, 0);
+	rc = alloc_chrdev_region(&nfc_dev->devno, 0, count, name);
+	if (rc)
+		goto free_buffers;
+	nfc_dev->nfc_class = class_create(THIS_MODULE, classname);
+	if (IS_ERR(nfc_dev->nfc_class)) {
+		rc = PTR_ERR(nfc_dev->nfc_class);
+		goto unregister_region;
 	}
-
-	nfc_dev->cold_reset.rsp_pending = false;
-	nfc_dev->cold_reset.is_nfc_enabled = false;
-	nfc_dev->cold_reset.is_crp_en = false;
-	nfc_dev->cold_reset.last_src_ese_prot = ESE_COLD_RESET_ORIGIN_NONE;
-
-	init_waitqueue_head(&nfc_dev->cold_reset.read_wq);
-
+	nfc_dev->lifetime_device.devt = nfc_dev->devno;
+	nfc_dev->lifetime_device.class = nfc_dev->nfc_class;
+	nfc_dev->nfc_device = &nfc_dev->lifetime_device;
+	dev_set_drvdata(nfc_dev->nfc_device, nfc_dev);
+	rc = dev_set_name(nfc_dev->nfc_device, "%s", name);
+	if (rc)
+		goto destroy_class;
+	cdev_init(&nfc_dev->c_dev, fops);
+	nfc_dev->c_dev.owner = THIS_MODULE;
+	rc = cdev_device_add(&nfc_dev->c_dev, nfc_dev->nfc_device);
+	if (rc) {
+		/* Even a failed device_add may have dispatched an open. The
+		 * caller marks removing and drains before releasing these buffers.
+		 */
+		WRITE_ONCE(nfc_dev->removing, true);
+		wake_up(&nfc_dev->read_wq);
+		wake_up(&nfc_dev->cold_reset.read_wq);
+		down_write(&nfc_dev->operation_sem);
+		up_write(&nfc_dev->operation_sem);
+		goto destroy_class;
+	}
+	nfc_dev->cdev_registered = true;
 	return 0;
+destroy_class:
+	class_destroy(nfc_dev->nfc_class);
+unregister_region:
+	unregister_chrdev_region(nfc_dev->devno, count);
+free_buffers:
+	kfree(nfc_dev->kbuf);
+	nfc_dev->kbuf = NULL;
+	if (nfc_dev->ipcl) {
+		ipc_log_context_destroy(nfc_dev->ipcl);
+		nfc_dev->ipcl = NULL;
+	}
+	return rc;
 }
 
 /**
@@ -418,14 +436,13 @@ long nfc_dev_compat_ioctl(struct file *pfile, unsigned int cmd,
  *
  * Return: 0 if Success(or no issue) and error ret code otherwise
  */
-int nfc_post_init(struct nfc_dev *nfc_dev)
+static int nfc_post_init_active(struct nfc_dev *nfc_dev)
 {
 	int ret=0;
-	static int post_init_success;
 	struct platform_configs nfc_configs;
 	struct platform_gpio *nfc_gpio;
 
-	if(post_init_success)
+	if(nfc_dev && nfc_dev->post_init_success)
 		return 0;
 	if (!nfc_dev)
 		return -ENODEV;
@@ -433,21 +450,28 @@ int nfc_post_init(struct nfc_dev *nfc_dev)
 	memcpy(&nfc_configs, &nfc_dev->configs, sizeof(struct platform_configs));
 	nfc_gpio = &nfc_configs.gpio;
 
-	ret = configure_gpio(nfc_gpio->ven, GPIO_OUTPUT);
+	ret = nfc_dev->ven_gpio_owned ? 0 :
+		configure_gpio(nfc_gpio->ven, GPIO_OUTPUT);
 	if (ret) {
 		pr_err("%s: unable to request nfc reset gpio [%d]\n",
 			__func__, nfc_gpio->ven);
 		return ret;
 	}
 
-	ret = configure_gpio(nfc_gpio->dwl_req, GPIO_OUTPUT);
+	nfc_dev->ven_gpio_owned = true;
+	ret = nfc_dev->dwl_gpio_owned ? 0 :
+		configure_gpio(nfc_gpio->dwl_req, GPIO_OUTPUT);
 	if (ret) {
 		pr_err("%s: unable to request nfc firm downl gpio [%d]\n",
 			__func__, nfc_gpio->dwl_req);
 	}
 
+	if (!ret && gpio_is_valid(nfc_gpio->dwl_req))
+		nfc_dev->dwl_gpio_owned = true;
+
         if(!(nfc_configs.clk_pin_voting)){
-                ret = configure_gpio(nfc_gpio->clkreq, GPIO_INPUT);
+                ret = nfc_dev->clkreq_gpio_owned ? 0 :
+			configure_gpio(nfc_gpio->clkreq, GPIO_INPUT);
                 if (ret) {
                         pr_err("%s: unable to request nfc clkreq gpio [%d]\n",
                               __func__, nfc_gpio->clkreq);
@@ -455,11 +479,19 @@ int nfc_post_init(struct nfc_dev *nfc_dev)
                 }
         }
 
+	if (!nfc_configs.clk_pin_voting)
+		nfc_dev->clkreq_gpio_owned = true;
 	ret = nfcc_hw_check(nfc_dev);
 	if (ret || nfc_dev->nfc_state == NFC_STATE_UNKNOWN) {
 		pr_err("nfc hw check failed ret %d\n", ret);
-		gpio_free(nfc_gpio->dwl_req);
-		gpio_free(nfc_gpio->ven);
+		if (nfc_dev->dwl_gpio_owned) {
+			gpio_free(nfc_gpio->dwl_req);
+			nfc_dev->dwl_gpio_owned = false;
+		}
+		if (nfc_dev->ven_gpio_owned) {
+			gpio_free(nfc_gpio->ven);
+			nfc_dev->ven_gpio_owned = false;
+		}
 		return ret;
 	}
 
@@ -468,11 +500,21 @@ int nfc_post_init(struct nfc_dev *nfc_dev)
 		sema_init(&sem_eSE_pwr_off,0);
 	}
 
-	post_init_success = 1;
+	nfc_dev->post_init_success = true;
 	pr_info("%s success\n", __func__);
 	return 0;
 
 
+}
+
+int nfc_post_init(struct nfc_dev *chip)
+{
+	int rc;
+
+	mutex_lock(&chip->post_init_mutex);
+	rc = nfc_post_init_active(chip);
+	mutex_unlock(&chip->post_init_mutex);
+	return rc;
 }
 
 /**
@@ -562,7 +604,6 @@ int nfc_dynamic_protection_ioctl(struct nfc_dev *nfc_dev, unsigned long sec_zone
 {
 	int ret = 0;
 
-	static int init_flag=1;
 
 	struct platform_gpio *nfc_gpio = &nfc_dev->configs.gpio;
 	if(sec_zone_trans == 1) {
@@ -590,11 +631,10 @@ int nfc_dynamic_protection_ioctl(struct nfc_dev *nfc_dev, unsigned long sec_zone
 		chk_eSE_pwr_off = 0;
 		nfc_dev->secure_zone = false;
 
-		if(init_flag) {
+		if(!nfc_dev->post_init_success) {
 			/*Initialize once,only during the  first non-secure entry*/
 			ret = nfc_post_init(nfc_dev);
-			if(ret == 0)
-				init_flag=0;
+
 		}
 		else {
 			if(!gpio_get_value(nfc_gpio->ven))
@@ -623,7 +663,7 @@ int nfc_dynamic_protection_ioctl(struct nfc_dev *nfc_dev, unsigned long sec_zone
  * 0 or 1 in case of arg is ESE_GET_PWR/ESE_POWER_STATE
  * and error ret code otherwise
  */
-long nfc_dev_ioctl(struct file *pfile, unsigned int cmd, unsigned long arg)
+static long nfc_dev_ioctl_active(struct file *pfile, unsigned int cmd, unsigned long arg)
 {
 	int ret = 0;
 	struct nfc_dev *nfc_dev = pfile->private_data;
@@ -670,89 +710,88 @@ long nfc_dev_ioctl(struct file *pfile, unsigned int cmd, unsigned long arg)
 	return ret;
 }
 
-int nfc_dev_open(struct inode *inode, struct file *filp)
+long nfc_dev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
-	struct nfc_dev *nfc_dev = NULL;
-	nfc_dev = container_of(inode->i_cdev, struct nfc_dev, c_dev);
+	struct nfc_dev *chip = file->private_data;
+	long rc;
 
-	if (!nfc_dev)
+	if (!chip)
 		return -ENODEV;
+	down_read(&chip->operation_sem);
+	rc = READ_ONCE(chip->removing) ? -ENODEV :
+		nfc_dev_ioctl_active(file, cmd, arg);
+	up_read(&chip->operation_sem);
+	return rc;
+}
 
-	pr_debug("%s: %d, %d\n", __func__, imajor(inode), iminor(inode));
+int nfc_dev_open(struct inode *inode, struct file *file)
+{
+	struct nfc_dev *chip = container_of(inode->i_cdev, struct nfc_dev, c_dev);
+	int rc = 0;
 
-	/* Set flag to block freezer fake signal if not set already.
-	 * Without this Signal being set, Driver is trying to do a read
-	 * which is causing the delay in moving to Hibernate Mode.
-	 */
-	if (!(current->flags & PF_NOFREEZE)) {
+	down_read(&chip->operation_sem);
+	if (READ_ONCE(chip->removing)) {
+		rc = -ENODEV;
+		goto out;
+	}
+	mutex_lock(&chip->dev_ref_mutex);
+	if (!(current->flags & PF_NOFREEZE))
 		current->flags |= PF_NOFREEZE;
-		pr_debug("%s: current->flags 0x%x. \n", __func__, current->flags);
+	if (!chip->dev_ref_count) {
+		set_valid_gpio(chip->configs.gpio.dwl_req, 0);
+		chip->nfc_enable_intr(chip);
 	}
+	chip->dev_ref_count++;
+	get_device(&chip->lifetime_device);
+	file->private_data = chip;
+	mutex_unlock(&chip->dev_ref_mutex);
+out:
+	up_read(&chip->operation_sem);
+	return rc;
+}
 
-	mutex_lock(&nfc_dev->dev_ref_mutex);
+int nfc_dev_flush(struct file *file, fl_owner_t id)
+{
+	struct nfc_dev *chip = file->private_data;
 
-	filp->private_data = nfc_dev;
-
-	if (nfc_dev->dev_ref_count == 0) {
-		set_valid_gpio(nfc_dev->configs.gpio.dwl_req, 0);
-
-		nfc_dev->nfc_enable_intr(nfc_dev);
+	if (!chip)
+		return -ENODEV;
+	down_read(&chip->operation_sem);
+	if (READ_ONCE(chip->removing))
+		goto out;
+	if (!mutex_trylock(&chip->read_mutex)) {
+		WRITE_ONCE(chip->release_read, true);
+		chip->nfc_disable_intr(chip);
+		wake_up(&chip->read_wq);
+		mutex_lock(&chip->read_mutex);
+		WRITE_ONCE(chip->release_read, false);
 	}
-	nfc_dev->dev_ref_count = nfc_dev->dev_ref_count + 1;
-	mutex_unlock(&nfc_dev->dev_ref_mutex);
+	mutex_unlock(&chip->read_mutex);
+out:
+	up_read(&chip->operation_sem);
 	return 0;
 }
 
-int nfc_dev_flush(struct file *pfile, fl_owner_t id)
+int nfc_dev_close(struct inode *inode, struct file *file)
 {
-	struct nfc_dev *nfc_dev = pfile->private_data;
+	struct nfc_dev *chip = file->private_data;
 
-	if (!nfc_dev)
+	if (!chip)
 		return -ENODEV;
-	/*
-	 * release blocked user thread waiting for pending read during close
-	 */
-	if (!mutex_trylock(&nfc_dev->read_mutex)) {
-		nfc_dev->release_read = true;
-		nfc_dev->nfc_disable_intr(nfc_dev);
-		wake_up(&nfc_dev->read_wq);
-		pr_debug("%s: waiting for release of blocked read\n", __func__);
-		mutex_lock(&nfc_dev->read_mutex);
-		nfc_dev->release_read = false;
-	} else {
-		pr_debug("%s: read thread already released\n", __func__);
-	}
-	mutex_unlock(&nfc_dev->read_mutex);
-	return 0;
-}
-
-int nfc_dev_close(struct inode *inode, struct file *filp)
-{
-	struct nfc_dev *nfc_dev = NULL;
-	nfc_dev = container_of(inode->i_cdev, struct nfc_dev, c_dev);
-
-	if (!nfc_dev)
-		return -ENODEV;
-
-	pr_debug("%s: %d, %d\n", __func__, imajor(inode), iminor(inode));
-
-	/* unset the flag to restore to previous state */
-	if (current->flags & PF_NOFREEZE) {
+	down_read(&chip->operation_sem);
+	mutex_lock(&chip->dev_ref_mutex);
+	if (current->flags & PF_NOFREEZE)
 		current->flags &= ~PF_NOFREEZE;
-		pr_debug("%s: current->flags 0x%x. \n", __func__, current->flags);
+	if (!READ_ONCE(chip->removing) && chip->dev_ref_count == 1) {
+		chip->nfc_disable_intr(chip);
+		set_valid_gpio(chip->configs.gpio.dwl_req, 0);
 	}
-
-	mutex_lock(&nfc_dev->dev_ref_mutex);
-	if (nfc_dev->dev_ref_count == 1) {
-		nfc_dev->nfc_disable_intr(nfc_dev);
-		set_valid_gpio(nfc_dev->configs.gpio.dwl_req, 0);
-	}
-	if (nfc_dev->dev_ref_count > 0)
-		nfc_dev->dev_ref_count = nfc_dev->dev_ref_count - 1;
-
-	filp->private_data = NULL;
-
-	mutex_unlock(&nfc_dev->dev_ref_mutex);
+	if (chip->dev_ref_count)
+		chip->dev_ref_count--;
+	file->private_data = NULL;
+	mutex_unlock(&chip->dev_ref_mutex);
+	up_read(&chip->operation_sem);
+	put_device(&chip->lifetime_device);
 	return 0;
 }
 
