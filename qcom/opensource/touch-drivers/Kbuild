@@ -159,6 +159,10 @@ ifeq ($(CONFIG_TOUCHSCREEN_GOODIX_BRL), y)
 		 ./goodix_berlin_driver/goodix_ts_inspect.o \
 		 ./goodix_berlin_driver/goodix_brl_spi.o \
 		 ./goodix_berlin_driver/goodix_brl_i2c.o
+	goodix_ts-$(CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU) += ./goodix_berlin_driver/goodix_meizu.o
+	ifeq ($(CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU),y)
+		ccflags-y += -DCONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU=1
+	endif
 
 	obj-$(CONFIG_MSM_TOUCH) += goodix_ts.o
 endif
