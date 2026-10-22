@@ -39,6 +39,22 @@ config QCOM_KGSL_FENCE_TRACE
 	  for debugging timeouts for fences between KGSL-contexts and
 	  sync-point blocks. If unsure, say 'N' here.
 
+config QCOM_KGSL_MEIZU_DIAGNOSTICS
+	bool "Meizu KGSL memory SysRq diagnostic"
+	depends on QCOM_KGSL && MAGIC_SYSRQ
+	help
+	  Register the M2391 SysRq-y GPU memory diagnostic using the public
+	  SysRq interface. This reports allocated GPU pages in KiB.
+
+config QCOM_KGSL_MEIZU_THERMAL_LOG
+	bool "Meizu GPU frequency telemetry"
+	depends on QCOM_KGSL=m
+	help
+	  Publish current and maximum allowed GPU frequencies in MHz to the
+	  recovered Meizu thermal logger. Requires the source mz_thermal_log
+	  module with its callback registration API; the stock module does
+	  not provide this API.
+
 config QCOM_ADRENO_DEFAULT_GOVERNOR
 	string "devfreq governor for the adreno core"
 	default "msm-adreno-tz"

@@ -23,6 +23,56 @@
 #include "kgsl_trace.h"
 #include "kgsl_util.h"
 
+#if IS_ENABLED(CONFIG_QCOM_KGSL_MEIZU_THERMAL_LOG)
+#include "../../../meizu/thermal-log/mz_thermal_log.h"
+
+/* Stock .text+0x1d084/0x1d134: pwrlevels[].gpu_freq is Hz. The
+ * device registry lock also excludes removal while sampling its state.
+ */
+static unsigned int kgsl_gpu_frequency_mhz(bool maximum)
+{
+	struct kgsl_device *device;
+	unsigned int frequency = 0;
+	unsigned int i;
+
+	mutex_lock(&kgsl_driver.devlock);
+	for (i = 0; i < ARRAY_SIZE(kgsl_driver.devp); i++) {
+		struct kgsl_pwrctrl *pwr;
+		unsigned int level;
+
+		device = kgsl_driver.devp[i];
+		if (!device || device->id != 0)
+			continue;
+		pwr = &device->pwrctrl;
+		level = READ_ONCE(pwr->active_pwrlevel);
+		if (maximum) {
+			unsigned int thermal = READ_ONCE(pwr->thermal_pwrlevel);
+			unsigned int user = READ_ONCE(pwr->max_pwrlevel);
+
+			if (thermal >= pwr->num_pwrlevels || user >= pwr->num_pwrlevels)
+				break;
+			frequency = min(pwr->pwrlevels[thermal].gpu_freq / 1000000,
+				pwr->pwrlevels[user].gpu_freq / 1000000);
+		} else if (level < pwr->num_pwrlevels) {
+			frequency = pwr->pwrlevels[level].gpu_freq / 1000000;
+		}
+		break;
+	}
+	mutex_unlock(&kgsl_driver.devlock);
+	return frequency;
+}
+
+static unsigned int kgsl_gpu_get_freq_max(void)
+{
+	return kgsl_gpu_frequency_mhz(true);
+}
+
+static unsigned int kgsl_gpu_get_cur_freq(void)
+{
+	return kgsl_gpu_frequency_mhz(false);
+}
+#endif
+
 #define UPDATE_BUSY_VAL		1000000
 
 #define KGSL_MAX_BUSLEVELS	20
@@ -1728,12 +1778,25 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 
 	timer_setup(&pwr->minbw_timer, kgsl_minbw_timer, 0);
 
+#if IS_ENABLED(CONFIG_QCOM_KGSL_MEIZU_THERMAL_LOG)
+	if (device->id == 0 &&
+		mz_thermal_register_gpu_callbacks(kgsl_gpu_get_cur_freq,
+			kgsl_gpu_get_freq_max))
+		dev_warn(device->dev, "GPU thermal telemetry registration failed\n");
+#endif
+
 	return 0;
 }
 
 void kgsl_pwrctrl_close(struct kgsl_device *device)
 {
 	struct kgsl_pwrctrl *pwr = &device->pwrctrl;
+
+#if IS_ENABLED(CONFIG_QCOM_KGSL_MEIZU_THERMAL_LOG)
+	if (device->id == 0)
+		mz_thermal_unregister_gpu_callbacks(kgsl_gpu_get_cur_freq,
+			kgsl_gpu_get_freq_max);
+#endif
 
 	pwr->power_flags = 0;
 

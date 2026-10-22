@@ -2486,9 +2486,7 @@ static void a6xx_send_tlb_hint(struct kgsl_device *device, bool val)
 	if (!gmu->domain)
 		return;
 
-#if (KERNEL_VERSION(5, 15, 0) <= LINUX_VERSION_CODE)
-	qcom_skip_tlb_management(&gmu->pdev->dev, val);
-#endif
+	/* The local SMMU has no skip-TLB API; retain the pre-boot flush. */
 	if (!val)
 		iommu_flush_iotlb_all(gmu->domain);
 }

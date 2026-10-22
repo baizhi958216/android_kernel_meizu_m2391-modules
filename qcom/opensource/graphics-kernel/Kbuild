@@ -43,6 +43,8 @@ ifeq ($(CONFIG_ARCH_SCUBA), y)
 endif
 
 ccflags-y += -I$(KGSL_PATH) -I$(KGSL_PATH)/include/linux -I$(KGSL_PATH)/include -I$(KERNEL_SRC)/drivers/devfreq -I$(KERNEL_SRC)/drivers/iommu
+ccflags-$(CONFIG_QCOM_KGSL_MEIZU_DIAGNOSTICS) += -DCONFIG_QCOM_KGSL_MEIZU_DIAGNOSTICS=1
+ccflags-$(CONFIG_QCOM_KGSL_MEIZU_THERMAL_LOG) += -DCONFIG_QCOM_KGSL_MEIZU_THERMAL_LOG=1
 
 obj-$(CONFIG_QCOM_KGSL) += msm_kgsl.o
 

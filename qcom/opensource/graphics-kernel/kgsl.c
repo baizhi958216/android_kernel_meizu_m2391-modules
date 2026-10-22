@@ -24,6 +24,7 @@
 #include <linux/security.h>
 #include <linux/sort.h>
 #include <linux/string_helpers.h>
+#include <linux/sysrq.h>
 #include <soc/qcom/of_common.h>
 #include <soc/qcom/secure_buffer.h>
 #include <soc/qcom/boot_stats.h>
@@ -5104,8 +5105,31 @@ void kgsl_device_platform_remove(struct kgsl_device *device)
 	_unregister_device(device);
 }
 
+#if IS_ENABLED(CONFIG_QCOM_KGSL_MEIZU_DIAGNOSTICS)
+/* Stock msm_kgsl: sysrq_kgsl_usage_processes, .text+0xe4a0. */
+static void sysrq_kgsl_usage_processes(int key)
+{
+	pr_info("kgsl useage: %lukB\n",
+		(unsigned long)atomic_long_read(&kgsl_driver.stats.page_alloc) >> 10);
+}
+
+static const struct sysrq_key_op kgsl_usage_sysrq_op = {
+	.handler = sysrq_kgsl_usage_processes,
+	.help_msg = "print-kgsl-memory(y)",
+	.action_msg = "Print kgsl Memory",
+};
+
+static bool kgsl_usage_sysrq_registered;
+#endif
+
 void kgsl_core_exit(void)
 {
+#if IS_ENABLED(CONFIG_QCOM_KGSL_MEIZU_DIAGNOSTICS)
+	if (kgsl_usage_sysrq_registered) {
+		unregister_sysrq_key('y', &kgsl_usage_sysrq_op);
+		kgsl_usage_sysrq_registered = false;
+	}
+#endif
 	kgsl_exit_page_pools();
 	kgsl_eventlog_exit();
 
@@ -5204,6 +5228,11 @@ int __init kgsl_core_init(void)
 	kgsl_driver.prockobj =
 		kobject_create_and_add("proc",
 				       &kgsl_driver.virtdev.kobj);
+
+#if IS_ENABLED(CONFIG_QCOM_KGSL_MEIZU_DIAGNOSTICS)
+	kgsl_usage_sysrq_registered =
+		!register_sysrq_key('y', &kgsl_usage_sysrq_op);
+#endif
 
 	kgsl_core_debugfs_init();
 

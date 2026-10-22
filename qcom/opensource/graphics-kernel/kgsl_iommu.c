@@ -294,23 +294,10 @@ static int _iopgtbl_unmap(struct kgsl_iommu_pt *pt, u64 gpuaddr, size_t size)
 
 flush:
 	/*
-	 * Skip below logic for 5.15 kernel version and above as
-	 * qcom_skip_tlb_management() API takes care of avoiding
-	 * TLB operations during slumber.
+	 * This kernel's SMMU has no skip-TLB hint API. Always invalidate after
+	 * unmap: iommu_flush_iotlb_all() takes the SMMU runtime-PM reference
+	 * before accessing registers, including while the GPU is in slumber.
 	 */
-	if (KERNEL_VERSION(5, 15, 0) > LINUX_VERSION_CODE) {
-		struct kgsl_device *device = KGSL_MMU_DEVICE(pt->base.mmu);
-
-		/* Skip TLB Operations if GPU is in slumber */
-		if (mutex_trylock(&device->mutex)) {
-			if (device->state == KGSL_STATE_SLUMBER) {
-				mutex_unlock(&device->mutex);
-				return 0;
-			}
-			mutex_unlock(&device->mutex);
-		}
-	}
-
 	kgsl_iommu_flush_tlb(pt->base.mmu);
 	return 0;
 }
@@ -361,22 +348,9 @@ static void kgsl_iommu_send_tlb_hint(struct kgsl_mmu *mmu, bool hint)
 {
 	struct kgsl_device *device = KGSL_MMU_DEVICE(mmu);
 
-#if (KERNEL_VERSION(5, 15, 0) <= LINUX_VERSION_CODE)
-	struct kgsl_iommu *iommu = &mmu->iommu;
-
 	/*
-	 * Send hint to SMMU driver for skipping TLB operations during slumber.
-	 * This will help to avoid unnecessary cx gdsc toggling.
-	 */
-	qcom_skip_tlb_management(&iommu->user_context.pdev->dev, hint);
-	if (iommu->lpac_context.domain)
-		qcom_skip_tlb_management(&iommu->lpac_context.pdev->dev, hint);
-#endif
-
-	/*
-	 * TLB operations are skipped during slumber. Incase CX doesn't
-	 * go down, it can result in incorrect translations due to stale
-	 * TLB entries. Flush TLB before boot up to ensure fresh start.
+	 * Keep the pre-boot invalidation even without skip-TLB hints so a
+	 * retained CX domain cannot expose translations from a previous boot.
 	 */
 	if (!hint)
 		kgsl_iommu_flush_tlb(mmu);
