@@ -19,14 +19,15 @@
 #include <linux/module.h>
 #include <linux/mutex.h>
 #include "meizu_sys.h"
-#include "base.h"
+
 
 static struct class *meizu_class;
+static struct kobject *meizu_class_root;
 static DEFINE_MUTEX(meizu_sysfslink_lock);
 
 static struct kobject *meizu_root(void)
 {
-	return &meizu_class->p->subsys.kobj;
+	return meizu_class_root;
 }
 
 int meizu_sysfslink_register_name(struct device *dev, char *name)
@@ -179,12 +180,20 @@ EXPORT_SYMBOL(mz_sysfs_create_directory);
 
 static int __init meizu_sys_init(void)
 {
-	meizu_class = class_create(THIS_MODULE, "meizu");
-	return IS_ERR(meizu_class) ? PTR_ERR(meizu_class) : 0;
+	meizu_class = class_create("meizu");
+	if (IS_ERR(meizu_class))
+		return PTR_ERR(meizu_class);
+	meizu_class_root = class_get_kobject(meizu_class);
+	if (!meizu_class_root) {
+		class_destroy(meizu_class);
+		return -ENODEV;
+	}
+	return 0;
 }
 
 static void __exit meizu_sys_exit(void)
 {
+	kobject_put(meizu_class_root);
 	class_destroy(meizu_class);
 	meizu_class = NULL;
 }
