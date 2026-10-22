@@ -1,0 +1,17 @@
+{
+  "status": "source-selected-stock-backed-up-and-removed",
+  "foundation": "Existing local Novatek GPL touchscreen source; copyright Novatek 2010-2018 and original license headers retained.",
+  "stock_sha256": "6e82738cab76ff742123272f37cf89c2d37bcc9e878be0de76ec58c7a295d78c",
+  "stock_module": "out/m2391-515-analysis/removed-stock-modules/vendor_dlkm/lib/modules/nt36xxx-i2c.ko",
+  "evidence": "out/m2391-515-analysis/recovery/nt36xxx-stock.dis",
+  "baseline_audit": "out/m2391-515-analysis/recovery/nt36xxx-cfi-normalized-audit.json",
+  "exports": [],
+  "changes": [
+    "Remove foundation PID5B0B firmware-update skip absent from stock.",
+    "Track actual IRQ/GPIO/late initialization and serialize one controller binding and panel transitions.",
+    "Drain SRCU panel callbacks and retained late-init task before proc/work/IRQ/input/GPIO/devm destruction.",
+    "Allocate MP buffers before proc publication, drain proc before free, and clean partial failure paths.",
+    "Reject malformed raw-proc payload lengths and out-of-range shared I2C buffer lengths.",
+    "Handle error notifier cookies and null IRQ diagnostic descriptors."
+  ]
+}

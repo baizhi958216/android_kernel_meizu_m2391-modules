@@ -1444,18 +1444,19 @@ return:
 *******************************************************/
 int32_t nvt_mp_proc_init(void)
 {
+	int ret = nvt_mp_buffer_init();
+
+	if (ret) {
+		nvt_mp_buffer_deinit();
+		return ret;
+	}
 	NVT_proc_selftest_entry = proc_create("nvt_selftest", 0444, NULL, &nvt_selftest_fops);
 	if (NVT_proc_selftest_entry == NULL) {
 		NVT_ERR("create /proc/nvt_selftest Failed!\n");
+		nvt_mp_buffer_deinit();
 		return -1;
 	} else {
-		if(nvt_mp_buffer_init()) {
-			NVT_ERR("Allocate mp memory failed\n");
-			return -1;
-		}
-		else {
-			NVT_LOG("create /proc/nvt_selftest Succeeded!\n");
-		}
+		NVT_LOG("create /proc/nvt_selftest Succeeded!\n");
 		return 0;
 	}
 }
@@ -1470,12 +1471,11 @@ return:
 *******************************************************/
 void nvt_mp_proc_deinit(void)
 {
-	nvt_mp_buffer_deinit();
-
 	if (NVT_proc_selftest_entry != NULL) {
 		remove_proc_entry("nvt_selftest", NULL);
 		NVT_proc_selftest_entry = NULL;
 		NVT_LOG("Removed /proc/%s\n", "nvt_selftest");
 	}
+	nvt_mp_buffer_deinit();
 }
 #endif /* #if NVT_TOUCH_MP */
