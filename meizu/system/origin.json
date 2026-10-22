@@ -1,0 +1,15 @@
+{
+  "status": "source-selected-stock-backed-up-and-removed",
+  "implementation": "Independent recovery from M2391 meizu-sys.ko disassembly and original split/base BTF",
+  "stock_sha256": "06f34c4d96dd1daaf33c4528dcc083d137720c15863e7504e427c221832a583c",
+  "exports": 11,
+  "exact_primitive_exports": 3,
+  "closed_source_exports": 8,
+  "boundary_layout_assertions": 129,
+  "abi_group": "meizu-system-consumers",
+  "safety_changes": [
+    "Publish attr parent before sysfs callback visibility.",
+    "Preflight foreign owners and roll back only attributes owned by this directory.",
+    "Clear failed kobject pointers and handle null directory teardown."
+  ]
+}
