@@ -1,0 +1,21 @@
+{
+  "status": "source-selected-stock-backed-up-and-removed",
+  "implementation": "Independent source reconstruction from the local stock M68 module, its relocation-annotated ARM64 disassembly, local firmware and M2391 MP device tree. No F71 or other confidential public-source implementation is copied.",
+  "stock_module": "vendor/meizu/m2391/proprietary/vendor_dlkm/lib/modules/cs_press_m68.ko",
+  "stock_sha256": "6a16fc4d983f157e47c5e03dcd028cc488953d1fdfa38cfa8e518ba19444f604",
+  "evidence": "out/m2391-515-analysis/recovery/cs-press-m68.dis",
+  "compatible": "meizu,cs_press_m68",
+  "i2c_address": "0x72",
+  "firmware": "cspress_m68fw.csf",
+  "storage_slot": 73,
+  "exports": [],
+  "safety_changes": [
+    "Checked short I2C transfers and allocation errors; bounded firmware and raw I/O sizes.",
+    "Serialized complete mailbox and firmware transactions.",
+    "Drained sysfs, misc, panel notifier, IRQ, thread and work before freeing resources; retained open-file state using kref.",
+    "Replaced NULL sscanf / calibration-overwriting logging with safe legacy binary logging record updates; ASCII calibration is retained.",
+    "Bounded hex parser does not modify const sysfs input or overwrite token boundaries.",
+    "Initialized the original one-byte EEPROM diagnostic output instead of exposing an unwritten byte.",
+    "Balanced repeated IRQ disable/enable aliases and propagated failed writes."
+  ]
+}
