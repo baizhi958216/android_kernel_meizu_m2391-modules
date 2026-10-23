@@ -71,6 +71,7 @@
 
 static struct sde_rsc_priv *rsc_prv_list[MAX_RSC_COUNT];
 static struct device *rpmh_dev[MAX_RSC_COUNT];
+static DEFINE_MUTEX(rpmh_dev_lock);
 
 /**
  * sde_rsc_client_create() - create the client for sde rsc.
@@ -114,7 +115,7 @@ struct sde_rsc_client *sde_rsc_client_create(u32 rsc_index, char *client_name,
 		return ERR_PTR(-ENOMEM);
 
 	mutex_lock(&rsc->client_lock);
-	strlcpy(client->name, client_name, MAX_RSC_CLIENT_NAME_LEN);
+	strscpy(client->name, client_name, MAX_RSC_CLIENT_NAME_LEN);
 	client->current_state = SDE_RSC_IDLE_STATE;
 	client->rsc_index = rsc_index;
 	client->id = id;
@@ -473,6 +474,34 @@ end:
 	return rc;
 }
 
+static bool sde_rsc_needs_solver(struct sde_rsc_priv *rsc, enum sde_rsc_state state)
+{
+	return state == SDE_RSC_CMD_STATE || state == SDE_RSC_IDLE_STATE ||
+		(state == SDE_RSC_VID_STATE && rsc->version >= SDE_RSC_REV_3);
+}
+
+static int sde_rsc_set_state(struct sde_rsc_priv *rsc, enum sde_rsc_state state)
+{
+	int ret;
+
+	/* Block new active TCS requests before the hardware enters solver mode. */
+	if (sde_rsc_needs_solver(rsc, state)) {
+		ret = rpmh_mode_solver_set(rsc->rpmh_dev, true);
+		if (ret)
+			return ret;
+	}
+
+	ret = rsc->hw_ops.state_update(rsc, state);
+	if (ret) {
+		rpmh_mode_solver_set(rsc->rpmh_dev, sde_rsc_needs_solver(rsc, rsc->current_state));
+		return ret;
+	}
+	if (!sde_rsc_needs_solver(rsc, state))
+		return rpmh_mode_solver_set(rsc->rpmh_dev, false);
+
+	return 0;
+}
+
 static int sde_rsc_switch_to_cmd(struct sde_rsc_priv *rsc,
 	struct sde_rsc_cmd_config *config,
 	struct sde_rsc_client *caller_client,
@@ -518,9 +547,9 @@ static int sde_rsc_switch_to_cmd(struct sde_rsc_priv *rsc,
 			goto end;
 
 	if (rsc->hw_ops.state_update) {
-		rc = rsc->hw_ops.state_update(rsc, SDE_RSC_CMD_STATE);
-		if (!rc)
-			rpmh_mode_solver_set(rsc->rpmh_dev, true);
+		rc = sde_rsc_set_state(rsc, SDE_RSC_CMD_STATE);
+		if (rc)
+			goto end;
 	}
 
 	/* vsync wait not needed during VID->CMD switch (rev 4+ HW only) */
@@ -578,9 +607,9 @@ static int sde_rsc_switch_to_clk(struct sde_rsc_priv *rsc,
 		goto end;
 
 	if (rsc->hw_ops.state_update) {
-		rc = rsc->hw_ops.state_update(rsc, SDE_RSC_CLK_STATE);
-		if (!rc)
-			rpmh_mode_solver_set(rsc->rpmh_dev, false);
+		rc = sde_rsc_set_state(rsc, SDE_RSC_CLK_STATE);
+		if (rc)
+			goto end;
 	}
 
 	/* indicate wait for vsync for cmd/vid to clk state switch */
@@ -665,10 +694,9 @@ static int sde_rsc_switch_to_vid(struct sde_rsc_priv *rsc,
 			goto end;
 
 	if (rsc->hw_ops.state_update) {
-		rc = rsc->hw_ops.state_update(rsc, SDE_RSC_VID_STATE);
-		if (!rc)
-			rpmh_mode_solver_set(rsc->rpmh_dev,
-				rsc->version >= SDE_RSC_REV_3);
+		rc = sde_rsc_set_state(rsc, SDE_RSC_VID_STATE);
+		if (rc)
+			goto end;
 	}
 
 	/* vsync wait not needed during CMD->VID switch (rev 4+ HW only) */
@@ -750,10 +778,9 @@ static int sde_rsc_switch_to_idle(struct sde_rsc_priv *rsc,
 		if (!rc)
 			rc = CLK_MODE_SWITCH_SUCCESS;
 	} else if (rsc->hw_ops.state_update) {
-		rc = rsc->hw_ops.state_update(rsc, SDE_RSC_IDLE_STATE);
-		rsc->post_poms = false;
+		rc = sde_rsc_set_state(rsc, SDE_RSC_IDLE_STATE);
 		if (!rc)
-			rpmh_mode_solver_set(rsc->rpmh_dev, true);
+			rsc->post_poms = false;
 	}
 
 	return rc;
@@ -1068,8 +1095,6 @@ int sde_rsc_client_trigger_vote(struct sde_rsc_client *caller_client,
 		    rsc->bw_config.new_ib_vote[i] > rsc->bw_config.ib_vote[i])
 			rsc->bwi_update = BW_LOW_TO_HIGH;
 
-		rsc->bw_config.ab_vote[i] = rsc->bw_config.new_ab_vote[i];
-		rsc->bw_config.ib_vote[i] = rsc->bw_config.new_ib_vote[i];
 	}
 
 	rc = sde_rsc_resource_enable(rsc);
@@ -1088,11 +1113,21 @@ int sde_rsc_client_trigger_vote(struct sde_rsc_client *caller_client,
 		}
 
 		rpmh_invalidate(rsc->rpmh_dev);
-		for (i = 0; i < SDE_POWER_HANDLE_DBUS_ID_MAX; i++)
-			sde_power_data_bus_set_quota(&rsc->phandle,
-				i, rsc->bw_config.ab_vote[i],
-				rsc->bw_config.ib_vote[i]);
-		rpmh_write_sleep_and_wake(rsc->rpmh_dev);
+		for (i = 0; i < SDE_POWER_HANDLE_DBUS_ID_MAX; i++) {
+			rc = sde_power_data_bus_set_quota(&rsc->phandle, i,
+					rsc->bw_config.new_ab_vote[i], rsc->bw_config.new_ib_vote[i]);
+			if (rc)
+				break;
+		}
+		if (!rc)
+			rc = rpmh_write_sleep_and_wake(rsc->rpmh_dev);
+		if (rc) {
+			if (rsc->hw_ops.tcs_use_ok)
+				rsc->hw_ops.tcs_use_ok(rsc);
+			goto tcs_wait_failed;
+		}
+		memcpy(rsc->bw_config.ab_vote, rsc->bw_config.new_ab_vote, sizeof(rsc->bw_config.ab_vote));
+		memcpy(rsc->bw_config.ib_vote, rsc->bw_config.new_ib_vote, sizeof(rsc->bw_config.ib_vote));
 	}
 
 	if (rsc->version >= SDE_RSC_REV_5 && !delta_vote)
@@ -1703,14 +1738,27 @@ static int sde_rsc_probe(struct platform_device *pdev)
 {
 	int ret;
 	struct sde_rsc_priv *rsc;
-	static int counter;
+	u32 index = SDE_RSC_INDEX;
+	struct device *rpmh;
 	char  name[MAX_RSC_CLIENT_NAME_LEN];
 
-	if (counter >= MAX_RSC_COUNT) {
+	of_property_read_u32(pdev->dev.of_node, "cell-index", &index);
+	if (index >= MAX_RSC_COUNT) {
 		pr_err("sde rsc supports probe till MAX_RSC_COUNT=%d devices\n",
 			MAX_RSC_COUNT);
 		return -EINVAL;
 	}
+
+	mutex_lock(&rpmh_dev_lock);
+	rpmh = get_device(rpmh_dev[index]);
+	mutex_unlock(&rpmh_dev_lock);
+	if (!rpmh)
+		return -EPROBE_DEFER;
+	if (!device_link_add(&pdev->dev, rpmh, DL_FLAG_AUTOREMOVE_CONSUMER)) {
+		put_device(rpmh);
+		return -EPROBE_DEFER;
+	}
+	put_device(rpmh);
 
 	rsc = kzalloc(sizeof(*rsc), GFP_KERNEL);
 	if (!rsc) {
@@ -1765,13 +1813,7 @@ static int sde_rsc_probe(struct platform_device *pdev)
 		goto sde_rsc_fail;
 	}
 
-	rsc->rpmh_dev = rpmh_dev[SDE_RSC_INDEX + counter];
-	if (IS_ERR_OR_NULL(rsc->rpmh_dev)) {
-		ret = !rsc->rpmh_dev ? -EINVAL : PTR_ERR(rsc->rpmh_dev);
-		rsc->rpmh_dev = NULL;
-		pr_err("rpmh device node is not available ret:%d\n", ret);
-		goto sde_rsc_fail;
-	}
+	rsc->rpmh_dev = rpmh;
 
 	ret = msm_dss_ioremap_byname(pdev, &rsc->wrapper_io, "wrapper");
 	if (ret) {
@@ -1827,17 +1869,17 @@ static int sde_rsc_probe(struct platform_device *pdev)
 	atomic_set(&rsc->resource_refcount, 0);
 
 	pr_info("sde rsc index:%d probed successfully\n",
-				SDE_RSC_INDEX + counter);
+				index);
 
-	rsc_prv_list[SDE_RSC_INDEX + counter] = rsc;
-	snprintf(name, MAX_RSC_CLIENT_NAME_LEN, "%s%d", "sde_rsc", counter);
+	rsc_prv_list[index] = rsc;
+	snprintf(name, MAX_RSC_CLIENT_NAME_LEN, "%s%d", "sde_rsc", index);
 	_sde_rsc_init_debugfs(rsc, name);
-	counter++;
 
 	ret = component_add(&pdev->dev, &sde_rsc_comp_ops);
-	if (ret)
-		pr_debug("component add failed, ret=%d\n", ret);
-	ret = 0;
+	if (ret) {
+		rsc_prv_list[index] = NULL;
+		goto sde_rsc_fail;
+	}
 
 	return ret;
 
@@ -1847,12 +1889,16 @@ rsc_alloc_fail:
 	return ret;
 }
 
-static int sde_rsc_remove(struct platform_device *pdev)
+static void sde_rsc_remove(struct platform_device *pdev)
 {
 	struct sde_rsc_priv *rsc = platform_get_drvdata(pdev);
 
+	u32 index = SDE_RSC_INDEX;
+
+	component_del(&pdev->dev, &sde_rsc_comp_ops);
+	of_property_read_u32(pdev->dev.of_node, "cell-index", &index);
+	rsc_prv_list[index] = NULL;
 	sde_rsc_deinit(pdev, rsc);
-	return 0;
 }
 
 static int sde_rsc_rpmh_probe(struct platform_device *pdev)
@@ -1869,18 +1915,21 @@ static int sde_rsc_rpmh_probe(struct platform_device *pdev)
 		return -EINVAL;
 	}
 
+	mutex_lock(&rpmh_dev_lock);
 	rpmh_dev[index] = &pdev->dev;
+	mutex_unlock(&rpmh_dev_lock);
 	return 0;
 }
 
-int sde_rsc_rpmh_remove(struct platform_device *pdev)
+static void sde_rsc_rpmh_remove(struct platform_device *pdev)
 {
 	int i;
 
+	mutex_lock(&rpmh_dev_lock);
 	for (i = 0; i < MAX_RSC_COUNT; i++)
-		rpmh_dev[i] = NULL;
-
-	return 0;
+		if (rpmh_dev[i] == &pdev->dev)
+			rpmh_dev[i] = NULL;
+	mutex_unlock(&rpmh_dev_lock);
 }
 
 static const struct of_device_id dt_match[] = {
