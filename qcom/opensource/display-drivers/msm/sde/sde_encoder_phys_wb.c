@@ -2253,7 +2253,9 @@ static int _sde_encoder_phys_wb_init_internal_fb(struct sde_encoder_phys_wb *wb_
 	}
 
 	/* allocate gem tracking object */
-	info = drm_get_format_info(dev, &mode_cmd);
+	info = drm_get_format_info(dev, mode_cmd.pixel_format, mode_cmd.modifier[0]);
+	if (!info)
+		return -EINVAL;
 	nplanes = info->num_planes;
 	if (nplanes >= SDE_MAX_PLANES) {
 		SDE_ERROR("[enc:%d wb:%d] requested format has too many planes:%d\n",
@@ -2273,12 +2275,15 @@ static int _sde_encoder_phys_wb_init_internal_fb(struct sde_encoder_phys_wb *wb_
 
 	for (i = 0; i < nplanes; ++i) {
 		wb_enc->bo_disable[i] = wb_enc->bo_disable[0];
+		drm_gem_object_get(wb_enc->bo_disable[i]);
 		mode_cmd.pitches[i] = width * info->cpp[i];
 	}
 
-	fb = msm_framebuffer_init(dev, &mode_cmd, wb_enc->bo_disable);
+	fb = msm_framebuffer_init(dev, info, &mode_cmd, wb_enc->bo_disable);
 	if (IS_ERR_OR_NULL(fb)) {
 		ret = PTR_ERR(fb);
+		for (i = 0; i < nplanes; i++)
+			drm_gem_object_put(wb_enc->bo_disable[i]);
 		drm_gem_object_put(wb_enc->bo_disable[0]);
 		wb_enc->bo_disable[0] = NULL;
 
@@ -2289,8 +2294,13 @@ static int _sde_encoder_phys_wb_init_internal_fb(struct sde_encoder_phys_wb *wb_
 
 	/* prepare the backing buffer now so that it's available later */
 	ret = msm_framebuffer_prepare(fb, aspace);
-	if (!ret)
+	if (!ret) {
 		wb_enc->fb_disable = fb;
+	} else {
+		drm_framebuffer_put(fb);
+		drm_gem_object_put(wb_enc->bo_disable[0]);
+		wb_enc->bo_disable[0] = NULL;
+	}
 	return ret;
 }
 
@@ -2305,6 +2315,8 @@ static void _sde_encoder_phys_wb_destroy_internal_fb(
 		return;
 
 	if (wb_enc->fb_disable) {
+		msm_framebuffer_cleanup(wb_enc->fb_disable,
+				wb_enc->base.sde_kms->aspace[SDE_IOMMU_DOMAIN_UNSECURE]);
 		drm_framebuffer_unregister_private(wb_enc->fb_disable);
 		drm_framebuffer_remove(wb_enc->fb_disable);
 		wb_enc->fb_disable = NULL;

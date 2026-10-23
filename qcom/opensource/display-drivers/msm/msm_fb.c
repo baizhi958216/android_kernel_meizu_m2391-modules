@@ -66,8 +66,11 @@ int msm_framebuffer_prepare(struct drm_framebuffer *fb,
 	for (i = 0; i < n; i++) {
 		ret = msm_gem_get_iova(fb->obj[i], aspace, &iova);
 		DBG("FB[%u]: iova[%d]: %08llx (%d)", fb->base.id, i, iova, ret);
-		if (ret)
+		if (ret) {
+			while (i--)
+				msm_gem_put_iova(fb->obj[i], aspace);
 			return ret;
+		}
 	}
 
 	return 0;
@@ -145,13 +148,15 @@ const struct msm_format *msm_framebuffer_format(struct drm_framebuffer *fb)
 }
 
 struct drm_framebuffer *msm_framebuffer_create(struct drm_device *dev,
-		struct drm_file *file, const struct drm_mode_fb_cmd2 *mode_cmd)
+		struct drm_file *file, const struct drm_format_info *info,
+		const struct drm_mode_fb_cmd2 *mode_cmd)
 {
-	const struct drm_format_info *info = drm_get_format_info(dev,
-								mode_cmd);
 	struct drm_gem_object *bos[4] = {0};
 	struct drm_framebuffer *fb;
 	int ret, i, n = info->num_planes;
+
+	if (n > ARRAY_SIZE(bos))
+		return ERR_PTR(-EINVAL);
 
 	for (i = 0; i < n; i++) {
 		bos[i] = drm_gem_object_lookup(file, mode_cmd->handles[i]);
@@ -161,7 +166,7 @@ struct drm_framebuffer *msm_framebuffer_create(struct drm_device *dev,
 		}
 	}
 
-	fb = msm_framebuffer_init(dev, mode_cmd, bos);
+	fb = msm_framebuffer_init(dev, info, mode_cmd, bos);
 	if (IS_ERR(fb)) {
 		ret = PTR_ERR(fb);
 		goto out_unref;
@@ -176,11 +181,10 @@ out_unref:
 }
 
 struct drm_framebuffer *msm_framebuffer_init(struct drm_device *dev,
+		const struct drm_format_info *info,
 		const struct drm_mode_fb_cmd2 *mode_cmd,
 		struct drm_gem_object **bos)
 {
-	const struct drm_format_info *info = drm_get_format_info(dev,
-								mode_cmd);
 	struct msm_drm_private *priv = dev->dev_private;
 	struct msm_kms *kms = priv->kms;
 	struct msm_framebuffer *msm_fb = NULL;
@@ -240,24 +244,12 @@ struct drm_framebuffer *msm_framebuffer_init(struct drm_device *dev,
 				goto fail;
 		}
 	} else {
-		const struct drm_format_info *info;
-
-		info = drm_format_info(mode_cmd->pixel_format);
-		if (!info || num_planes > ARRAY_SIZE(info->cpp)) {
-			ret = -EINVAL;
-			goto fail;
-		}
-
 		for (i = 0; i < num_planes; i++) {
-			unsigned int width = mode_cmd->width / (i ?
-					info->hsub : 1);
-			unsigned int height = mode_cmd->height / (i ?
-					info->vsub : 1);
-			unsigned int min_size;
-
-			min_size = (height - 1) * mode_cmd->pitches[i]
-				+ width * info->cpp[i]
-				+ mode_cmd->offsets[i];
+			unsigned int width = drm_format_info_plane_width(info, mode_cmd->width, i);
+			unsigned int height = drm_format_info_plane_height(info, mode_cmd->height, i);
+			u64 min_size = (u64)(height - 1) * mode_cmd->pitches[i] +
+					drm_format_info_min_pitch(info, i, width) +
+					mode_cmd->offsets[i];
 
 			if (!bos[i] || bos[i]->size < min_size) {
 				ret = -EINVAL;
@@ -269,7 +261,7 @@ struct drm_framebuffer *msm_framebuffer_init(struct drm_device *dev,
 	for (i = 0; i < num_planes; i++)
 		msm_fb->base.obj[i] = bos[i];
 
-	drm_helper_mode_fill_fb_struct(dev, fb, mode_cmd);
+	drm_helper_mode_fill_fb_struct(dev, fb, info, mode_cmd);
 
 	ret = drm_framebuffer_init(dev, fb, &msm_framebuffer_funcs);
 	if (ret) {
@@ -357,8 +349,8 @@ int msm_fb_obj_get_attrs(struct drm_gem_object *obj,
 		for (i = 0; i < nelems; i++) {
 			if (vmid_list[i] == VMID_CP_PIXEL)
 				*fb_sec = 1;
-			else if (vmid_list[i] & (VMID_CP_SEC_DISPLAY |
-					VMID_CP_CAMERA_PREVIEW))
+			else if (vmid_list[i] == VMID_CP_SEC_DISPLAY ||
+				 vmid_list[i] == VMID_CP_CAMERA_PREVIEW)
 				*fb_sec_dir = 1;
 		}
 	}
