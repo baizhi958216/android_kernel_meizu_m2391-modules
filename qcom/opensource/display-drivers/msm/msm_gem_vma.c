@@ -48,8 +48,10 @@ static int smmu_aspace_map_vma(struct msm_gem_address_space *aspace,
 
 	ret = aspace->mmu->funcs->map_dma_buf(aspace->mmu, sgt,
 			DMA_BIDIRECTIONAL, flags);
-	if (!ret)
-		vma->iova = sg_dma_address(sgt->sgl);
+	if (ret)
+		return ret;
+
+	vma->iova = sg_dma_address(sgt->sgl);
 
 	/* Get a reference to the aspace to keep it around */
 	kref_get(&aspace->kref);

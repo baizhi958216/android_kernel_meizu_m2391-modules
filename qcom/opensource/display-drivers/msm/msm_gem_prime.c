@@ -44,7 +44,12 @@ struct sg_table *msm_gem_prime_get_sg_table(struct drm_gem_object *obj)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
 int msm_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map)
 {
-	void *addr = msm_gem_get_vaddr(obj);
+	void *addr;
+
+	if (obj->import_attach)
+		return dma_buf_vmap(obj->import_attach->dmabuf, map);
+
+	addr = msm_gem_get_vaddr(obj);
 
 	if (IS_ERR_OR_NULL(addr))
 		return addr ? PTR_ERR(addr) : -ENOMEM;
@@ -64,18 +69,10 @@ void msm_gem_prime_vunmap(struct drm_gem_object *obj, struct iosys_map *map)
 void msm_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
 #endif
 {
-	msm_gem_put_vaddr(obj);
-}
-
-int msm_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
-{
-	int ret;
-
-	ret = drm_gem_mmap_obj(obj, obj->size, vma);
-	if (ret < 0)
-		return ret;
-
-	return msm_gem_mmap_obj(vma->vm_private_data, vma);
+	if (obj->import_attach)
+		dma_buf_vunmap(obj->import_attach->dmabuf, map);
+	else
+		msm_gem_put_vaddr(obj);
 }
 
 struct drm_gem_object *msm_gem_prime_import_sg_table(struct drm_device *dev,
@@ -87,7 +84,7 @@ struct drm_gem_object *msm_gem_prime_import_sg_table(struct drm_device *dev,
 int msm_gem_prime_pin(struct drm_gem_object *obj)
 {
 	if (!obj->import_attach)
-		msm_gem_get_pages(obj);
+		return PTR_ERR_OR_ZERO(msm_gem_get_pages(obj));
 	return 0;
 }
 

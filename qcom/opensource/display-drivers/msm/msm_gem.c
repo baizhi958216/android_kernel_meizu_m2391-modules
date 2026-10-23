@@ -17,11 +17,11 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <linux/qcom-dma-mapping.h>
+#include <linux/dma-map-ops.h>
 #include <linux/spinlock.h>
 #include <linux/shmem_fs.h>
+#include <linux/vmalloc.h>
 #include <linux/dma-buf.h>
-#include <linux/pfn_t.h>
 #include <linux/version.h>
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
 #include <linux/ion.h>
@@ -36,6 +36,7 @@
 #define ALIGNED_OFFSET (U32_MAX & ~(GUARD_BYTES))
 
 static void msm_gem_vunmap_locked(struct drm_gem_object *obj);
+static void put_pages(struct drm_gem_object *obj);
 
 
 static dma_addr_t physaddr(struct drm_gem_object *obj)
@@ -85,7 +86,6 @@ static struct page **get_pages_vram(struct drm_gem_object *obj, int npages)
 static struct page **get_pages(struct drm_gem_object *obj)
 {
 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
-	struct device *aspace_dev;
 
 	if (obj->import_attach)
 		return msm_obj->pages;
@@ -114,29 +114,12 @@ static struct page **get_pages(struct drm_gem_object *obj)
 
 			DISP_DEV_ERR(dev->dev, "failed to allocate sgt\n");
 			msm_obj->sgt = NULL;
+			put_pages(obj);
 			return ptr;
 		}
 
-		if (msm_obj->vram_node) {
-			goto end;
-		/*
-		 * For non-cached buffers, ensure the new pages are clean
-		 * because display controller, GPU, etc. are not coherent
-		 */
-		} else if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED)) {
-			aspace_dev = msm_gem_get_aspace_device(msm_obj->aspace);
-			if (aspace_dev) {
-				dma_map_sg(aspace_dev, msm_obj->sgt->sgl,
-					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
-				/* mark the buffer as external buffer */
-				msm_obj->flags |= MSM_BO_EXTBUF;
-			} else {
-				DRM_ERROR("failed to get aspace_device\n");
-			}
-		}
 	}
 
-end:
 	return msm_obj->pages;
 }
 
@@ -160,6 +143,7 @@ static void put_pages(struct drm_gem_object *obj)
 		if (msm_obj->sgt) {
 			sg_free_table(msm_obj->sgt);
 			kfree(msm_obj->sgt);
+			msm_obj->sgt = NULL;
 		}
 
 		if (use_pages(obj))
@@ -218,14 +202,27 @@ void msm_gem_sync(struct drm_gem_object *obj)
 }
 
 
-int msm_gem_mmap_obj(struct drm_gem_object *obj,
+static int msm_gem_mmap_obj(struct drm_gem_object *obj,
 		struct vm_area_struct *vma)
 {
 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
 
-	vma->vm_flags &= ~VM_PFNMAP;
-	vma->vm_flags |= VM_MIXEDMAP;
+	if (obj->import_attach) {
+		int ret;
 
+		vma->vm_private_data = NULL;
+		vma->vm_ops = NULL;
+		ret = dma_buf_mmap(obj->import_attach->dmabuf, vma, 0);
+		if (!ret)
+			drm_gem_object_put(obj);
+		return ret;
+	}
+
+	if (is_cow_mapping(vma->vm_flags))
+		return -EINVAL;
+
+	vma->vm_pgoff -= drm_vma_node_start(&obj->vma_node);
+	vm_flags_set(vma, VM_MIXEDMAP | VM_DONTEXPAND | VM_DONTDUMP);
 	if (msm_obj->flags & MSM_BO_WC) {
 		vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
 	} else if (msm_obj->flags & MSM_BO_UNCACHED) {
@@ -236,28 +233,13 @@ int msm_gem_mmap_obj(struct drm_gem_object *obj,
 		 * address_space (so unmap_mapping_range does what we want,
 		 * in particular in the case of mmap'd dmabufs)
 		 */
-		fput(vma->vm_file);
-		get_file(obj->filp);
-		vma->vm_pgoff = 0;
-		vma->vm_file  = obj->filp;
+		if (obj->filp)
+			vma_set_file(vma, obj->filp);
 
 		vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
 	}
 
 	return 0;
-}
-
-int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
-{
-	int ret;
-
-	ret = drm_gem_mmap(filp, vma);
-	if (ret) {
-		DBG("mmap failed: %d", ret);
-		return ret;
-	}
-
-	return msm_gem_mmap_obj(vma->vm_private_data, vma);
 }
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
@@ -297,15 +279,18 @@ vm_fault_t msm_gem_fault(struct vm_fault *vmf)
 		goto out_unlock;
 	}
 
-	/* We don't use vmf->pgoff since that has the fake offset: */
-	pgoff = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
+	pgoff = vmf->pgoff;
+	if (pgoff >= obj->size >> PAGE_SHIFT) {
+		ret = VM_FAULT_SIGBUS;
+		goto out_unlock;
+	}
 
 	pfn = page_to_pfn(pages[pgoff]);
 
 	VERB("Inserting %pK pfn %lx, pa %lx", (void *)vmf->address,
 			pfn, pfn << PAGE_SHIFT);
 
-	ret = vmf_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+	ret = vmf_insert_mixed(vma, vmf->address, pfn);
 out_unlock:
 	mutex_unlock(&msm_obj->lock);
 out:
@@ -346,20 +331,27 @@ uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj)
 dma_addr_t msm_gem_get_dma_addr(struct drm_gem_object *obj)
 {
 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
+	dma_addr_t addr = 0;
 	struct sg_table *sgt;
 
+	mutex_lock(&msm_obj->lock);
 	if (!msm_obj->sgt) {
-		sgt = dma_buf_map_attachment(obj->import_attach,
+		if (!obj->import_attach)
+			goto unlock;
+		sgt = dma_buf_map_attachment_unlocked(obj->import_attach,
 						DMA_BIDIRECTIONAL);
 		if (IS_ERR_OR_NULL(sgt)) {
 			DRM_ERROR("dma_buf_map_attachment failure, err=%ld\n",
 					PTR_ERR(sgt));
-			return 0;
+			goto unlock;
 		}
 		msm_obj->sgt = sgt;
 	}
 
-	return sg_phys(msm_obj->sgt->sgl);
+	addr = sg_phys(msm_obj->sgt->sgl);
+unlock:
+	mutex_unlock(&msm_obj->lock);
+	return addr;
 }
 
 static struct msm_gem_vma *add_vma(struct drm_gem_object *obj,
@@ -425,7 +417,8 @@ put_iova(struct drm_gem_object *obj)
 		 * update the active_list during gem_free_obj and gem_purge.
 		 */
 		msm_obj->aspace = vma->aspace;
-		del_vma(vma);
+		if (&vma->node != msm_obj->vram_node)
+			del_vma(vma);
 	}
 }
 
@@ -445,8 +438,7 @@ static int msm_gem_get_iova_locked(struct drm_gem_object *obj,
 		struct page **pages;
 		struct device *dev;
 		struct dma_buf *dmabuf;
-		bool reattach = false;
-		unsigned long dma_map_attrs;
+		struct dma_buf_attachment *new_attach;
 
 		dev = msm_gem_get_aspace_device(aspace);
 		if ((dev && obj->import_attach) &&
@@ -464,38 +456,26 @@ static int msm_gem_get_iova_locked(struct drm_gem_object *obj,
 			}
 
 			dmabuf = obj->import_attach->dmabuf;
-			dma_map_attrs = obj->import_attach->dma_map_attrs;
 
 			DRM_DEBUG("detach nsec-dev:%pK attach sec-dev:%pK\n",
 					obj->import_attach->dev, dev);
 			SDE_EVT32(obj->import_attach->dev, dev, msm_obj->sgt,
 					 msm_obj->obj_dirty);
 
-			if (msm_obj->sgt)
-				dma_buf_unmap_attachment(obj->import_attach,
-					msm_obj->sgt, DMA_BIDIRECTIONAL);
-			dma_buf_detach(dmabuf, obj->import_attach);
+			new_attach = dma_buf_attach(dmabuf, dev);
+			if (IS_ERR(new_attach))
+				return PTR_ERR(new_attach);
 
-			obj->import_attach = dma_buf_attach(dmabuf, dev);
-			if (IS_ERR(obj->import_attach)) {
-				DRM_ERROR("dma_buf_attach failure, err=%ld\n",
-						PTR_ERR(obj->import_attach));
-				ret = PTR_ERR(obj->import_attach);
-				return ret;
-			}
-			/*
-			 * obj->import_attach is created as part of dma_buf_attach.
-			 * Re-apply the dma_map_attr in this case to be in sync
-			 * with iommu_map attrs during map_attachment callback.
-			 */
-			obj->import_attach->dma_map_attrs |= dma_map_attrs;
+			if (msm_obj->sgt)
+				dma_buf_unmap_attachment_unlocked(obj->import_attach,
+						msm_obj->sgt, DMA_BIDIRECTIONAL);
+			msm_obj->sgt = NULL;
+			dma_buf_detach(dmabuf, obj->import_attach);
+			obj->import_attach = new_attach;
 			msm_obj->obj_dirty = false;
-			reattach = true;
 		}
 
-		/* perform delayed import for buffers without existing sgt */
-		if (((msm_obj->flags & MSM_BO_EXTBUF) && !(msm_obj->sgt))
-				|| reattach) {
+		if (obj->import_attach && !msm_obj->sgt) {
 			ret = msm_gem_delayed_import(obj);
 			if (ret) {
 				DRM_ERROR("delayed dma-buf import failed %d\n",
@@ -634,6 +614,11 @@ void msm_gem_aspace_domain_attach_detach_update(
 			if (obj->import_attach) {
 				mutex_lock(&msm_obj->lock);
 				put_iova(obj);
+				if (msm_obj->sgt) {
+					dma_buf_unmap_attachment_unlocked(obj->import_attach,
+							msm_obj->sgt, DMA_BIDIRECTIONAL);
+					msm_obj->sgt = NULL;
+				}
 				msm_obj->obj_dirty = true;
 				mutex_unlock(&msm_obj->lock);
 			}
@@ -693,7 +678,7 @@ static void *get_vaddr(struct drm_gem_object *obj, unsigned madv)
 {
 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-	struct dma_buf_map map;
+	struct iosys_map map;
 #endif
 	int ret = 0;
 
@@ -722,17 +707,20 @@ static void *get_vaddr(struct drm_gem_object *obj, unsigned madv)
 		}
 
 		if (obj->import_attach) {
-			if (obj->dev && obj->dev->dev && !dev_is_dma_coherent(obj->dev->dev)) {
-				ret = dma_buf_begin_cpu_access(
-					obj->import_attach->dmabuf, DMA_BIDIRECTIONAL);
-				if (ret)
-					goto fail;
-			}
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-			ret = dma_buf_vmap(obj->import_attach->dmabuf, &map);
+			ret = dma_buf_begin_cpu_access(obj->import_attach->dmabuf, DMA_BIDIRECTIONAL);
 			if (ret)
 				goto fail;
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
+			ret = dma_buf_vmap_unlocked(obj->import_attach->dmabuf, &map);
+			if (!ret && map.is_iomem) {
+				dma_buf_vunmap_unlocked(obj->import_attach->dmabuf, &map);
+				ret = -EOPNOTSUPP;
+			}
+			if (ret) {
+				dma_buf_end_cpu_access(obj->import_attach->dmabuf, DMA_BIDIRECTIONAL);
+				goto fail;
+			}
 			msm_obj->vaddr = map.vaddr;
 #else
 			msm_obj->vaddr = dma_buf_vmap(obj->import_attach->dmabuf);
@@ -797,7 +785,7 @@ static void msm_gem_vunmap_locked(struct drm_gem_object *obj)
 {
 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-	struct dma_buf_map map = DMA_BUF_MAP_INIT_VADDR(msm_obj->vaddr);
+	struct iosys_map map = IOSYS_MAP_INIT_VADDR(msm_obj->vaddr);
 #endif
 
 	WARN_ON(!mutex_is_locked(&msm_obj->lock));
@@ -807,7 +795,7 @@ static void msm_gem_vunmap_locked(struct drm_gem_object *obj)
 
 	if (obj->import_attach) {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-		dma_buf_vunmap(obj->import_attach->dmabuf, &map);
+		dma_buf_vunmap_unlocked(obj->import_attach->dmabuf, &map);
 		dma_buf_end_cpu_access(obj->import_attach->dmabuf, DMA_BIDIRECTIONAL);
 #else
 		dma_buf_vunmap(obj->import_attach->dmabuf, msm_obj->vaddr);
@@ -865,7 +853,7 @@ void msm_gem_free_object(struct drm_gem_object *obj)
 	struct drm_device *dev = obj->dev;
 	struct msm_drm_private *priv = dev->dev_private;
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-	struct dma_buf_map map = DMA_BUF_MAP_INIT_VADDR(msm_obj->vaddr);
+	struct iosys_map map = IOSYS_MAP_INIT_VADDR(msm_obj->vaddr);
 #endif
 
 	/* object should not be on active list: */
@@ -886,12 +874,10 @@ void msm_gem_free_object(struct drm_gem_object *obj)
 	}
 
 	if (obj->import_attach) {
-		if (msm_obj->vaddr)
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-			dma_buf_vunmap(obj->import_attach->dmabuf, &map);
-#else
-			dma_buf_vunmap(obj->import_attach->dmabuf, msm_obj->vaddr);
-#endif
+		if (msm_obj->vaddr) {
+			dma_buf_vunmap_unlocked(obj->import_attach->dmabuf, &map);
+			dma_buf_end_cpu_access(obj->import_attach->dmabuf, DMA_BIDIRECTIONAL);
+		}
 
 		/* Don't drop the pages for imported dmabuf, as they are not
 		 * ours, just free the array we allocated:
@@ -903,6 +889,8 @@ void msm_gem_free_object(struct drm_gem_object *obj)
 	} else {
 		msm_gem_vunmap_locked(obj);
 		put_pages(obj);
+		if (msm_obj->vram_node)
+			del_vma(container_of(msm_obj->vram_node, struct msm_gem_vma, node));
 	}
 
 	drm_gem_object_release(obj);
@@ -950,6 +938,7 @@ static const struct drm_gem_object_funcs msm_gem_object_funcs = {
 	.vmap = msm_gem_prime_vmap,
 	.vunmap = msm_gem_prime_vunmap,
 	.vm_ops = &vm_ops,
+	.mmap = msm_gem_mmap_obj,
 };
 #endif
 
@@ -993,6 +982,7 @@ static int msm_gem_new_impl(struct drm_device *dev,
 	msm_obj->base.resv = resv;
 
 	INIT_LIST_HEAD(&msm_obj->submit_entry);
+	INIT_LIST_HEAD(&msm_obj->mm_list);
 	INIT_LIST_HEAD(&msm_obj->vmas);
 	INIT_LIST_HEAD(&msm_obj->iova_list);
 	msm_obj->aspace = msm_gem_smmu_address_space_get(dev,
@@ -1059,6 +1049,7 @@ static struct drm_gem_object *_msm_gem_new(struct drm_device *dev,
 		struct msm_gem_vma *vma;
 		struct page **pages;
 
+		drm_gem_private_object_init(dev, obj, size);
 		mutex_lock(&msm_obj->lock);
 
 		vma = add_vma(obj, NULL);
@@ -1068,9 +1059,7 @@ static struct drm_gem_object *_msm_gem_new(struct drm_device *dev,
 			goto fail;
 		}
 
-		to_msm_bo(obj)->vram_node = &vma->node;
-
-		drm_gem_private_object_init(dev, obj, size);
+		msm_obj->vram_node = &vma->node;
 
 		pages = get_pages(obj);
 		if (IS_ERR(pages)) {
@@ -1140,13 +1129,12 @@ int msm_gem_delayed_import(struct drm_gem_object *obj)
 	}
 
 	attach = obj->import_attach;
-	attach->dma_map_attrs |= DMA_ATTR_DELAYED_UNMAP;
 
 	/*
 	 * dma_buf_map_attachment will call dma_map_sg for ion buffer
 	 * mapping, and iova will get mapped when the function returns.
 	 */
-	sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+	sgt = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
 	if (IS_ERR(sgt)) {
 		ret = PTR_ERR(sgt);
 		DRM_ERROR("dma_buf_map_attachment failure, err=%d\n",
@@ -1168,10 +1156,11 @@ struct drm_gem_object *msm_gem_import(struct drm_device *dev,
 #endif
 	struct msm_gem_object *msm_obj;
 	struct drm_gem_object *obj = NULL;
-	uint32_t size;
+	size_t size = PAGE_ALIGN(dmabuf->size);
 	int ret;
 
-	size = PAGE_ALIGN(dmabuf->size);
+	if (!size || size > U32_MAX)
+		return ERR_PTR(-E2BIG);
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
 	ret = msm_gem_new_impl(dev, size, MSM_BO_WC, dmabuf->resv, &obj);

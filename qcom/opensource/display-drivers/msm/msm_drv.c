@@ -1846,7 +1846,7 @@ static const struct file_operations fops = {
 	.compat_ioctl       = drm_compat_ioctl,
 	.poll               = drm_poll,
 	.read               = drm_read,
-	.mmap               = msm_gem_mmap,
+	.mmap               = drm_gem_mmap,
 };
 
 static struct drm_driver msm_driver = {
@@ -2359,4 +2359,5 @@ module_exit(msm_drm_unregister);
 
 MODULE_AUTHOR("Rob Clark <robdclark@gmail.com");
 MODULE_DESCRIPTION("MSM DRM Driver");
+MODULE_IMPORT_NS("DMA_BUF");
 MODULE_LICENSE("GPL");

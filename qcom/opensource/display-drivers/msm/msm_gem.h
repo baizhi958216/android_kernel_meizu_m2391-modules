@@ -126,8 +126,6 @@ struct msm_gem_object {
 
 	struct llist_node freed;
 
-	/* normally (resv == &_resv) except for imported bo's */
-
 	/* For physically contiguous buffers.  Used when we don't have
 	 * an IOMMU.  Also used for stolen/splashscreen buffer.
 	 */
