@@ -115,7 +115,7 @@ static int xcharge_notify_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static int xcharge_notify_remove(struct platform_device *pdev)
+static void xcharge_notify_remove(struct platform_device *pdev)
 {
 	struct workqueue_struct *wq;
 	unsigned long flags;
@@ -128,7 +128,6 @@ static int xcharge_notify_remove(struct platform_device *pdev)
 	cancel_delayed_work_sync(&plug_work);
 	destroy_workqueue(wq);
 	mutex_unlock(&queue_lifecycle_lock);
-	return 0;
 }
 
 static const struct of_device_id xcharge_notify_match[] = {
