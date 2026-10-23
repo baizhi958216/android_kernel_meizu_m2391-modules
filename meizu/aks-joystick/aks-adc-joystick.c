@@ -2832,7 +2832,7 @@ static int aks_gamepad_parse_user_calibrate(char* config) {
 	return 0;
 }
 
-static void aks_gamepad_reset_user_fn_key_option()
+static void aks_gamepad_reset_user_fn_key_option(void)
 {
 	aks_fun_key_info.activated = false;
 	aks_fun_key_info.index = -1;
@@ -3051,7 +3051,7 @@ fail:
 	return ret;
 }
 
-static void aks_gamepad_reset_user_cali_cache()
+static void aks_gamepad_reset_user_cali_cache(void)
 {
 	memset(&user_calied_axis_lt, 0, sizeof(struct aks_analog_key_axis));
 	memset(&user_calied_axis_rt, 0, sizeof(struct aks_analog_key_axis));
