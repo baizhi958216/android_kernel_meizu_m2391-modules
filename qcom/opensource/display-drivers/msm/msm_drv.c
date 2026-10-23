@@ -2069,12 +2069,14 @@ static int add_display_components(struct device *dev,
 		struct device_node *np = dev->of_node;
 		unsigned int i;
 
+		msm_smmu_add_components(dev, matchptr);
 		for (i = 0; ; i++) {
 			node = of_parse_phandle(np, "connectors", i);
 			if (!node)
 				break;
 
-			component_match_add(dev, matchptr, compare_of, node);
+			drm_of_component_match_add(dev, matchptr, compare_of, node);
+			of_node_put(node);
 		}
 
 		return 0;

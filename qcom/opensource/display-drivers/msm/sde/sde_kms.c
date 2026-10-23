@@ -2488,68 +2488,69 @@ static void _sde_kms_hw_destroy(struct sde_kms *sde_kms,
 	_sde_kms_mmu_destroy(sde_kms);
 }
 
-int sde_kms_mmu_detach(struct sde_kms *sde_kms, bool secure_only)
+static int sde_kms_mmu_switch(struct msm_gem_address_space *aspace, bool attach)
 {
-	int i;
+	struct msm_mmu *mmu = aspace->mmu;
+	int ret;
+
+	if (attach) {
+		ret = mmu->funcs->attach(mmu, (const char **)iommu_ports, ARRAY_SIZE(iommu_ports));
+		if (ret)
+			return ret;
+		aspace->domain_attached = true;
+		msm_gem_aspace_domain_attach_detach_update(aspace, false);
+	} else {
+		aspace->domain_attached = false;
+		msm_gem_aspace_domain_attach_detach_update(aspace, true);
+		ret = mmu->funcs->detach(mmu, (const char **)iommu_ports, ARRAY_SIZE(iommu_ports));
+		if (ret) {
+			aspace->domain_attached = true;
+			msm_gem_aspace_domain_attach_detach_update(aspace, false);
+			return ret;
+		}
+	}
+	return 0;
+}
+
+static int sde_kms_mmu_switch_domains(struct sde_kms *sde_kms, bool secure_only, bool attach)
+{
+	unsigned long changed = 0;
+	int i, ret;
 
 	if (!sde_kms)
 		return -EINVAL;
 
 	for (i = 0; i < MSM_SMMU_DOMAIN_MAX; i++) {
-		struct msm_mmu *mmu;
 		struct msm_gem_address_space *aspace = sde_kms->aspace[i];
 
-		if (!aspace)
+		if (!aspace || aspace->domain_attached == attach)
+			continue;
+		if (secure_only && !aspace->mmu->funcs->is_domain_secure(aspace->mmu))
 			continue;
 
-		mmu = sde_kms->aspace[i]->mmu;
-
-		if (secure_only &&
-			!aspace->mmu->funcs->is_domain_secure(mmu))
-			continue;
-
-		/* cleanup aspace before detaching */
-		msm_gem_aspace_domain_attach_detach_update(aspace, true);
-
-		SDE_DEBUG("Detaching domain:%d\n", i);
-		aspace->mmu->funcs->detach(mmu, (const char **)iommu_ports,
-			ARRAY_SIZE(iommu_ports));
-
-		aspace->domain_attached = false;
+		ret = sde_kms_mmu_switch(aspace, attach);
+		if (ret)
+			goto rollback;
+		changed |= BIT(i);
 	}
-
 	return 0;
+
+rollback:
+	while (i-- > 0) {
+		if ((changed & BIT(i)) && sde_kms_mmu_switch(sde_kms->aspace[i], !attach))
+			SDE_ERROR("failed to roll back domain %d\n", i);
+	}
+	return ret;
+}
+
+int sde_kms_mmu_detach(struct sde_kms *sde_kms, bool secure_only)
+{
+	return sde_kms_mmu_switch_domains(sde_kms, secure_only, false);
 }
 
 int sde_kms_mmu_attach(struct sde_kms *sde_kms, bool secure_only)
 {
-	int i;
-
-	if (!sde_kms)
-		return -EINVAL;
-
-	for (i = 0; i < MSM_SMMU_DOMAIN_MAX; i++) {
-		struct msm_mmu *mmu;
-		struct msm_gem_address_space *aspace = sde_kms->aspace[i];
-
-		if (!aspace)
-			continue;
-
-		mmu = sde_kms->aspace[i]->mmu;
-
-		if (secure_only &&
-			!aspace->mmu->funcs->is_domain_secure(mmu))
-			continue;
-
-		SDE_DEBUG("Attaching domain:%d\n", i);
-		aspace->mmu->funcs->attach(mmu, (const char **)iommu_ports,
-			ARRAY_SIZE(iommu_ports));
-
-		aspace->domain_attached = true;
-		msm_gem_aspace_domain_attach_detach_update(aspace, false);
-	}
-
-	return 0;
+	return sde_kms_mmu_switch_domains(sde_kms, secure_only, true);
 }
 
 static void sde_kms_destroy(struct msm_kms *kms)
