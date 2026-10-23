@@ -1009,7 +1009,7 @@ struct msm_drm_private {
 	 * List of inactive GEM objects.  Every bo is either in the inactive_list
 	 * or gpu->active_list (for the gpu it is active on[1])
 	 *
-	 * These lists are protected by mm_lock.  If struct_mutex is involved, it
+	 * These lists are protected by mm_lock.  If object_lock is involved, it
 	 * should be aquired prior to mm_lock.  One should *not* hold mm_lock in
 	 * get_pages()/vmap()/etc paths, as they can trigger the shrinker.
 	 *
@@ -1018,6 +1018,8 @@ struct msm_drm_private {
 	 */
 	struct list_head inactive_list;
 	struct mutex mm_lock;
+	struct mutex object_lock;
+	bool has_iommu;
 
 	struct workqueue_struct *wq;
 
@@ -1094,6 +1096,13 @@ struct msm_drm_private {
 	struct mutex vm_client_lock;
 	struct list_head vm_client_list;
 };
+
+static inline struct mutex *msm_object_lock(struct drm_device *dev)
+{
+	struct msm_drm_private *priv = dev->dev_private;
+
+	return &priv->object_lock;
+}
 
 /* get struct msm_kms * from drm_device * */
 #define ddev_to_msm_kms(D) ((D) && (D)->dev_private ? \
@@ -1262,6 +1271,7 @@ int msm_gem_delayed_import(struct drm_gem_object *obj);
 #define MSM_FB_CACHE_WRITE_EN	0x1
 #define MSM_FB_CACHE_READ_EN	0x2
 
+int msm_ioctl_rmfb2(struct drm_device *dev, void *data, struct drm_file *file);
 int msm_framebuffer_prepare(struct drm_framebuffer *fb,
 		struct msm_gem_address_space *aspace);
 void msm_framebuffer_cleanup(struct drm_framebuffer *fb,

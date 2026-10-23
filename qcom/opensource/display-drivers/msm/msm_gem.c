@@ -781,7 +781,7 @@ int msm_gem_madvise(struct drm_gem_object *obj, unsigned madv)
 
 	mutex_lock(&msm_obj->lock);
 
-	WARN_ON(!mutex_is_locked(&obj->dev->struct_mutex));
+	lockdep_assert_held(msm_object_lock(obj->dev));
 
 	if (msm_obj->madv != __MSM_MADV_PURGED)
 		msm_obj->madv = madv;
@@ -1031,7 +1031,7 @@ static struct drm_gem_object *_msm_gem_new(struct drm_device *dev,
 
 	size = PAGE_ALIGN(size);
 
-	if (!iommu_present(&platform_bus_type))
+	if (!priv->has_iommu)
 		use_vram = true;
 	else if ((flags & (MSM_BO_STOLEN | MSM_BO_SCANOUT)) && priv->vram.size)
 		use_vram = true;
