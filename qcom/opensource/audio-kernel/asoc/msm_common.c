@@ -706,6 +706,9 @@ static void msm_audio_remove_qos_request(void)
 
 	if (msm_audio_req) {
 		for_each_cpu(cpu, cluster_cpu_mask) {
+			/* Only the first two CPUs receive requests; add may also fail. */
+			if (!dev_pm_qos_request_active(&msm_audio_req[cpu]))
+				continue;
 			ret = dev_pm_qos_remove_request(
 				    &msm_audio_req[cpu]);
 			if (ret < 0)
@@ -714,6 +717,7 @@ static void msm_audio_remove_qos_request(void)
 			pr_debug("%s remove cpu affinity of core %d.\n", __func__, cpu);
 		}
 		kfree(msm_audio_req);
+		msm_audio_req = NULL;
 	}
 }
 
