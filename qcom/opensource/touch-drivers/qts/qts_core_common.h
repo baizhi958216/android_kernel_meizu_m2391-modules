@@ -1,4 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
+#ifndef QTS_CORE_COMMON_H
+#define QTS_CORE_COMMON_H
 /*
  * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
  */
@@ -36,6 +38,7 @@ struct qts_vendor_callback_ops {
 struct qts_vendor_data {
 	struct i2c_client *client;
 	struct spi_device *spi;
+	struct module *owner;
 	void *vendor_data;
 	void *notifier_cookie;
 	struct qts_vendor_callback_ops qts_vendor_ops;
@@ -48,3 +51,5 @@ struct qts_vendor_data {
 
 int qts_client_register(struct qts_vendor_data qts_vendor_data);
 void qts_client_unregister(void);
+
+#endif

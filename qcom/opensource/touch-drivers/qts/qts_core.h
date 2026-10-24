@@ -1,4 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
+#ifndef QTS_CORE_H
+#define QTS_CORE_H
 /*
  * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
  */
@@ -96,6 +98,8 @@ struct trusted_touch_vm_info {
 	const char *trusted_touch_type;
 	u32 hw_irq;
 	gh_memparcel_handle_t vm_mem_handle;
+	bool mem_lent;
+	bool irq_lent;
 	u32 *iomem_bases;
 	u32 *iomem_sizes;
 	u32 iomem_list_size;
@@ -110,6 +114,7 @@ struct qts_data {
 	struct spi_device *spi;
 	struct device *dev;
 	struct device_node *dp;
+	struct module *owner;
 	void *vendor_data; /* vendor touch driver data */
 	u32 bus_type; /*i2c or spi*/
 	u32 client_type; /* primary or secondary */
@@ -135,6 +140,8 @@ struct qts_data {
 	bool power_disabled;
 
 	struct mutex transition_lock;
+	struct mutex tui_store_lock;
+	struct wakeup_source *tui_wakeup;
 	bool suspended;
 
 	/* vendor callback ops */
@@ -168,4 +175,6 @@ struct qts_data_entries {
 
 #ifdef CONFIG_ARCH_QTI_VM
 void qts_trusted_touch_tvm_i2c_failure_report(struct qts_data *qts_data);
+#endif
+
 #endif

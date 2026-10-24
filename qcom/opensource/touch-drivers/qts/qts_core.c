@@ -6,6 +6,7 @@
 #define pr_fmt(fmt)	"%s: " fmt, __func__
 
 #include <linux/vmalloc.h>
+#include <drm/drm_panel.h>
 #include <linux/uaccess.h>
 #include <linux/delay.h>
 #include <linux/input.h>
@@ -16,7 +17,7 @@
 #include <linux/sysfs.h>
 #include <linux/sort.h>
 #include <linux/atomic.h>
-#include <linux/pinctrl/qcom-pinctrl.h>
+#include <linux/pinctrl/kalama.h>
 #include <linux/pm.h>
 #include <linux/pm_runtime.h>
 #include <linux/component.h>
@@ -39,17 +40,16 @@ static struct gh_acl_desc *qts_vm_get_acl(enum gh_vm_names vm_name)
 {
 	struct gh_acl_desc *acl_desc;
 	gh_vmid_t vmid;
+	int ret;
 
-#if (KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE)
-	ghd_rm_get_vmid(vm_name, &vmid);
-#else
-	gh_rm_get_vmid(vm_name, &vmid);
-#endif
+	ret = gh_rm_get_vmid(vm_name, &vmid);
+	if (ret)
+		return ERR_PTR(ret);
 
 	acl_desc = kzalloc(offsetof(struct gh_acl_desc, acl_entries[1]),
 			GFP_KERNEL);
 	if (!acl_desc)
-		return ERR_PTR(ENOMEM);
+		return ERR_PTR(-ENOMEM);
 
 	acl_desc->n_acl_entries = 1;
 	acl_desc->acl_entries[0].vmid = vmid;
@@ -66,7 +66,7 @@ static struct gh_sgl_desc *qts_vm_get_sgl(struct trusted_touch_vm_info *vm_info)
 	sgl_desc = kzalloc(offsetof(struct gh_sgl_desc,
 			sgl_entries[vm_info->iomem_list_size]), GFP_KERNEL);
 	if (!sgl_desc)
-		return ERR_PTR(ENOMEM);
+		return ERR_PTR(-ENOMEM);
 
 	sgl_desc->n_sgl_entries = vm_info->iomem_list_size;
 
@@ -80,7 +80,7 @@ static struct gh_sgl_desc *qts_vm_get_sgl(struct trusted_touch_vm_info *vm_info)
 
 static int qts_populate_vm_info_iomem(struct qts_data *qts_data)
 {
-	int i, gpio, rc = 0;
+	int i, rc = 0;
 	int num_regs, num_sizes, num_gpios, list_size;
 	struct resource res;
 	struct device_node *np = qts_data->dev->of_node;
@@ -105,8 +105,7 @@ static int qts_populate_vm_info_iomem(struct qts_data *qts_data)
 
 	num_gpios = of_count_phandle_with_args(np, "qts,trusted-touch-vm-gpio-list", "#gpio-cells");
 	if (num_gpios < 0) {
-		pr_warn("Ignoring invalid trusted gpio list: %d\n", num_gpios);
-		num_gpios = 0;
+		return num_gpios;
 	}
 
 	list_size = num_regs + num_gpios;
@@ -122,17 +121,17 @@ static int qts_populate_vm_info_iomem(struct qts_data *qts_data)
 		return -ENOMEM;
 
 	for (i = 0; i < num_gpios; ++i) {
-		gpio = of_get_named_gpio(np, "qts,trusted-touch-vm-gpio-list", i);
-		if (gpio < 0 || !gpio_is_valid(gpio)) {
-			pr_err("Invalid gpio %d at position %d\n", gpio, i);
-			return gpio;
-		}
+		struct of_phandle_args args;
 
-		if (!msm_gpio_get_pin_address(gpio, &res)) {
-			pr_err("Failed to retrieve gpio-%d resource\n", gpio);
-			return -ENODATA;
-		}
-
+		rc = of_parse_phandle_with_args(np, "qts,trusted-touch-vm-gpio-list",
+						"#gpio-cells", i, &args);
+		if (rc)
+			return rc;
+		rc = args.args_count == 2 ?
+			kalama_gpio_get_mmio(args.np, args.args[0], &res) : -EINVAL;
+		of_node_put(args.np);
+		if (rc || res.end > U32_MAX)
+			return rc ?: -ERANGE;
 		vm_info->iomem_bases[i] = res.start;
 		vm_info->iomem_sizes[i] = resource_size(&res);
 	}
@@ -198,9 +197,10 @@ static int qts_populate_vm_info(struct qts_data *qts_data)
 
 static void qts_destroy_vm_info(struct qts_data *qts_data)
 {
-	kfree(qts_data->vm_info->iomem_sizes);
-	kfree(qts_data->vm_info->iomem_bases);
-	kfree(qts_data->vm_info);
+	devm_kfree(qts_data->dev, qts_data->vm_info->iomem_sizes);
+	devm_kfree(qts_data->dev, qts_data->vm_info->iomem_bases);
+	devm_kfree(qts_data->dev, qts_data->vm_info);
+	qts_data->vm_info = NULL;
 }
 
 static void qts_vm_deinit(struct qts_data *qts_data)
@@ -426,7 +426,7 @@ static void qts_trusted_touch_tvm_vm_mode_enable(struct qts_data *qts_data)
 	if (qts_data->bus_type == QTS_BUS_TYPE_I2C)
 		rc = pm_runtime_get_sync(qts_data->client->adapter->dev.parent);
 	else
-		rc = pm_runtime_get_sync(qts_data->spi->master->dev.parent);
+		rc = pm_runtime_get_sync(qts_data->spi->controller->dev.parent);
 
 	if (rc < 0) {
 		pr_err("failed to get sync rc:%d\n", rc);
@@ -611,7 +611,7 @@ static void qts_trusted_touch_tvm_vm_mode_disable(struct qts_data *qts_data)
 	if (qts_data->bus_type == QTS_BUS_TYPE_I2C)
 		pm_runtime_put_sync(qts_data->client->adapter->dev.parent);
 	else
-		pm_runtime_put_sync(qts_data->spi->master->dev.parent);
+		pm_runtime_put_sync(qts_data->spi->controller->dev.parent);
 
 	qts_trusted_touch_set_vm_state(qts_data, TVM_I2C_SESSION_RELEASED);
 	rc = qts_vm_mem_release(qts_data);
@@ -707,7 +707,7 @@ static void qts_trusted_touch_abort_tvm(struct qts_data *qts_data)
 		if (qts_data->bus_type == QTS_BUS_TYPE_I2C)
 			pm_runtime_put_sync(qts_data->client->adapter->dev.parent);
 		else
-			pm_runtime_put_sync(qts_data->spi->master->dev.parent);
+			pm_runtime_put_sync(qts_data->spi->controller->dev.parent);
 		fallthrough;
 	case TVM_I2C_SESSION_RELEASED:
 		rc = qts_vm_mem_release(qts_data);
@@ -731,62 +731,26 @@ static void qts_trusted_touch_abort_tvm(struct qts_data *qts_data)
 static void qts_bus_put(struct qts_data *qts_data);
 static int qts_enable_reg(struct qts_data *qts_data, bool enable);
 
-static void qts_trusted_touch_abort_pvm(struct qts_data *qts_data)
+/* Release only resources for which the RM acknowledged the transfer. */
+static int qts_pvm_reclaim(struct qts_data *qts_data)
 {
-	int rc = 0;
-	int vm_state = qts_trusted_touch_get_vm_state(qts_data);
+	struct trusted_touch_vm_info *vm_info = qts_data->vm_info;
+	int ret;
 
-	if (vm_state >= TRUSTED_TOUCH_PVM_STATE_MAX) {
-		pr_err("Invalid driver state: %d\n", vm_state);
-		return;
+	if (vm_info->irq_lent) {
+		ret = gh_irq_reclaim(vm_info->irq_label);
+		if (ret)
+			return ret;
+		vm_info->irq_lent = false;
 	}
-
-	switch (vm_state) {
-	case PVM_IRQ_RELEASE_NOTIFIED:
-	case PVM_ALL_RESOURCES_RELEASE_NOTIFIED:
-	case PVM_IRQ_LENT:
-	case PVM_IRQ_LENT_NOTIFIED:
-		rc = gh_irq_reclaim(qts_data->vm_info->irq_label);
-		if (rc) {
-			pr_err("failed to reclaim irq on pvm rc:%d\n", rc);
-			return;
-		}
-		fallthrough;
-	case PVM_IRQ_RECLAIMED:
-	case PVM_IOMEM_LENT:
-	case PVM_IOMEM_LENT_NOTIFIED:
-	case PVM_IOMEM_RELEASE_NOTIFIED:
-#if (KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE)
-		rc = ghd_rm_mem_reclaim(qts_data->vm_info->vm_mem_handle, 0);
-#else
-		rc = gh_rm_mem_reclaim(qts_data->vm_info->vm_mem_handle, 0);
-#endif
-
-		if (rc) {
-			pr_err("failed to reclaim iomem on pvm rc:%d\n", rc);
-			qts_trusted_touch_set_vm_state(qts_data, PVM_IOMEM_RELEASE_NOTIFIED);
-			return;
-		}
-		qts_data->vm_info->vm_mem_handle = 0;
-		fallthrough;
-	case PVM_IOMEM_RECLAIMED:
-	case PVM_INTERRUPT_DISABLED:
-		if (qts_data->vendor_ops.enable_touch_irq)
-			qts_data->vendor_ops.enable_touch_irq(qts_data->vendor_data, true);
-		fallthrough;
-	case PVM_I2C_RESOURCE_ACQUIRED:
-	case PVM_INTERRUPT_ENABLED:
-		qts_bus_put(qts_data);
-		fallthrough;
-	case TRUSTED_TOUCH_PVM_INIT:
-	case PVM_I2C_RESOURCE_RELEASED:
-		atomic_set(&qts_data->trusted_touch_enabled, 0);
-		atomic_set(&qts_data->trusted_touch_transition, 0);
+	if (vm_info->mem_lent) {
+		ret = gh_rm_mem_reclaim(vm_info->vm_mem_handle, 0);
+		if (ret)
+			return ret;
+		vm_info->mem_lent = false;
+		vm_info->vm_mem_handle = 0;
 	}
-
-	atomic_set(&qts_data->trusted_touch_abort_status, 0);
-
-	qts_trusted_touch_set_vm_state(qts_data, TRUSTED_TOUCH_PVM_INIT);
+	return 0;
 }
 
 static int qts_clk_prepare_enable(struct qts_data *qts_data)
@@ -825,15 +789,17 @@ static int qts_bus_get(struct qts_data *qts_data)
 
 	reinit_completion(&qts_data->trusted_touch_powerdown);
 
-	qts_enable_reg(qts_data, true);
+	rc = qts_enable_reg(qts_data, true);
+	if (rc)
+		return rc;
 
 	if (qts_data->bus_type == QTS_BUS_TYPE_I2C)
 		dev = qts_data->client->adapter->dev.parent;
 	else
-		dev = qts_data->spi->master->dev.parent;
+		dev = qts_data->spi->controller->dev.parent;
 
 	mutex_lock(&qts_data->qts_clk_io_ctrl_mutex);
-	rc = pm_runtime_get_sync(dev);
+	rc = pm_runtime_resume_and_get(dev);
 	if (rc >= 0 &&  qts_data->core_clk != NULL &&
 				qts_data->iface_clk != NULL) {
 		rc = qts_clk_prepare_enable(qts_data);
@@ -842,6 +808,8 @@ static int qts_bus_get(struct qts_data *qts_data)
 	}
 
 	mutex_unlock(&qts_data->qts_clk_io_ctrl_mutex);
+	if (rc < 0)
+		qts_enable_reg(qts_data, false);
 	return rc;
 }
 
@@ -852,14 +820,14 @@ static void qts_bus_put(struct qts_data *qts_data)
 	if (qts_data->bus_type == QTS_BUS_TYPE_I2C)
 		dev = qts_data->client->adapter->dev.parent;
 	else
-		dev = qts_data->spi->master->dev.parent;
+		dev = qts_data->spi->controller->dev.parent;
 
 	mutex_lock(&qts_data->qts_clk_io_ctrl_mutex);
 	if (qts_data->core_clk != NULL && qts_data->iface_clk != NULL)
 		qts_clk_disable_unprepare(qts_data);
 	pm_runtime_put_sync(dev);
 	mutex_unlock(&qts_data->qts_clk_io_ctrl_mutex);
-	complete(&qts_data->trusted_touch_powerdown);
+	complete_all(&qts_data->trusted_touch_powerdown);
 	qts_enable_reg(qts_data, false);
 }
 
@@ -870,70 +838,42 @@ static struct gh_notify_vmid_desc *qts_vm_get_vmid(gh_vmid_t vmid)
 	vmid_desc = kzalloc(offsetof(struct gh_notify_vmid_desc,
 				vmid_entries[1]), GFP_KERNEL);
 	if (!vmid_desc)
-		return ERR_PTR(ENOMEM);
+		return ERR_PTR(-ENOMEM);
 
 	vmid_desc->n_vmid_entries = 1;
 	vmid_desc->vmid_entries[0].vmid = vmid;
 	return vmid_desc;
 }
 
-static void qts_trusted_touch_pvm_vm_mode_disable(struct qts_data *qts_data)
+static int qts_trusted_touch_pvm_vm_mode_disable(struct qts_data *qts_data)
 {
-	int rc = 0;
+	int rc;
 
 	atomic_set(&qts_data->trusted_touch_transition, 1);
-
-	if (atomic_read(&qts_data->trusted_touch_abort_status)) {
-		qts_trusted_touch_abort_pvm(qts_data);
-		return;
-	}
-
-	if (qts_trusted_touch_get_vm_state(qts_data) != PVM_ALL_RESOURCES_RELEASE_NOTIFIED)
-		pr_info("all release notifications are not received yet\n");
-
 	if (qts_data->vendor_ops.pre_la_tui_disable)
 		qts_data->vendor_ops.pre_la_tui_disable(qts_data->vendor_data);
 
-#if (KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE)
-	rc = ghd_rm_mem_reclaim(qts_data->vm_info->vm_mem_handle, 0);
-#else
-	rc = gh_rm_mem_reclaim(qts_data->vm_info->vm_mem_handle, 0);
-#endif
-
+	rc = qts_pvm_reclaim(qts_data);
 	if (rc) {
-		pr_err("Trusted touch VM mem reclaim failed rc:%d\n", rc);
-		goto error;
+		qts_trusted_touch_abort_handler(qts_data, TRUSTED_TOUCH_EVENT_RECLAIM_FAILURE);
+		return rc;
 	}
-	qts_trusted_touch_set_vm_state(qts_data, PVM_IOMEM_RECLAIMED);
-	qts_data->vm_info->vm_mem_handle = 0;
-	pr_debug("vm mem reclaim success!\n");
 
-	rc = gh_irq_reclaim(qts_data->vm_info->irq_label);
-	if (rc) {
-		pr_err("failed to reclaim irq on pvm rc:%d\n", rc);
-		goto error;
-	}
-	qts_trusted_touch_set_vm_state(qts_data, PVM_IRQ_RECLAIMED);
-	pr_debug("vm irq reclaim success!\n");
-
+	if (qts_data->bus_type == QTS_BUS_TYPE_I2C)
+		i2c_mark_adapter_resumed(qts_data->client->adapter);
 	if (qts_data->vendor_ops.enable_touch_irq)
 		qts_data->vendor_ops.enable_touch_irq(qts_data->vendor_data, true);
-
-	qts_trusted_touch_set_vm_state(qts_data, PVM_INTERRUPT_ENABLED);
-	qts_bus_put(qts_data);
-	atomic_set(&qts_data->trusted_touch_transition, 0);
-	qts_trusted_touch_set_vm_state(qts_data, PVM_I2C_RESOURCE_RELEASED);
-	qts_trusted_touch_set_vm_state(qts_data, TRUSTED_TOUCH_PVM_INIT);
-	atomic_set(&qts_data->trusted_touch_enabled, 0);
-
 	if (qts_data->vendor_ops.post_la_tui_disable)
 		qts_data->vendor_ops.post_la_tui_disable(qts_data->vendor_data);
 
-	pr_info("Irq, iomem are reclaimed and trusted touch disabled\n");
-	return;
-error:
-	qts_trusted_touch_abort_handler(qts_data,
-			TRUSTED_TOUCH_EVENT_RECLAIM_FAILURE);
+	qts_trusted_touch_set_vm_state(qts_data, TRUSTED_TOUCH_PVM_INIT);
+	atomic_set(&qts_data->trusted_touch_abort_status, 0);
+	atomic_set(&qts_data->trusted_touch_enabled, 0);
+	atomic_set(&qts_data->trusted_touch_transition, 0);
+	qts_bus_put(qts_data);
+	__pm_relax(qts_data->tui_wakeup);
+	module_put(qts_data->owner);
+	return 0;
 }
 
 static void qts_vm_irq_on_release_callback(void *data,
@@ -1017,13 +957,8 @@ static int qts_vm_mem_lend(struct qts_data *qts_data)
 		goto sgl_error;
 	}
 
-#if (KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE)
-	rc = ghd_rm_mem_lend(GH_RM_MEM_TYPE_IO, 0, TRUSTED_TOUCH_MEM_LABEL,
-			acl_desc, sgl_desc, NULL, &mem_handle);
-#else
 	rc = gh_rm_mem_lend(GH_RM_MEM_TYPE_IO, 0, TRUSTED_TOUCH_MEM_LABEL,
 			acl_desc, sgl_desc, NULL, &mem_handle);
-#endif
 
 	if (rc) {
 		pr_err("Failed to lend IO memories for Trusted touch rc:%d\n", rc);
@@ -1032,15 +967,17 @@ static int qts_vm_mem_lend(struct qts_data *qts_data)
 
 	pr_debug("vm mem lend success\n");
 
+	qts_data->vm_info->vm_mem_handle = mem_handle;
+	qts_data->vm_info->mem_lent = true;
 	qts_trusted_touch_set_vm_state(qts_data, PVM_IOMEM_LENT);
 
-#if (KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE)
-	ghd_rm_get_vmid(GH_TRUSTED_VM, &trusted_vmid);
-#else
-	gh_rm_get_vmid(GH_TRUSTED_VM, &trusted_vmid);
-#endif
+	trusted_vmid = acl_desc->acl_entries[0].vmid;
 
 	vmid_desc = qts_vm_get_vmid(trusted_vmid);
+	if (IS_ERR(vmid_desc)) {
+		rc = PTR_ERR(vmid_desc);
+		goto error;
+	}
 
 	rc = gh_rm_mem_notify(mem_handle, GH_RM_MEM_NOTIFY_RECIPIENT_SHARED,
 			qts_data->vm_info->mem_tag, vmid_desc);
@@ -1051,7 +988,6 @@ static int qts_vm_mem_lend(struct qts_data *qts_data)
 
 	qts_trusted_touch_set_vm_state(qts_data, PVM_IOMEM_LENT_NOTIFIED);
 
-	qts_data->vm_info->vm_mem_handle = mem_handle;
 vmid_error:
 	kfree(vmid_desc);
 error:
@@ -1077,34 +1013,40 @@ static int qts_trusted_touch_pvm_vm_mode_enable(struct qts_data *qts_data)
 		goto error;
 	}
 
-	if (qts_data->vendor_ops.pre_la_tui_enable)
-		qts_data->vendor_ops.pre_la_tui_enable(qts_data->vendor_data);
-
-	/* i2c session start and resource acquire */
-	if (qts_bus_get(qts_data) < 0) {
-		pr_err("qts_bus_get failed\n");
-		rc = -EIO;
+	if (qts_data->vendor_ops.get_irq_num)
+		qts_data->irq = qts_data->vendor_ops.get_irq_num(qts_data->vendor_data);
+	if (qts_data->irq <= 0) {
+		rc = -EAGAIN;
 		goto error;
 	}
 
+	if (!try_module_get(qts_data->owner)) {
+		rc = -ENODEV;
+		goto error;
+	}
+	__pm_stay_awake(qts_data->tui_wakeup);
+	rc = qts_bus_get(qts_data);
+	if (rc < 0) {
+		__pm_relax(qts_data->tui_wakeup);
+		module_put(qts_data->owner);
+		goto error;
+	}
+
+	if (qts_data->vendor_ops.pre_la_tui_enable)
+		qts_data->vendor_ops.pre_la_tui_enable(qts_data->vendor_data);
 	qts_trusted_touch_set_vm_state(qts_data, PVM_I2C_RESOURCE_ACQUIRED);
 	if (qts_data->vendor_ops.enable_touch_irq)
 		qts_data->vendor_ops.enable_touch_irq(qts_data->vendor_data, false);
 	qts_trusted_touch_set_vm_state(qts_data, PVM_INTERRUPT_DISABLED);
 
+	if (qts_data->bus_type == QTS_BUS_TYPE_I2C)
+		i2c_mark_adapter_suspended(qts_data->client->adapter);
 	rc = qts_vm_mem_lend(qts_data);
 	if (rc) {
 		pr_err("Failed to lend memory\n");
 		goto abort_handler;
 	}
 	pr_debug("vm mem lend success\n");
-
-	if (atomic_read(&qts_data->delayed_pvm_probe_pending)) {
-		if (qts_data->vendor_ops.get_irq_num)
-			qts_data->irq = qts_data->vendor_ops.get_irq_num(qts_data->vendor_data);
-
-		atomic_set(&qts_data->delayed_tvm_probe_pending, 0);
-	}
 
 	rc = gh_irq_lend_v2(vm_info->irq_label, vm_info->vm_name,
 		qts_data->irq, &qts_vm_irq_on_release_callback, qts_data);
@@ -1113,6 +1055,7 @@ static int qts_trusted_touch_pvm_vm_mode_enable(struct qts_data *qts_data)
 		goto abort_handler;
 	}
 
+	vm_info->irq_lent = true;
 	pr_debug("vm irq lend success for irq:%d\n", qts_data->irq);
 	qts_trusted_touch_set_vm_state(qts_data, PVM_IRQ_LENT);
 
@@ -1134,8 +1077,15 @@ static int qts_trusted_touch_pvm_vm_mode_enable(struct qts_data *qts_data)
 
 abort_handler:
 	qts_trusted_touch_abort_handler(qts_data, TRUSTED_TOUCH_EVENT_LEND_FAILURE);
+	if (qts_data->vendor_ops.post_la_tui_enable)
+		qts_data->vendor_ops.post_la_tui_enable(qts_data->vendor_data);
+	qts_trusted_touch_pvm_vm_mode_disable(qts_data);
+	mutex_unlock(&qts_data->transition_lock);
+	return rc;
 
 error:
+	atomic_set(&qts_data->trusted_touch_transition, 0);
+	complete_all(&qts_data->trusted_touch_powerdown);
 	mutex_unlock(&qts_data->transition_lock);
 	return rc;
 }
@@ -1153,14 +1103,15 @@ static int qts_handle_trusted_touch_pvm(struct qts_data *qts_data, int value)
 		}
 		if (atomic_read(&qts_data->trusted_touch_mode) ==
 				TRUSTED_TOUCH_VM_MODE) {
-			qts_trusted_touch_pvm_vm_mode_disable(qts_data);
+			err = qts_trusted_touch_pvm_vm_mode_disable(qts_data);
 		} else {
 			pr_err("Unsupported trusted touch mode\n");
 		}
 		break;
 
 	case 1:
-		if (atomic_read(&qts_data->trusted_touch_enabled)) {
+		if (atomic_read(&qts_data->trusted_touch_enabled) ||
+		    atomic_read(&qts_data->trusted_touch_abort_status)) {
 			pr_err("Trusted touch usecase underway\n");
 			err = -EBUSY;
 			break;
@@ -1174,7 +1125,7 @@ static int qts_handle_trusted_touch_pvm(struct qts_data *qts_data, int value)
 		break;
 
 	default:
-		pr_err("unsupported value: %lu\n", value);
+		pr_err("unsupported value: %d\n", value);
 		err = -EINVAL;
 		break;
 	}
@@ -1186,7 +1137,8 @@ static int qts_handle_trusted_touch_pvm(struct qts_data *qts_data, int value)
 static void qts_trusted_touch_event_notify(struct qts_data *qts_data, int event)
 {
 	atomic_set(&qts_data->trusted_touch_event, event);
-	sysfs_notify(&qts_data->dev->kobj, NULL, "trusted_touch_event");
+	if (qts_data->client_kobj)
+		sysfs_notify(qts_data->client_kobj, NULL, "trusted_touch_event");
 }
 
 static void qts_trusted_touch_abort_handler(struct qts_data *qts_data, int error)
@@ -1213,7 +1165,8 @@ static int qts_vm_init(struct qts_data *qts_data)
 	rc = qts_populate_vm_info(qts_data);
 	if (rc) {
 		pr_err("Cannot setup vm pipeline\n");
-		rc = -EINVAL;
+		if (qts_data->vm_info)
+			qts_destroy_vm_info(qts_data);
 		goto fail;
 	}
 
@@ -1221,9 +1174,9 @@ static int qts_vm_init(struct qts_data *qts_data)
 #ifdef CONFIG_ARCH_QTI_VM
 	mem_cookie = gh_mem_notifier_register(vm_info->mem_tag,
 			qts_vm_mem_on_lend_handler, qts_data);
-	if (!mem_cookie) {
+	if (IS_ERR_OR_NULL(mem_cookie)) {
 		pr_err("Failed to register on lend mem notifier\n");
-		rc = -EINVAL;
+		rc = mem_cookie ? PTR_ERR(mem_cookie) : -ENODEV;
 		goto init_fail;
 	}
 	vm_info->mem_cookie = mem_cookie;
@@ -1233,9 +1186,9 @@ static int qts_vm_init(struct qts_data *qts_data)
 #else
 	mem_cookie = gh_mem_notifier_register(vm_info->mem_tag,
 			qts_vm_mem_on_release_handler, qts_data);
-	if (!mem_cookie) {
+	if (IS_ERR_OR_NULL(mem_cookie)) {
 		pr_err("Failed to register on release mem notifier\n");
-		rc = -EINVAL;
+		rc = mem_cookie ? PTR_ERR(mem_cookie) : -ENODEV;
 		goto init_fail;
 	}
 	vm_info->mem_cookie = mem_cookie;
@@ -1253,7 +1206,7 @@ static void qts_dt_parse_trusted_touch_info(struct qts_data *qts_data)
 	struct device_node *np = qts_data->dev->of_node;
 	int rc = 0;
 	const char *selection;
-	const char *environment;
+	const char *environment = NULL;
 
 	rc = of_property_read_string(np, "qts,trusted-touch-mode", &selection);
 	if (rc) {
@@ -1283,7 +1236,7 @@ static void qts_dt_parse_trusted_touch_info(struct qts_data *qts_data)
 	pr_debug("Trusted touch environment:%s\n", qts_data->touch_environment);
 }
 
-static void qts_trusted_touch_init(struct qts_data *qts_data)
+static int qts_trusted_touch_init(struct qts_data *qts_data)
 {
 	int rc = 0;
 
@@ -1291,7 +1244,7 @@ static void qts_trusted_touch_init(struct qts_data *qts_data)
 	qts_dt_parse_trusted_touch_info(qts_data);
 
 	if (atomic_read(&qts_data->trusted_touch_mode) == TRUSTED_TOUCH_MODE_NONE)
-		return;
+		return 0;
 
 	init_completion(&qts_data->trusted_touch_powerdown);
 
@@ -1314,9 +1267,10 @@ static void qts_trusted_touch_init(struct qts_data *qts_data)
 						TRUSTED_TOUCH_VM_MODE) {
 		rc = qts_vm_init(qts_data);
 		if (rc)
-			pr_err("Failed to init VM\n");
+			return rc;
 	}
 	atomic_set(&qts_data->trusted_touch_initialized, 1);
+	return 0;
 }
 
 static bool qts_ts_is_primary(struct kobject *kobj)
@@ -1385,23 +1339,16 @@ static ssize_t trusted_touch_enable_store(struct kobject *kobj, struct kobj_attr
 	if (!atomic_read(&qts_data->trusted_touch_initialized))
 		return -EIO;
 
-	pr_info("TUI trusted_touch_enable:%d\n", value);
+	pr_info("TUI trusted_touch_enable:%lu\n", value);
 
+	mutex_lock(&qts_data->tui_store_lock);
 #ifdef CONFIG_ARCH_QTI_VM
 	err = qts_handle_trusted_touch_tvm(qts_data, value);
-	if (err) {
-		pr_err("Failed to handle trusted touch in tvm\n");
-		return -EINVAL;
-	}
 #else
 	err = qts_handle_trusted_touch_pvm(qts_data, value);
-	if (err) {
-		pr_err("Failed to handle trusted touch in pvm\n");
-		return -EINVAL;
-	}
 #endif
-	err = count;
-	return err;
+	mutex_unlock(&qts_data->tui_store_lock);
+	return err ?: count;
 }
 
 static ssize_t trusted_touch_event_show(struct kobject *kobj, struct kobj_attribute *attr,
@@ -1547,11 +1494,12 @@ static int qts_ts_check_dt(struct device_node *np)
 
 static void qts_power_source_init(struct qts_data *qts_data)
 {
-	qts_data->vdd = regulator_get(qts_data->dev, "vdd");
+	qts_data->vdd = devm_regulator_get(qts_data->dev,
+		of_property_present(qts_data->dp, "iovdd-supply") ? "iovdd" : "vdd");
 	if (IS_ERR_OR_NULL(qts_data->vdd))
 		pr_debug("get vdd regulator failed\n");
 
-	qts_data->avdd = regulator_get(qts_data->dev, "avdd");
+	qts_data->avdd = devm_regulator_get(qts_data->dev, "avdd");
 	if (IS_ERR_OR_NULL(qts_data->avdd))
 		pr_debug("get avdd regulator failed\n");
 }
@@ -1562,8 +1510,7 @@ static int qts_enable_reg(struct qts_data *qts_data, bool enable)
 	int ret = 0;
 
 	if (IS_ERR_OR_NULL(qts_data->vdd)) {
-		pr_err("vdd is invalid\n");
-		return ret;
+		return qts_data->vdd ? PTR_ERR(qts_data->vdd) : -ENODEV;
 	}
 
 	if (enable) {
@@ -1723,13 +1670,13 @@ static void qts_panel_notifier_callback(enum panel_event_notifier_tag tag,
 	}
 }
 
-static void qts_ts_register_for_panel_events(struct qts_data *qts_data)
+static int qts_ts_register_for_panel_events(struct qts_data *qts_data)
 {
 	void *cookie = NULL;
 
 	if (qts_data->client_type != QTS_CLIENT_PRIMARY_TOUCH) {
 		pr_err("Invalid touch type\n");
-		return;
+		return 0;
 	}
 
 	cookie = panel_event_notifier_register(PANEL_EVENT_NOTIFICATION_PRIMARY,
@@ -1738,12 +1685,13 @@ static void qts_ts_register_for_panel_events(struct qts_data *qts_data)
 	if (IS_ERR_OR_NULL(cookie)) {
 		pr_err("Failed to register for panel events\n");
 		qts_data->notifier_cookie = NULL;
-		return;
+		return cookie ? PTR_ERR(cookie) : -ENODEV;
 	}
 
-	pr_debug("registered for panel notifications panel: 0x%x\n", qts_data->panel);
+	pr_debug("registered for panel notifications panel: %p\n", qts_data->panel);
 
 	qts_data->notifier_cookie = cookie;
+	return 0;
 }
 
 int qts_client_register(struct qts_vendor_data qts_vendor_data)
@@ -1796,17 +1744,21 @@ int qts_client_register(struct qts_vendor_data qts_vendor_data)
 	qts_data->bus_type = qts_vendor_data.bus_type;
 	qts_data->client_type = qts_vendor_data.client_type;
 	qts_data->dp = dp;
+	qts_data->owner = qts_vendor_data.owner;
 	qts_data->vendor_data = qts_vendor_data.vendor_data;
 	qts_data->panel = active_panel;
 	qts_data->vendor_ops = qts_vendor_data.qts_vendor_ops;
 	qts_data->schedule_suspend = qts_vendor_data.schedule_suspend;
 	qts_data->schedule_resume = qts_vendor_data.schedule_resume;
-	qts_data->suspended = true;
+	qts_data->suspended = false;
 
 	qts_adjust_irq_flags(qts_vendor_data.irq_gpio_flags,
 		&qts_data->irq_gpio_flags, &qts_data->irq_accept_flags);
 
-	qts_trusted_touch_init(qts_data);
+	rc = qts_trusted_touch_init(qts_data);
+	if (rc)
+		goto qts_register_end;
+	mutex_init(&qts_data->tui_store_lock);
 
 	mutex_init(&(qts_data->qts_clk_io_ctrl_mutex));
 
@@ -1837,10 +1789,33 @@ int qts_client_register(struct qts_vendor_data qts_vendor_data)
 	/* Registration may immediately expose callbacks: initialize their work,
 	 * pending-probe and power state before publishing the notifier.
 	 */
-	qts_ts_register_for_panel_events(qts_data);
-	qts_vendor_data.notifier_cookie = qts_data->notifier_cookie;
-	if (qts_data->tui_supported && qts_create_sysfs(qts_data))
-		pr_err("failed to create trusted-touch sysfs\n");
+	rc = qts_ts_register_for_panel_events(qts_data);
+	if (rc)
+		goto err_work;
+	if (qts_data->tui_supported) {
+		qts_data->tui_wakeup = wakeup_source_register(qts_data->dev, "trusted_touch");
+		if (!qts_data->tui_wakeup) {
+			rc = -ENOMEM;
+			goto err_panel;
+		}
+		rc = qts_create_sysfs(qts_data);
+		if (rc) {
+			wakeup_source_unregister(qts_data->tui_wakeup);
+			goto err_panel;
+		}
+	}
+	goto qts_register_end;
+
+err_panel:
+	panel_event_notifier_unregister(qts_data->notifier_cookie);
+	qts_data->notifier_cookie = NULL;
+err_work:
+	if (qts_data->ts_workqueue) {
+		destroy_workqueue(qts_data->ts_workqueue);
+		qts_data->ts_workqueue = NULL;
+	}
+	if (qts_data->vm_info)
+		qts_vm_deinit(qts_data);
 
 qts_register_end:
 	pr_debug("client register end\n");
@@ -1879,6 +1854,8 @@ void qts_client_unregister(void)
 			destroy_workqueue(qts_data->ts_workqueue);
 			qts_data->ts_workqueue = NULL;
 		}
+		if (qts_data->tui_wakeup)
+			wakeup_source_unregister(qts_data->tui_wakeup);
 		if (qts_data->vm_info) {
 			qts_vm_deinit(qts_data);
 			qts_data->vm_info = NULL;
