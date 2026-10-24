@@ -106,7 +106,7 @@ ifeq ($(CONFIG_QTS_ENABLE), y)
 	LINUX_INC += -include $(TOUCH_ROOT)/qts/qts_core.h
 	LINUX_INC += -include $(TOUCH_ROOT)/qts/qts_core_common.h
 
-	qts-y := ./qts/qts_core.o
+	qts-y := qts/qts_core.o
 
 	obj-$(CONFIG_MSM_TOUCH) += qts.o
 endif
@@ -149,17 +149,17 @@ ifeq ($(CONFIG_TOUCHSCREEN_GOODIX_BRL), y)
 	LINUX_INC += -include $(TOUCH_ROOT)/goodix_berlin_driver/goodix_ts_core.h
 
 	goodix_ts-y := \
-		 ./goodix_berlin_driver/goodix_ts_core.o \
-		 ./goodix_berlin_driver/goodix_brl_hw.o \
-		 ./goodix_berlin_driver/goodix_cfg_bin.o \
-		 ./goodix_berlin_driver/goodix_ts_utils.o \
-		 ./goodix_berlin_driver/goodix_brl_fwupdate.o \
-		 ./goodix_berlin_driver/goodix_ts_tools.o \
-		 ./goodix_berlin_driver/goodix_ts_gesture.o \
-		 ./goodix_berlin_driver/goodix_ts_inspect.o \
-		 ./goodix_berlin_driver/goodix_brl_spi.o \
-		 ./goodix_berlin_driver/goodix_brl_i2c.o
-	goodix_ts-$(CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU) += ./goodix_berlin_driver/goodix_meizu.o
+		 goodix_berlin_driver/goodix_ts_core.o \
+		 goodix_berlin_driver/goodix_brl_hw.o \
+		 goodix_berlin_driver/goodix_cfg_bin.o \
+		 goodix_berlin_driver/goodix_ts_utils.o \
+		 goodix_berlin_driver/goodix_brl_fwupdate.o \
+		 goodix_berlin_driver/goodix_ts_tools.o \
+		 goodix_berlin_driver/goodix_ts_gesture.o \
+		 goodix_berlin_driver/goodix_ts_inspect.o \
+		 goodix_berlin_driver/goodix_brl_spi.o \
+		 goodix_berlin_driver/goodix_brl_i2c.o
+	goodix_ts-$(CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU) += goodix_berlin_driver/goodix_meizu.o
 	ifeq ($(CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU),y)
 		ccflags-y += -DCONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU=1
 		# Register the suspend/IRQ gesture hooks and keep the IC powered in sleep.
