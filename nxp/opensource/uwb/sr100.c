@@ -714,7 +714,7 @@ static int sr100_probe(struct spi_device *spi)
 	}
 	irq_set_status_flags(spi->irq, IRQ_NOAUTOEN);
 	rc = devm_request_threaded_irq(&spi->dev, spi->irq, NULL,
-				 sr100_dev_irq_handler, IRQF_TRIGGER_RISING,
+				 sr100_dev_irq_handler, IRQF_TRIGGER_RISING | IRQF_ONESHOT,
 				 "srxxx", d);
 	if (rc)
 		goto fail;
