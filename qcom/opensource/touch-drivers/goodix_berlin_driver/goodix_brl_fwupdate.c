@@ -936,7 +936,7 @@ static int goodix_update_finish(struct fw_update_ctrl *fwu_ctrl)
  * @fwu_ctrl: firmware control
  * return: = 0 update ok, < 0 error or NO_NEED_UPDATE
  */
-int goodix_fw_update_proc(struct fw_update_ctrl *fwu_ctrl)
+static int goodix_fw_update_proc(struct fw_update_ctrl *fwu_ctrl)
 {
 #define FW_UPDATE_RETRY		2
 	int retry0 = FW_UPDATE_RETRY;
@@ -1039,7 +1039,7 @@ static ssize_t goodix_sysfs_update_en_store(
 }
 
 static ssize_t goodix_sysfs_fwimage_store(struct file *file,
-		struct kobject *kobj, struct bin_attribute *attr,
+		struct kobject *kobj, const struct bin_attribute *attr,
 		char *buf, loff_t pos, size_t count)
 {
 	struct firmware **fw = &goodix_fw_update_ctrl.fw_data.fw_sysfs;
@@ -1328,7 +1328,7 @@ int goodix_fw_update_init(struct goodix_ts_core *core_data)
 	goodix_fw_update_ctrl.core_data = core_data;
 	goodix_fw_update_ctrl.mode = 0;
 
-	strlcpy(goodix_fw_update_ctrl.fw_name, core_data->board_data.fw_name,
+	strscpy(goodix_fw_update_ctrl.fw_name, core_data->board_data.fw_name,
 		sizeof(goodix_fw_update_ctrl.fw_name));
 
 	ret = goodix_fw_sysfs_init(core_data, &goodix_fw_update_ctrl);

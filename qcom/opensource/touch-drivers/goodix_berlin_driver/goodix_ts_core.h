@@ -21,7 +21,7 @@
 #include <linux/init.h>
 #include <linux/firmware.h>
 #include <linux/slab.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 #include <linux/vmalloc.h>
 #include <linux/kthread.h>
 #include <linux/delay.h>
@@ -42,6 +42,9 @@
 #include <linux/i2c.h>
 #include <linux/spi/spi.h>
 #include "../qts/qts_core_common.h"
+
+int goodix_ts_register_notifier(struct notifier_block *nb);
+int goodix_ts_unregister_notifier(struct notifier_block *nb);
 
 #define GOODIX_CORE_DRIVER_NAME			"goodix_ts"
 #define GOODIX_PEN_DRIVER_NAME			"goodix_ts,pen"
@@ -544,6 +547,7 @@ struct goodix_ts_core {
 	atomic_t trusted_touch_mode;
 #endif
 	bool qts_en;
+	struct completion init_thread_done;
 	struct mutex tui_transition_lock;
 };
 

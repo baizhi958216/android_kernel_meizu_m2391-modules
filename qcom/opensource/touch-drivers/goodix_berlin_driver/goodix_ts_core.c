@@ -16,6 +16,7 @@
   *
   */
 #include <linux/version.h>
+#include <drm/drm_panel.h>
 #include <linux/fs.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
@@ -49,12 +50,12 @@ static void goodix_register_for_panel_events(struct device_node *dp,
 	cookie = panel_event_notifier_register(PANEL_EVENT_NOTIFICATION_PRIMARY,
 			PANEL_EVENT_NOTIFIER_CLIENT_PRIMARY_TOUCH, active_panel,
 			&goodix_panel_notifier_callback, cd);
-	if (!cookie) {
+	if (IS_ERR_OR_NULL(cookie)) {
 		pr_err("Failed to register for panel events\n");
 		return;
 	}
 
-	ts_debug("registered for panel notifications panel: 0x%x\n",
+	ts_debug("registered for panel notifications panel: %p\n",
 			active_panel);
 
 	cd->notifier_cookie = cookie;
@@ -1072,7 +1073,7 @@ static int goodix_parse_dt(struct device_node *node,
 	if (!r) {
 		ts_info("avdd name from dt: %s", name_tmp);
 		if (strlen(name_tmp) < sizeof(board_data->avdd_name))
-			strlcpy(board_data->avdd_name,
+			strscpy(board_data->avdd_name,
 				name_tmp, sizeof(board_data->avdd_name));
 		else
 			ts_info("invalied avdd name length: %ld > %ld",
@@ -1085,7 +1086,7 @@ static int goodix_parse_dt(struct device_node *node,
 	if (!r) {
 		ts_info("iovdd name from dt: %s", name_tmp);
 		if (strlen(name_tmp) < sizeof(board_data->iovdd_name))
-			strlcpy(board_data->iovdd_name,
+			strscpy(board_data->iovdd_name,
 				name_tmp, sizeof(board_data->iovdd_name));
 		else
 			ts_info("invalied iovdd name length: %ld > %ld",
@@ -1097,12 +1098,12 @@ static int goodix_parse_dt(struct device_node *node,
 	r = of_property_read_string(node, "goodix,firmware-name", &name_tmp);
 	if (!r) {
 		ts_info("firmware name from dt: %s", name_tmp);
-		strlcpy(board_data->fw_name,
+		strscpy(board_data->fw_name,
 				name_tmp, sizeof(board_data->fw_name));
 	} else {
 		ts_info("can't find firmware name, use default: %s",
 				TS_DEFAULT_FIRMWARE);
-		strlcpy(board_data->fw_name,
+		strscpy(board_data->fw_name,
 				TS_DEFAULT_FIRMWARE,
 				sizeof(board_data->fw_name));
 	}
@@ -1111,12 +1112,12 @@ static int goodix_parse_dt(struct device_node *node,
 	r = of_property_read_string(node, "goodix,config-name", &name_tmp);
 	if (!r) {
 		ts_info("config name from dt: %s", name_tmp);
-		strlcpy(board_data->cfg_bin_name, name_tmp,
+		strscpy(board_data->cfg_bin_name, name_tmp,
 				sizeof(board_data->cfg_bin_name));
 	} else {
 		ts_info("can't find config name, use default: %s",
 				TS_DEFAULT_CFG_BIN);
-		strlcpy(board_data->cfg_bin_name,
+		strscpy(board_data->cfg_bin_name,
 				TS_DEFAULT_CFG_BIN,
 				sizeof(board_data->cfg_bin_name));
 	}
@@ -1375,7 +1376,7 @@ static int goodix_ts_power_init(struct goodix_ts_core *core_data)
  * @core_data: pointer to touch core data
  * return: 0 ok, <0 failed
  */
-int goodix_ts_power_on(struct goodix_ts_core *cd)
+static int goodix_ts_power_on(struct goodix_ts_core *cd)
 {
 	int ret = 0;
 
@@ -1396,7 +1397,7 @@ int goodix_ts_power_on(struct goodix_ts_core *cd)
  * @core_data: pointer to touch core data
  * return: 0 ok, <0 failed
  */
-int goodix_ts_power_off(struct goodix_ts_core *cd)
+static int goodix_ts_power_off(struct goodix_ts_core *cd)
 {
 	int ret;
 
@@ -1588,7 +1589,7 @@ static int goodix_ts_pen_dev_config(struct goodix_ts_core *core_data)
 	return 0;
 }
 
-void goodix_ts_input_dev_remove(struct goodix_ts_core *core_data)
+static void goodix_ts_input_dev_remove(struct goodix_ts_core *core_data)
 {
 	if (!core_data->input_dev)
 		return;
@@ -1597,7 +1598,7 @@ void goodix_ts_input_dev_remove(struct goodix_ts_core *core_data)
 	core_data->input_dev = NULL;
 }
 
-void goodix_ts_pen_dev_remove(struct goodix_ts_core *core_data)
+static void goodix_ts_pen_dev_remove(struct goodix_ts_core *core_data)
 {
 	if (!core_data->pen_dev)
 		return;
@@ -2033,7 +2034,7 @@ static int goodix_generic_noti_callback(struct notifier_block *self,
 	return 0;
 }
 
-int goodix_ts_stage2_init(struct goodix_ts_core *cd)
+static int goodix_ts_stage2_init(struct goodix_ts_core *cd)
 {
 	int ret;
 	struct goodix_bus_interface *bus_interface;
@@ -2071,7 +2072,8 @@ int goodix_ts_stage2_init(struct goodix_ts_core *cd)
 	ts_info("success register irq");
 
 #if defined(CONFIG_DRM)
-	if (is_primary && cd->touch_environment && !strcmp(cd->touch_environment, "pvm"))
+	if (!cd->qts_en && is_primary && cd->touch_environment &&
+	    !strcmp(cd->touch_environment, "pvm"))
 		goodix_register_for_panel_events(cd->bus->dev->of_node, cd);
 
 #elif defined(CONFIG_FB)
@@ -2217,6 +2219,7 @@ skip_to_stage2_init:
 	}
 	cd->init_stage = CORE_INIT_STAGE2;
 	mutex_unlock(&goodix_later_init_tmutex);
+	complete(&cd->init_thread_done);
 	return 0;
 
 uninit_fw:
@@ -2229,19 +2232,22 @@ err_out:
 		cd->ic_configs[i] = NULL;
 	}
 	mutex_unlock(&goodix_later_init_tmutex);
+	complete(&cd->init_thread_done);
 	return ret;
 }
 
 static int goodix_start_later_init(struct goodix_ts_core *ts_core)
 {
 	struct task_struct *init_thrd;
+	init_completion(&ts_core->init_thread_done);
 	/* create and run update thread */
 	init_thrd = kthread_run(goodix_later_init_thread,
 				ts_core, "goodix_init_thread");
 	if (IS_ERR_OR_NULL(init_thrd)) {
 		ts_err("Failed to create update thread:%ld",
 			PTR_ERR(init_thrd));
-		return -EFAULT;
+		complete(&ts_core->init_thread_done);
+		return PTR_ERR(init_thrd);
 	}
 	return 0;
 }
@@ -2407,7 +2413,7 @@ static int goodix_ts_get_irq_num(void *data)
 {
 	struct goodix_ts_core *core_data = data;
 
-	return core_data->irq;
+	return core_data->init_stage == CORE_INIT_STAGE2 ? core_data->irq : -EAGAIN;
 }
 
 static irqreturn_t  goodix_irq_handler(int irq, void *data)
@@ -2464,6 +2470,7 @@ static void goodix_ts_fill_qts_vendor_data(struct qts_vendor_data *qts_vendor_da
 		break;
 	}
 
+	qts_vendor_data->owner = THIS_MODULE;
 	qts_vendor_data->vendor_data = core_data;
 	qts_vendor_data->schedule_suspend = false;
 	qts_vendor_data->schedule_resume = false;
@@ -2493,7 +2500,7 @@ static int goodix_ts_probe(struct platform_device *pdev)
 	int ret;
 	struct device_node *node;
 	bool qts_en = false;
-	struct qts_vendor_data qts_vendor_data;
+	struct qts_vendor_data qts_vendor_data = {};
 	bool is_primary;
 
 	ts_info("goodix_ts_probe IN");
@@ -2606,6 +2613,7 @@ skip_to_power_gpio_setup:
 		ret = qts_client_register(qts_vendor_data);
 		if (ret) {
 			pr_err("qts client register failed, rc %d\n", ret);
+			goodix_ts_power_off(core_data);
 			goto err_out;
 		}
 		core_data->qts_en = qts_en;
@@ -2625,7 +2633,17 @@ skip_to_power_gpio_setup:
 	core_data->ready = true;
 
 	/* Try start a thread to get config-bin info */
-	goodix_start_later_init(core_data);
+	ret = goodix_start_later_init(core_data);
+	if (ret) {
+		core_data->ready = false;
+		goodix_ts_unregister_notifier(&core_data->ts_notifier);
+		if (is_primary)
+			goodix_tools_exit();
+		if (core_data->qts_en)
+			qts_client_unregister();
+		goodix_ts_power_off(core_data);
+		goto err_out;
+	}
 
 	ts_info("goodix_ts_core probe success");
 	return 0;
@@ -2637,11 +2655,15 @@ err_out:
 	return ret;
 }
 
-static int goodix_ts_remove(struct platform_device *pdev)
+static void goodix_ts_remove(struct platform_device *pdev)
 {
 	struct goodix_ts_core *core_data = platform_get_drvdata(pdev);
 	struct goodix_ts_hw_ops *hw_ops = core_data->hw_ops;
 	struct goodix_ts_esd *ts_esd = &core_data->ts_esd;
+
+	wait_for_completion(&core_data->init_thread_done);
+	if (core_data->qts_en)
+		qts_client_unregister();
 
 	/* Drain panel suspend/resume callbacks before their resources disappear. */
 #if defined(CONFIG_DRM)
@@ -2684,7 +2706,6 @@ static int goodix_ts_remove(struct platform_device *pdev)
 		goodix_ts_power_off(core_data);
 	}
 
-	return 0;
 }
 
 #if defined(CONFIG_PM) && !defined(CONFIG_DRM)
@@ -2706,6 +2727,7 @@ MODULE_DEVICE_TABLE(platform, ts_core_ids);
 static struct platform_driver goodix_ts_driver = {
 	.driver = {
 		.name = GOODIX_CORE_DRIVER_NAME,
+		.suppress_bind_attrs = true,
 		.owner = THIS_MODULE,
 #if defined(CONFIG_PM) && !defined(CONFIG_DRM)
 		.pm = &dev_pm_ops,

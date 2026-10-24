@@ -1964,7 +1964,7 @@ exit:
 	goodix_cap_test_finish(ts_test);
 }
 
-char *goodix_strncat(char *dest, char *src, size_t dest_size)
+static char *goodix_strncat(char *dest, char *src, size_t dest_size)
 {
 	size_t dest_len = 0;
 
@@ -1973,7 +1973,7 @@ char *goodix_strncat(char *dest, char *src, size_t dest_size)
 	return dest;
 }
 
-char *goodix_strncatint(char *dest, int src, char *format, size_t dest_size)
+static char *goodix_strncatint(char *dest, int src, char *format, size_t dest_size)
 {
 	char src_str[MAX_STR_LEN] = {0};
 
@@ -2885,7 +2885,7 @@ static void goodix_put_test_result(struct goodix_ts_test *ts_test,
 		TS_RAWDATA_RESULT_MAX);
 	goodix_strncat(ts_test->test_info, "\n",
 		TS_RAWDATA_RESULT_MAX);
-	strlcpy(info->result, ts_test->test_info, TS_RAWDATA_RESULT_MAX - 1);
+	strscpy(info->result, ts_test->test_info, TS_RAWDATA_RESULT_MAX - 1);
 
 #ifdef SAVE_IN_CSV
 	/* save result to file */
@@ -2911,7 +2911,7 @@ static int goodix_do_inspect(struct goodix_ts_core *cd, struct ts_rawdata_info *
 	ret = goodix_tptest_prepare(ts_test);
 	if (ret < 0) {
 		ts_err("Failed to prepare TP test, exit");
-		strlcpy(info->result, "[FAIL]-0F-software reason\n",
+		strscpy(info->result, "[FAIL]-0F-software reason\n",
 				TS_RAWDATA_RESULT_MAX - 1);
 		goto exit_finish;
 	}

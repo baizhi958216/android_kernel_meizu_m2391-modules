@@ -162,8 +162,7 @@ static void goodix_pdev_release(struct device *dev)
 	kfree(goodix_pdev);
 }
 
-static int goodix_i2c_probe(struct i2c_client *client,
-	const struct i2c_device_id *dev_id)
+static int goodix_i2c_probe(struct i2c_client *client)
 {
 	int ret = 0;
 
@@ -252,6 +251,7 @@ MODULE_DEVICE_TABLE(i2c, i2c_id_table);
 static struct i2c_driver goodix_i2c_driver = {
 	.driver = {
 		.name = TS_DRIVER_NAME,
+		.suppress_bind_attrs = true,
 		//.owner = THIS_MODULE,
 		.of_match_table = of_match_ptr(i2c_matchs),
 	},

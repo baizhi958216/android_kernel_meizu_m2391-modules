@@ -10,7 +10,7 @@
 #include <linux/of.h>
 #include <linux/slab.h>
 #include <linux/workqueue.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 #include "goodix_ts_core.h"
 #include "goodix_meizu.h"
 #include "../mz_gesture/mz_gesture_ts.h"
