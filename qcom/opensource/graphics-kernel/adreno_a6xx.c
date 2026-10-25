@@ -2102,7 +2102,7 @@ u64 a6xx_read_alwayson(struct adreno_device *adreno_dev)
 static void a6xx_remove(struct adreno_device *adreno_dev)
 {
 	if (ADRENO_FEATURE(adreno_dev, ADRENO_PREEMPTION))
-		del_timer(&adreno_dev->preempt.timer);
+		timer_delete(&adreno_dev->preempt.timer);
 }
 
 static void a6xx_read_bus_stats(struct kgsl_device *device,

@@ -1560,7 +1560,7 @@ void kgsl_pwrctrl_irq(struct kgsl_device *device, bool state)
 
 static void kgsl_minbw_timer(struct timer_list *t)
 {
-	struct kgsl_pwrctrl *pwr = from_timer(pwr, t, minbw_timer);
+	struct kgsl_pwrctrl *pwr = timer_container_of(pwr, t, minbw_timer);
 	struct kgsl_device *device = container_of(pwr,
 					struct kgsl_device, pwrctrl);
 
@@ -1876,7 +1876,7 @@ done:
 
 void kgsl_timer(struct timer_list *t)
 {
-	struct kgsl_device *device = from_timer(device, t, idle_timer);
+	struct kgsl_device *device = timer_container_of(device, t, idle_timer);
 
 	if (device->requested_state != KGSL_STATE_SUSPEND) {
 		kgsl_pwrctrl_request_state(device, KGSL_STATE_SLUMBER);
@@ -1987,13 +1987,13 @@ static int _init(struct kgsl_device *device)
 	case KGSL_STATE_MINBW:
 		fallthrough;
 	case KGSL_STATE_NAP:
-		del_timer_sync(&device->pwrctrl.minbw_timer);
+		timer_delete_sync(&device->pwrctrl.minbw_timer);
 		/* Force power on to do the stop */
 		status = kgsl_pwrctrl_enable(device);
 		fallthrough;
 	case KGSL_STATE_ACTIVE:
 		kgsl_pwrctrl_irq(device, false);
-		del_timer_sync(&device->idle_timer);
+		timer_delete_sync(&device->idle_timer);
 		device->ftbl->stop(device);
 		fallthrough;
 	case KGSL_STATE_AWARE:
@@ -2067,7 +2067,7 @@ static int _wake(struct kgsl_device *device)
 		/* All settings for power level transitions are complete*/
 		pwr->previous_pwrlevel = pwr->active_pwrlevel;
 		kgsl_start_idle_timer(device);
-		del_timer_sync(&device->pwrctrl.minbw_timer);
+		timer_delete_sync(&device->pwrctrl.minbw_timer);
 		break;
 	case KGSL_STATE_AWARE:
 		kgsl_pwrctrl_clk_set_options(device, true);
@@ -2075,7 +2075,7 @@ static int _wake(struct kgsl_device *device)
 		kgsl_pwrctrl_set_state(device, KGSL_STATE_ACTIVE);
 		kgsl_pwrctrl_irq(device, true);
 		kgsl_start_idle_timer(device);
-		del_timer_sync(&device->pwrctrl.minbw_timer);
+		timer_delete_sync(&device->pwrctrl.minbw_timer);
 		break;
 	default:
 		dev_warn(device->dev, "unhandled state %s\n",
@@ -2114,7 +2114,7 @@ _aware(struct kgsl_device *device)
 		fallthrough;
 	case KGSL_STATE_ACTIVE:
 		kgsl_pwrctrl_irq(device, false);
-		del_timer_sync(&device->idle_timer);
+		timer_delete_sync(&device->idle_timer);
 		break;
 	case KGSL_STATE_SLUMBER:
 		status = kgsl_pwrctrl_enable(device);
@@ -2203,8 +2203,8 @@ _slumber(struct kgsl_device *device)
 	case KGSL_STATE_NAP:
 		fallthrough;
 	case KGSL_STATE_MINBW:
-		del_timer_sync(&device->pwrctrl.minbw_timer);
-		del_timer_sync(&device->idle_timer);
+		timer_delete_sync(&device->pwrctrl.minbw_timer);
+		timer_delete_sync(&device->idle_timer);
 		kgsl_pwrctrl_irq(device, false);
 		/* make sure power is on to stop the device*/
 		status = kgsl_pwrctrl_enable(device);

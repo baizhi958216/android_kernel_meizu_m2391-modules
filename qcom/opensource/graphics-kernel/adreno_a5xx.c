@@ -2417,7 +2417,7 @@ static bool a5xx_is_hw_collapsible(struct adreno_device *adreno_dev)
 static void a5xx_remove(struct adreno_device *adreno_dev)
 {
 	if (ADRENO_FEATURE(adreno_dev, ADRENO_PREEMPTION))
-		del_timer(&adreno_dev->preempt.timer);
+		timer_delete(&adreno_dev->preempt.timer);
 }
 
 static void a5xx_power_stats(struct adreno_device *adreno_dev,

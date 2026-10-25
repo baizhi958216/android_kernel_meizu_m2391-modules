@@ -200,7 +200,7 @@ void adreno_dispatcher_stop_fault_timer(struct kgsl_device *device)
 	struct adreno_dispatcher *dispatcher = &adreno_dev->dispatcher;
 
 	if (ADRENO_FEATURE(adreno_dev, ADRENO_SOFT_FAULT_DETECT))
-		del_timer_sync(&dispatcher->fault_timer);
+		timer_delete_sync(&dispatcher->fault_timer);
 }
 
 /**
@@ -2023,7 +2023,7 @@ static int dispatcher_do_fault(struct adreno_device *adreno_dev)
 	}
 
 	/* Turn off all the timers */
-	del_timer_sync(&dispatcher->timer);
+	timer_delete_sync(&dispatcher->timer);
 
 	adreno_dispatcher_stop_fault_timer(device);
 
@@ -2032,7 +2032,7 @@ static int dispatcher_do_fault(struct adreno_device *adreno_dev)
 	 * disable build. Hence skip del timer if it is not initialized.
 	 */
 	if (adreno_is_preemption_enabled(adreno_dev))
-		del_timer_sync(&adreno_dev->preempt.timer);
+		timer_delete_sync(&adreno_dev->preempt.timer);
 
 	if (gx_on)
 		adreno_readreg64(adreno_dev, ADRENO_REG_CP_RB_BASE,
@@ -2479,7 +2479,7 @@ void adreno_dispatcher_fault(struct adreno_device *adreno_dev,
  */
 static void adreno_dispatcher_timer(struct timer_list *t)
 {
-	struct adreno_dispatcher *dispatcher = from_timer(dispatcher, t, timer);
+	struct adreno_dispatcher *dispatcher = timer_container_of(dispatcher, t, timer);
 	struct adreno_device *adreno_dev = container_of(dispatcher,
 					struct adreno_device, dispatcher);
 
@@ -2509,7 +2509,7 @@ void adreno_dispatcher_stop(struct adreno_device *adreno_dev)
 {
 	struct adreno_dispatcher *dispatcher = &adreno_dev->dispatcher;
 
-	del_timer_sync(&dispatcher->timer);
+	timer_delete_sync(&dispatcher->timer);
 
 	adreno_dispatcher_stop_fault_timer(KGSL_DEVICE(adreno_dev));
 }
@@ -2630,7 +2630,7 @@ static void adreno_dispatcher_close(struct adreno_device *adreno_dev)
 	struct adreno_ringbuffer *rb;
 
 	mutex_lock(&dispatcher->mutex);
-	del_timer_sync(&dispatcher->timer);
+	timer_delete_sync(&dispatcher->timer);
 
 	adreno_dispatcher_stop_fault_timer(KGSL_DEVICE(adreno_dev));
 

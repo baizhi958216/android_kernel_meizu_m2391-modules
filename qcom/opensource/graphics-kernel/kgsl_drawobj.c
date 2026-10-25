@@ -144,7 +144,7 @@ void kgsl_dump_syncpoints(struct kgsl_device *device,
 static void syncobj_timer(struct timer_list *t)
 {
 	struct kgsl_device *device;
-	struct kgsl_drawobj_sync *syncobj = from_timer(syncobj, t, timer);
+	struct kgsl_drawobj_sync *syncobj = timer_container_of(syncobj, t, timer);
 	struct kgsl_drawobj *drawobj;
 	struct kgsl_drawobj_sync_event *event;
 	unsigned int i;
@@ -249,7 +249,7 @@ static bool drawobj_sync_expire(struct kgsl_device *device,
 	 * for dispatch
 	 */
 	if (!kgsl_drawobj_events_pending(event->syncobj)) {
-		del_timer(&syncobj->timer);
+		timer_delete(&syncobj->timer);
 
 		if (device->ftbl->drawctxt_sched)
 			device->ftbl->drawctxt_sched(device,
@@ -342,7 +342,7 @@ static void syncobj_destroy(struct kgsl_drawobj *drawobj)
 	unsigned int i;
 
 	/* Zap the canary timer */
-	del_timer_sync(&syncobj->timer);
+	timer_delete_sync(&syncobj->timer);
 
 	/*
 	 * Clear all pending events - this will render any subsequent async

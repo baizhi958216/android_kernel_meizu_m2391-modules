@@ -97,7 +97,7 @@ static ssize_t log_stream_enable_store(struct kobject *kobj,
 	bool val;
 	int ret;
 
-	ret = kstrtobool(buf, &val);
+	ret = kkstrtobool(buf, &val);
 	if (ret)
 		return ret;
 
@@ -3294,7 +3294,7 @@ no_gx_power:
 
 	clear_bit(GMU_PRIV_GPU_STARTED, &gmu->flags);
 
-	del_timer_sync(&device->idle_timer);
+	timer_delete_sync(&device->idle_timer);
 
 	kgsl_pwrscale_sleep(device);
 

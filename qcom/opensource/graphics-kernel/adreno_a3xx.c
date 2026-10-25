@@ -764,7 +764,7 @@ static int a3xx_soft_fault_detect_read_compare(struct adreno_device *adreno_dev)
  */
 static void a3xx_soft_fault_timer(struct timer_list *t)
 {
-	struct adreno_dispatcher *dispatcher = from_timer(dispatcher,
+	struct adreno_dispatcher *dispatcher = timer_container_of(dispatcher,
 							t, fault_timer);
 	struct adreno_device *adreno_dev = container_of(dispatcher,
 					struct adreno_device, dispatcher);
