@@ -13,13 +13,13 @@
 #include <linux/slab.h>
 #include <linux/firmware.h>
 #include <linux/elf.h>
+#include <linux/unaligned.h>
 #include "smcinvoke.h"
 #include "smcinvoke_object.h"
 #include "IClientEnv.h"
 #if !IS_ENABLED(CONFIG_QSEECOM)
 #include "IQSEEComCompat.h"
 #include "IQSEEComCompatAppLoader.h"
-#include "linux/qseecom.h"
 #if IS_ENABLED(CONFIG_QSEECOM_PROXY)
 #include <linux/qseecom_kernel.h>
 #else
@@ -86,7 +86,7 @@ static void tzobject_delete(struct kref *refs)
 	kfree(me);
 }
 
-int getObjectFromHandle(int handle, struct Object *obj)
+static int getObjectFromHandle(int handle, struct Object *obj)
 {
 	int ret = 0;
 
@@ -105,7 +105,7 @@ int getObjectFromHandle(int handle, struct Object *obj)
 	return ret;
 }
 
-int getHandleFromObject(struct Object obj, int *handle)
+static int getHandleFromObject(struct Object obj, int *handle)
 {
 	int ret = 0;
 
@@ -254,7 +254,7 @@ static int invoke_over_smcinvoke(void *cxt,
 			struct smcinvoke_obj obj = argptr[i].o;
 
 			if (obj.fd >= 0) {
-				pr_err("Close OO[%zu].fd = %d\n", i, obj.fd);
+				pr_err("Close OO[%zu].fd = %lld\n", i, obj.fd);
 				close_fd(obj.fd);
 			}
 		}
@@ -276,14 +276,14 @@ exit:
 	return ret | req.result;
 }
 
-int get_root_obj(struct Object *rootObj)
+static int get_root_obj(struct Object *rootObj)
 {
 	int ret = 0;
 	int root_fd = -1;
 
 	ret = get_root_fd(&root_fd);
 	if (ret) {
-		pr_err("Failed to get root fd, ret = %d\n");
+		pr_err("Failed to get root fd, ret = %d\n", ret);
 		return ret;
 	}
 	*rootObj = tzobject_new(root_fd);
@@ -383,7 +383,7 @@ static int __qseecom_start_app(struct qseecom_handle **handle,
 	int ret = 0;
 	struct qseecom_compat_context *cxt = NULL;
 
-	pr_warn("%s, start app %s, size %zu\n",
+	pr_warn("%s, start app %s, size %u\n",
 		__func__, app_name, size);
 	if (app_name == NULL || handle == NULL) {
 		pr_err("app_name is null or invalid handle\n");
@@ -488,7 +488,7 @@ static int __qseecom_send_command(struct qseecom_handle *handle, void *send_buf,
 		__func__, sbuf_len, rbuf_len);
 
 	if (!handle || !send_buf || !resp_buf || !sbuf_len || !rbuf_len) {
-		pr_err("One of params is invalid. %s, handle %x, send_buf %x,resp_buf %x,sbuf_len %u, rbuf_len %u\n",
+		pr_err("One of params is invalid. %s, handle %p, send_buf %p,resp_buf %p,sbuf_len %u, rbuf_len %u\n",
 			 __func__, handle, send_buf, resp_buf, sbuf_len, rbuf_len);
 		return -EINVAL;
 	}
@@ -540,133 +540,108 @@ EXPORT_SYMBOL(qseecom_send_command);
 
 #endif
 
-char *firmware_request_from_smcinvoke(const char *appname, size_t *fw_size, struct qtee_shm *shm)
+struct qsee_segment {
+	const struct firmware *fw;
+	size_t offset;
+};
+
+static int qsee_phdrs(const struct firmware *fw, u64 *offset, u16 *count, u16 *stride)
 {
+	const u8 *p = fw->data;
+	size_t phdr_size;
 
-	int rc = 0;
-	const struct firmware *fw_entry = NULL, *fw_entry00 = NULL, *fw_entrylast = NULL;
-	char fw_name[MAX_FW_APP_SIZE + FILE_EXT_SIZE] = "\0";
-	int num_images = 0, phi = 0;
-	unsigned char app_arch = 0;
-	u8 *img_data_ptr = NULL;
-	size_t bufferOffset = 0, phdr_table_offset = 0;
-	size_t *offset = NULL;
-	Elf32_Phdr phdr32;
-	Elf64_Phdr phdr64;
-	struct elf32_hdr *ehdr = NULL;
-	struct elf64_hdr *ehdr64 = NULL;
+	if (fw->size < EI_NIDENT || memcmp(p, ELFMAG, SELFMAG) ||
+	    p[EI_DATA] != ELFDATA2LSB)
+		return -ENOEXEC;
+	switch (p[EI_CLASS]) {
+	case ELFCLASS32: {
+		const Elf32_Ehdr *eh = (const void *)p;
 
+		if (fw->size < sizeof(*eh))
+			return -ENOEXEC;
+		*offset = le32_to_cpu(eh->e_phoff);
+		*count = le16_to_cpu(eh->e_phnum);
+		*stride = le16_to_cpu(eh->e_phentsize);
+		phdr_size = sizeof(Elf32_Phdr);
+		break;
+	}
+	case ELFCLASS64: {
+		const Elf64_Ehdr *eh = (const void *)p;
 
-	/* load b00*/
-	snprintf(fw_name, sizeof(fw_name), "%s.b00", appname);
-	rc = firmware_request_nowarn(&fw_entry00, fw_name, class_dev);
-	if (rc) {
-		pr_err("Load %s failed, ret:%d\n", fw_name, rc);
+		if (fw->size < sizeof(*eh))
+			return -ENOEXEC;
+		*offset = le64_to_cpu(eh->e_phoff);
+		*count = le16_to_cpu(eh->e_phnum);
+		*stride = le16_to_cpu(eh->e_phentsize);
+		phdr_size = sizeof(Elf64_Phdr);
+		break;
+	}
+	default:
+		return -ENOEXEC;
+	}
+	if (!*count || *stride != phdr_size || *offset > fw->size ||
+	    *count > (fw->size - *offset) / *stride)
+		return -ENOEXEC;
+	return 0;
+}
+
+char *firmware_request_from_smcinvoke(const char *appname, size_t *fw_size,
+				     struct qtee_shm *shm)
+{
+	const struct firmware *header;
+	struct qsee_segment *segments = NULL;
+	char name[MAX_FW_APP_SIZE + sizeof(".b65535")];
+	size_t image_size;
+	u64 phoff;
+	u16 count, stride;
+	u32 i;
+	char *image = NULL;
+
+	if (!appname || !fw_size || !shm || strnlen(appname, MAX_FW_APP_SIZE) == MAX_FW_APP_SIZE)
 		return NULL;
-	}
+	snprintf(name, sizeof(name), "%s.b00", appname);
+	if (firmware_request_nowarn(&header, name, class_dev))
+		return NULL;
+	if (qsee_phdrs(header, &phoff, &count, &stride))
+		goto put_header;
+	segments = kcalloc(count, sizeof(*segments), GFP_KERNEL);
+	if (!segments)
+		goto put_header;
+	image_size = header->size;
+	for (i = 1; i < count; i++) {
+		const u8 *ph = header->data + phoff + i * stride;
+		u64 offset, end, file_size;
 
-	app_arch = *(unsigned char *)(fw_entry00->data + EI_CLASS);
-
-	/*Get the offsets for split images header*/
-	if (app_arch == ELFCLASS32) {
-
-		ehdr = (struct elf32_hdr *)fw_entry00->data;
-		num_images = ehdr->e_phnum;
-		offset = kcalloc(num_images, sizeof(size_t), GFP_KERNEL);
-		if (offset == NULL)
-			goto release_fw_entry00;
-		phdr_table_offset = (size_t) ehdr->e_phoff;
-		for (phi = 1; phi < num_images; ++phi) {
-			bufferOffset = phdr_table_offset + phi * sizeof(Elf32_Phdr);
-			phdr32 = *(Elf32_Phdr *)(fw_entry00->data + bufferOffset);
-			offset[phi] = (size_t)phdr32.p_offset;
+		if (header->data[EI_CLASS] == ELFCLASS32) {
+			offset = get_unaligned_le32(ph + offsetof(Elf32_Phdr, p_offset));
+			file_size = get_unaligned_le32(ph + offsetof(Elf32_Phdr, p_filesz));
+		} else {
+			offset = get_unaligned_le64(ph + offsetof(Elf64_Phdr, p_offset));
+			file_size = get_unaligned_le64(ph + offsetof(Elf64_Phdr, p_filesz));
 		}
-
-	} else if (app_arch == ELFCLASS64) {
-
-		ehdr64 = (struct elf64_hdr *)fw_entry00->data;
-		num_images = ehdr64->e_phnum;
-		offset = kcalloc(num_images, sizeof(size_t), GFP_KERNEL);
-		if (offset == NULL)
-			goto release_fw_entry00;
-		phdr_table_offset = (size_t) ehdr64->e_phoff;
-		for (phi = 1; phi < num_images; ++phi) {
-			bufferOffset = phdr_table_offset + phi * sizeof(Elf64_Phdr);
-			phdr64 = *(Elf64_Phdr *)(fw_entry00->data + bufferOffset);
-			offset[phi] = (size_t)phdr64.p_offset;
-		}
-
-	} else {
-
-		pr_err("QSEE %s app, arch %u is not supported\n", appname, app_arch);
-		goto release_fw_entry00;
+		snprintf(name, sizeof(name), "%s.b%02u", appname, i);
+		if (firmware_request_nowarn(&segments[i].fw, name, class_dev))
+			goto put_segments;
+		if (file_size != segments[i].fw->size ||
+		    check_add_overflow(offset, file_size, &end) ||
+		    end > SIZE_MAX)
+			goto put_segments;
+		segments[i].offset = offset;
+		image_size = max(image_size, (size_t)end);
 	}
-
-	/*Find the size of last split bin image*/
-	snprintf(fw_name, ARRAY_SIZE(fw_name), "%s.b%02d", appname, num_images-1);
-	rc = firmware_request_nowarn(&fw_entrylast, fw_name, class_dev);
-	if (rc) {
-		pr_err("Failed to locate blob %s\n", fw_name);
-		goto release_fw_entry00;
-	}
-
-	/*Find the total image size*/
-	*fw_size = fw_entry00->size;
-	for (phi = 1; phi < num_images-1; phi++) {
-		snprintf(fw_name, ARRAY_SIZE(fw_name), "%s.b%02d", appname, phi);
-		rc = firmware_request_nowarn(&fw_entry, fw_name, class_dev);
-		if (rc) {
-			pr_err("Failed to locate blob %s\n", fw_name);
-			goto release_fw_entrylast;
-		}
-
-		if (*fw_size > U32_MAX - fw_entry->size) {
-			release_firmware(fw_entry);
-			goto release_fw_entrylast;
-		}
-
-		if((*fw_size) < (offset[phi] + fw_entry->size))
-			*fw_size = offset[phi] + fw_entry->size;
-		release_firmware(fw_entry);
-		fw_entry = NULL;
-	}
-
-	if((*fw_size) < (offset[phi] + fw_entrylast->size))
-		*fw_size = offset[phi] + fw_entrylast->size;
-
-
-
-	/*Allocate memory for the buffer that will hold the split image*/
-	rc = qtee_shmbridge_allocate_shm((*fw_size), shm);
-	if (rc) {
-		pr_err("smbridge alloc failed for size: %zu\n", *fw_size);
-		goto release_fw_entrylast;
-	}
-	img_data_ptr = shm->vaddr;
-	/*
-	 * Copy contents of split bins to the buffer
-	 */
-	memcpy(img_data_ptr, fw_entry00->data, fw_entry00->size);
-	for (phi = 1; phi < num_images-1; phi++) {
-		snprintf(fw_name, ARRAY_SIZE(fw_name), "%s.b%02d", appname, phi);
-		rc = firmware_request_nowarn(&fw_entry, fw_name, class_dev);
-		if (rc) {
-			pr_err("Failed to locate blob %s\n", fw_name);
-			qtee_shmbridge_free_shm(shm);
-			img_data_ptr = NULL;
-			goto release_fw_entrylast;
-		}
-		memcpy(img_data_ptr + offset[phi], fw_entry->data, fw_entry->size);
-		release_firmware(fw_entry);
-		fw_entry = NULL;
-	}
-	memcpy(img_data_ptr + offset[phi], fw_entrylast->data, fw_entrylast->size);
-
-release_fw_entrylast:
-	release_firmware(fw_entrylast);
-release_fw_entry00:
-	release_firmware(fw_entry00);
-	kfree(offset);
-	return img_data_ptr;
+	if (qtee_shmbridge_allocate_shm(image_size, shm))
+		goto put_segments;
+	image = shm->vaddr;
+	memcpy(image, header->data, header->size);
+	for (i = 1; i < count; i++)
+		memcpy(image + segments[i].offset, segments[i].fw->data, segments[i].fw->size);
+	*fw_size = image_size;
+put_segments:
+	for (i = 1; i < count; i++)
+		release_firmware(segments[i].fw);
+	kfree(segments);
+put_header:
+	release_firmware(header);
+	return image;
 }
 EXPORT_SYMBOL(firmware_request_from_smcinvoke);
