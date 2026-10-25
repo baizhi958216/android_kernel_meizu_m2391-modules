@@ -60,7 +60,7 @@ TRACE_EVENT(invoke_cmd_handler,
 		__entry->ret		= ret;
 		__entry->cmd		= cmd;
 	),
-	TP_printk("cmd=0x%x (%d), response_type=%ld, result=0x%x (%d), ret=%d",
+	TP_printk("cmd=0x%x (%d), response_type=%llu, result=0x%x (%d), ret=%d",
 			__entry->cmd, __entry->cmd, __entry->response_type,
 			__entry->result, __entry->result, __entry->ret)
 );
@@ -166,7 +166,7 @@ TRACE_EVENT(prepare_send_scm_msg,
 		__entry->response_type	= response_type;
 		__entry->result		= result;
 	),
-	TP_printk("response_type=0x%lx (%ld), result=0x%x (%d)",
+	TP_printk("response_type=0x%llx (%llu), result=0x%x (%d)",
 			__entry->response_type, __entry->response_type,
 			__entry->result, __entry->result)
 );
@@ -186,7 +186,7 @@ TRACE_EVENT(marshal_in_invoke_req,
 		__entry->cb_server_fd	= cb_server_fd;
 		__entry->tzhandle	= tzhandle;
 	),
-	TP_printk("OI[%d]: fd=0x%x cb_server_fd=0x%x tzhandle=0x%x",
+	TP_printk("OI[%d]: fd=0x%llx cb_server_fd=0x%x tzhandle=0x%x",
 			__entry->i, __entry->fd, __entry->cb_server_fd, __entry->tzhandle)
 );
 
@@ -298,7 +298,7 @@ TRACE_EVENT(process_log_info,
 		__field(uint32_t,	tzhandle)
 	),
 	TP_fast_assign(
-		__assign_str(str, buf);
+		__assign_str(str);
 		__entry->context_type	= context_type;
 		__entry->tzhandle	= tzhandle;
 	),
@@ -352,8 +352,8 @@ TRACE_EVENT(status,
 		__string(str2,	status)
 	),
 	TP_fast_assign(
-		__assign_str(str,	func);
-		__assign_str(str2,	status);
+		__assign_str(str);
+		__assign_str(str2);
 	),
 	TP_printk("%s status=%s", __get_str(str), __get_str(str2))
 );
@@ -489,7 +489,7 @@ TRACE_EVENT(smcinvoke_release,
 #endif /* _TRACE_SMCINVOKE_H */
 
 #undef TRACE_INCLUDE_PATH
-#define TRACE_INCLUDE_PATH ../../../m2391-modules/qcom/opensource/securemsm-kernel/smcinvoke
+#define TRACE_INCLUDE_PATH .
 
 #undef TRACE_INCLUDE_FILE
 #define TRACE_INCLUDE_FILE trace_smcinvoke

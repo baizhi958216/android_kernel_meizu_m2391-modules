@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-only
+obj-m += smcinvoke_dlkm.o
+smcinvoke_dlkm-y := smcinvoke_kernel.o smcinvoke.o
+ccflags-y += -I$(src) -I$(src)/../linux

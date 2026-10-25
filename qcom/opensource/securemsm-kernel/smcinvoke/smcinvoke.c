@@ -21,15 +21,19 @@
 #include <linux/delay.h>
 #include <linux/kref.h>
 #include <linux/signal.h>
-#include <linux/msm_ion.h>
+#include <linux/dma-mapping.h>
 #include <linux/mem-buf.h>
+#include <linux/of.h>
 #include <linux/of_platform.h>
+#include <linux/unaligned.h>
 #include <linux/firmware.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/freezer.h>
 #include <linux/ratelimit.h>
 #include <asm/cacheflush.h>
-#include <soc/qcom/qseecomi.h>
+/* QSEE result words shared by both firmware interfaces. */
+#define QSEOS_RESULT_INCOMPLETE 1
+#define QSEOS_RESULT_BLOCKED_ON_LISTENER 2
 #include <linux/qtee_shmbridge.h>
 #include <linux/kthread.h>
 #include "smcinvoke.h"
@@ -237,7 +241,7 @@ struct smcinvoke_msg_hdr {
 struct smcinvoke_tzcb_req {
 	int32_t result;
 	struct smcinvoke_msg_hdr hdr;
-	union smcinvoke_tz_args args[0];
+	union smcinvoke_tz_args args[];
 };
 
 struct smcinvoke_file_data {
@@ -252,7 +256,7 @@ struct smcinvoke_piggyback_msg {
 	uint32_t version;
 	uint32_t op;
 	uint32_t counts;
-	int32_t objs[0];
+	int32_t objs[];
 };
 
 /* Data structure to hold request coming from TZ */
@@ -294,6 +298,8 @@ struct smcinvoke_cbobj {
  */
 struct smcinvoke_mem_obj {
 	/* these ids are objid part of tzhandle */
+	phys_addr_t bridge_start;
+	size_t bridge_size;
 	uint16_t mem_region_id;
 	uint16_t mem_map_obj_id;
 	struct dma_buf *dma_buf;
@@ -492,7 +498,7 @@ static void smcinvoke_shmbridge_post_process(void)
 			do {
 				ret = qtee_shmbridge_deregister(handle);
 				if (unlikely(ret)) {
-					smci_err_ratelimited("SHM failed: ret:%d ptr:0x%x h:%#llx\n",
+					smci_err_ratelimited("SHM failed: ret:%d buffer:%p h:%#llx\n",
 							ret,
 							dmabuf_to_free,
 							handle);
@@ -758,10 +764,10 @@ static inline void free_mem_obj_locked(struct smcinvoke_mem_obj *mem_obj)
 	if (shmbridge_handle)
 		ret = qtee_shmbridge_deregister(shmbridge_handle);
 	if (ret) {
-		pr_err("Error:%d delete bridge failed leaking memory 0x%x\n",
+		pr_err("Error:%d delete bridge failed retaining buffer %p\n",
 				ret, dmabuf_to_free);
 		if (ret == -EBUSY) {
-			pr_err("EBUSY: we postpone it 0x%x\n",
+			pr_err("EBUSY: defer release of %p\n",
 					dmabuf_to_free);
 			entry = kzalloc(sizeof(*entry), GFP_KERNEL);
 			if (entry) {
@@ -805,10 +811,12 @@ static void del_mem_map_obj_locked(struct kref *kref)
 	mem_obj->p_addr_len = 0;
 	mem_obj->p_addr = 0;
 	if (mem_obj->sgt)
-		dma_buf_unmap_attachment(mem_obj->buf_attach,
+		dma_buf_unmap_attachment_unlocked(mem_obj->buf_attach,
 				mem_obj->sgt, DMA_BIDIRECTIONAL);
+	mem_obj->sgt = NULL;
 	if (mem_obj->buf_attach)
 		dma_buf_detach(mem_obj->dma_buf, mem_obj->buf_attach);
+	mem_obj->buf_attach = NULL;
 
 	/*
 	 * mem_regn obj and mem_map obj are held into mem_obj structure which
@@ -1221,7 +1229,7 @@ static int smcinvoke_create_bridge(struct smcinvoke_mem_obj *mem_obj)
 	size_t size = mem_obj->p_addr_len;
 
 	if (!qtee_shmbridge_is_enabled())
-		return 0;
+		return -EOPNOTSUPP;
 
 	ret = mem_buf_dma_buf_copy_vmperm(dmabuf, (int **)&vmid_list,
 			(int **)&perms_list, (int *)&nelems);
@@ -1230,8 +1238,7 @@ static int smcinvoke_create_bridge(struct smcinvoke_mem_obj *mem_obj)
 		return ret;
 	}
 
-	if (mem_buf_dma_buf_exclusive_owner(dmabuf))
-		perms_list[0] = PERM_READ | PERM_WRITE;
+	/* The exporter supplies the actual permissions of each VM. */
 
 	ret = qtee_shmbridge_register(phys, size, vmid_list, perms_list, nelems,
 			tz_perm, &mem_obj->shmbridge_handle);
@@ -1242,6 +1249,8 @@ static int smcinvoke_create_bridge(struct smcinvoke_mem_obj *mem_obj)
 		goto exit;
 	}
 
+	mem_obj->bridge_start = phys;
+	mem_obj->bridge_size = size;
 	trace_smcinvoke_create_bridge(mem_obj->shmbridge_handle, mem_obj->mem_region_id);
 exit:
 	kfree(perms_list);
@@ -1278,7 +1287,8 @@ static int32_t smcinvoke_map_mem_region(void *buf, size_t buf_len)
 	struct sg_table *sgt = NULL;
 
 	if (msg->hdr.counts != OBJECT_COUNTS_PACK(0, 1, 1, 1) ||
-			(buf_len - msg->args[0].b.offset < msg->args[0].b.size)) {
+	    msg->args[0].b.size < sizeof(*ob) ||
+	    !IS_ALIGNED(msg->args[0].b.offset, __alignof__(*ob))) {
 		pr_err("Invalid counts received for mapping mem obj\n");
 		return OBJECT_ERROR_INVALID;
 	}
@@ -1306,9 +1316,9 @@ static int32_t smcinvoke_map_mem_region(void *buf, size_t buf_len)
 		}
 		mem_obj->buf_attach = buf_attach;
 
-		sgt = dma_buf_map_attachment(buf_attach, DMA_BIDIRECTIONAL);
+		sgt = dma_buf_map_attachment_unlocked(buf_attach, DMA_BIDIRECTIONAL);
 		if (IS_ERR(sgt)) {
-			pr_err("mapping dma buffers failed, ret: %d\n",
+			pr_err("mapping dma buffers failed, ret: %ld\n",
 					PTR_ERR(sgt));
 			ret = OBJECT_ERROR_KMEM;
 			goto out;
@@ -1316,12 +1326,12 @@ static int32_t smcinvoke_map_mem_region(void *buf, size_t buf_len)
 		mem_obj->sgt = sgt;
 
 		/* contiguous only => nents=1 */
-		if (sgt->nents != 1) {
+		if (sgt->orig_nents != 1 || sgt->nents != 1) {
 			ret = OBJECT_ERROR_INVALID;
 			pr_err("sg enries are not contigous, ret: %d\n", ret);
 			goto out;
 		}
-		mem_obj->p_addr = sg_dma_address(sgt->sgl);
+		mem_obj->p_addr = sg_phys(sgt->sgl);
 		mem_obj->p_addr_len = sgt->sgl->length;
 		if (!mem_obj->p_addr) {
 			ret = OBJECT_ERROR_INVALID;
@@ -1329,35 +1339,14 @@ static int32_t smcinvoke_map_mem_region(void *buf, size_t buf_len)
 			goto out;
 		}
 
-		/* Increase reference count as we are feeding the memobj to
-		 * smcinvoke and unlock the mutex. No need to hold the mutex in
-		 * case of shmbridge creation.
-		 */
-		kref_get(&mem_obj->mem_map_obj_ref_cnt);
-		mutex_unlock(&g_smcinvoke_lock);
-
-		ret = smcinvoke_create_bridge(mem_obj);
-
-		/* Take lock again and decrease the reference count which we
-		 * increased for shmbridge but before proceeding further we
-		 * have to check again if the memobj is still valid or not
-		 * after decreasing the reference.
-		 */
-		mutex_lock(&g_smcinvoke_lock);
-		kref_put(&mem_obj->mem_map_obj_ref_cnt, del_mem_map_obj_locked);
-
-		if (ret) {
+		/* Publish the mapping only after QTEE acknowledges its ACL. */
+		if ((mem_obj->shmbridge_handle &&
+		     (mem_obj->p_addr != mem_obj->bridge_start ||
+		      mem_obj->p_addr_len != mem_obj->bridge_size)) ||
+		    (!mem_obj->shmbridge_handle && smcinvoke_create_bridge(mem_obj))) {
 			ret = OBJECT_ERROR_INVALID;
 			goto out;
 		}
-
-		if (!find_mem_obj_locked(TZHANDLE_GET_OBJID(msg->args[1].handle),
-				SMCINVOKE_MEM_RGN_OBJ)) {
-			mutex_unlock(&g_smcinvoke_lock);
-			pr_err("Memory object not found\n");
-			return OBJECT_ERROR_BADOBJ;
-		}
-
 		mem_obj->mem_map_obj_id = next_mem_map_obj_id_locked();
 	} else {
 		kref_get(&mem_obj->mem_map_obj_ref_cnt);
@@ -1375,19 +1364,13 @@ out:
 
 static int32_t smcinvoke_sleep(void *buf, size_t buf_len)
 {
-    struct smcinvoke_tzcb_req *msg = buf;
-    uint32_t sleepTimeMs_val = 0;
+	struct smcinvoke_tzcb_req *msg = buf;
 
-    if (msg->hdr.counts != OBJECT_COUNTS_PACK(1, 0, 0, 0) ||
-       (buf_len - msg->args[0].b.offset < msg->args[0].b.size)) {
-         pr_err("Invalid counts received for sleeping in hlos\n");
-         return OBJECT_ERROR_INVALID;
-    }
-
-    /* Time in miliseconds is expected from tz */
-    sleepTimeMs_val = *((uint32_t *)(buf + msg->args[0].b.offset));
-    msleep(sleepTimeMs_val);
-    return OBJECT_OK;
+	if (msg->hdr.counts != OBJECT_COUNTS_PACK(1, 0, 0, 0) ||
+	    msg->args[0].b.size != sizeof(u32))
+		return OBJECT_ERROR_INVALID;
+	msleep(get_unaligned_le32(buf + msg->args[0].b.offset));
+	return OBJECT_OK;
 }
 
 static void process_kernel_obj(void *buf, size_t buf_len)
@@ -1423,47 +1406,63 @@ static void process_mem_obj(void *buf, size_t buf_len)
 }
 
 static int invoke_cmd_handler(int cmd, phys_addr_t in_paddr, size_t in_buf_len,
-		uint8_t *out_buf, phys_addr_t out_paddr,
-		size_t out_buf_len, int32_t *result, u64 *response_type,
-		unsigned int *data, struct qtee_shm *in_shm,
-		struct qtee_shm *out_shm)
+			      phys_addr_t out_paddr, size_t out_buf_len, int32_t *result,
+			      u64 *response_type)
 {
-	int ret = 0;
+	u64 object_result = 0;
+	int ret;
 
+	dma_wmb();
 	switch (cmd) {
 	case SMCINVOKE_INVOKE_CMD_LEGACY:
-		qtee_shmbridge_flush_shm_buf(in_shm);
-		qtee_shmbridge_flush_shm_buf(out_shm);
-		ret = qcom_scm_invoke_smc_legacy(in_paddr, in_buf_len, out_paddr, out_buf_len,
-				result, response_type, data);
-		qtee_shmbridge_inv_shm_buf(in_shm);
-		qtee_shmbridge_inv_shm_buf(out_shm);
+		ret = qcom_scm_qtee_invoke_smc_legacy(in_paddr, in_buf_len, out_paddr,
+						     out_buf_len, &object_result, response_type);
 		break;
-
 	case SMCINVOKE_INVOKE_CMD:
-		ret = qcom_scm_invoke_smc(in_paddr, in_buf_len, out_paddr, out_buf_len,
-				result, response_type, data);
+		ret = qcom_scm_qtee_invoke_smc(in_paddr, in_buf_len, out_paddr, out_buf_len,
+					      &object_result, response_type);
 		break;
-
 	case SMCINVOKE_CB_RSP_CMD:
-		if (legacy_smc_call)
-			qtee_shmbridge_flush_shm_buf(out_shm);
-		ret = qcom_scm_invoke_callback_response(virt_to_phys(out_buf), out_buf_len,
-				result, response_type, data);
-		if (legacy_smc_call) {
-			qtee_shmbridge_inv_shm_buf(in_shm);
-			qtee_shmbridge_inv_shm_buf(out_shm);
-		}
+		ret = qcom_scm_qtee_callback_response(out_paddr, out_buf_len,
+						     &object_result, response_type);
 		break;
-
 	default:
-		ret = -EINVAL;
-		break;
+		return -EINVAL;
 	}
-
+	dma_rmb();
+	if (!ret)
+		*result = (s32)object_result;
 	trace_invoke_cmd_handler(cmd, *response_type, *result, ret);
 	return ret;
 }
+/* Validate the argument vector and the bounds of all inline buffers. */
+static bool smcinvoke_callback_extent(const struct smcinvoke_tzcb_req *msg,
+				      size_t size, size_t *end)
+{
+	size_t header, extent;
+	unsigned int i, n;
+
+	if (size < sizeof(*msg))
+		return false;
+	header = TZCB_BUF_OFFSET(msg);
+	if (header > size)
+		return false;
+	extent = header;
+	n = OBJECT_COUNTS_NUM_BI(msg->hdr.counts) + OBJECT_COUNTS_NUM_BO(msg->hdr.counts);
+	for (i = 0; i < n; i++) {
+		const struct smcinvoke_buf_hdr *b = &msg->args[i].b;
+
+		if (!b->size)
+			continue;
+		if (b->offset < header || b->offset > size || b->size > size - b->offset)
+			return false;
+		extent = max(extent, (size_t)b->offset + b->size);
+	}
+	if (end)
+		*end = extent;
+	return true;
+}
+
 /*
  * Buf should be aligned to struct smcinvoke_tzcb_req
  */
@@ -1479,11 +1478,15 @@ static void process_tzcb_req(void *buf, size_t buf_len, struct file **arr_filp)
 	struct smcinvoke_server_info *srvr_info = NULL;
 
 	if (buf_len < sizeof(struct smcinvoke_tzcb_req)) {
-		pr_err("smaller buffer length : %u\n", buf_len);
+		pr_err("smaller buffer length : %zu\n", buf_len);
 		return;
 	}
 
 	cb_req = buf;
+	if (!smcinvoke_callback_extent(cb_req, buf_len, NULL)) {
+		cb_req->result = OBJECT_ERROR_INVALID;
+		return;
+	}
 
 	/* check whether it is to be served by kernel or userspace */
 	if (TZHANDLE_IS_KERNEL_OBJ(cb_req->hdr.tzhandle)) {
@@ -1730,55 +1733,13 @@ static bool is_inbound_req(int val)
 
 static void process_piggyback_cb_data(uint8_t *outbuf, size_t buf_len)
 {
-	struct smcinvoke_tzcb_req *msg = NULL;
-	uint32_t max_offset = 0;
-	uint32_t buffer_size_max_offset = 0;
-	void *piggyback_buf = NULL;
-	size_t piggyback_buf_size;
-	size_t piggyback_offset = 0;
-	int i = 0;
+	size_t offset;
 
-	if (outbuf == NULL) {
-		pr_err("%s: outbuf is NULL\n", __func__);
+	if (!outbuf || !smcinvoke_callback_extent((const void *)outbuf, buf_len, &offset))
 		return;
-	}
-
-	msg = (void *) outbuf;
-	if ((buf_len < msg->args[0].b.offset) ||
-		(buf_len - msg->args[0].b.offset < msg->args[0].b.size)) {
-		pr_err("%s: invalid scenario\n", __func__);
-		return;
-	}
-
-	FOR_ARGS(i, msg->hdr.counts, BI)
-	{
-		if (msg->args[i].b.offset > max_offset) {
-			max_offset = msg->args[i].b.offset;
-			buffer_size_max_offset = msg->args[i].b.size;
-		}
-	}
-
-	FOR_ARGS(i, msg->hdr.counts, BO)
-	{
-		if (msg->args[i].b.offset > max_offset) {
-			max_offset = msg->args[i].b.offset;
-			buffer_size_max_offset = msg->args[i].b.size;
-		}
-	}
-
-	//Take out the offset after BI and BO objects end
-	if (max_offset)
-		piggyback_offset = max_offset + buffer_size_max_offset;
-	else
-		piggyback_offset = TZCB_BUF_OFFSET(msg);
-
-	piggyback_offset = smci_size_align(piggyback_offset, SMCINVOKE_ARGS_ALIGN_SIZE);
-
-	// Jump to piggy back data offset
-	piggyback_buf = (uint8_t *)msg + piggyback_offset;
-	piggyback_buf_size = g_max_cb_buf_size - piggyback_offset;
-
-	process_piggyback_data(piggyback_buf, piggyback_buf_size);
+	offset = ALIGN(offset, SMCINVOKE_ARGS_ALIGN_SIZE);
+	if (offset < buf_len)
+		process_piggyback_data(outbuf + offset, buf_len - offset);
 }
 
 static int prepare_send_scm_msg(const uint8_t *in_buf, phys_addr_t in_paddr,
@@ -1792,8 +1753,7 @@ static int prepare_send_scm_msg(const uint8_t *in_buf, phys_addr_t in_paddr,
 		bool retry)
 {
 	int ret = 0, cmd, retry_count = 0;
-	u64 response_type;
-	unsigned int data;
+	u64 response_type = 0;
 	struct file *arr_filp[OBJECT_COUNTS_MAX_OO] = {NULL};
 
 	*tz_acked = false;
@@ -1805,9 +1765,8 @@ static int prepare_send_scm_msg(const uint8_t *in_buf, phys_addr_t in_paddr,
 
 	while (1) {
 		do {
-			ret = invoke_cmd_handler(cmd, in_paddr, in_buf_len, out_buf,
-					out_paddr, out_buf_len, &req->result,
-					&response_type, &data, in_shm, out_shm);
+			ret = invoke_cmd_handler(cmd, in_paddr, in_buf_len, out_paddr,
+					out_buf_len, &req->result, &response_type);
 
 			if (ret == -EBUSY) {
 				smci_err_ratelimited("Secure side is busy,will retry after 30 ms, retry_count = %d\n",retry_count);
@@ -1834,27 +1793,14 @@ static int prepare_send_scm_msg(const uint8_t *in_buf, phys_addr_t in_paddr,
 		if (ret || !is_inbound_req(response_type))
 			break;
 
-		/* process listener request */
-		if (response_type == QSEOS_RESULT_INCOMPLETE ||
-				response_type == QSEOS_RESULT_BLOCKED_ON_LISTENER) {
-			ret = qseecom_process_listener_from_smcinvoke(
-					&req->result, &response_type, &data);
-
-			trace_prepare_send_scm_msg(response_type, req->result);
-
-			if (!req->result &&
-			response_type != SMCINVOKE_RESULT_INBOUND_REQ_NEEDED) {
-				ret = marshal_out_invoke_req(in_buf,
-						in_buf_len, req, args_buf,
-						context_type);
-			}
-			*tz_acked = true;
-		}
-
-		/*
-		 * qseecom does not understand smcinvoke's callback object &&
-		 * erringly sets ret value as -EINVAL :( We need to handle it.
+		/* Kalama serves listeners as QTEE callback objects. A legacy QSEOS
+		 * result cannot be acknowledged as a successful object invocation.
 		 */
+		if (response_type == QSEOS_RESULT_INCOMPLETE ||
+		    response_type == QSEOS_RESULT_BLOCKED_ON_LISTENER) {
+			ret = -EPROTO;
+			break;
+		}
 		if (response_type != SMCINVOKE_RESULT_INBOUND_REQ_NEEDED)
 			break;
 
@@ -2148,6 +2094,9 @@ static void process_piggyback_data(void *buf, size_t buf_size)
 	struct smcinvoke_piggyback_msg *msg = buf;
 	int32_t *objs = msg->objs;
 
+	if (buf_size < sizeof(*msg) || msg->op != OBJECT_OP_RELEASE ||
+	    msg->counts > (buf_size - sizeof(*msg)) / sizeof(*objs))
+		return;
 	for (i = 0; i < msg->counts; i++) {
 		req.hdr.op = msg->op;
 		req.hdr.counts = 0; /* release op does not require any args */
@@ -2683,7 +2632,7 @@ static int release_cb_server(uint16_t server_id)
 	return 0;
 }
 
-int smcinvoke_release_filp(struct file *filp)
+static int smcinvoke_release_filp(struct file *filp)
 {
 	int ret = 0;
 	struct smcinvoke_file_data *file_data = filp->private_data;
@@ -2737,7 +2686,7 @@ int smcinvoke_release_filp(struct file *filp)
 		mutex_lock(&object_postprocess_lock);
 		list_add_tail(&entry->list, &g_object_postprocess);
 		mutex_unlock(&object_postprocess_lock);
-		pr_debug("Object release list: added a handle:0x%lx\n", tzhandle);
+		pr_debug("Object release list: added a handle:0x%x\n", tzhandle);
 		__wakeup_postprocess_kthread(&smcinvoke[OBJECT_WORKER_THREAD]);
 	}
 
@@ -2789,6 +2738,8 @@ static int smcinvoke_probe(struct platform_device *pdev)
 	unsigned int count = 1;
 	int rc = 0;
 
+	if (!qtee_shmbridge_is_enabled())
+		return -EPROBE_DEFER;
 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
 	if (rc) {
 		pr_err("dma_set_mask_and_coherent failed %d\n", rc);
@@ -2810,7 +2761,7 @@ static int smcinvoke_probe(struct platform_device *pdev)
 		pr_err("chrdev_region failed %d for %s\n", rc, SMCINVOKE_DEV);
 		goto exit_destroy_wkthread;
 	}
-	driver_class = class_create(THIS_MODULE, SMCINVOKE_DEV);
+	driver_class = class_create(SMCINVOKE_DEV);
 	if (IS_ERR(driver_class)) {
 		rc = -ENOMEM;
 		pr_err("class_create failed %d\n", rc);
@@ -2818,9 +2769,9 @@ static int smcinvoke_probe(struct platform_device *pdev)
 	}
 	class_dev = device_create(driver_class, NULL, smcinvoke_device_no,
 						NULL, SMCINVOKE_DEV);
-	if (!class_dev) {
+	if (IS_ERR(class_dev)) {
 		pr_err("class_device_create failed %d\n", rc);
-		rc = -ENOMEM;
+		rc = PTR_ERR(class_dev);
 		goto exit_destroy_class;
 	}
 
@@ -2857,7 +2808,7 @@ exit_destroy_wkthread:
 	return rc;
 }
 
-static int smcinvoke_remove(struct platform_device *pdev)
+static void smcinvoke_remove(struct platform_device *pdev)
 {
 	int count = 1;
 
@@ -2866,7 +2817,6 @@ static int smcinvoke_remove(struct platform_device *pdev)
 	device_destroy(driver_class, smcinvoke_device_no);
 	class_destroy(driver_class);
 	unregister_chrdev_region(smcinvoke_device_no, count);
-	return 0;
 }
 
 static int __maybe_unused smcinvoke_suspend(struct platform_device *pdev,
@@ -2902,6 +2852,7 @@ static struct platform_driver smcinvoke_plat_driver = {
 	.resume = smcinvoke_resume,
 	.driver = {
 		.name = "smcinvoke",
+		.suppress_bind_attrs = true,
 		.of_match_table = smcinvoke_match,
 	},
 };
@@ -2921,4 +2872,5 @@ module_exit(smcinvoke_exit);
 
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("SMC Invoke driver");
-MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
+MODULE_IMPORT_NS("DMA_BUF");
+MODULE_DEVICE_TABLE(of, smcinvoke_match);
