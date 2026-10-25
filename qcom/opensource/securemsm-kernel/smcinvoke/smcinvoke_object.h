@@ -190,6 +190,7 @@ static inline void Object_replace(struct Object *loc, struct Object objNew)
 int smcinvoke_release_from_kernel_client(int fd);
 
 int get_root_fd(int *root_fd);
+int get_root_obj(struct Object *root_obj);
 
 int process_invoke_request_from_kernel_client(
 		int fd, struct smcinvoke_cmd_req *req);

@@ -351,7 +351,7 @@ static struct smcinvoke_worker_thread smcinvoke[MAX_THREAD_NUMBER];
 static const char thread_name[MAX_THREAD_NUMBER][MAX_CHAR_NAME] = {
 	"smcinvoke_shmbridge_postprocess", "smcinvoke_object_postprocess", "smcinvoke_adci_thread"};
 static struct Object adci_rootEnv = Object_NULL;
-extern int get_root_obj(struct Object *rootObj);
+
 
 static int prepare_send_scm_msg(const uint8_t *in_buf, phys_addr_t in_paddr,
 		size_t in_buf_len,
@@ -2873,4 +2873,5 @@ module_exit(smcinvoke_exit);
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("SMC Invoke driver");
 MODULE_IMPORT_NS("DMA_BUF");
+MODULE_IMPORT_NS("ANDROID_GKI_VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver");
 MODULE_DEVICE_TABLE(of, smcinvoke_match);
