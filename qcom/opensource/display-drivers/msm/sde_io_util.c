@@ -8,7 +8,8 @@
 #include <linux/io.h>
 #include <linux/regulator/consumer.h>
 #include <linux/soc/qcom/spmi-pmic-arb.h>
-#include <linux/pinctrl/qcom-pinctrl.h>
+#include <linux/gpio/driver.h>
+#include <linux/pinctrl/kalama.h>
 #include <linux/delay.h>
 #include <linux/sde_io_util.h>
 #include <linux/sde_vm_event.h>
@@ -138,7 +139,7 @@ int msm_dss_get_gpio_io_mem(const int gpio_pin, struct list_head *mem_list)
 {
 	struct msm_io_mem_entry *io_mem;
 	struct resource res;
-	bool gpio_pin_status = false;
+	struct gpio_device *gdev;
 	int rc = 0;
 
 	if (!gpio_is_valid(gpio_pin))
@@ -148,11 +149,15 @@ int msm_dss_get_gpio_io_mem(const int gpio_pin, struct list_head *mem_list)
 	if (!io_mem)
 		return -ENOMEM;
 
-	gpio_pin_status = msm_gpio_get_pin_address(gpio_pin, &res);
-	if (!gpio_pin_status) {
+	gdev = gpiod_to_gpio_device(gpio_to_desc(gpio_pin));
+	if (!gdev) {
 		rc = -ENODEV;
 		goto parse_fail;
 	}
+	rc = kalama_gpio_get_mmio(dev_of_node(gpio_device_to_device(gdev)),
+				 gpio_pin - gpio_device_get_base(gdev), &res);
+	if (rc)
+		goto parse_fail;
 
 	io_mem->base = res.start;
 	io_mem->size = resource_size(&res);
@@ -174,8 +179,6 @@ int msm_dss_get_pmic_io_mem(struct platform_device *pdev,
 	struct list_head temp_head;
 	struct msm_io_mem_entry *io_mem;
 	struct resource *res = NULL;
-	struct property *prop;
-	const __be32 *cur;
 	int rc = 0;
 	u32 val;
 
@@ -185,8 +188,7 @@ int msm_dss_get_pmic_io_mem(struct platform_device *pdev,
 	if (!res)
 		return -ENOMEM;
 
-	of_property_for_each_u32(pdev->dev.of_node, "qcom,pmic-arb-address",
-			prop, cur, val) {
+	of_property_for_each_u32(pdev->dev.of_node, "qcom,pmic-arb-address", val) {
 		rc = spmi_pmic_arb_map_address(&pdev->dev, val, res);
 		if (rc < 0) {
 			DEV_ERR("%pS - failed to map pmic address, rc:%d\n",
@@ -591,7 +593,7 @@ int msm_dss_mmrm_register(struct device *dev, struct dss_module_power *mp,
 			MMRM_CLIENT_DOMAIN_DISPLAY;
 		desc.client_info.desc.client_id =
 			clk_array[i].mmrm.clk_id;
-		strlcpy(name, clk_array[i].clk_name,
+		strscpy(name, clk_array[i].clk_name,
 			sizeof(desc.client_info.desc.name));
 		desc.client_info.desc.clk = clk_array[i].clk;
 		desc.priority = MMRM_CLIENT_PRIOR_LOW;
