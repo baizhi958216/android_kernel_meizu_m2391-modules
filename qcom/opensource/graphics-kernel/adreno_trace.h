@@ -478,7 +478,7 @@ TRACE_EVENT(kgsl_a3xx_irq_status,
 	),
 
 	TP_fast_assign(
-		__assign_str(device_name, adreno_dev->dev.name);
+		__assign_str(device_name);
 		__entry->status = status;
 	),
 
@@ -536,7 +536,7 @@ TRACE_EVENT(kgsl_a5xx_irq_status,
 	),
 
 	TP_fast_assign(
-		__assign_str(device_name, adreno_dev->dev.name);
+		__assign_str(device_name);
 		__entry->status = status;
 	),
 
@@ -606,7 +606,7 @@ TRACE_EVENT(kgsl_gen7_irq_status,
 	),
 
 	TP_fast_assign(
-		__assign_str(device_name, adreno_dev->dev.name);
+		__assign_str(device_name);
 		__entry->status = status;
 	),
 
