@@ -111,12 +111,12 @@
 
 #define SDE_DBG_LOG_ENTRY(off, x0, x4, x8, xc, log) \
 	if (log) \
-		dev_err(sde_dbg_base.dev, "0x%08x| %08x %08x %08x %08x\n", off, x0, x4, x8, xc)
+		dev_err(sde_dbg_base.dev, "0x%08lx| %08x %08x %08x %08x\n", (unsigned long)(off), x0, x4, x8, xc)
 
 #define SDE_DBG_LOG_DUMP_ADDR(name, addr, size, off, log) \
 	if (log) \
-		dev_err(sde_dbg_base.dev, "%s: start_addr:0x%pK len:0x%x offset=0x%lx\n", \
-				name, addr, size, off)
+		dev_err(sde_dbg_base.dev, "%s: start_addr:0x%pK len:0x%zx offset=0x%lx\n", \
+				name, addr, (size_t)(size), (unsigned long)(off))
 
 #define SDE_DBG_LOG_DEBUGBUS(name, addr, block_id, test_id, val) \
 	dev_err(sde_dbg_base.dev, "%s 0x%x %d %d 0x%x\n", name, addr, block_id, test_id, val)
@@ -529,7 +529,7 @@ static void _sde_dump_reg(const char *dump_name, u32 reg_dump_flag,
 
 		if (dump_addr && in_dump && sde_dbg_base.coredump_reading)
 			drm_printf(sde_dbg_base.sde_dbg_printer,
-				"0x%08x| %08x %08x %08x %08x\n",
+				"0x%08lx| %08x %08x %08x %08x\n",
 				(unsigned long)(addr - base_addr),
 				dump_addr[i * 4],
 				dump_addr[i * 4 + 1],
@@ -670,7 +670,7 @@ void sde_mini_dump_add_va_region(const char *name, u32 size, void *virt_addr)
 	struct va_md_entry md_entry;
 	int ret;
 
-	strlcpy(md_entry.owner, name, sizeof(md_entry.owner));
+	strscpy(md_entry.owner, name, sizeof(md_entry.owner));
 	md_entry.vaddr = (uintptr_t)virt_addr;
 	md_entry.size = size;
 
@@ -1186,7 +1186,7 @@ static void _sde_dbg_dump_dsi_dbg_bus(struct sde_dbg_sde_debug_bus *bus, u32 ena
 	mutex_unlock(&sde_dbg_dsi_mutex);
 }
 
-void sde_evtlog_dump_all(struct sde_dbg_evtlog *evtlog)
+static void sde_evtlog_dump_all(struct sde_dbg_evtlog *evtlog)
 {
 	char buf[SDE_EVTLOG_BUF_MAX];
 	bool update_last_entry = true;
@@ -1836,7 +1836,7 @@ static int  _sde_dbg_recovery_dump_reg_blk(struct sde_dbg_reg_base *blk,
 	len += snprintf(buf + len, DUMP_LINE_SIZE,
 			"==========================================\n");
 	len += snprintf(buf + len, DUMP_LINE_SIZE,
-			"****** DUMP of %s block (0x%08x) ******\n",
+			"****** DUMP of %s block (0x%08lx) ******\n",
 			blk->name, blk->phys_addr);
 	len += snprintf(buf + len, DUMP_LINE_SIZE,
 			"count:%ld max-off:0x%lx has_sub_blk:%d\n",
@@ -2773,7 +2773,7 @@ int sde_dbg_reg_register_base(const char *name, void __iomem *base, size_t max_o
 	if (!reg_base)
 		return -ENOMEM;
 
-	strlcpy(reg_base->name, name, sizeof(reg_base->name));
+	strscpy(reg_base->name, name, sizeof(reg_base->name));
 	reg_base->base = base;
 	reg_base->phys_addr = phys_addr;
 	reg_base->max_offset = max_offset;
@@ -2807,7 +2807,7 @@ int sde_dbg_reg_register_cb(const char *name, void (*cb)(void *), void *ptr)
 	if (!reg_base)
 		return -ENOMEM;
 
-	strlcpy(reg_base->name, name, sizeof(reg_base->name));
+	strscpy(reg_base->name, name, sizeof(reg_base->name));
 	reg_base->base = NULL;
 	reg_base->max_offset = 0;
 	reg_base->off = 0;
@@ -2888,7 +2888,7 @@ void sde_dbg_reg_register_dump_range(const char *base_name,
 	if (!range)
 		return;
 
-	strlcpy(range->range_name, range_name, sizeof(range->range_name));
+	strscpy(range->range_name, range_name, sizeof(range->range_name));
 	range->offset.start = offset_start;
 	range->offset.end = offset_end;
 	range->xin_id = xin_id;
