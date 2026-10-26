@@ -29,7 +29,7 @@ static bool _sde_vm_owns_hw(struct sde_kms *sde_kms)
 	return (owns_irq & owns_mem_io);
 }
 
-void sde_vm_irq_release_notification_handler(void *req,
+static void sde_vm_irq_release_notification_handler(void *req,
 		unsigned long notif_type, enum gh_irq_label label)
 {
 	SDE_INFO("irq release notification for label: %d\n", label);
@@ -42,7 +42,7 @@ static void sde_vm_mem_release_notification_handler(
 	SDE_INFO("mem release notification for tag: %d\n", tag);
 }
 
-int _sde_vm_reclaim_mem(struct sde_kms *sde_kms)
+static int _sde_vm_reclaim_mem(struct sde_kms *sde_kms)
 {
 	struct sde_vm_primary *sde_vm = to_vm_primary(sde_kms->vm);
 	int rc = 0;
@@ -63,7 +63,7 @@ int _sde_vm_reclaim_mem(struct sde_kms *sde_kms)
 	return rc;
 }
 
-int _sde_vm_reclaim_irq(struct sde_kms *sde_kms)
+static int _sde_vm_reclaim_irq(struct sde_kms *sde_kms)
 {
 	struct sde_vm_primary *sde_vm = to_vm_primary(sde_kms->vm);
 	struct sde_vm_irq_desc *irq_desc;
