@@ -470,7 +470,7 @@ static int _sde_hw_rc_program_enable_bits(
 	if (!r1_enable && r2_enable)
 		ystart = rc_roi->y;
 
-	SDE_DEBUG("idx:%d w:%d h:%d flags:%x, R1:%d, R2:%d, PU R1:%d, PU R2:%d, Y_START:%d\n",
+	SDE_DEBUG("idx:%d w:%llu h:%llu flags:%llx, R1:%d, R2:%d, PU R1:%d, PU R2:%d, Y_START:%d\n",
 			RC_IDX(hw_dspp), mask_w, mask_h, flags, r1_valid, r2_valid, pu_in_r1,
 			pu_in_r2, ystart);
 	SDE_EVT32(RC_IDX(hw_dspp), mask_w, mask_h, flags, r1_valid, r2_valid, pu_in_r1, pu_in_r2,
@@ -965,7 +965,7 @@ int sde_hw_rc_setup_mask(struct sde_hw_dspp *hw_dspp, void *cfg)
 	panel_h = hw_cfg->panel_height;
 
 	if ((panel_w != mask_w || panel_h != mask_h)) {
-		SDE_ERROR("RC-%d mask: w %d h %d panel: w %d h %d mismatch\n",
+		SDE_ERROR("RC-%d mask: w %llu h %llu panel: w %llu h %llu mismatch\n",
 				RC_IDX(hw_dspp), mask_w, mask_h, panel_w, panel_h);
 		SDE_EVT32(1);
 		_sde_hw_rc_reg_write(hw_dspp, SDE_HW_RC_REG1, 0);

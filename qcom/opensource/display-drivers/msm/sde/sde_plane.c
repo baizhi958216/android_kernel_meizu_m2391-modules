@@ -19,7 +19,10 @@
 
 #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
 
+#include <linux/vmalloc.h>
+#include <drm/drm_framebuffer.h>
 #include <drm/drm_gem_atomic_helper.h>
+#include <drm/drm_blend.h>
 #include <linux/debugfs.h>
 #include <linux/dma-buf.h>
 #include <drm/sde_drm.h>
@@ -396,7 +399,7 @@ void sde_plane_set_revalidate(struct drm_plane *plane, bool enable)
 	psde->revalidate = enable;
 }
 
-int sde_plane_danger_signal_ctrl(struct drm_plane *plane, bool enable)
+static int sde_plane_danger_signal_ctrl(struct drm_plane *plane, bool enable)
 {
 	struct sde_plane *psde;
 	int rc;
@@ -1628,7 +1631,7 @@ static int sde_plane_rot_atomic_check(struct drm_plane *plane,
 			!psde->pipe_sblk->in_rot_format_list ||
 			!(psde->features & BIT(SDE_SSPP_TRUE_INLINE_ROT))) {
 			SDE_ERROR_PLANE(psde,
-			    "wrong config rt:%d/%d nrt:%d fmt:%d h:%d 0x%x\n",
+			    "wrong config rt:%d/%d nrt:%d fmt:%d h:%d 0x%llx\n",
 				!psde->pipe_sblk->in_rot_maxdwnscale_rt_num,
 				!psde->pipe_sblk->in_rot_maxdwnscale_rt_denom,
 				!psde->pipe_sblk->in_rot_maxdwnscale_nrt,
@@ -2414,12 +2417,12 @@ static int _sde_atomic_check_pre_downscale(struct sde_plane *psde,
 
 	if (pd_x && !_sde_plane_has_pre_downscale(psde)) {
 		SDE_ERROR_PLANE(psde,
-			"hw does not support pre-downscale X: 0x%x\n",
+			"hw does not support pre-downscale X: 0x%llx\n",
 			psde->features);
 		ret = -EINVAL;
 	} else if (pd_y && !(psde->features & BIT(SDE_SSPP_PREDOWNSCALE_Y))) {
 		SDE_ERROR_PLANE(psde,
-			"hw does not support pre-downscale Y: 0x%x\n",
+			"hw does not support pre-downscale Y: 0x%llx\n",
 			psde->features);
 		ret = -EINVAL;
 	} else if (!min_ratio_numer || !min_ratio_denom) {

@@ -5,6 +5,7 @@
 
 #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
 
+#include <drm/drm_framebuffer.h>
 #include <drm/drm_fourcc.h>
 #include <media/mmm_color_fmt.h>
 

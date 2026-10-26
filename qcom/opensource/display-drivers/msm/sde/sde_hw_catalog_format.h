@@ -4,6 +4,7 @@
  * Copyright (c) 2015-2019, 2021 The Linux Foundation. All rights reserved.
  */
 
+#include <drm/drm_fourcc.h>
 #include "sde_hw_mdss.h"
 
 #define RGB_10BIT_FMTS	{DRM_FORMAT_BGRA1010102, 0}, \
