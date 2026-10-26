@@ -27,6 +27,7 @@
 #include <linux/of_irq.h>
 #include <linux/dma-buf.h>
 #include <linux/memblock.h>
+#include <drm/drm_framebuffer.h>
 #include <linux/soc/qcom/panel_event_notifier.h>
 #include <drm/drm_atomic_uapi.h>
 #include <drm/drm_probe_helper.h>
@@ -56,10 +57,9 @@
 #include "sde_vm.h"
 #include "sde_fence.h"
 
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/qcom-iommu-util.h>
 #include "soc/qcom/secure_buffer.h"
-#include <linux/qtee_shmbridge.h>
 #ifdef CONFIG_DRM_SDE_VM
 #include <linux/gunyah/gh_irq_lend.h>
 #endif
@@ -298,85 +298,17 @@ static int _sde_kms_secure_ctrl_xin_clients(struct sde_kms *sde_kms,
  */
 static int _sde_kms_scm_call(struct sde_kms *sde_kms, int vmid)
 {
-	struct device dummy = {};
-	dma_addr_t dma_handle;
-	uint32_t num_sids;
-	uint32_t *sec_sid;
-	struct sde_mdss_cfg *sde_cfg = sde_kms->catalog;
-	int ret = 0, i;
-	struct qtee_shm shm;
-	bool qtee_en = qtee_shmbridge_is_enabled();
-	phys_addr_t mem_addr;
-	u64 mem_size;
+	struct sde_mdss_cfg *cfg = sde_kms->catalog;
+	int ret;
 
-	num_sids = sde_cfg->sec_sid_mask_count;
-	if (!num_sids) {
-		SDE_ERROR("secure SID masks not configured, vmid 0x%x\n", vmid);
+	if (!cfg->sec_sid_mask_count)
 		return -EINVAL;
-	}
 
-	if (qtee_en) {
-		ret = qtee_shmbridge_allocate_shm(num_sids * sizeof(uint32_t),
-			&shm);
-		if (ret)
-			return -ENOMEM;
-
-		sec_sid = (uint32_t *) shm.vaddr;
-		mem_addr = shm.paddr;
-		/**
-		 * SMMUSecureModeSwitch requires the size to be number of SID's
-		 * but shm allocates size in pages. Modify the args as per
-		 * client requirement.
-		 */
-		mem_size = sizeof(uint32_t) * num_sids;
-	} else {
-		sec_sid = kcalloc(num_sids, sizeof(uint32_t), GFP_KERNEL);
-		if (!sec_sid)
-			return -ENOMEM;
-
-		mem_addr = virt_to_phys(sec_sid);
-		mem_size = sizeof(uint32_t) * num_sids;
-	}
-
-	for (i = 0; i < num_sids; i++) {
-		sec_sid[i] = sde_cfg->sec_sid_mask[i];
-		SDE_DEBUG("sid_mask[%d]: %d\n", i, sec_sid[i]);
-	}
-
-	ret = dma_coerce_mask_and_coherent(&dummy, DMA_BIT_MASK(64));
-	if (ret) {
-		SDE_ERROR("Failed to set dma mask for dummy dev %d\n", ret);
-		goto map_error;
-	}
-	set_dma_ops(&dummy, NULL);
-
-	dma_handle = dma_map_single(&dummy, sec_sid,
-				num_sids * sizeof(uint32_t), DMA_TO_DEVICE);
-	if (dma_mapping_error(&dummy, dma_handle)) {
-		SDE_ERROR("dma_map_single for dummy dev failed vmid 0x%x\n",
-									vmid);
-		goto map_error;
-	}
-	SDE_DEBUG("calling scm_call for vmid 0x%x, num_sids %d, qtee_en %d",
-				vmid, num_sids, qtee_en);
-
-	ret = qcom_scm_mem_protect_sd_ctrl(MDP_DEVICE_ID, mem_addr,
-				mem_size, vmid);
+	ret = qcom_scm_mem_protect_sd_ctrl(MDP_DEVICE_ID, cfg->sec_sid_mask,
+					   cfg->sec_sid_mask_count, vmid);
 	if (ret)
-		SDE_ERROR("Error:scm_call2, vmid %d, ret%d\n",
-				vmid, ret);
-	SDE_EVT32(MEM_PROTECT_SD_CTRL_SWITCH, MDP_DEVICE_ID, mem_size,
-			vmid, qtee_en, num_sids, ret);
-
-	dma_unmap_single(&dummy, dma_handle,
-				num_sids * sizeof(uint32_t), DMA_TO_DEVICE);
-
-map_error:
-	if (qtee_en)
-		qtee_shmbridge_free_shm(&shm);
-	else
-		kfree(sec_sid);
-
+		SDE_ERROR("secure display switch to VMID %d failed: %d\n", vmid, ret);
+	SDE_EVT32(MEM_PROTECT_SD_CTRL_SWITCH, MDP_DEVICE_ID, vmid, cfg->sec_sid_mask_count, ret);
 	return ret;
 }
 
@@ -750,13 +682,12 @@ no_ops:
 	return 0;
 }
 
-static int _sde_kms_release_shared_buffer(unsigned int mem_addr,
+static int _sde_kms_release_shared_buffer(phys_addr_t mem_addr,
 					unsigned int splash_buffer_size,
-					unsigned int ramdump_base,
+					phys_addr_t ramdump_base,
 					unsigned int ramdump_buffer_size)
 {
 	unsigned long pfn_start, pfn_end, pfn_idx;
-	int ret = 0;
 
 	if (!mem_addr || !splash_buffer_size) {
 		SDE_ERROR("invalid params\n");
@@ -770,19 +701,22 @@ static int _sde_kms_release_shared_buffer(unsigned int mem_addr,
 		splash_buffer_size -= ramdump_buffer_size;
 	}
 
-	pfn_start = mem_addr >> PAGE_SHIFT;
-	pfn_end = (mem_addr + splash_buffer_size) >> PAGE_SHIFT;
+	if (!splash_buffer_size)
+		return 0;
+	if (!IS_ALIGNED(mem_addr, PAGE_SIZE) || !IS_ALIGNED(splash_buffer_size, PAGE_SIZE))
+		return -EINVAL;
 
-	ret = memblock_free(mem_addr, splash_buffer_size);
-	if (ret) {
-		SDE_ERROR("continuous splash memory free failed:%d\n", ret);
-		return ret;
-	}
+	pfn_start = PHYS_PFN(mem_addr);
+	pfn_end = pfn_start + PHYS_PFN(splash_buffer_size);
+	for (pfn_idx = pfn_start; pfn_idx < pfn_end; pfn_idx++)
+		if (!pfn_valid(pfn_idx) || !PageReserved(pfn_to_page(pfn_idx)))
+			return -EINVAL;
+
+	memblock_free(phys_to_virt(mem_addr), splash_buffer_size);
 	for (pfn_idx = pfn_start; pfn_idx < pfn_end; pfn_idx++)
 		free_reserved_page(pfn_to_page(pfn_idx));
 
-	return ret;
-
+	return 0;
 }
 
 static int _sde_kms_one2one_mem_map_ipcc_reg(struct sde_kms *sde_kms, u32 buf_size,
@@ -843,8 +777,10 @@ static int _sde_kms_splash_mem_get(struct sde_kms *sde_kms,
 				splash->splash_buf_base,
 				splash->splash_buf_size,
 				IOMMU_READ | IOMMU_NOEXEC);
-		if (ret)
+		if (ret) {
 			SDE_ERROR("splash memory smmu map failed:%d\n", ret);
+			return ret;
+		}
 	}
 
 	splash->ref_cnt++;
@@ -884,7 +820,7 @@ static int _sde_kms_map_all_splash_regions(struct sde_kms *sde_kms)
 }
 
 static int _sde_kms_splash_mem_put(struct sde_kms *sde_kms,
-		struct sde_splash_mem *splash)
+		struct sde_splash_mem *splash, bool release_pages)
 {
 	struct msm_mmu *mmu = NULL;
 	int rc = 0;
@@ -906,8 +842,12 @@ static int _sde_kms_splash_mem_put(struct sde_kms *sde_kms,
 			splash->splash_buf_base, splash->ref_cnt);
 
 	if (!splash->ref_cnt) {
-		mmu->funcs->one_to_one_unmap(mmu, splash->splash_buf_base,
+		rc = mmu->funcs->one_to_one_unmap(mmu, splash->splash_buf_base,
 				splash->splash_buf_size);
+		if (rc)
+			return rc;
+		if (!release_pages)
+			return 0;
 		rc = _sde_kms_release_shared_buffer(splash->splash_buf_base,
 				splash->splash_buf_size, splash->ramdump_base,
 				splash->ramdump_size);
@@ -918,7 +858,7 @@ static int _sde_kms_splash_mem_put(struct sde_kms *sde_kms,
 	return rc;
 }
 
-static int _sde_kms_unmap_all_splash_regions(struct sde_kms *sde_kms)
+static int _sde_kms_unmap_all_splash_regions(struct sde_kms *sde_kms, bool release_pages)
 {
 	int i = 0;
 	int ret = 0, failure = 0;
@@ -929,7 +869,7 @@ static int _sde_kms_unmap_all_splash_regions(struct sde_kms *sde_kms)
 
 	for (i = 0; i < sde_kms->splash_data.num_splash_displays; i++) {
 		region = sde_kms->splash_data.splash_display[i].splash;
-		ret = _sde_kms_splash_mem_put(sde_kms, region);
+		ret = _sde_kms_splash_mem_put(sde_kms, region, release_pages);
 		if (ret) {
 			failure = 1;
 			pr_err("Error unmapping splash mem for display %d\n",
@@ -939,7 +879,7 @@ static int _sde_kms_unmap_all_splash_regions(struct sde_kms *sde_kms)
 		/* Demura is optional and need not exist */
 		region = sde_kms->splash_data.splash_display[i].demura;
 		if (region) {
-			ret = _sde_kms_splash_mem_put(sde_kms, region);
+			ret = _sde_kms_splash_mem_put(sde_kms, region, release_pages);
 			if (ret) {
 				failure = 1;
 				pr_err("Error unmapping demura mem for display %d\n",
@@ -1202,7 +1142,7 @@ int sde_kms_vm_primary_prepare_commit(struct sde_kms *sde_kms,
 	return rc;
 }
 
-void sde_kms_vm_set_sid(struct sde_kms *sde_kms, u32 vm)
+static void sde_kms_vm_set_sid(struct sde_kms *sde_kms, u32 vm)
 {
 	struct drm_plane *plane;
 	struct drm_device *ddev;
@@ -1349,10 +1289,10 @@ static void _sde_kms_free_splash_display_data(struct sde_kms *sde_kms,
 		return;
 
 	if (sde_kms->splash_data.num_splash_regions) {
-		_sde_kms_splash_mem_put(sde_kms, splash_display->splash);
+		_sde_kms_splash_mem_put(sde_kms, splash_display->splash, true);
 		if (splash_display->demura)
 			_sde_kms_splash_mem_put(sde_kms,
-					splash_display->demura);
+					splash_display->demura, true);
 	}
 	sde_kms->splash_data.num_splash_displays--;
 	SDE_DEBUG("cont_splash handoff done, remaining:%d\n",
@@ -1431,7 +1371,7 @@ static void sde_kms_cancel_delayed_work(struct drm_crtc *crtc)
 	}
 }
 
-int sde_kms_vm_pre_release(struct sde_kms *sde_kms,
+static int sde_kms_vm_pre_release(struct sde_kms *sde_kms,
 	struct drm_atomic_state *state, bool is_primary)
 {
 	struct drm_crtc *crtc;
@@ -2445,7 +2385,7 @@ static void _sde_kms_hw_destroy(struct sde_kms *sde_kms,
 
 	_sde_kms_release_displays(sde_kms);
 
-	_sde_kms_unmap_all_splash_regions(sde_kms);
+	_sde_kms_unmap_all_splash_regions(sde_kms, true);
 
 	if (sde_kms->catalog) {
 		for (i = 0; i < sde_kms->catalog->vbif_count; i++) {
@@ -4004,7 +3944,7 @@ end:
 }
 
 
-void sde_kms_display_early_wakeup(struct drm_device *dev,
+static void sde_kms_display_early_wakeup(struct drm_device *dev,
 				const int32_t connector_id)
 {
 	struct drm_connector_list_iter conn_iter;
@@ -4128,7 +4068,7 @@ static void _sde_kms_pm_suspend_idle_helper(struct sde_kms *sde_kms,
 	msm_atomic_flush_display_threads(priv);
 }
 
-struct msm_display_mode *sde_kms_get_msm_mode(struct drm_connector_state *conn_state)
+static struct msm_display_mode *sde_kms_get_msm_mode(struct drm_connector_state *conn_state)
 {
 	struct sde_connector_state *sde_conn_state;
 
@@ -4517,7 +4457,7 @@ static int _sde_kms_mmu_init(struct sde_kms *sde_kms)
 	return 0;
 
 enable_trans_fail:
-	_sde_kms_unmap_all_splash_regions(sde_kms);
+	_sde_kms_unmap_all_splash_regions(sde_kms, false);
 fail:
 	_sde_kms_mmu_destroy(sde_kms);
 
@@ -4749,7 +4689,7 @@ static int _sde_kms_get_demura_plane_data(struct sde_splash_data *data)
 			continue;
 
 		} else if (!mem->splash_buf_base || !mem->splash_buf_size) {
-			SDE_ERROR("mem for disp %d invalid: add:%lx size:%lx\n",
+			SDE_ERROR("mem for disp %d invalid: add:%lx size:%x\n",
 					(i+1), mem->splash_buf_base,
 					mem->splash_buf_size);
 			continue;
@@ -5145,7 +5085,7 @@ power_error:
 	return rc;
 }
 
-int _sde_kms_get_tvm_inclusion_mem(struct sde_mdss_cfg *catalog, struct list_head *mem_list)
+static int _sde_kms_get_tvm_inclusion_mem(struct sde_mdss_cfg *catalog, struct list_head *mem_list)
 {
 	struct list_head temp_head;
 	struct msm_io_mem_entry *io_mem;
@@ -5260,11 +5200,6 @@ static int sde_kms_hw_init(struct msm_kms *kms)
 	atomic_set(&sde_kms->detach_sec_cb, 0);
 	atomic_set(&sde_kms->detach_all_cb, 0);
 	atomic_set(&sde_kms->irq_vote_count, 0);
-
-	/*
-	 * Support format modifiers for compression etc.
-	 */
-	dev->mode_config.allow_fb_modifiers = true;
 
 	sde_kms->affinity_notify.notify = sde_kms_irq_affinity_notify;
 	sde_kms->affinity_notify.release = sde_kms_irq_affinity_release;
