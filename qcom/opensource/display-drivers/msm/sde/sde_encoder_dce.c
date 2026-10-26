@@ -20,6 +20,7 @@
 #include "sde_hw_ctl.h"
 #include "sde_formats.h"
 #include "sde_encoder_phys.h"
+#include "sde_encoder_dce.h"
 #include "sde_power_handle.h"
 #include "sde_hw_dsc.h"
 #include "sde_hw_vdc.h"
@@ -826,7 +827,7 @@ static void _dce_vdc_disable(struct sde_encoder_virt *sde_enc)
 	 */
 }
 
-bool _dce_dsc_is_dirty(struct sde_encoder_virt *sde_enc)
+static bool _dce_dsc_is_dirty(struct sde_encoder_virt *sde_enc)
 {
 	int i;
 
@@ -842,7 +843,7 @@ bool _dce_dsc_is_dirty(struct sde_encoder_virt *sde_enc)
 	return false;
 }
 
-bool _dce_vdc_is_dirty(struct sde_encoder_virt *sde_enc)
+static bool _dce_vdc_is_dirty(struct sde_encoder_virt *sde_enc)
 {
 	int i;
 
@@ -877,7 +878,7 @@ static void _dce_helper_flush_dsc(struct sde_encoder_virt *sde_enc)
 	}
 }
 
-void _dce_helper_flush_vdc(struct sde_encoder_virt *sde_enc)
+static void _dce_helper_flush_vdc(struct sde_encoder_virt *sde_enc)
 {
 	int i;
 	struct sde_hw_ctl *hw_ctl = NULL;

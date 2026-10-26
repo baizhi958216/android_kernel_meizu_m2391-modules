@@ -5,6 +5,7 @@
  */
 
 #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
+#include <drm/drm_framebuffer.h>
 #include <linux/debugfs.h>
 #include <drm/sde_drm.h>
 
@@ -2545,7 +2546,7 @@ static void sde_encoder_phys_wb_destroy(struct sde_encoder_phys *phys_enc)
 	kfree(wb_enc);
 }
 
-void sde_encoder_phys_wb_add_enc_to_minidump(struct sde_encoder_phys *phys_enc)
+static void sde_encoder_phys_wb_add_enc_to_minidump(struct sde_encoder_phys *phys_enc)
 {
 	struct sde_encoder_phys_wb *wb_enc = to_sde_encoder_phys_wb(phys_enc);
 

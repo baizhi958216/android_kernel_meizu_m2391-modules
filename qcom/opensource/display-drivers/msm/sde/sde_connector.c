@@ -5,6 +5,8 @@
  */
 
 #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
+#include <linux/vmalloc.h>
+#include <drm/drm_framebuffer.h>
 #include "msm_drv.h"
 #include "sde_dbg.h"
 
@@ -837,7 +839,7 @@ static int _sde_connector_update_bl_scale(struct sde_connector *c_conn)
 	return rc;
 }
 
-void sde_connector_set_colorspace(struct sde_connector *c_conn)
+static void sde_connector_set_colorspace(struct sde_connector *c_conn)
 {
 	int rc = 0;
 
@@ -1730,7 +1732,7 @@ static int _sde_connector_set_prop_dyn_transfer_time(struct sde_connector *c_con
 
 	rc = c_conn->ops.update_transfer_time(c_conn->display, val);
 	if (rc)
-		SDE_ERROR_CONN(c_conn, "updating transfer time failed, val: %u, rc %d\n", val, rc);
+		SDE_ERROR_CONN(c_conn, "updating transfer time failed, val: %llu, rc %d\n", val, rc);
 
 	return rc;
 }
@@ -2661,8 +2663,9 @@ static int sde_connector_get_modes(struct drm_connector *connector)
 
 static enum drm_mode_status
 sde_connector_mode_valid(struct drm_connector *connector,
-		struct drm_display_mode *mode)
+		const struct drm_display_mode *mode)
 {
+	struct drm_display_mode checked;
 	struct sde_connector *c_conn;
 	struct msm_resource_caps_info avail_res;
 
@@ -2677,9 +2680,10 @@ sde_connector_mode_valid(struct drm_connector *connector,
 	memset(&avail_res, 0, sizeof(avail_res));
 	sde_connector_get_avail_res_info(connector, &avail_res);
 
-	if (c_conn->ops.mode_valid)
-		return c_conn->ops.mode_valid(connector, mode, c_conn->display,
-				&avail_res);
+	if (c_conn->ops.mode_valid) {
+		drm_mode_copy(&checked, mode);
+		return c_conn->ops.mode_valid(connector, &checked, c_conn->display, &avail_res);
+	}
 
 	/* assume all modes okay by default */
 	return MODE_OK;

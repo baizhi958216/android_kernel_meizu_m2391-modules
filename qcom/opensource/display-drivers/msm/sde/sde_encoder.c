@@ -18,6 +18,8 @@
  */
 
 #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
+#include <linux/delay.h>
+#include <drm/drm_framebuffer.h>
 #include <linux/kthread.h>
 #include <linux/debugfs.h>
 #include <linux/input.h>
@@ -3626,7 +3628,7 @@ static enum sde_wb sde_encoder_get_wb(struct sde_mdss_cfg *catalog,
 	return WB_MAX;
 }
 
-void sde_encoder_hw_fence_status(struct sde_kms *sde_kms,
+static void sde_encoder_hw_fence_status(struct sde_kms *sde_kms,
 	struct drm_crtc *crtc, struct sde_hw_ctl *hw_ctl)
 {
 	u64 start_timestamp, end_timestamp;
@@ -3655,7 +3657,7 @@ void sde_encoder_hw_fence_status(struct sde_kms *sde_kms,
 	}
 }
 
-void sde_encoder_perf_uidle_status(struct sde_kms *sde_kms,
+static void sde_encoder_perf_uidle_status(struct sde_kms *sde_kms,
 	struct drm_crtc *crtc)
 {
 	struct sde_hw_uidle *uidle;
@@ -6334,7 +6336,7 @@ void sde_encoder_misr_sign_event_notify(struct drm_encoder *drm_enc)
 		phys = sde_enc->phys_encs[i];
 
 		if (!phys || !phys->ops.collect_misr) {
-			SDE_DEBUG("invalid misr ops\n", i);
+			SDE_DEBUG("invalid misr ops for encoder %d\n", i);
 			continue;
 		}
 
