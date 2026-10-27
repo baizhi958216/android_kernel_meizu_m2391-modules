@@ -265,7 +265,7 @@ static int msm_hdcp_probe(struct platform_device *pdev)
 		return ret;
 	}
 
-	hdcp->class = class_create(THIS_MODULE, CLASS_NAME);
+	hdcp->class = class_create(CLASS_NAME);
 	if (IS_ERR(hdcp->class)) {
 		ret = PTR_ERR(hdcp->class);
 		pr_err("couldn't create class rc = %d\n", ret);
@@ -303,13 +303,13 @@ error_class_create:
 	return ret;
 }
 
-static int msm_hdcp_remove(struct platform_device *pdev)
+static void msm_hdcp_remove(struct platform_device *pdev)
 {
 	struct msm_hdcp *hdcp;
 
 	hdcp = platform_get_drvdata(pdev);
 	if (!hdcp)
-		return -ENODEV;
+		return;
 
 	sysfs_remove_group(&hdcp->device->kobj,
 	&msm_hdcp_fs_attr_group);
@@ -318,7 +318,6 @@ static int msm_hdcp_remove(struct platform_device *pdev)
 	class_destroy(hdcp->class);
 	unregister_chrdev_region(hdcp->dev_num, 1);
 
-	return 0;
 }
 
 static struct platform_driver msm_hdcp_driver = {

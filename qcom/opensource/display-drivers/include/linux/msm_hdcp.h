@@ -5,10 +5,13 @@
 
 #ifndef __MSM_HDCP_H
 #define __MSM_HDCP_H
+#include <linux/init.h>
 #include <linux/types.h>
 #include "hdcp/msm_hdmi_hdcp_mgr.h"
 
 #if IS_ENABLED(CONFIG_HDCP_QSEECOM)
+void __init msm_hdcp_register(void);
+void __exit msm_hdcp_unregister(void);
 void msm_hdcp_notify_topology(struct device *dev);
 void msm_hdcp_cache_repeater_topology(struct device *dev,
 			struct HDCP_V2V1_MSG_TOPOLOGY *tp);
