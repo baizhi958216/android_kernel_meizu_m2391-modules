@@ -16,6 +16,7 @@ static void kgsl_sync_timeline_signal(struct kgsl_sync_timeline *timeline,
 	unsigned int timestamp);
 
 static const struct dma_fence_ops kgsl_sync_fence_ops;
+static const struct dma_fence_ops kgsl_syncsource_fence_ops;
 
 static struct kgsl_sync_fence *kgsl_sync_fence_create(
 					struct kgsl_context *context,
@@ -256,57 +257,6 @@ out:
 	return ret;
 }
 
-static void kgsl_sync_timeline_value_str(struct dma_fence *fence,
-					char *str, int size)
-{
-	struct kgsl_sync_fence *kfence = (struct kgsl_sync_fence *)fence;
-	struct kgsl_sync_timeline *ktimeline = kfence->parent;
-	struct kgsl_context *context = NULL;
-	unsigned long flags;
-	int ret = 0;
-
-	unsigned int timestamp_retired;
-	unsigned int timestamp_queued;
-
-	if (!kref_get_unless_zero(&ktimeline->kref))
-		return;
-	if (!ktimeline->device)
-		goto put_timeline;
-
-	spin_lock_irqsave(&ktimeline->lock, flags);
-	ret = _kgsl_context_get(ktimeline->context);
-	context = ret ? ktimeline->context : NULL;
-	spin_unlock_irqrestore(&ktimeline->lock, flags);
-
-	/* Get the last signaled timestamp if the context is not valid */
-	timestamp_queued = ktimeline->last_timestamp;
-	timestamp_retired = timestamp_queued;
-	if (context) {
-		kgsl_readtimestamp(ktimeline->device, context,
-			KGSL_TIMESTAMP_RETIRED, &timestamp_retired);
-
-		kgsl_readtimestamp(ktimeline->device, context,
-			KGSL_TIMESTAMP_QUEUED, &timestamp_queued);
-
-		kgsl_context_put(context);
-	}
-
-	snprintf(str, size, "%u queued:%u retired:%u",
-		ktimeline->last_timestamp,
-		timestamp_queued, timestamp_retired);
-
-put_timeline:
-	kgsl_sync_timeline_put(ktimeline);
-}
-
-static void kgsl_sync_fence_value_str(struct dma_fence *fence,
-					char *str, int size)
-{
-	struct kgsl_sync_fence *kfence = (struct kgsl_sync_fence *)fence;
-
-	snprintf(str, size, "%u", kfence->timestamp);
-}
-
 static const char *kgsl_sync_fence_driver_name(struct dma_fence *fence)
 {
 	return "kgsl-timeline";
@@ -416,9 +366,6 @@ static const struct dma_fence_ops kgsl_sync_fence_ops = {
 	.signaled = kgsl_sync_fence_has_signaled,
 	.wait = dma_fence_default_wait,
 	.release = kgsl_sync_fence_release,
-
-	.fence_value_str = kgsl_sync_fence_value_str,
-	.timeline_value_str = kgsl_sync_timeline_value_str,
 };
 
 static void kgsl_sync_fence_callback(struct dma_fence *fence,
@@ -460,18 +407,11 @@ static void kgsl_get_fence_names(struct dma_fence *fence,
 	for (i = 0; i < num_fences; i++) {
 		struct dma_fence *f = fences[i];
 		struct fence_info *fi = &info_ptr->fences[i];
-		int len;
+		/* Syncsource fences each own a context and always have seqno 1. */
+		u64 value = f->ops == &kgsl_syncsource_fence_ops ? f->context : f->seqno;
 
-		len =  scnprintf(fi->name, sizeof(fi->name), "%s %s",
-			f->ops->get_driver_name(f),
-			f->ops->get_timeline_name(f));
-
-		if (f->ops->fence_value_str) {
-			len += scnprintf(fi->name + len, sizeof(fi->name) - len,
-				": ");
-			f->ops->fence_value_str(f, fi->name + len,
-				sizeof(fi->name) - len);
-		}
+		scnprintf(fi->name, sizeof(fi->name), "%s %s: %llu",
+			  f->ops->get_driver_name(f), f->ops->get_timeline_name(f), value);
 	}
 }
 
@@ -861,23 +801,11 @@ static const char *kgsl_syncsource_driver_name(struct dma_fence *fence)
 	return "kgsl-syncsource-timeline";
 }
 
-static void kgsl_syncsource_fence_value_str(struct dma_fence *fence,
-						char *str, int size)
-{
-	/*
-	 * Each fence is independent of the others on the same timeline.
-	 * We use a different context for each of them.
-	 */
-	snprintf(str, size, "%llu", fence->context);
-}
-
 static const struct dma_fence_ops kgsl_syncsource_fence_ops = {
 	.get_driver_name = kgsl_syncsource_driver_name,
 	.get_timeline_name = kgsl_syncsource_get_timeline_name,
 	.enable_signaling = kgsl_syncsource_enable_signaling,
 	.wait = dma_fence_default_wait,
 	.release = kgsl_syncsource_fence_release,
-
-	.fence_value_str = kgsl_syncsource_fence_value_str,
 };
 
