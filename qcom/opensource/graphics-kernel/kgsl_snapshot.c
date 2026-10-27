@@ -877,7 +877,7 @@ static ssize_t skip_ib_capture_store(struct kgsl_device *device,
 {
 	int ret;
 
-	ret = kkstrtobool(buf, &device->skip_ib_capture);
+	ret = kstrtobool(buf, &device->skip_ib_capture);
 	return ret ? ret : count;
 }
 

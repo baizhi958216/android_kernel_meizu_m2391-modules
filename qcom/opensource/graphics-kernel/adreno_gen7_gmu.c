@@ -68,7 +68,7 @@ static ssize_t log_stream_enable_store(struct kobject *kobj,
 	bool val;
 	int ret;
 
-	ret = kkstrtobool(buf, &val);
+	ret = kstrtobool(buf, &val);
 	if (ret)
 		return ret;
 

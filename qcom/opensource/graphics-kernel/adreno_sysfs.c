@@ -304,7 +304,7 @@ ssize_t adreno_sysfs_store_bool(struct device *dev,
 	bool val;
 	int ret;
 
-	ret = kkstrtobool(buf, &val);
+	ret = kstrtobool(buf, &val);
 	if (ret)
 		return ret;
 
