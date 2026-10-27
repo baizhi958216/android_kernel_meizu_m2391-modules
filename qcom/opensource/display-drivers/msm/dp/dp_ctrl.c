@@ -827,10 +827,10 @@ static int dp_ctrl_enable_stream_clocks(struct dp_ctrl_private *ctrl,
 
 	if (dp_panel->stream_id == DP_STREAM_0) {
 		clk_type = DP_STREAM0_PM;
-		strlcpy(clk_name, "strm0_pixel_clk", 32);
+		strscpy(clk_name, "strm0_pixel_clk", 32);
 	} else if (dp_panel->stream_id == DP_STREAM_1) {
 		clk_type = DP_STREAM1_PM;
-		strlcpy(clk_name, "strm1_pixel_clk", 32);
+		strscpy(clk_name, "strm1_pixel_clk", 32);
 	} else {
 		DP_ERR("Invalid stream:%d for clk enable\n",
 				dp_panel->stream_id);
@@ -1507,7 +1507,7 @@ static void dp_ctrl_isr(struct dp_ctrl *dp_ctrl)
 	SDE_EVT32_EXTERNAL(SDE_EVTLOG_FUNC_EXIT);
 }
 
-void dp_ctrl_set_sim_mode(struct dp_ctrl *dp_ctrl, bool en)
+static void dp_ctrl_set_sim_mode(struct dp_ctrl *dp_ctrl, bool en)
 {
 	struct dp_ctrl_private *ctrl;
 
@@ -1519,7 +1519,7 @@ void dp_ctrl_set_sim_mode(struct dp_ctrl *dp_ctrl, bool en)
 	DP_INFO("sim_mode=%d\n", ctrl->sim_mode);
 }
 
-int dp_ctrl_setup_misr(struct dp_ctrl *dp_ctrl)
+static int dp_ctrl_setup_misr(struct dp_ctrl *dp_ctrl)
 {
 	struct dp_ctrl_private *ctrl;
 
@@ -1531,7 +1531,7 @@ int dp_ctrl_setup_misr(struct dp_ctrl *dp_ctrl)
 	return ctrl->catalog->setup_misr(ctrl->catalog);
 }
 
-int dp_ctrl_read_misr(struct dp_ctrl *dp_ctrl, struct dp_misr40_data *data)
+static int dp_ctrl_read_misr(struct dp_ctrl *dp_ctrl, struct dp_misr40_data *data)
 {
 	struct dp_ctrl_private *ctrl;
 

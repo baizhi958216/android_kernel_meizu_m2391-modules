@@ -843,7 +843,7 @@ static void _dp_panel_calc_tu(struct dp_tu_calc_input *in,
 
 	if (HBLANK_MARGIN_EXTRA != 0) {
 		HBLANK_MARGIN += HBLANK_MARGIN_EXTRA;
-		DP_DEBUG("Info: increase HBLANK_MARGIN to %d. (PLUS%d)\n", HBLANK_MARGIN,
+		DP_DEBUG("Info: increase HBLANK_MARGIN to %lld. (PLUS%lld)\n", HBLANK_MARGIN,
 			HBLANK_MARGIN_EXTRA);
 	}
 
@@ -3059,7 +3059,7 @@ static void dp_panel_update_pps(struct dp_panel *dp_panel, char *pps_cmd)
 	catalog->pps_flush(catalog);
 }
 
-int dp_panel_get_src_crc(struct dp_panel *dp_panel, u16 *crc)
+static int dp_panel_get_src_crc(struct dp_panel *dp_panel, u16 *crc)
 {
 	struct dp_catalog_panel *catalog;
 	struct dp_panel_private *panel;
@@ -3070,7 +3070,7 @@ int dp_panel_get_src_crc(struct dp_panel *dp_panel, u16 *crc)
 	return catalog->get_src_crc(catalog, crc);
 }
 
-int dp_panel_get_sink_crc(struct dp_panel *dp_panel, u16 *crc)
+static int dp_panel_get_sink_crc(struct dp_panel *dp_panel, u16 *crc)
 {
 	int rc = 0;
 	struct dp_panel_private *panel;
@@ -3096,7 +3096,7 @@ int dp_panel_get_sink_crc(struct dp_panel *dp_panel, u16 *crc)
 	return rc;
 }
 
-int dp_panel_sink_crc_enable(struct dp_panel *dp_panel, bool enable)
+static int dp_panel_sink_crc_enable(struct dp_panel *dp_panel, bool enable)
 {
 	int rc = 0;
 	struct dp_panel_private *panel;

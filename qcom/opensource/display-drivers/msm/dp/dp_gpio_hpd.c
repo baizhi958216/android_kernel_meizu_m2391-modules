@@ -4,6 +4,7 @@
  * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
  */
 
+#include <linux/pinctrl/consumer.h>
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 #include <linux/kernel.h>
@@ -183,7 +184,7 @@ error:
 	return rc;
 }
 
-int dp_gpio_hpd_register(struct dp_hpd *dp_hpd)
+static int dp_gpio_hpd_register(struct dp_hpd *dp_hpd)
 {
 	struct dp_gpio_hpd_private *gpio_hpd;
 	int edge;
@@ -255,7 +256,7 @@ struct dp_hpd *dp_gpio_hpd_get(struct device *dev,
 	}
 
 	gpio_hpd->gpio_cfg.gpio = gpio;
-	strlcpy(gpio_hpd->gpio_cfg.gpio_name, hpd_gpio_name,
+	strscpy(gpio_hpd->gpio_cfg.gpio_name, hpd_gpio_name,
 		sizeof(gpio_hpd->gpio_cfg.gpio_name));
 	gpio_hpd->gpio_cfg.value = 0;
 

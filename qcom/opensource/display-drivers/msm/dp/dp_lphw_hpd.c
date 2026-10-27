@@ -4,6 +4,7 @@
  * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
  */
 
+#include <linux/pinctrl/consumer.h>
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 #include <linux/kernel.h>
@@ -241,7 +242,7 @@ static int dp_lphw_hpd_simulate_attention(struct dp_hpd *dp_hpd, int vdo)
 	return 0;
 }
 
-int dp_lphw_hpd_register(struct dp_hpd *dp_hpd)
+static int dp_lphw_hpd_register(struct dp_hpd *dp_hpd)
 {
 	struct dp_lphw_hpd_private *lphw_hpd;
 	int rc = 0;
@@ -368,7 +369,7 @@ struct dp_hpd *dp_lphw_hpd_get(struct device *dev, struct dp_parser *parser,
 	}
 
 	lphw_hpd->gpio_cfg.gpio = gpio;
-	strlcpy(lphw_hpd->gpio_cfg.gpio_name, hpd_gpio_name,
+	strscpy(lphw_hpd->gpio_cfg.gpio_name, hpd_gpio_name,
 		sizeof(lphw_hpd->gpio_cfg.gpio_name));
 	lphw_hpd->gpio_cfg.value = 0;
 

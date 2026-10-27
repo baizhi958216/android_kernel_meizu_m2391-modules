@@ -395,7 +395,7 @@ enum dp_4nm_pll_status {
 	TSYNC_DONE,
 };
 
-char *dp_4nm_pll_get_status_name(enum dp_4nm_pll_status status)
+static char *dp_4nm_pll_get_status_name(enum dp_4nm_pll_status status)
 {
 	switch (status) {
 	case C_READY:
@@ -592,7 +592,7 @@ static int dp_pll_configure(struct dp_pll *pll, unsigned long rate)
 	pll->vco_rate = rate;
 	rc = dp_vco_set_rate_4nm(pll, rate);
 	if (rc < 0) {
-		DP_ERR("pll rate %s set failed\n", rate);
+		DP_ERR("pll rate %lu set failed\n", rate);
 		pll->vco_rate = 0;
 		return rc;
 	}

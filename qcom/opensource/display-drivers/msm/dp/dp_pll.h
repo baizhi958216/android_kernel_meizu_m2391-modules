@@ -147,8 +147,10 @@ static inline bool is_gdsc_disabled(struct dp_pll *pll)
 	return (dp_pll_read(gdsc, 0x0) & BIT(31)) ? false : true;
 }
 
+unsigned long dp_vco_recalc_rate_5nm(struct dp_pll *pll);
 int dp_pll_clock_register_5nm(struct dp_pll *pll);
 void dp_pll_clock_unregister_5nm(struct dp_pll *pll);
+unsigned long dp_vco_recalc_rate_4nm(struct dp_pll *pll);
 int dp_pll_clock_register_4nm(struct dp_pll *pll);
 void dp_pll_clock_unregister_4nm(struct dp_pll *pll);
 
