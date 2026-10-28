@@ -115,20 +115,20 @@ static void battery_thermal_cb(struct work_struct *work)
 		thermal_zone_device_update(d->battery_low, THERMAL_EVENT_UNSPECIFIED);
 }
 
-static int usb_thermal_get_temp(void *data, int *temp)
+static int usb_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
 {
 	*temp = (int)(READ_ONCE(tusb) * 10U);
 	return 0;
 }
-static int battery_thermal_get_temp(void *data, int *temp)
+static int battery_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
 {
 	*temp = (int)(READ_ONCE(tbat) * 10U);
 	return 0;
 }
-static const struct thermal_zone_of_device_ops usb_ops = {
+static const struct thermal_zone_device_ops usb_ops = {
 	.get_temp = usb_thermal_get_temp,
 };
-static const struct thermal_zone_of_device_ops battery_ops = {
+static const struct thermal_zone_device_ops battery_ops = {
 	.get_temp = battery_thermal_get_temp,
 };
 
@@ -145,11 +145,18 @@ static int xcharge_thermal_probe(struct platform_device *pdev)
 		return -ENOMEM;
 	INIT_DELAYED_WORK(&d->usb_work, usb_thermal_cb);
 	INIT_DELAYED_WORK(&d->battery_work, battery_thermal_cb);
-	d->usb = devm_thermal_zone_of_sensor_register(&pdev->dev, 0, pdev, &usb_ops);
-	d->battery_high = devm_thermal_zone_of_sensor_register(&pdev->dev, 1,
+	d->usb = devm_thermal_of_zone_register(&pdev->dev, 0, pdev, &usb_ops);
+	d->battery_high = devm_thermal_of_zone_register(&pdev->dev, 1,
 			pdev, &battery_ops);
-	d->battery_low = devm_thermal_zone_of_sensor_register(&pdev->dev, 2,
+	d->battery_low = devm_thermal_of_zone_register(&pdev->dev, 2,
 			pdev, &battery_ops);
+	if (IS_ERR(d->usb) || IS_ERR(d->battery_high) || IS_ERR(d->battery_low)) {
+		int ret = IS_ERR(d->usb) ? PTR_ERR(d->usb) :
+			IS_ERR(d->battery_high) ? PTR_ERR(d->battery_high) : PTR_ERR(d->battery_low);
+
+		destroy_workqueue(d->wq);
+		return dev_err_probe(&pdev->dev, ret, "charger thermal zone registration\n");
+	}
 	platform_set_drvdata(pdev, d);
 	spin_lock_irqsave(&thermal_lock, flags);
 	if (thermal_dev) {
@@ -162,7 +169,7 @@ static int xcharge_thermal_probe(struct platform_device *pdev)
 	spin_unlock_irqrestore(&thermal_lock, flags);
 	return 0;
 }
-static int xcharge_thermal_remove(struct platform_device *pdev)
+static void xcharge_thermal_remove(struct platform_device *pdev)
 {
 	struct charger_thermal_dev *d = platform_get_drvdata(pdev);
 	unsigned long flags;
@@ -173,7 +180,6 @@ static int xcharge_thermal_remove(struct platform_device *pdev)
 	cancel_delayed_work_sync(&d->usb_work);
 	cancel_delayed_work_sync(&d->battery_work);
 	destroy_workqueue(d->wq);
-	return 0;
 }
 static const struct of_device_id thermal_match[] = {
 	{ .compatible = "xcharge,xcharge_thermal" },
