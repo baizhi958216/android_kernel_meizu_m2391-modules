@@ -12,7 +12,7 @@
 #include <linux/errno.h>
 #include <linux/export.h>
 #include <linux/string.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 
 #include "meizu_storage.h"
 
@@ -75,37 +75,6 @@ static void montMul(const RSAPublicKey *key, uint32_t *c,
 		montMulAdd(key, c, a[i], b);
 }
 
-/* No allocation or sleeping: the original verification API is synchronous. */
-static void mz_sha1(const uint8_t *data, size_t len, uint8_t *digest)
-{
-	u32 state[SHA1_DIGEST_WORDS];
-	u32 workspace[SHA1_WORKSPACE_WORDS];
-	u8 tail[SHA1_BLOCK_SIZE * 2] = { 0 };
-	u64 bits = (u64)len * 8;
-	size_t final_size;
-	unsigned int i;
-
-	sha1_init(state);
-	while (len >= SHA1_BLOCK_SIZE) {
-		sha1_transform(state, (const char *)data, workspace);
-		data += SHA1_BLOCK_SIZE;
-		len -= SHA1_BLOCK_SIZE;
-	}
-	if (len)
-		memcpy(tail, data, len);
-	tail[len] = 0x80;
-	final_size = len < 56 ? SHA1_BLOCK_SIZE : SHA1_BLOCK_SIZE * 2;
-	put_unaligned_be64(bits, tail + final_size - 8);
-	sha1_transform(state, (const char *)tail, workspace);
-	if (final_size == SHA1_BLOCK_SIZE * 2)
-		sha1_transform(state, (const char *)tail + SHA1_BLOCK_SIZE, workspace);
-	for (i = 0; i < SHA1_DIGEST_WORDS; i++)
-		put_unaligned_be32(state[i], digest + i * 4);
-	memzero_explicit(state, sizeof(state));
-	memzero_explicit(workspace, sizeof(workspace));
-	memzero_explicit(tail, sizeof(tail));
-}
-
 int rsa_with_sha1_verify(const uint8_t *data, uint16_t len,
 		const RSAPublicKey *key, const uint8_t *signature)
 {
@@ -125,7 +94,7 @@ int rsa_with_sha1_verify(const uint8_t *data, uint16_t len,
 	if (!key || !signature || (!data && len) || key->len != MZ_RSA_WORDS ||
 			(key->exponent != 3 && key->exponent != 65537))
 		return -EINVAL;
-	mz_sha1(data, len, data_hash);
+	sha1(data, len, data_hash);
 	for (i = 0; i < MZ_RSA_WORDS; i++)
 		a[i] = get_unaligned_be32(signature + (MZ_RSA_WORDS - 1 - i) * 4);
 	montMul(key, aR, a, key->rr);
@@ -150,7 +119,7 @@ int rsa_with_sha1_verify(const uint8_t *data, uint16_t len,
 	 */
 	for (i = 0; i < SHA1_DIGEST_SIZE; i++)
 		block[MZ_RSA_BYTES - SHA1_DIGEST_SIZE + i] ^= data_hash[i];
-	mz_sha1(block, sizeof(block), block_hash);
+	sha1(block, sizeof(block), block_hash);
 	for (i = 0; i < SHA1_DIGEST_SIZE; i++)
 		difference |= block_hash[i] ^ padding_hash[i];
 	ret = difference ? -EINVAL : 0;
