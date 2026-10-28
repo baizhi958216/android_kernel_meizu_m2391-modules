@@ -2102,6 +2102,8 @@ static void dp_display_deinit_sub_modules(struct dp_display_private *dp)
 	dp_power_put(dp->power);
 	dp_pll_put(dp->pll);
 	dp_aux_put(dp->aux);
+	of_node_put(dp->aux_switch_node);
+	dp->aux_switch_node = NULL;
 	dp_catalog_put(dp->catalog);
 	dp_parser_put(dp->parser);
 	mutex_destroy(&dp->session_lock);
@@ -2159,9 +2161,11 @@ static int dp_init_sub_modules(struct dp_display_private *dp)
 	dp_core_revision = dp_catalog_get_dp_core_version(dp->catalog);
 
 	dp->aux_switch_node = of_parse_phandle(dp->pdev->dev.of_node, phandle, 0);
-	if (!dp->aux_switch_node) {
+	if (!of_device_is_available(dp->aux_switch_node)) {
+		of_node_put(dp->aux_switch_node);
+		dp->aux_switch_node = NULL;
 		dp->no_aux_switch = true;
-		DP_WARN("Aux switch node not found, assigning bypass mode as switch type\n");
+		DP_DEBUG("No enabled AUX switch on this board\n");
 		dp->switch_type = DP_AUX_SWITCH_BYPASS;
 		goto skip_node_name;
 	}
@@ -2345,6 +2349,8 @@ error_power:
 error_pll:
 	dp_aux_put(dp->aux);
 error_aux:
+	of_node_put(dp->aux_switch_node);
+	dp->aux_switch_node = NULL;
 	dp_catalog_put(dp->catalog);
 error_catalog:
 	dp_parser_put(dp->parser);
