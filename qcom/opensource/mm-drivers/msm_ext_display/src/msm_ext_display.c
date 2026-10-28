@@ -68,18 +68,6 @@ static int msm_ext_disp_extcon_register(struct msm_ext_disp *ext_disp, int id)
 	return ret;
 }
 
-static void msm_ext_disp_extcon_unregister(struct msm_ext_disp *ext_disp,
-		int id)
-{
-	if (!ext_disp || !ext_disp->pdev || id >= MSM_EXT_DISP_MAX_CODECS) {
-		pr_err("Invalid params\n");
-		return;
-	}
-
-	devm_extcon_dev_unregister(&ext_disp->pdev->dev,
-			ext_disp->audio_sdev[id]);
-}
-
 static const char *msm_ext_disp_name(enum msm_ext_disp_type type)
 {
 	switch (type) {
@@ -581,93 +569,26 @@ EXPORT_SYMBOL(msm_ext_disp_deregister_intf);
 
 static int msm_ext_disp_probe(struct platform_device *pdev)
 {
-	int ret = 0, id;
-	struct device_node *of_node = NULL;
-	struct msm_ext_disp *ext_disp = NULL;
-
-	if (!pdev) {
-		pr_err("No platform device found\n");
-		ret = -ENODEV;
-		goto end;
-	}
-
-	of_node = pdev->dev.of_node;
-	if (!of_node) {
-		pr_err("No device node found\n");
-		ret = -ENODEV;
-		goto end;
-	}
+	struct msm_ext_disp *ext_disp;
+	int ret, id;
 
 	ext_disp = devm_kzalloc(&pdev->dev, sizeof(*ext_disp), GFP_KERNEL);
-	if (!ext_disp) {
-		ret = -ENOMEM;
-		goto end;
-	}
+	if (!ext_disp)
+		return -ENOMEM;
 
-	platform_set_drvdata(pdev, &ext_disp->ext_disp_data);
+	mutex_init(&ext_disp->lock);
+	INIT_LIST_HEAD(&ext_disp->display_list);
+	ext_disp->current_codec.type = EXT_DISPLAY_TYPE_MAX;
 	ext_disp->pdev = pdev;
 
 	for (id = 0; id < MSM_EXT_DISP_MAX_CODECS; id++) {
 		ret = msm_ext_disp_extcon_register(ext_disp, id);
 		if (ret)
-			goto child_node_failure;
+			return ret;
 	}
 
-	ret = of_platform_populate(of_node, NULL, NULL, &pdev->dev);
-	if (ret) {
-		pr_err("Failed to add child devices. Error = %d\n", ret);
-		goto child_node_failure;
-	} else {
-		pr_debug("%s: Added child devices.\n", __func__);
-	}
-
-	mutex_init(&ext_disp->lock);
-
-	INIT_LIST_HEAD(&ext_disp->display_list);
-	ext_disp->current_codec.type = EXT_DISPLAY_TYPE_MAX;
-	ext_disp->update_audio = false;
-
-	return ret;
-
-child_node_failure:
-	for (id = 0; id < MSM_EXT_DISP_MAX_CODECS; id++)
-		msm_ext_disp_extcon_unregister(ext_disp, id);
-
-	devm_kfree(&ext_disp->pdev->dev, ext_disp);
-end:
-	return ret;
-}
-
-static int msm_ext_disp_remove(struct platform_device *pdev)
-{
-	int ret = 0, id;
-	struct msm_ext_disp *ext_disp = NULL;
-	struct msm_ext_disp_data *ext_disp_data = NULL;
-
-	if (!pdev) {
-		pr_err("No platform device\n");
-		ret = -ENODEV;
-		goto end;
-	}
-
-	ext_disp_data = platform_get_drvdata(pdev);
-	if (!ext_disp_data) {
-		pr_err("No drvdata found\n");
-		ret = -ENODEV;
-		goto end;
-	}
-
-	ext_disp = container_of(ext_disp_data, struct msm_ext_disp,
-				ext_disp_data);
-
-	for (id = 0; id < MSM_EXT_DISP_MAX_CODECS; id++)
-		msm_ext_disp_extcon_unregister(ext_disp, id);
-
-	mutex_destroy(&ext_disp->lock);
-	devm_kfree(&ext_disp->pdev->dev, ext_disp);
-
-end:
-	return ret;
+	platform_set_drvdata(pdev, &ext_disp->ext_disp_data);
+	return devm_of_platform_populate(&pdev->dev);
 }
 
 static const struct of_device_id msm_ext_dt_match[] = {
@@ -678,25 +599,13 @@ MODULE_DEVICE_TABLE(of, msm_ext_dt_match);
 
 static struct platform_driver this_driver = {
 	.probe = msm_ext_disp_probe,
-	.remove = msm_ext_disp_remove,
 	.driver = {
 		.name = "msm-ext-disp",
 		.of_match_table = msm_ext_dt_match,
 	},
 };
 
-static int __init msm_ext_disp_init(void)
-{
-	int ret = 0;
-
-	ret = platform_driver_register(&this_driver);
-	if (ret)
-		pr_err("failed, ret = %d\n", ret);
-
-	return ret;
-}
-
-subsys_initcall(msm_ext_disp_init);
+module_platform_driver(this_driver);
 
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("MSM External Display");
