@@ -27,6 +27,10 @@ enum dp_sim_mode_type {
 	DP_SIM_MODE_ALL        = 0x0000001F,
 };
 
+struct platform_device;
+int dp_sim_probe(struct platform_device *pdev);
+void dp_sim_remove(struct platform_device *pdev);
+
 int dp_sim_create_bridge(struct device *dev,
 		struct dp_aux_bridge **bridge);
 

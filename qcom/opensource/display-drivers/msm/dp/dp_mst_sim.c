@@ -1639,17 +1639,15 @@ fail:
 	return ret;
 }
 
-int dp_sim_remove(struct platform_device *pdev)
+void dp_sim_remove(struct platform_device *pdev)
 {
 	struct dp_sim_device *dp_sim_dev;
 
 	dp_sim_dev = platform_get_drvdata(pdev);
 	if (!dp_sim_dev)
-		return 0;
+		return;
 
 	debugfs_remove_recursive(dp_sim_dev->debugfs_dir);
 
 	dp_sim_destroy_bridge(&dp_sim_dev->bridge);
-
-	return 0;
 }
