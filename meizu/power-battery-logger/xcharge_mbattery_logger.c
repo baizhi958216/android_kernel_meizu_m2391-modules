@@ -95,11 +95,10 @@ static void logger_sample(struct work_struct *work)
 	}
 }
 
-static enum alarmtimer_restart logger_alarm_cb(struct alarm *alarm, ktime_t now)
+static void logger_alarm_cb(struct alarm *alarm, ktime_t now)
 {
 	if (!READ_ONCE(stopping))
 		mod_delayed_work(logger_wq, &logger_work, 0);
-	return ALARMTIMER_NORESTART;
 }
 
 void xcharge_mbattery_logger_update_plug_in_status(enum mbattery_plug_in_type type,
@@ -146,7 +145,7 @@ static int xcharge_mbattery_logger_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static int xcharge_mbattery_logger_remove(struct platform_device *pdev)
+static void xcharge_mbattery_logger_remove(struct platform_device *pdev)
 {
 	mutex_lock(&logger_lock);
 	ready = false;
@@ -158,7 +157,6 @@ static int xcharge_mbattery_logger_remove(struct platform_device *pdev)
 	destroy_workqueue(logger_wq);
 	logger_wq = NULL;
 	mutex_unlock(&logger_lock);
-	return 0;
 }
 
 static const struct of_device_id logger_match[] = {

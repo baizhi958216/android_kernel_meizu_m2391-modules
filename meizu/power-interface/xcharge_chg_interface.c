@@ -315,7 +315,7 @@ fail:
 	return ret;
 }
 
-static int interface_remove(struct platform_device *pdev)
+static void interface_remove(struct platform_device *pdev)
 {
 	struct kobject *rev, *coil;
 
@@ -331,7 +331,6 @@ static int interface_remove(struct platform_device *pdev)
 	kobject_put(coil);
 	destroy_dirs();
 	mutex_unlock(&interface_lock);
-	return 0;
 }
 static const struct of_device_id interface_match[] = {
 	{ .compatible = "xcharge,xcharge_chg_interface" },
