@@ -89,24 +89,6 @@ static int dp_altmode_set_usb_dp_mode(struct dp_altmode_private *altmode)
 	return rc;
 }
 
-static void dp_altmode_send_pan_ack(struct altmode_client *amclient,
-		u8 port_index)
-{
-	int rc;
-	struct altmode_pan_ack_msg ack;
-
-	ack.cmd_type = ALTMODE_PAN_ACK;
-	ack.port_index = port_index;
-
-	rc = altmode_send_data(amclient, &ack, sizeof(ack));
-	if (rc < 0) {
-		DP_ERR("failed: %d\n", rc);
-		return;
-	}
-
-	DP_DEBUG("port=%d\n", port_index);
-}
-
 static int dp_altmode_notify(void *priv, void *data, size_t len)
 {
 	int rc = 0;
@@ -156,7 +138,7 @@ static int dp_altmode_notify(void *priv, void *data, size_t len)
 			if (rc)
 				DP_ERR("failed to clear usb dp mode, rc: %d\n", rc);
 		}
-		goto ack;
+		return rc;
 	}
 
 	/* Configure */
@@ -190,41 +172,20 @@ static int dp_altmode_notify(void *priv, void *data, size_t len)
 
 		rc = dp_altmode_set_usb_dp_mode(altmode);
 		if (rc)
-			goto ack;
+			return rc;
 
 		if (altmode->dp_cb && altmode->dp_cb->configure)
 			altmode->dp_cb->configure(altmode->dev);
-		goto ack;
+		return rc;
 	}
 
 	/* Attention */
 	if (altmode->forced_disconnect)
-		goto ack;
+		return rc;
 
 	if (altmode->dp_cb && altmode->dp_cb->attention)
 		altmode->dp_cb->attention(altmode->dev);
-ack:
-	dp_altmode_send_pan_ack(altmode->amclient, port_index);
 	return rc;
-}
-
-static void dp_altmode_register(void *priv)
-{
-	struct dp_altmode_private *altmode = priv;
-	struct altmode_client_data cd = {
-		.callback	= &dp_altmode_notify,
-	};
-
-	cd.name = "displayport";
-	cd.svid = USB_SID_DISPLAYPORT;
-	cd.priv = altmode;
-
-	altmode->amclient = altmode_register_client(altmode->dev, &cd);
-	if (IS_ERR_OR_NULL(altmode->amclient))
-		DP_ERR("failed to register as client: %ld\n",
-				PTR_ERR(altmode->amclient));
-	else
-		DP_DEBUG("success\n");
 }
 
 static int dp_altmode_simulate_connect(struct dp_hpd *dp_hpd, bool hpd)
@@ -271,7 +232,11 @@ static int dp_altmode_simulate_attention(struct dp_hpd *dp_hpd, int vdo)
 
 struct dp_hpd *dp_altmode_get(struct device *dev, struct dp_hpd_cb *cb)
 {
-	int rc = 0;
+	struct altmode_client_data cd = {
+		.name = "displayport",
+		.svid = USB_SID_DISPLAYPORT,
+		.callback = dp_altmode_notify,
+	};
 	struct dp_altmode_private *altmode;
 	struct dp_altmode *dp_altmode;
 
@@ -292,18 +257,15 @@ struct dp_hpd *dp_altmode_get(struct device *dev, struct dp_hpd_cb *cb)
 	dp_altmode->base.simulate_connect = dp_altmode_simulate_connect;
 	dp_altmode->base.simulate_attention = dp_altmode_simulate_attention;
 
-	rc = altmode_register_notifier(dev, dp_altmode_register, altmode);
-	if (rc < 0) {
-		DP_ERR("altmode probe notifier registration failed: %d\n", rc);
-		goto error;
+	cd.priv = altmode;
+	altmode->amclient = altmode_register_client(dev, &cd);
+	if (IS_ERR(altmode->amclient)) {
+		int ret = PTR_ERR(altmode->amclient);
+
+		kfree(altmode);
+		return ERR_PTR(ret);
 	}
-
-	DP_DEBUG("success\n");
-
 	return &dp_altmode->base;
-error:
-	kfree(altmode);
-	return ERR_PTR(rc);
 }
 
 void dp_altmode_put(struct dp_hpd *dp_hpd)
@@ -319,7 +281,6 @@ void dp_altmode_put(struct dp_hpd *dp_hpd)
 			dp_altmode);
 
 	altmode_deregister_client(altmode->amclient);
-	altmode_deregister_notifier(altmode->dev, altmode);
 
 	kfree(altmode);
 }

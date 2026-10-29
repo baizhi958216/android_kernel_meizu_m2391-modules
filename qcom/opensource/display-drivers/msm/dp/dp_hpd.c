@@ -74,6 +74,9 @@ struct dp_hpd *dp_hpd_get(struct device *dev, struct dp_parser *parser,
 		goto config;
 	}
 
+	if (of_find_property(dev->of_node, "qcom,altmode-dev", NULL))
+		return dp_hpd;
+
 	dp_hpd = dp_usbpd_get(dev, cb);
 	if (!IS_ERR_OR_NULL(dp_hpd)) {
 		dp_hpd->type = DP_HPD_USBPD;
