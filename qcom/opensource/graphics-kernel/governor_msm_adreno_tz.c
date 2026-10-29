@@ -13,11 +13,12 @@
 #include <linux/io.h>
 #include <linux/ftrace.h>
 #include <linux/mm.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <asm/cacheflush.h>
-#include <linux/qtee_shmbridge.h>
 
-#include "governor.h"
+#include <linux/of.h>
+
+#include "kgsl_device.h"
 #include "msm_adreno_devfreq.h"
 
 static DEFINE_SPINLOCK(tz_lock);
@@ -61,7 +62,7 @@ static unsigned long acc_total, acc_relative_busy;
 /*
  * Returns GPU suspend time in millisecond.
  */
-u64 suspend_time_ms(void)
+static u64 suspend_time_ms(void)
 {
 	u64 suspend_sampling_time;
 	u64 time_diff = 0;
@@ -161,7 +162,7 @@ static const struct device_attribute *adreno_tz_attr_list[] = {
 		NULL
 };
 
-void compute_work_load(struct devfreq_dev_status *stats,
+static void compute_work_load(struct devfreq_dev_status *stats,
 		struct devfreq_msm_adreno_tz_data *priv,
 		struct devfreq *devfreq)
 {
@@ -221,95 +222,26 @@ static int __secure_tz_update_entry3(int level, s64 total_time, s64 busy_time,
 	return ret;
 }
 
-static int tz_init_ca(struct device *dev,
-	struct devfreq_msm_adreno_tz_data *priv)
-{
-	unsigned int tz_ca_data[2];
-	phys_addr_t paddr;
-	u8 *tz_buf;
-	int ret;
-	struct qtee_shm shm;
-
-	/* Set data for TZ */
-	tz_ca_data[0] = priv->bin.ctxt_aware_target_pwrlevel;
-	tz_ca_data[1] = priv->bin.ctxt_aware_busy_penalty;
-
-	if (!qtee_shmbridge_is_enabled()) {
-		tz_buf = kzalloc(PAGE_ALIGN(sizeof(tz_ca_data)), GFP_KERNEL);
-		if (!tz_buf)
-			return -ENOMEM;
-		paddr = virt_to_phys(tz_buf);
-	} else {
-		ret = qtee_shmbridge_allocate_shm(
-				PAGE_ALIGN(sizeof(tz_ca_data)), &shm);
-		if (ret)
-			return -ENOMEM;
-		tz_buf = shm.vaddr;
-		paddr = shm.paddr;
-	}
-
-	memcpy(tz_buf, tz_ca_data, sizeof(tz_ca_data));
-	/* Ensure memcpy completes execution */
-	mb();
-	dma_sync_single_for_device(dev, paddr,
-		PAGE_ALIGN(sizeof(tz_ca_data)), DMA_BIDIRECTIONAL);
-
-	ret = qcom_scm_dcvs_init_ca_v2(paddr, sizeof(tz_ca_data));
-
-	if (!qtee_shmbridge_is_enabled())
-		kfree_sensitive(tz_buf);
-	else
-		qtee_shmbridge_free_shm(&shm);
-
-	return ret;
-}
-
-static int tz_init(struct device *dev, struct devfreq_msm_adreno_tz_data *priv,
-			unsigned int *tz_pwrlevels, u32 size_pwrlevels,
-			unsigned int *version, u32 size_version)
+static int tz_init(struct devfreq_msm_adreno_tz_data *priv,
+		   const u32 *tz_pwrlevels, size_t size, int *version)
 {
 	int ret;
-	phys_addr_t paddr;
 
-	if (qcom_scm_dcvs_core_available()) {
-		u8 *tz_buf;
-		struct qtee_shm shm;
+	if (!qcom_scm_dcvs_core_available())
+		return -EOPNOTSUPP;
 
-		if (!qtee_shmbridge_is_enabled()) {
-			tz_buf = kzalloc(PAGE_ALIGN(size_pwrlevels),
-						GFP_KERNEL);
-			if (!tz_buf)
-				return -ENOMEM;
-			paddr = virt_to_phys(tz_buf);
-		} else {
-			ret = qtee_shmbridge_allocate_shm(
-					PAGE_ALIGN(size_pwrlevels), &shm);
-			if (ret)
-				return -ENOMEM;
-			tz_buf = shm.vaddr;
-			paddr = shm.paddr;
-		}
+	ret = qcom_scm_dcvs_init_v2(tz_pwrlevels, size, version);
+	if (ret)
+		return ret;
+	priv->is_64 = true;
 
-		memcpy(tz_buf, tz_pwrlevels, size_pwrlevels);
-		/* Ensure memcpy completes execution */
-		mb();
-		dma_sync_single_for_device(dev, paddr,
-			PAGE_ALIGN(size_pwrlevels), DMA_BIDIRECTIONAL);
+	/* Initialize context aware feature, if enabled. */
+	if (priv->ctxt_aware_enable) {
+		if (qcom_scm_dcvs_ca_available()) {
+			u32 params[] = { priv->bin.ctxt_aware_target_pwrlevel,
+					 priv->bin.ctxt_aware_busy_penalty };
 
-		ret = qcom_scm_dcvs_init_v2(paddr, size_pwrlevels, version);
-		if (!ret)
-			priv->is_64 = true;
-		if (!qtee_shmbridge_is_enabled())
-			kfree_sensitive(tz_buf);
-		else
-			qtee_shmbridge_free_shm(&shm);
-	} else
-		ret = -EINVAL;
-
-	 /* Initialize context aware feature, if enabled. */
-	if (!ret && priv->ctxt_aware_enable) {
-		if (priv->is_64 && qcom_scm_dcvs_ca_available()) {
-			ret = tz_init_ca(dev, priv);
+			ret = qcom_scm_dcvs_init_ca_v2(params, sizeof(params));
 			/*
 			 * If context aware feature initialization fails,
 			 * just print an error message and return
@@ -427,9 +359,9 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 static int __tz_init(struct devfreq *devfreq)
 {
 	struct devfreq_msm_adreno_tz_data *priv;
-	unsigned int tz_pwrlevels[MSM_ADRENO_MAX_PWRLEVELS + 1];
+	u32 tz_pwrlevels[MSM_ADRENO_MAX_PWRLEVELS + 1] = {};
 	int i, out, ret;
-	unsigned int version;
+	int version;
 
 	struct msm_adreno_extended_profile *gpu_profile = container_of(
 					(devfreq->profile),
@@ -456,11 +388,10 @@ static int __tz_init(struct devfreq *devfreq)
 		return -EINVAL;
 	}
 
-	ret = tz_init(&devfreq->dev, priv, tz_pwrlevels, sizeof(tz_pwrlevels),
-			&version, sizeof(version));
+	ret = tz_init(priv, tz_pwrlevels, sizeof(tz_pwrlevels), &version);
 	if (ret != 0 || version > MAX_TZ_VERSION) {
-		pr_err(TAG "tz_init failed\n");
-		return ret;
+		pr_err(TAG "tz_init failed: ret=%d version=%d\n", ret, ret ? -1 : version);
+		return ret ?: -EPROTONOSUPPORT;
 	}
 
 	return 0;

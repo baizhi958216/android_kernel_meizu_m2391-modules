@@ -7,7 +7,9 @@
 #include <linux/devfreq.h>
 #include <linux/slab.h>
 
-#include "governor.h"
+#include <linux/of.h>
+
+#include "kgsl_device.h"
 #include "msm_adreno_devfreq.h"
 
 #define MIN_BUSY                1000
@@ -41,7 +43,7 @@ static ssize_t cur_ab_show(struct device *dev,
 					struct msm_busmon_extended_profile,
 					profile);
 
-	return scnprintf(buf, PAGE_SIZE, "%llu\n", bus_profile->ab_mbytes);
+	return scnprintf(buf, PAGE_SIZE, "%lu\n", bus_profile->ab_mbytes);
 }
 
 static ssize_t sampling_interval_show(struct device *dev,
