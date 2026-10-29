@@ -12,12 +12,15 @@
 #include <linux/firmware.h>
 #include <linux/ktime.h>
 #include <linux/of_address.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
+#include <linux/iopoll.h>
 #include <linux/regulator/consumer.h>
 #include <linux/slab.h>
 #include <linux/soc/qcom/mdt_loader.h>
 #include <linux/string.h>
+#if IS_ENABLED(CONFIG_QCOM_VA_MINIDUMP)
 #include <soc/qcom/minidump.h>
+#endif
 
 #include "adreno.h"
 #include "kgsl_util.h"
@@ -159,9 +162,12 @@ out:
 
 int kgsl_zap_shader_unload(struct device *dev)
 {
-	int ret;
+	int ret, status;
 
-	ret = qcom_scm_pas_shutdown_retry(GPU_PASID);
+	ret = read_poll_timeout(qcom_scm_pas_shutdown, status, !status,
+				100000, 5000000, false, GPU_PASID);
+	if (ret)
+		ret = status;
 	if (ret)
 		dev_err(dev, "Error %d while PAS shutdown\n", ret);
 
