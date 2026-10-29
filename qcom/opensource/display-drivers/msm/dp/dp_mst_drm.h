@@ -13,6 +13,8 @@
 #include "dp_display.h"
 
 #if IS_ENABLED(CONFIG_DRM_MSM_DP_MST)
+bool dp_mst_commit_has_topology(struct drm_atomic_state *state);
+int dp_mst_root_atomic_check(struct drm_connector_state *state);
 
 /**
  * dp_mst_drm_bridge_init - initialize mst bridge
@@ -46,6 +48,16 @@ void dp_mst_deinit(struct dp_display *dp_display);
  */
 void dp_mst_clear_edid_cache(void *dp_display);
 #else
+static inline bool dp_mst_commit_has_topology(struct drm_atomic_state *state)
+{
+	return false;
+}
+
+static inline int dp_mst_root_atomic_check(struct drm_connector_state *state)
+{
+	return 0;
+}
+
 
 static inline int dp_mst_drm_bridge_init(void *display,
 	struct drm_encoder *encoder)

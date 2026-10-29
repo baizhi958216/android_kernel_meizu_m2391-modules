@@ -550,7 +550,7 @@ int dp_connector_atomic_check(struct drm_connector *connector,
 		sde_conn->colorspace_updated = true;
 	}
 
-	return 0;
+	return dp_mst_root_atomic_check(c_state);
 }
 
 int dp_connector_get_modes(struct drm_connector *connector,

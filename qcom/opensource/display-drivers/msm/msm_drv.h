@@ -1025,6 +1025,7 @@ struct msm_drm_private {
 
 	/* crtcs pending async atomic updates: */
 	uint32_t pending_crtcs;
+	bool mst_commit_pending;
 	uint32_t pending_planes;
 	wait_queue_head_t pending_crtcs_event;
 

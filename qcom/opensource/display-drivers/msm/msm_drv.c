@@ -55,6 +55,7 @@
 #endif
 
 #include "msm_drv.h"
+#include <drm/display/drm_dp_mst_helper.h>
 #include "msm_gem.h"
 #include "msm_kms.h"
 #include "msm_mmu.h"
@@ -156,14 +157,16 @@ static void msm_drm_display_thread_priority_worker(struct kthread_work *work)
 static int msm_atomic_check(struct drm_device *dev,
 			    struct drm_atomic_state *state)
 {
-	struct msm_drm_private *priv;
+	struct msm_drm_private *priv = dev->dev_private;
+	int ret;
 
-	priv = dev->dev_private;
-	if (priv && priv->kms && priv->kms->funcs &&
-			priv->kms->funcs->atomic_check)
-		return priv->kms->funcs->atomic_check(priv->kms, state);
-
-	return drm_atomic_helper_check(dev, state);
+	if (priv && priv->kms && priv->kms->funcs && priv->kms->funcs->atomic_check)
+		ret = priv->kms->funcs->atomic_check(priv->kms, state);
+	else
+		ret = drm_atomic_helper_check(dev, state);
+	if (!ret && IS_ENABLED(CONFIG_DRM_MSM_DP_MST))
+		ret = drm_dp_mst_atomic_check(state);
+	return ret;
 }
 
 static const struct drm_mode_config_funcs mode_config_funcs = {

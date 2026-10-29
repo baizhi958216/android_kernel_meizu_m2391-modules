@@ -23,6 +23,8 @@
 
 #include "msm_drv.h"
 #include "msm_gem.h"
+#include "dp/dp_mst_drm.h"
+#include <drm/display/drm_dp_mst_helper.h>
 #include "msm_kms.h"
 #include "sde_trace.h"
 #include <drm/drm_atomic_uapi.h>
@@ -35,6 +37,7 @@ struct msm_commit {
 	uint32_t crtc_mask;
 	uint32_t plane_mask;
 	bool nonblock;
+	bool mst_commit;
 	struct kthread_work commit_work;
 };
 
@@ -162,6 +165,8 @@ static void commit_destroy(struct msm_commit *c)
 	DBG("end: %08x", crtc_mask);
 	priv->pending_crtcs &= ~crtc_mask;
 	priv->pending_planes &= ~plane_mask;
+	if (c->mst_commit)
+		priv->mst_commit_pending = false;
 	wake_up_all_locked(&priv->pending_crtcs_event);
 	spin_unlock(&priv->pending_crtcs_event.lock);
 
@@ -562,6 +567,8 @@ static void complete_commit(struct msm_commit *c)
 	struct msm_kms *kms = priv->kms;
 
 	drm_atomic_helper_wait_for_fences(dev, state, false);
+	if (c->mst_commit)
+		drm_dp_mst_atomic_wait_for_dependencies(state);
 
 	kms->funcs->prepare_commit(kms, state);
 
@@ -744,6 +751,9 @@ int msm_atomic_commit(struct drm_device *dev,
 	for_each_new_plane_in_state(state, plane, new_plane_state, i)
 		c->plane_mask |= drm_plane_mask(plane);
 
+	/* Distinct CRTCs can replace payloads on the same physical DP link. */
+	c->mst_commit = dp_mst_commit_has_topology(state);
+
 	/* Protection for prepare_fence callback */
 retry:
 	ret = drm_modeset_lock(&state->dev->mode_config.connection_mutex,
@@ -763,11 +773,14 @@ retry:
 	spin_lock(&priv->pending_crtcs_event.lock);
 	ret = wait_event_interruptible_locked(priv->pending_crtcs_event,
 			!(priv->pending_crtcs & c->crtc_mask) &&
-			!(priv->pending_planes & c->plane_mask));
+			!(priv->pending_planes & c->plane_mask) &&
+			!(c->mst_commit && priv->mst_commit_pending));
 	if (ret == 0) {
 		DBG("start: %08x", c->crtc_mask);
 		priv->pending_crtcs |= c->crtc_mask;
 		priv->pending_planes |= c->plane_mask;
+		if (c->mst_commit)
+			priv->mst_commit_pending = true;
 	}
 	spin_unlock(&priv->pending_crtcs_event.lock);
 
