@@ -96,6 +96,7 @@ void hw_fence_utils_process_doorbell_mask(struct hw_fence_driver_data *drv_data,
  *
  * Returns zero if success, otherwise returns negative error code.
  */
+int hw_fence_utils_register_rm(struct hw_fence_driver_data *drv_data);
 int hw_fence_utils_alloc_mem(struct hw_fence_driver_data *hw_fence_drv_data);
 
 /**

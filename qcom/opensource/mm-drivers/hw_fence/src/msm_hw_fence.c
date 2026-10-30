@@ -15,7 +15,7 @@
 #include "hw_fence_drv_ipc.h"
 
 struct hw_fence_driver_data *hw_fence_drv_data;
-static bool hw_fence_driver_enable;
+static bool hw_fence_driver_enable = true;
 
 void *msm_hw_fence_register(enum hw_fence_client_id client_id_ext,
 	struct msm_hw_fence_mem_addr *mem_descriptor)
@@ -173,7 +173,7 @@ int msm_hw_fence_create(void *client_handle,
 		return -EINVAL;
 	}
 
-	if (!hw_fence_drv_data->vm_ready) {
+	if (!READ_ONCE(hw_fence_drv_data->vm_ready)) {
 		HWFNC_DBG_H("VM not ready, cannot create fence\n");
 		return -EAGAIN;
 	}
@@ -237,7 +237,7 @@ int msm_hw_fence_destroy(void *client_handle,
 
 	/* This Fence not a HW-Fence */
 	if (!test_bit(MSM_HW_FENCE_FLAG_ENABLED_BIT, &fence->flags)) {
-		HWFNC_ERR("DMA Fence is not a HW Fence flags:0x%llx\n", fence->flags);
+		HWFNC_ERR("DMA Fence is not a HW Fence flags:0x%lx\n", fence->flags);
 		return -EINVAL;
 	}
 
@@ -304,7 +304,7 @@ int msm_hw_fence_wait_update_v2(void *client_handle,
 		return -EINVAL;
 	}
 
-	if (!hw_fence_drv_data->vm_ready) {
+	if (!READ_ONCE(hw_fence_drv_data->vm_ready)) {
 		HWFNC_DBG_H("VM not ready, cannot destroy fence\n");
 		return -EAGAIN;
 	}
@@ -381,7 +381,7 @@ int msm_hw_fence_reset_client(void *client_handle, u32 reset_flags)
 		return -EINVAL;
 	}
 
-	if (!hw_fence_drv_data->vm_ready) {
+	if (!READ_ONCE(hw_fence_drv_data->vm_ready)) {
 		HWFNC_DBG_H("VM not ready, cannot reset client\n");
 		return -EAGAIN;
 	}
@@ -426,12 +426,12 @@ int msm_hw_fence_update_txq(void *client_handle, u64 handle, u64 flags, u32 erro
 	struct msm_hw_fence_client *hw_fence_client;
 
 	if (IS_ERR_OR_NULL(hw_fence_drv_data) || !hw_fence_drv_data->resources_ready ||
-			!hw_fence_drv_data->vm_ready) {
+			!READ_ONCE(hw_fence_drv_data->vm_ready)) {
 		HWFNC_ERR("hw fence driver  or vm not ready\n");
 		return -EAGAIN;
 	} else if (IS_ERR_OR_NULL(client_handle) ||
 			(handle >= hw_fence_drv_data->hw_fences_tbl_cnt)) {
-		HWFNC_ERR("Invalid handle:%d or client handle:%d max:%d\n", handle,
+		HWFNC_ERR("Invalid handle:%llu or client handle:%d max:%d\n", handle,
 			IS_ERR_OR_NULL(client_handle), hw_fence_drv_data->hw_fences_tbl_cnt);
 		return -EINVAL;
 	}
@@ -455,7 +455,7 @@ int msm_hw_fence_trigger_signal(void *client_handle,
 	struct msm_hw_fence_client *hw_fence_client;
 
 	if (IS_ERR_OR_NULL(hw_fence_drv_data) || !hw_fence_drv_data->resources_ready
-			|| !hw_fence_drv_data->vm_ready) {
+			|| !READ_ONCE(hw_fence_drv_data->vm_ready)) {
 		HWFNC_ERR("hw fence driver or vm not ready\n");
 		return -EAGAIN;
 	} else if (IS_ERR_OR_NULL(client_handle)) {
@@ -495,7 +495,7 @@ static int msm_hw_fence_probe_init(struct platform_device *pdev)
 
 	HWFNC_DBG_H("+\n");
 
-	hw_fence_drv_data = kzalloc(sizeof(*hw_fence_drv_data), GFP_KERNEL);
+	hw_fence_drv_data = devm_kzalloc(&pdev->dev, sizeof(*hw_fence_drv_data), GFP_KERNEL);
 	if (!hw_fence_drv_data)
 		return -ENOMEM;
 
@@ -518,7 +518,6 @@ static int msm_hw_fence_probe_init(struct platform_device *pdev)
 
 error:
 	dev_set_drvdata(&pdev->dev, NULL);
-	kfree(hw_fence_drv_data);
 	hw_fence_drv_data = (void *) -EPROBE_DEFER;
 
 	HWFNC_ERR("error %d\n", rc);
@@ -555,28 +554,10 @@ err_exit:
 	return rc;
 }
 
-static int msm_hw_fence_remove(struct platform_device *pdev)
+static void msm_hw_fence_remove(struct platform_device *pdev)
 {
-	HWFNC_DBG_H("+\n");
-
-	if (!pdev) {
-		HWFNC_ERR("null platform dev\n");
-		return -EINVAL;
-	}
-
-	hw_fence_drv_data = dev_get_drvdata(&pdev->dev);
-	if (!hw_fence_drv_data) {
-		HWFNC_ERR("null driver data\n");
-		return -EINVAL;
-	}
-
-	dev_set_drvdata(&pdev->dev, NULL);
-	kfree(hw_fence_drv_data);
-	hw_fence_drv_data = (void *) -EPROBE_DEFER;
-
-	HWFNC_DBG_H("-\n");
-
-	return 0;
+	hw_fence_drv_data->resources_ready = false;
+	hw_fence_drv_data = ERR_PTR(-EPROBE_DEFER);
 }
 
 static const struct of_device_id msm_hw_fence_dt_match[] = {
@@ -584,11 +565,14 @@ static const struct of_device_id msm_hw_fence_dt_match[] = {
 	{}
 };
 
+MODULE_DEVICE_TABLE(of, msm_hw_fence_dt_match);
+
 static struct platform_driver msm_hw_fence_driver = {
 	.probe = msm_hw_fence_probe,
 	.remove = msm_hw_fence_remove,
 	.driver = {
 		.name = "msm-hw-fence",
+		.suppress_bind_attrs = true,
 		.of_match_table = of_match_ptr(msm_hw_fence_dt_match),
 	},
 };

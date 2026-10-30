@@ -345,6 +345,11 @@ struct hw_fence_driver_data {
 	u32 peer_name;
 	struct notifier_block rm_nb;
 	u32 memparcel;
+	u64 owners;
+	u16 owner_vmid;
+	u16 peer_vmid;
+	struct mutex parcel_lock;
+	bool parcel_shared;
 	u32 used_mem_size;
 
 	/* doorbell */
@@ -464,6 +469,7 @@ struct msm_hw_fence {
 	u64 client_data[HW_FENCE_MAX_CLIENTS_WITH_DATA];
 };
 
+int msm_hw_fence_driver_doorbell_sim(u64 db_mask);
 int hw_fence_init(struct hw_fence_driver_data *drv_data);
 int hw_fence_alloc_client_resources(struct hw_fence_driver_data *drv_data,
 	struct msm_hw_fence_client *hw_fence_client,

@@ -8,8 +8,7 @@
 #include <linux/io.h>
 #include <linux/gunyah/gh_rm_drv.h>
 #include <linux/gunyah/gh_dbl.h>
-#include <linux/qcom_scm.h>
-#include <soc/qcom/secure_buffer.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 
 #include "hw_fence_drv_priv.h"
 #include "hw_fence_drv_utils.h"
@@ -141,7 +140,7 @@ static void _unlock(struct hw_fence_driver_data *drv_data, uint64_t *lock)
 		 */
 #if IS_ENABLED(CONFIG_DEBUG_FS)
 		drv_data->debugfs_data.lock_wake_cnt++;
-		HWFNC_DBG_LOCK("triggering ipc to unblock SVM lock_val:%d cnt:%llu\n", lock_val,
+		HWFNC_DBG_LOCK("triggering ipc to unblock SVM lock_val:%llu cnt:%llu\n", lock_val,
 			drv_data->debugfs_data.lock_wake_cnt);
 #endif
 		hw_fence_ipcc_trigger_signal(drv_data,
@@ -218,7 +217,7 @@ static inline int _process_gfx_client_loopback(struct hw_fence_driver_data *drv_
 			HWFNC_ERR("unable to read gfx rxq\n");
 			break;
 		}
-		HWFNC_DBG_L("GFX loopback rxq read: hash:%llu ctx:%llu seq:%llu f:%llu e:%lu\n",
+		HWFNC_DBG_L("GFX loopback rxq read: hash:%llu ctx:%llu seq:%llu f:%llu e:%u\n",
 			payload.hash, payload.ctxt_id, payload.seqno, payload.flags, payload.error);
 	}
 
@@ -307,14 +306,19 @@ static void _hw_fence_cb(int irq, void *data)
 	hw_fence_utils_process_doorbell_mask(drv_data, clear_flags);
 }
 
+static void hw_fence_release_doorbell(void *doorbell)
+{
+	gh_dbl_rx_unregister(doorbell);
+}
+
 int hw_fence_utils_init_virq(struct hw_fence_driver_data *drv_data)
 {
 	struct device_node *node = drv_data->dev->of_node;
-	struct device_node *node_compat;
+	struct device_node *node_compat __free(device_node) = NULL;
 	const char *compat = "qcom,msm-hw-fence-db";
 	int ret;
 
-	node_compat = of_find_compatible_node(node, NULL, compat);
+	node_compat = of_get_compatible_child(node, compat);
 	if (!node_compat) {
 		HWFNC_ERR("Failed to find dev node with compat:%s\n", compat);
 		return -EINVAL;
@@ -329,125 +333,130 @@ int hw_fence_utils_init_virq(struct hw_fence_driver_data *drv_data)
 	HWFNC_DBG_IRQ("registering doorbell db_label:%d\n", drv_data->db_label);
 	drv_data->rx_dbl = gh_dbl_rx_register(drv_data->db_label, _hw_fence_cb, drv_data);
 	if (IS_ERR_OR_NULL(drv_data->rx_dbl)) {
-		ret = PTR_ERR(drv_data->rx_dbl);
+		ret = drv_data->rx_dbl ? PTR_ERR(drv_data->rx_dbl) : -ENODEV;
 		HWFNC_ERR("Failed to register doorbell\n");
 		return ret;
 	}
 
-	return 0;
+	return devm_add_action_or_reset(drv_data->dev, hw_fence_release_doorbell, drv_data->rx_dbl);
+}
+
+static int hw_fence_reclaim(struct hw_fence_driver_data *drv_data)
+{
+	struct qcom_scm_vmperm owner = { .vmid = drv_data->owner_vmid, .perm = QCOM_SCM_PERM_RWX };
+	int ret;
+
+	WRITE_ONCE(drv_data->vm_ready, false);
+	if (drv_data->parcel_shared) {
+		ret = gh_rm_mem_reclaim(drv_data->memparcel, 0);
+		if (ret)
+			return ret;
+		drv_data->parcel_shared = false;
+	}
+	if (!drv_data->owners)
+		return 0;
+	ret = qcom_scm_assign_mem(drv_data->res.start, resource_size(&drv_data->res),
+				  &drv_data->owners, &owner, 1);
+	if (!ret)
+		drv_data->owners = 0;
+	return ret;
 }
 
 static int hw_fence_gunyah_share_mem(struct hw_fence_driver_data *drv_data,
-				gh_vmid_t self, gh_vmid_t peer)
+				    gh_vmid_t self, gh_vmid_t peer)
 {
-	struct qcom_scm_vmperm src_vmlist[] = {{self, PERM_READ | PERM_WRITE | PERM_EXEC}};
-	struct qcom_scm_vmperm dst_vmlist[] = {{self, PERM_READ | PERM_WRITE},
-					       {peer, PERM_READ | PERM_WRITE}};
-	int srcvmids = BIT(src_vmlist[0].vmid);
-	int dstvmids = BIT(dst_vmlist[0].vmid) | BIT(dst_vmlist[1].vmid);
-	struct gh_acl_desc *acl;
-	struct gh_sgl_desc *sgl;
+	struct qcom_scm_vmperm dst[] = { { self, QCOM_SCM_PERM_RW }, { peer, QCOM_SCM_PERM_RW } };
+	struct gh_acl_desc *acl __free(kfree) = NULL;
+	struct gh_sgl_desc *sgl __free(kfree) = NULL;
+	u64 owners;
 	int ret;
 
-	ret = qcom_scm_assign_mem(drv_data->res.start, resource_size(&drv_data->res), &srcvmids,
-			dst_vmlist, ARRAY_SIZE(dst_vmlist));
-	if (ret) {
-		HWFNC_ERR("%s: qcom_scm_assign_mem failed addr=%x size=%u err=%d\n",
-			__func__, drv_data->res.start, drv_data->size, ret);
+	if (self >= 64 || peer >= 64 || self == peer)
+		return -EINVAL;
+	if (READ_ONCE(drv_data->vm_ready))
+		return 0;
+	ret = hw_fence_reclaim(drv_data);
+	if (ret)
 		return ret;
-	}
 
-	acl = kzalloc(offsetof(struct gh_acl_desc, acl_entries[2]), GFP_KERNEL);
-	if (!acl)
+	acl = kzalloc(struct_size(acl, acl_entries, 2), GFP_KERNEL);
+	sgl = kzalloc(struct_size(sgl, sgl_entries, 1), GFP_KERNEL);
+	if (!acl || !sgl)
 		return -ENOMEM;
-	sgl = kzalloc(offsetof(struct gh_sgl_desc, sgl_entries[1]), GFP_KERNEL);
-	if (!sgl) {
-		kfree(acl);
-		return -ENOMEM;
-	}
 	acl->n_acl_entries = 2;
-	acl->acl_entries[0].vmid = (u16)self;
+	acl->acl_entries[0].vmid = self;
 	acl->acl_entries[0].perms = GH_RM_ACL_R | GH_RM_ACL_W;
-	acl->acl_entries[1].vmid = (u16)peer;
+	acl->acl_entries[1].vmid = peer;
 	acl->acl_entries[1].perms = GH_RM_ACL_R | GH_RM_ACL_W;
-
 	sgl->n_sgl_entries = 1;
 	sgl->sgl_entries[0].ipa_base = drv_data->res.start;
 	sgl->sgl_entries[0].size = resource_size(&drv_data->res);
 
-	ret = gh_rm_mem_share(GH_RM_MEM_TYPE_NORMAL, 0, drv_data->label,
-			acl, sgl, NULL, &drv_data->memparcel);
+	owners = BIT_ULL(self);
+	ret = qcom_scm_assign_mem(drv_data->res.start, resource_size(&drv_data->res),
+				  &owners, dst, ARRAY_SIZE(dst));
+	if (ret)
+		return ret;
+
+	drv_data->owner_vmid = self;
+	drv_data->peer_vmid = peer;
+	drv_data->owners = owners;
+	ret = gh_rm_mem_share(GH_RM_MEM_TYPE_NORMAL, 0, drv_data->label, acl, sgl,
+			      NULL, &drv_data->memparcel);
 	if (ret) {
-		HWFNC_ERR("%s: gh_rm_mem_share failed addr=%x size=%u err=%d\n",
-			__func__, drv_data->res.start, drv_data->size, ret);
-		/* Attempt to give resource back to HLOS */
-		qcom_scm_assign_mem(drv_data->res.start, resource_size(&drv_data->res),
-				&dstvmids, src_vmlist, ARRAY_SIZE(src_vmlist));
-		ret = -EPROBE_DEFER;
+		if (hw_fence_reclaim(drv_data))
+			dev_err(drv_data->dev, "failed to restore HW fence memory ownership\n");
+		return ret;
 	}
-
-	kfree(acl);
-	kfree(sgl);
-
-	return ret;
+	drv_data->parcel_shared = true;
+	return 0;
 }
 
 static int hw_fence_rm_cb(struct notifier_block *nb, unsigned long cmd, void *data)
 {
-	struct gh_rm_notif_vm_status_payload *vm_status_payload;
-	struct hw_fence_driver_data *drv_data;
-	gh_vmid_t peer_vmid;
-	gh_vmid_t self_vmid;
+	struct hw_fence_driver_data *drv_data = container_of(nb, struct hw_fence_driver_data, rm_nb);
+	struct gh_rm_notif_vm_status_payload *status = data;
+	gh_vmid_t self, peer;
+	int ret = 0;
 
-	drv_data = container_of(nb, struct hw_fence_driver_data, rm_nb);
-
-	HWFNC_DBG_INIT("cmd:0x%lx ++\n", cmd);
 	if (cmd != GH_RM_NOTIF_VM_STATUS)
-		goto end;
-
-	vm_status_payload = data;
-	HWFNC_DBG_INIT("payload vm_status:%d\n", vm_status_payload->vm_status);
-	if (vm_status_payload->vm_status != GH_RM_VM_STATUS_READY &&
-	    vm_status_payload->vm_status != GH_RM_VM_STATUS_RESET)
-		goto end;
-
-	if (gh_rm_get_vmid(drv_data->peer_name, &peer_vmid))
-		goto end;
-
-	if (gh_rm_get_vmid(GH_PRIMARY_VM, &self_vmid))
-		goto end;
-
-	if (peer_vmid != vm_status_payload->vmid)
-		goto end;
-
-	switch (vm_status_payload->vm_status) {
-	case GH_RM_VM_STATUS_READY:
-		HWFNC_DBG_INIT("init mem\n");
-		if (hw_fence_gunyah_share_mem(drv_data, self_vmid, peer_vmid))
-			HWFNC_ERR("failed to share memory\n");
-		else
-			drv_data->vm_ready = true;
-		break;
-	case GH_RM_VM_STATUS_RESET:
-		HWFNC_DBG_INIT("reset\n");
-		break;
+		return NOTIFY_DONE;
+	mutex_lock(&drv_data->parcel_lock);
+	if (status->vm_status == GH_RM_VM_STATUS_RESET) {
+		if (drv_data->owners && drv_data->peer_vmid == status->vmid)
+			ret = hw_fence_reclaim(drv_data);
+	} else if (status->vm_status == GH_RM_VM_STATUS_READY &&
+		   !gh_rm_get_vmid(drv_data->peer_name, &peer) && peer == status->vmid &&
+		   !gh_rm_get_vmid(GH_PRIMARY_VM, &self)) {
+		ret = hw_fence_gunyah_share_mem(drv_data, self, peer);
+		WRITE_ONCE(drv_data->vm_ready, !ret);
 	}
-
-end:
+	mutex_unlock(&drv_data->parcel_lock);
+	if (ret)
+		dev_err(drv_data->dev, "VM %u fence memory transition failed: %d\n", status->vmid, ret);
 	return NOTIFY_DONE;
+}
+
+static void hw_fence_unregister_rm(void *data)
+{
+	struct hw_fence_driver_data *drv_data = data;
+
+	gh_rm_unregister_notifier(&drv_data->rm_nb);
+	if (hw_fence_reclaim(drv_data))
+		dev_err(drv_data->dev, "failed to reclaim HW fence memory\n");
 }
 
 /* Allocates carved-out mapped memory */
 int hw_fence_utils_alloc_mem(struct hw_fence_driver_data *drv_data)
 {
 	struct device_node *node = drv_data->dev->of_node;
-	struct device_node *node_compat;
+	struct device_node *node_compat __free(device_node) = NULL;
 	const char *compat = "qcom,msm-hw-fence-mem";
 	struct device *dev = drv_data->dev;
 	struct device_node *np;
-	int notifier_ret, ret;
+	int ret;
 
-	node_compat = of_find_compatible_node(node, NULL, compat);
+	node_compat = of_get_compatible_child(node, compat);
 	if (!node_compat) {
 		HWFNC_ERR("Failed to find dev node with compat:%s\n", compat);
 		return -EINVAL;
@@ -480,36 +489,61 @@ int hw_fence_utils_alloc_mem(struct hw_fence_driver_data *drv_data)
 	}
 	drv_data->size = resource_size(&drv_data->res);
 	if (drv_data->size < drv_data->used_mem_size) {
-		HWFNC_ERR("0x%x size of carved-out memory region is less than required size:0x%x\n",
+		HWFNC_ERR("0x%zx size of carved-out memory region is less than required size:0x%x\n",
 			drv_data->size, drv_data->used_mem_size);
 		return -ENOMEM;
 	}
 
-	HWFNC_DBG_INIT("io_mem_base:0x%x start:0x%x end:0x%x size:0x%x name:%s\n",
+	HWFNC_DBG_INIT("io_mem_base:%pK start:0x%llx end:0x%llx size:0x%zx name:%s\n",
 		drv_data->io_mem_base, drv_data->res.start,
 		drv_data->res.end, drv_data->size, drv_data->res.name);
 
 	memset_io(drv_data->io_mem_base, 0x0, drv_data->size);
 
-	/* Register memory with HYP */
-	ret = of_property_read_u32(node_compat, "peer-name", &drv_data->peer_name);
-	if (ret)
-		drv_data->peer_name = GH_SELF_VM;
-
-	drv_data->rm_nb.notifier_call = hw_fence_rm_cb;
-	drv_data->rm_nb.priority = INT_MAX;
-	notifier_ret = gh_rm_register_notifier(&drv_data->rm_nb);
-	HWFNC_DBG_INIT("notifier: ret:%d peer_name:%d notifier_ret:%d\n", ret,
-		drv_data->peer_name, notifier_ret);
-	if (notifier_ret) {
-		HWFNC_ERR("fail to register notifier ret:%d\n", notifier_ret);
-		return -EPROBE_DEFER;
-	}
-
-	return 0;
+	return of_property_read_u32(node_compat, "peer-name", &drv_data->peer_name);
 }
 
-char *_get_mem_reserve_type(enum hw_fence_mem_reserve type)
+int hw_fence_utils_register_rm(struct hw_fence_driver_data *drv_data)
+{
+	struct gh_vm_status *status;
+	gh_vmid_t self, peer;
+	int ret;
+
+	ret = gh_rm_get_vmid(GH_PRIMARY_VM, &self);
+	if (ret)
+		return ret;
+
+	mutex_init(&drv_data->parcel_lock);
+	drv_data->rm_nb.notifier_call = hw_fence_rm_cb;
+	/* Let the RM populate the VM name table before consuming READY. */
+	drv_data->rm_nb.priority = -1;
+	ret = gh_rm_register_notifier(&drv_data->rm_nb);
+	if (ret)
+		return ret;
+	ret = devm_add_action_or_reset(drv_data->dev, hw_fence_unregister_rm, drv_data);
+	if (ret)
+		return ret;
+
+	/* A modular provider can probe after the peer's READY notification. */
+	mutex_lock(&drv_data->parcel_lock);
+	if (!gh_rm_get_vmid(drv_data->peer_name, &peer)) {
+		status = gh_rm_vm_get_status(peer);
+		if (IS_ERR_OR_NULL(status)) {
+			ret = status ? PTR_ERR(status) : -EIO;
+		} else {
+			if (status->vm_status == GH_RM_VM_STATUS_READY ||
+			    status->vm_status == GH_RM_VM_STATUS_RUNNING) {
+				ret = hw_fence_gunyah_share_mem(drv_data, self, peer);
+				WRITE_ONCE(drv_data->vm_ready, !ret);
+			}
+			kfree(status);
+		}
+	}
+	mutex_unlock(&drv_data->parcel_lock);
+	return ret;
+}
+
+static const char *_get_mem_reserve_type(enum hw_fence_mem_reserve type)
 {
 	switch (type) {
 	case HW_FENCE_MEM_RESERVE_CTRL_QUEUE:
@@ -573,20 +607,20 @@ int hw_fence_utils_reserve_mem(struct hw_fence_driver_data *drv_data,
 		break;
 	}
 
-	if (start_offset + *size > drv_data->size) {
-		HWFNC_ERR("reservation request:%lu exceeds total size:%d\n",
+	if (start_offset > drv_data->size || *size > drv_data->size - start_offset) {
+		HWFNC_ERR("reservation request:%u exceeds total size:%zu\n",
 			start_offset + *size, drv_data->size);
 		return -ENOMEM;
 	}
 
-	HWFNC_DBG_INIT("type:%s (%d) io_mem_base:0x%x start:0x%x start_offset:%lu size:0x%x\n",
+	HWFNC_DBG_INIT("type:%s (%d) io_mem_base:%pK start:0x%llx start_offset:%u size:0x%x\n",
 		_get_mem_reserve_type(type), type, drv_data->io_mem_base, drv_data->res.start,
 		start_offset, *size);
 
 
 	*phys = drv_data->res.start + (phys_addr_t)start_offset;
 	*pa = (drv_data->io_mem_base + start_offset); /* offset is in bytes */
-	HWFNC_DBG_H("phys:0x%x pa:0x%pK\n", *phys, *pa);
+	HWFNC_DBG_H("phys:0x%llx pa:0x%pK\n", *phys, *pa);
 
 exit:
 	return ret;
@@ -613,7 +647,7 @@ static int _parse_client_queue_dt_props_indv(struct hw_fence_driver_data *drv_da
 		desc->queue_entries = tmp[2];
 
 		if (tmp[3] > 1) {
-			HWFNC_ERR("%s invalid skip_txq_wr_idx prop:%lu\n", desc->name, tmp[3]);
+			HWFNC_ERR("%s invalid skip_txq_wr_idx prop:%u\n", desc->name, tmp[3]);
 			return -EINVAL;
 		}
 		desc->skip_txq_wr_idx = tmp[3];
@@ -621,14 +655,14 @@ static int _parse_client_queue_dt_props_indv(struct hw_fence_driver_data *drv_da
 
 	if (desc->clients_num > desc->max_clients_num || !desc->queues_num ||
 			desc->queues_num > HW_FENCE_CLIENT_QUEUES || !desc->queue_entries) {
-		HWFNC_ERR("%s invalid dt: clients_num:%lu queues_num:%lu, queue_entries:%lu\n",
+		HWFNC_ERR("%s invalid dt: clients_num:%u queues_num:%u, queue_entries:%u\n",
 			desc->name, desc->clients_num, desc->queues_num, desc->queue_entries);
 		return -EINVAL;
 	}
 
 	/* compute mem_size */
 	if (desc->queue_entries >= U32_MAX / HW_FENCE_CLIENT_QUEUE_PAYLOAD) {
-		HWFNC_ERR("%s client queue entries:%lu will overflow client queue size\n",
+		HWFNC_ERR("%s client queue entries:%u will overflow client queue size\n",
 			desc->name, desc->queue_entries);
 		return -EINVAL;
 	}
@@ -636,7 +670,7 @@ static int _parse_client_queue_dt_props_indv(struct hw_fence_driver_data *drv_da
 	queue_size = HW_FENCE_CLIENT_QUEUE_PAYLOAD * desc->queue_entries;
 	if (queue_size >= ((U32_MAX & PAGE_MASK) -
 		HW_FENCE_HFI_CLIENT_HEADERS_SIZE(desc->queues_num)) / desc->queues_num) {
-		HWFNC_ERR("%s client queue size:%lu will overflow client queue mem size\n",
+		HWFNC_ERR("%s client queue size:%u will overflow client queue mem size\n",
 			desc->name, queue_size);
 		return -EINVAL;
 	}
@@ -645,12 +679,12 @@ static int _parse_client_queue_dt_props_indv(struct hw_fence_driver_data *drv_da
 		(queue_size * desc->queues_num));
 
 	if (desc->mem_size > MAX_CLIENT_QUEUE_MEM_SIZE) {
-		HWFNC_ERR("%s client queue mem_size:%lu greater than max client queue size:%lu\n",
+		HWFNC_ERR("%s client queue mem_size:%u greater than max client queue size:%d\n",
 			desc->name, desc->mem_size, MAX_CLIENT_QUEUE_MEM_SIZE);
 		return -EINVAL;
 	}
 
-	HWFNC_DBG_INIT("%s: clients=%lu q_num=%lu q_entries=%lu mem_sz=%lu skips_wr_ptr:%s\n",
+	HWFNC_DBG_INIT("%s: clients=%u q_num=%u q_entries=%u mem_sz=%u skips_wr_ptr:%s\n",
 		desc->name, desc->clients_num, desc->queues_num, desc->queue_entries,
 		desc->mem_size, desc->skip_txq_wr_idx ? "true" : "false");
 
@@ -691,7 +725,7 @@ static int _parse_client_queue_dt_props(struct hw_fence_driver_data *drv_data)
 
 	/* allocate memory for client queue size descriptors */
 	size = drv_data->clients_num * sizeof(struct hw_fence_client_queue_size_desc);
-	drv_data->hw_fence_client_queue_size = kzalloc(size, GFP_KERNEL);
+	drv_data->hw_fence_client_queue_size = devm_kzalloc(drv_data->dev, size, GFP_KERNEL);
 	if (!drv_data->hw_fence_client_queue_size)
 		return -ENOMEM;
 
@@ -710,7 +744,7 @@ static int _parse_client_queue_dt_props(struct hw_fence_driver_data *drv_data)
 				(struct hw_fence_client_queue_size_desc)
 				{desc->queues_num, desc->queue_entries, desc->mem_size,
 				start_offset, desc->skip_txq_wr_idx};
-			HWFNC_DBG_INIT("%s client_id_ext:%lu client_id:%lu start_offset:%lu\n",
+			HWFNC_DBG_INIT("%s client_id_ext:%u client_id:%u start_offset:%u\n",
 				desc->name, client_id_ext, client_id, start_offset);
 			start_offset += desc->mem_size;
 		}
@@ -734,7 +768,7 @@ int hw_fence_utils_parse_dt_props(struct hw_fence_driver_data *drv_data)
 	drv_data->hw_fence_table_entries = val;
 
 	if (drv_data->hw_fence_table_entries >= U32_MAX / sizeof(struct msm_hw_fence)) {
-		HWFNC_ERR("table entries:%lu will overflow table size\n",
+		HWFNC_ERR("table entries:%u will overflow table size\n",
 			drv_data->hw_fence_table_entries);
 		return -EINVAL;
 	}
@@ -751,7 +785,7 @@ int hw_fence_utils_parse_dt_props(struct hw_fence_driver_data *drv_data)
 	/* ctrl queues init */
 
 	if (drv_data->hw_fence_queue_entries >= U32_MAX / HW_FENCE_CTRL_QUEUE_PAYLOAD) {
-		HWFNC_ERR("queue entries:%lu will overflow ctrl queue size\n",
+		HWFNC_ERR("queue entries:%u will overflow ctrl queue size\n",
 			drv_data->hw_fence_queue_entries);
 		return -EINVAL;
 	}
@@ -760,7 +794,7 @@ int hw_fence_utils_parse_dt_props(struct hw_fence_driver_data *drv_data)
 
 	if (drv_data->hw_fence_ctrl_queue_size >= (U32_MAX - HW_FENCE_HFI_CTRL_HEADERS_SIZE) /
 			HW_FENCE_CTRL_QUEUES) {
-		HWFNC_ERR("queue size:%lu will overflow ctrl queue mem size\n",
+		HWFNC_ERR("queue size:%u will overflow ctrl queue mem size\n",
 			drv_data->hw_fence_ctrl_queue_size);
 		return -EINVAL;
 	}
@@ -778,16 +812,16 @@ int hw_fence_utils_parse_dt_props(struct hw_fence_driver_data *drv_data)
 	/* allocate clients */
 
 	size = drv_data->clients_num * sizeof(struct msm_hw_fence_client *);
-	drv_data->clients = kzalloc(size, GFP_KERNEL);
+	drv_data->clients = devm_kzalloc(drv_data->dev, size, GFP_KERNEL);
 	if (!drv_data->clients)
 		return -ENOMEM;
 
-	HWFNC_DBG_INIT("table: entries=%lu mem_size=%lu queue: entries=%lu\b",
+	HWFNC_DBG_INIT("table: entries=%u mem_size=%u queue: entries=%u\b",
 		drv_data->hw_fence_table_entries, drv_data->hw_fence_mem_fences_table_size,
 		drv_data->hw_fence_queue_entries);
-	HWFNC_DBG_INIT("ctrl queue: size=%lu mem_size=%lu\b",
+	HWFNC_DBG_INIT("ctrl queue: size=%u mem_size=%u\b",
 		drv_data->hw_fence_ctrl_queue_size, drv_data->hw_fence_mem_ctrl_queues_size);
-	HWFNC_DBG_INIT("clients_num: %lu, total_mem_size:%lu\n", drv_data->clients_num,
+	HWFNC_DBG_INIT("clients_num: %u, total_mem_size:%u\n", drv_data->clients_num,
 		drv_data->used_mem_size);
 
 	return 0;
@@ -817,7 +851,7 @@ int hw_fence_utils_map_ipcc(struct hw_fence_driver_data *drv_data)
 	}
 	drv_data->ipcc_io_mem = ptr;
 
-	HWFNC_DBG_H("mapped address:0x%x size:0x%x io_mem:0x%pK\n",
+	HWFNC_DBG_H("mapped address:0x%llx size:0x%x io_mem:0x%pK\n",
 		drv_data->ipcc_reg_base, drv_data->ipcc_size,
 		drv_data->ipcc_io_mem);
 
