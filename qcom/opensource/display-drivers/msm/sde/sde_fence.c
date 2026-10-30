@@ -6,14 +6,12 @@
 
 #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
 #include <linux/sync_file.h>
+#include <linux/soc/qcom/qcom_sync_file.h>
 #include <linux/dma-fence.h>
 #include <linux/dma-fence-array.h>
 #include "msm_drv.h"
 #include "sde_kms.h"
 #include "sde_fence.h"
-
-#define SPEC_FENCE_FLAG_FENCE_ARRAY	0x10
-#define SPEC_FENCE_FLAG_ARRAY_BIND	0x11
 
 /**
  * struct sde_fence - release/retire fence structure
@@ -670,17 +668,12 @@ static void sde_fence_dump_user_fds_info(struct dma_fence *base_fence)
 	struct dma_fence *user_fence;
 	int i;
 
-	array = container_of(base_fence, struct dma_fence_array, base);
-	if (test_bit(SPEC_FENCE_FLAG_FENCE_ARRAY, &base_fence->flags) &&
-		test_bit(SPEC_FENCE_FLAG_ARRAY_BIND, &base_fence->flags)) {
-		for (i = 0; i < array->num_fences; i++) {
-			user_fence = array->fences[i];
-			if (user_fence) {
-				dma_fence_get(user_fence);
-				sde_fence_dump(user_fence);
-				dma_fence_put(user_fence);
-			}
-		}
+	array = spec_sync_bound_inputs(to_dma_fence_array(base_fence));
+	if (!array)
+		return;
+	for (i = 0; i < array->num_fences; i++) {
+		user_fence = array->fences[i];
+		sde_fence_dump(user_fence);
 	}
 }
 

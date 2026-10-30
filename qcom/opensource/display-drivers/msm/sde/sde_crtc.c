@@ -3728,13 +3728,17 @@ static struct dma_fence *_sde_plane_get_input_hw_fence(struct drm_plane *plane)
 		if (test_bit(SPEC_FENCE_FLAG_FENCE_ARRAY, &fence->flags)) {
 			bool spec_hw_fence = false;
 
-			array = container_of(fence, struct dma_fence_array, base);
+			array = to_dma_fence_array(fence);
 			if (IS_ERR_OR_NULL(array))
 				goto exit;
 
 			if (!test_bit(SPEC_FENCE_FLAG_FENCE_ARRAY_BOUND, &fence->flags))
 				if (spec_sync_wait_bind_array(array, SPEC_FENCE_TIMEOUT_MS) < 0)
 					goto exit;
+
+			array = spec_sync_bound_inputs(array);
+			if (!array)
+				goto exit;
 
 			for (i = 0; i < array->num_fences; i++) {
 				spec_fence = array->fences[i];
@@ -3755,7 +3759,7 @@ static struct dma_fence *_sde_plane_get_input_hw_fence(struct drm_plane *plane)
 				}
 			}
 			if (spec_hw_fence)
-				input_hw_fence = fence;
+				input_hw_fence = &array->base;
 		} else if (test_bit(MSM_HW_FENCE_FLAG_ENABLED_BIT, &fence->flags)) {
 			input_hw_fence = fence;
 
@@ -3807,11 +3811,11 @@ static int _sde_crtc_fences_wait_list(struct drm_crtc *crtc, bool use_hw_fences,
 	drm_atomic_crtc_for_each_plane(plane, crtc) {
 
 		/* check if input-fences are hw fences and if they are, add them to the list */
-		if (use_hw_fences && !mode_switch) {
+		if (use_hw_fences && !mode_switch && num_hw_fences < max_hw_fences) {
 
 			dma_hw_fences[num_hw_fences] = _sde_plane_get_input_hw_fence(plane);
 
-			if (dma_hw_fences[num_hw_fences] && (num_hw_fences < max_hw_fences)) {
+			if (dma_hw_fences[num_hw_fences]) {
 				bool repeated_fence = false;
 
 				/* check if this fence already in the hw-fences list */
