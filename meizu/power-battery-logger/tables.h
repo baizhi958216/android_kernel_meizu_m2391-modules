@@ -1,31 +1,31 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
-/* Exact stock .data property IDs and relocated .rodata strings. */
+/* Standard properties follow the kernel enum; OEM property IDs stay on their wire numbers. */
 static struct logger_element fuel_gage_list[] = {
-	{ "battery", (enum power_supply_property)46, 0 },
-	{ "battery", (enum power_supply_property)0, 0 },
-	{ "battery", (enum power_supply_property)2, 0 },
-	{ "battery", (enum power_supply_property)17, 0 },
-	{ "battery", (enum power_supply_property)12, 0 },
-	{ "battery", (enum power_supply_property)51, 0 },
-	{ "battery", (enum power_supply_property)28, 0 },
-	{ "battery", (enum power_supply_property)7, 0 },
-	{ "battery", (enum power_supply_property)62, 0 },
-	{ "battery", (enum power_supply_property)60, 0 },
+	{ "battery", POWER_SUPPLY_PROP_CAPACITY, 0 },
+	{ "battery", POWER_SUPPLY_PROP_STATUS, 0 },
+	{ "battery", POWER_SUPPLY_PROP_HEALTH, 0 },
+	{ "battery", POWER_SUPPLY_PROP_CURRENT_NOW, 0 },
+	{ "battery", POWER_SUPPLY_PROP_VOLTAGE_NOW, 0 },
+	{ "battery", POWER_SUPPLY_PROP_TEMP, 0 },
+	{ "battery", POWER_SUPPLY_PROP_CHARGE_COUNTER, 0 },
+	{ "battery", POWER_SUPPLY_PROP_CYCLE_COUNT, 0 },
+	{ "battery", POWER_SUPPLY_PROP_TIME_TO_FULL_AVG, 0 },
+	{ "battery", POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG, 0 },
 	{ "usb", (enum power_supply_property)287, 0 },
 	{ "usb", (enum power_supply_property)288, 0 },
 };
 static struct logger_element wired_charging_list[] = {
-	{ "usb", (enum power_supply_property)4, 0 },
-	{ "usb", (enum power_supply_property)17, 0 },
-	{ "usb", (enum power_supply_property)12, 0 },
-	{ "usb", (enum power_supply_property)51, 0 },
-	{ "usb", (enum power_supply_property)37, 0 },
+	{ "usb", POWER_SUPPLY_PROP_ONLINE, 0 },
+	{ "usb", POWER_SUPPLY_PROP_CURRENT_NOW, 0 },
+	{ "usb", POWER_SUPPLY_PROP_VOLTAGE_NOW, 0 },
+	{ "usb", POWER_SUPPLY_PROP_TEMP, 0 },
+	{ "usb", POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT, 0 },
 	{ "usb", (enum power_supply_property)286, 0 },
 	{ "battery", (enum power_supply_property)306, 0 },
 	{ "battery", (enum power_supply_property)308, 0 },
 };
 static struct logger_element wireless_charging_list[] = {
-	{ "wireless", (enum power_supply_property)4, 0 },
+	{ "wireless", POWER_SUPPLY_PROP_ONLINE, 0 },
 	{ "wireless", (enum power_supply_property)300, 0 },
 	{ "wireless", (enum power_supply_property)285, 0 },
 	{ "wireless", (enum power_supply_property)286, 0 },

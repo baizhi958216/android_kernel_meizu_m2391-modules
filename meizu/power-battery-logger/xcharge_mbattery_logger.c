@@ -50,8 +50,8 @@ static void update_props(struct logger_element *table, size_t count)
 			mpower_print("Failed to get %s psy\n", table[i].psy_name);
 			continue; /* Stock preserves the previous sample if no provider. */
 		}
-		power_supply_get_property(psy, table[i].prop, &value);
-		table[i].prop_val = value.intval;
+		if (!power_supply_get_property(psy, table[i].prop, &value))
+			table[i].prop_val = value.intval;
 		power_supply_put(psy);
 	}
 }
