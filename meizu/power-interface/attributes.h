@@ -32,13 +32,13 @@ static struct mz_sysfs_attr wireless_attrs[] = {
 
 static const struct forwarding_attr forwarding_attrs[] = {
 	{ &usb_c_attrs[0].kattr, "usb", 285, "%d\n", 0, 0 }, /* plug_orient */
-	{ &usb_c_attrs[1].kattr, "usb", 64, "%d\n", 5, 0 }, /* pps_online */
+	{ &usb_c_attrs[1].kattr, "usb", POWER_SUPPLY_PROP_USB_TYPE, "%d\n", 5, 0 }, /* pps_online */
 	{ &wired_attrs[0].kattr, "battery", 306, "%d\n", 1, 0 }, /* wired_level */
 	{ &wired_attrs[1].kattr, "battery", 305, "%d\n", 3, 0 }, /* cmd_discharging */
 	{ &wired_attrs[2].kattr, "battery", 309, "%d\n", 0, 0 }, /* discharge_cur */
-	{ &battery_attrs[0].kattr, "battery", 50, "%d\n", 0, 0 }, /* soh */
-	{ &wireless_attrs[0].kattr, "wireless", 12, "%d\n", 0, 0 }, /* reverse_chg_vout */
-	{ &wireless_attrs[1].kattr, "wireless", 17, "%d\n", 0, 0 }, /* reverse_chg_iout */
+	{ &battery_attrs[0].kattr, "battery", POWER_SUPPLY_PROP_CAPACITY_LEVEL, "%d\n", 0, 0 }, /* soh */
+	{ &wireless_attrs[0].kattr, "wireless", POWER_SUPPLY_PROP_VOLTAGE_NOW, "%d\n", 0, 0 }, /* reverse_chg_vout */
+	{ &wireless_attrs[1].kattr, "wireless", POWER_SUPPLY_PROP_CURRENT_NOW, "%d\n", 0, 0 }, /* reverse_chg_iout */
 	{ &wireless_attrs[2].kattr, "wireless", 285, "%d\n", 0, 0 }, /* vout */
 	{ &wireless_attrs[3].kattr, "wireless", 286, "%d\n", 0, 0 }, /* iout */
 	{ &wireless_attrs[4].kattr, "wireless", 287, "%d\n", 0, 0 }, /* power */
