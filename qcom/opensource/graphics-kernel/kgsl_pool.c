@@ -528,7 +528,7 @@ done:
 	kgsl_zero_page(page, order, dev);
 
 	for (j = 0; j < (*page_size >> PAGE_SHIFT); j++) {
-		p = nth_page(page, j);
+		p = pfn_to_page(page_to_pfn(page) + j);
 		pages[pcount] = p;
 		pcount++;
 	}
@@ -591,12 +591,7 @@ kgsl_pool_shrink_count_objects(struct shrinker *shrinker,
 }
 
 /* Shrinker callback data*/
-static struct shrinker kgsl_pool_shrinker = {
-	.count_objects = kgsl_pool_shrink_count_objects,
-	.scan_objects = kgsl_pool_shrink_scan_objects,
-	.seeks = DEFAULT_SEEKS,
-	.batch = 0,
-};
+static struct shrinker *kgsl_pool_shrinker;
 
 int kgsl_pool_reserved_get(void *data, u64 *val)
 {
@@ -678,14 +673,20 @@ static int kgsl_of_parse_mempool(struct kgsl_page_pool *pool,
 	return 0;
 }
 
-void kgsl_probe_page_pools(void)
+int kgsl_probe_page_pools(void)
 {
 	struct device_node *node, *child;
 	int index = 0;
 
 	node = of_find_compatible_node(NULL, NULL, "qcom,gpu-mempools");
 	if (!node)
-		return;
+		return 0;
+
+	kgsl_pool_shrinker = shrinker_alloc(0, "kgsl-page-pools");
+	if (!kgsl_pool_shrinker) {
+		of_node_put(node);
+		return -ENOMEM;
+	}
 
 	/* Get Max pages limit for mempool */
 	of_property_read_u32(node, "qcom,mempool-max-pages",
@@ -707,18 +708,25 @@ void kgsl_probe_page_pools(void)
 	of_node_put(node);
 
 	/* Initialize shrinker */
-	register_shrinker(&kgsl_pool_shrinker);
+	kgsl_pool_shrinker->count_objects = kgsl_pool_shrink_count_objects;
+	kgsl_pool_shrinker->scan_objects = kgsl_pool_shrink_scan_objects;
+	kgsl_pool_shrinker->seeks = DEFAULT_SEEKS;
+	shrinker_register(kgsl_pool_shrinker);
+	return 0;
 }
 
 void kgsl_exit_page_pools(void)
 {
 	int i;
 
+	if (!kgsl_pool_shrinker)
+		return;
+	shrinker_free(kgsl_pool_shrinker);
+	kgsl_pool_shrinker = NULL;
+
 	/* Release all pages in pools, if any.*/
 	kgsl_pool_reduce(INT_MAX, true);
 
-	/* Unregister shrinker */
-	unregister_shrinker(&kgsl_pool_shrinker);
 
 	/* Destroy helper structures */
 	for (i = 0; i < kgsl_num_pools; i++)

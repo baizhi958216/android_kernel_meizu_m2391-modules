@@ -4,6 +4,7 @@
  * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <asm/cacheflush.h>
 #include <linux/of_platform.h>
 #include <linux/highmem.h>
@@ -668,7 +669,7 @@ static int kgsl_paged_map_kernel(struct kgsl_memdesc *memdesc)
 		}
 
 		memdesc->hostptr = vmap(memdesc->pages, memdesc->page_count,
-					VM_IOREMAP, page_prot);
+					VM_MAP, page_prot);
 		if (memdesc->hostptr)
 			KGSL_STATS_ADD(memdesc->size,
 				&kgsl_driver.stats.vmalloc,
@@ -1102,7 +1103,7 @@ void kgsl_zero_page(struct page *p, unsigned int order,
 	int i;
 
 	for (i = 0; i < (1 << order); i++) {
-		struct page *page = nth_page(p, i);
+		struct page *page = pfn_to_page(page_to_pfn(p) + i);
 
 		clear_highpage(page);
 	}
@@ -1285,7 +1286,7 @@ static void kgsl_free_pages_from_sgt(struct kgsl_memdesc *memdesc)
 
 		while (j < (sg->length/PAGE_SIZE)) {
 			count = 1 << compound_order(p);
-			next = nth_page(p, count);
+			next = pfn_to_page(page_to_pfn(p) + count);
 			kgsl_free_page(p);
 
 			p = next;

@@ -692,4 +692,6 @@ static inline bool kgsl_addr_range_overlap(uint64_t gpuaddr1,
  */
 void kgsl_work_period_update(struct kgsl_device *device,
 			struct gpu_work_period *period, u64 active);
+u64 kgsl_get_stats(pid_t pid);
+
 #endif /* __KGSL_H */

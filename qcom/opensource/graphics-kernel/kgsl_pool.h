@@ -7,7 +7,7 @@
 #define __KGSL_POOL_H
 
 #ifdef CONFIG_QCOM_KGSL_USE_SHMEM
-static inline void kgsl_probe_page_pools(void) { }
+static inline int kgsl_probe_page_pools(void) { return 0; }
 static inline void kgsl_exit_page_pools(void) { }
 static inline int kgsl_get_page_size(size_t size, unsigned int align)
 {
@@ -81,7 +81,7 @@ int kgsl_pool_size_total(void);
 /**
  * kgsl_probe_page_pools - Initialize the memory pools
  */
-void kgsl_probe_page_pools(void);
+int kgsl_probe_page_pools(void);
 
 /**
  * kgsl_exit_page_pools - Free outstanding pooled memory

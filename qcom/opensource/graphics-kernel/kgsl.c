@@ -27,7 +27,6 @@
 #include <linux/sysrq.h>
 #include <soc/qcom/of_common.h>
 #include <soc/qcom/secure_buffer.h>
-#include <soc/qcom/boot_stats.h>
 
 #include "kgsl_compat.h"
 #include "kgsl_debugfs.h"
@@ -355,31 +354,15 @@ static const struct kgsl_memdesc_ops kgsl_dmabuf_ops = {
 
 static void kgsl_destroy_anon(struct kgsl_memdesc *memdesc)
 {
-	int i = 0, j;
+	unsigned int i;
 	struct scatterlist *sg;
-	struct page *page;
 
 	if (memdesc->priv & KGSL_MEMDESC_MAPPED)
 		return;
 
-	for_each_sg(memdesc->sgt->sgl, sg, memdesc->sgt->nents, i) {
-		page = sg_page(sg);
-		for (j = 0; j < (sg->length >> PAGE_SHIFT); j++) {
-
-			/*
-			 * Mark the page in the scatterlist as dirty if they
-			 * were writable by the GPU.
-			 */
-			if (!(memdesc->flags & KGSL_MEMFLAGS_GPUREADONLY))
-				set_page_dirty_lock(nth_page(page, j));
-
-			/*
-			 * Put the page reference taken using get_user_pages
-			 * during memdesc_sg_virt.
-			 */
-			put_page(nth_page(page, j));
-		}
-	}
+	for_each_sgtable_sg(memdesc->sgt, sg, i)
+		unpin_user_page_range_dirty_lock(sg_page(sg), sg->length >> PAGE_SHIFT,
+						!(memdesc->flags & KGSL_MEMFLAGS_GPUREADONLY));
 
 	sg_free_table(memdesc->sgt);
 	kfree(memdesc->sgt);
@@ -2809,7 +2792,7 @@ static int check_vma(unsigned long hostptr, u64 size)
 static int memdesc_sg_virt(struct kgsl_memdesc *memdesc, unsigned long useraddr)
 {
 	int ret = 0;
-	long npages = 0, i;
+	long npages = 0;
 	size_t sglen = (size_t) (memdesc->size / PAGE_SIZE);
 	struct page **pages = NULL;
 	int write = ((memdesc->flags & KGSL_MEMFLAGS_GPUREADONLY) ? 0 :
@@ -2835,7 +2818,7 @@ static int memdesc_sg_virt(struct kgsl_memdesc *memdesc, unsigned long useraddr)
 		goto out;
 	}
 
-	npages = get_user_pages(useraddr, sglen, write, pages, NULL);
+	npages = pin_user_pages(useraddr, sglen, write | FOLL_LONGTERM, pages);
 	mmap_read_unlock(current->mm);
 
 	ret = (npages < 0) ? (int)npages : 0;
@@ -2860,8 +2843,8 @@ static int memdesc_sg_virt(struct kgsl_memdesc *memdesc, unsigned long useraddr)
 		sg_free_table(memdesc->sgt);
 out:
 	if (ret) {
-		for (i = 0; i < npages; i++)
-			put_page(pages[i]);
+		if (npages > 0)
+			unpin_user_pages(pages, npages);
 
 		kfree(memdesc->sgt);
 		memdesc->sgt = NULL;
@@ -4418,7 +4401,7 @@ kgsl_mmap_memstore(struct file *file, struct kgsl_device *device,
 	if (vma->vm_flags & VM_WRITE)
 		return -EPERM;
 
-	vma->vm_flags &= ~VM_MAYWRITE;
+	vm_flags_clear(vma, VM_MAYWRITE);
 
 	if (memdesc->size  != vma_size) {
 		dev_err(device->dev, "Cannot partially map the memstore\n");
@@ -4427,7 +4410,7 @@ kgsl_mmap_memstore(struct file *file, struct kgsl_device *device,
 
 	vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
 	vma->vm_private_data = memdesc;
-	vma->vm_flags |= memdesc->ops->vmflags;
+	vm_flags_set(vma, memdesc->ops->vmflags);
 	vma->vm_ops = &kgsl_memstore_vm_ops;
 	vma->vm_file = file;
 
@@ -4605,7 +4588,7 @@ static unsigned long set_svm_area(struct file *file,
 	 * Do additoinal constraints checking on the address. Passing MAP_FIXED
 	 * ensures that the address we want gets checked
 	 */
-	ret = current->mm->get_unmapped_area(file, addr, len, 0,
+	ret = mm_get_unmapped_area(current->mm, file, addr, len, 0,
 		flags & MAP_FIXED);
 
 	/* If it passes, attempt to set the region in the SVM */
@@ -4706,7 +4689,7 @@ kgsl_get_unmapped_area(struct file *file, unsigned long addr,
 	}
 
 	if (!kgsl_memdesc_use_cpu_map(&entry->memdesc)) {
-		val = current->mm->get_unmapped_area(file, addr, len, 0, flags);
+		val = mm_get_unmapped_area(current->mm, file, addr, len, 0, flags);
 		if (IS_ERR_VALUE(val))
 			dev_err_ratelimited(device->dev,
 					       "get_unmapped_area: pid %d addr %lx pgoff %lx len %ld failed error %d\n",
@@ -4755,7 +4738,7 @@ static int kgsl_mmap(struct file *file, struct vm_area_struct *vma)
 	if (ret)
 		return ret;
 
-	vma->vm_flags |= entry->memdesc.ops->vmflags;
+	vm_flags_set(vma, entry->memdesc.ops->vmflags);
 
 	vma->vm_private_data = entry;
 
@@ -5175,7 +5158,7 @@ int __init kgsl_core_init(void)
 {
 	int result = 0;
 
-	place_marker("M - DRIVER KGSL Init");
+	trace_kgsl_boot_marker("M - DRIVER KGSL Init");
 
 	/* alloc major and minor device numbers */
 	result = alloc_chrdev_region(&kgsl_driver.major, 0,
@@ -5199,7 +5182,7 @@ int __init kgsl_core_init(void)
 		goto err;
 	}
 
-	kgsl_driver.class = class_create(THIS_MODULE, "kgsl");
+	kgsl_driver.class = class_create("kgsl");
 
 	if (IS_ERR(kgsl_driver.class)) {
 		result = PTR_ERR(kgsl_driver.class);
@@ -5239,7 +5222,9 @@ int __init kgsl_core_init(void)
 	kgsl_sharedmem_init_sysfs();
 
 	/* Initialize the memory pools */
-	kgsl_probe_page_pools();
+	result = kgsl_probe_page_pools();
+	if (result)
+		goto err;
 
 	INIT_LIST_HEAD(&kgsl_driver.process_list);
 
@@ -5280,7 +5265,7 @@ int __init kgsl_core_init(void)
 	memfree.list = kcalloc(MEMFREE_ENTRIES, sizeof(struct memfree_entry),
 		GFP_KERNEL);
 
-	place_marker("M - DRIVER KGSL Ready");
+	trace_kgsl_boot_marker("M - DRIVER KGSL Ready");
 
 	return 0;
 
