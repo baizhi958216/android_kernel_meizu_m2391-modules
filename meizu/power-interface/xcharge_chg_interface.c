@@ -28,6 +28,7 @@ static DEFINE_MUTEX(vote_lock);
 static DEFINE_MUTEX(level_lock);
 static struct device *gdev;
 static struct thermal_cooling_device *cooling;
+static bool cooling_requested;
 static struct kobject *rev_kobj, *coil_kobj;
 static unsigned long max_fcc;
 static bool discharge_votes[DISCHARGING_VOTER_MAX];
@@ -226,6 +227,7 @@ static const struct thermal_cooling_device_ops cooling_ops = {
 void xcharge_chg_interface_register_cd(void)
 {
 	mutex_lock(&interface_lock);
+	cooling_requested = true;
 	if (gdev && !cooling) {
 		cooling = thermal_of_cooling_device_register(gdev->of_node,
 				"xcharge_chg", NULL, &cooling_ops);
@@ -305,6 +307,8 @@ static int interface_probe(struct platform_device *pdev)
 	}
 	gdev = &pdev->dev;
 	mutex_unlock(&interface_lock);
+	if (READ_ONCE(cooling_requested))
+		xcharge_chg_interface_register_cd();
 	return 0;
 fail:
 	kobject_put(rev_kobj);
