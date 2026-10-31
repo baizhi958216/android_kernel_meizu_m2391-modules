@@ -4,6 +4,7 @@
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  */
 
+#include <linux/vmalloc.h>
 #include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
 #include <linux/clk.h>
 #include <linux/component.h>
@@ -22,7 +23,6 @@
 #include <linux/mailbox/qmp.h>
 #include <linux/version.h>
 #include <soc/qcom/cmd-db.h>
-#include <soc/qcom/boot_stats.h>
 
 #include "adreno.h"
 #include "adreno_a6xx.h"
@@ -1488,7 +1488,7 @@ struct kgsl_memdesc *reserve_gmu_kernel_block(struct a6xx_gmu_device *gmu,
 		IOMMU_READ | IOMMU_WRITE | IOMMU_PRIV);
 	if (ret) {
 		dev_err(&gmu->pdev->dev,
-			"Unable to map GMU kernel block: addr:0x%08x size:0x%x :%d\n",
+			"Unable to map GMU kernel block: addr:0x%08x size:0x%llx :%d\n",
 			addr, md->size, ret);
 		kgsl_sharedmem_free(md);
 		memset(md, 0, sizeof(*md));
@@ -1526,7 +1526,7 @@ struct kgsl_memdesc *reserve_gmu_kernel_block_fixed(struct a6xx_gmu_device *gmu,
 
 	if ((vma->next_va + md->size) > (vma->start + vma->size)) {
 		dev_err(&gmu->pdev->dev,
-			"GMU mapping too big. available: %d required: %d\n",
+			"GMU mapping too big. available: %d required: %llu\n",
 			vma->next_va - vma->start, md->size);
 			md =  ERR_PTR(-ENOMEM);
 			goto done;
@@ -1535,7 +1535,7 @@ struct kgsl_memdesc *reserve_gmu_kernel_block_fixed(struct a6xx_gmu_device *gmu,
 	ret = gmu_core_map_memdesc(gmu->domain, md, addr, attrs);
 	if (ret) {
 		dev_err(&gmu->pdev->dev,
-			"Unable to map GMU kernel block: addr:0x%08x size:0x%x :%d\n",
+			"Unable to map GMU kernel block: addr:0x%08x size:0x%llx :%d\n",
 			addr, md->size, ret);
 		md =  ERR_PTR(-ENOMEM);
 		goto done;
@@ -2762,18 +2762,14 @@ static int a6xx_gmu_iommu_init(struct a6xx_gmu_device *gmu)
 {
 	int ret;
 
-	gmu->domain = iommu_domain_alloc(&platform_bus_type);
-	if (gmu->domain == NULL) {
-		dev_err(&gmu->pdev->dev, "Unable to allocate GMU IOMMU domain\n");
-		return -ENODEV;
+	gmu->domain = iommu_paging_domain_alloc(&gmu->pdev->dev);
+	if (IS_ERR(gmu->domain)) {
+		ret = PTR_ERR(gmu->domain);
+		gmu->domain = NULL;
+		return dev_err_probe(&gmu->pdev->dev, ret, "failed to allocate GMU domain\n");
 	}
 
-	/*
-	 * Disable stall on fault for the GMU context bank.
-	 * This sets SCTLR.CFCFG = 0.
-	 * Also note that, the smmu driver sets SCTLR.HUPCF = 0 by default.
-	 */
-	qcom_iommu_set_fault_model(gmu->domain, QCOM_IOMMU_FAULT_MODEL_NO_STALL);
+	/* The GMU's stage-1 context uses terminate-on-fault (SCTLR.CFCFG=0). */
 
 	ret = iommu_attach_device(gmu->domain, &gmu->pdev->dev);
 	if (!ret) {
@@ -3138,7 +3134,7 @@ static int a6xx_first_boot(struct adreno_device *adreno_dev)
 		return 0;
 	}
 
-	place_marker("M - DRIVER ADRENO Init");
+	trace_kgsl_boot_marker("M - DRIVER ADRENO Init");
 
 	ret = a6xx_ringbuffer_init(adreno_dev);
 	if (ret)
@@ -3205,7 +3201,7 @@ static int a6xx_first_boot(struct adreno_device *adreno_dev)
 
 	kgsl_pwrctrl_set_state(device, KGSL_STATE_ACTIVE);
 
-	place_marker("M - DRIVER ADRENO Ready");
+	trace_kgsl_boot_marker("M - DRIVER ADRENO Ready");
 
 	return 0;
 }
@@ -3677,10 +3673,9 @@ static int a6xx_gmu_probe_dev(struct platform_device *pdev)
 	return component_add(&pdev->dev, &a6xx_gmu_component_ops);
 }
 
-static int a6xx_gmu_remove_dev(struct platform_device *pdev)
+static void a6xx_gmu_remove_dev(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &a6xx_gmu_component_ops);
-	return 0;
 }
 
 static const struct of_device_id a6xx_gmu_match_table[] = {
