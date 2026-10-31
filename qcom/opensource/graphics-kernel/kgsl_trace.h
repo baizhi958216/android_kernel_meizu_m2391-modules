@@ -20,6 +20,14 @@
 #include "kgsl_drawobj.h"
 #include "kgsl_sharedmem.h"
 
+TRACE_EVENT(kgsl_boot_marker,
+	TP_PROTO(const char *name),
+	TP_ARGS(name),
+	TP_STRUCT__entry(__string(name, name)),
+	TP_fast_assign(__assign_str(name);),
+	TP_printk("%s", __get_str(name))
+);
+
 #define KGSL_TRACE_GPU_FREQ(freq, gpu_id) \
 	do { \
 		trace_gpu_frequency(freq, gpu_id); \
