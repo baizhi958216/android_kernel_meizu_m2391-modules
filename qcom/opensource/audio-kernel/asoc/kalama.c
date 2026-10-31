@@ -70,9 +70,7 @@
 #define STEREO_SPEAKER  2
 #define QUAD_SPEAKER	4
 
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 #include "kalama-meizu.inc"
-#endif
 
 enum {
 	WCD937X_DEV_INDEX,
@@ -422,9 +420,6 @@ static const struct snd_soc_dapm_widget msm_int_dapm_widgets[] = {
 	SND_SOC_DAPM_MIC("Analog Mic4", NULL),
 	SND_SOC_DAPM_MIC("Analog Mic5", NULL),
 
-#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
-	SND_SOC_DAPM_MIC("Analog Mic6", NULL),
-#endif
 	SND_SOC_DAPM_MIC("Digital Mic0", msm_dmic_event),
 	SND_SOC_DAPM_MIC("Digital Mic1", msm_dmic_event),
 	SND_SOC_DAPM_MIC("Digital Mic2", msm_dmic_event),
@@ -787,64 +782,6 @@ static struct snd_soc_dai_link msm_wsa_wsa2_cdc_dma_be_dai_links[] = {
 
 static struct snd_soc_dai_link msm_rx_tx_cdc_dma_be_dai_links[] = {
 	/* RX CDC DMA Backend DAI Links */
-#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
-	{
-		.name = LPASS_BE_RX_CDC_DMA_RX_0,
-		.stream_name = LPASS_BE_RX_CDC_DMA_RX_0,
-		.playback_only = 1,
-		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
-			SND_SOC_DPCM_TRIGGER_POST},
-		.ignore_pmdown_time = 1,
-		.ignore_suspend = 1,
-		.ops = &msm_common_be_ops,
-		SND_SOC_DAILINK_REG(rx_dma_rx0),
-		.init = &msm_rx_tx_codec_init,
-	},
-	{
-		.name = LPASS_BE_RX_CDC_DMA_RX_1,
-		.stream_name = LPASS_BE_RX_CDC_DMA_RX_1,
-		.playback_only = 1,
-		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
-			SND_SOC_DPCM_TRIGGER_POST},
-		.ignore_pmdown_time = 1,
-		.ignore_suspend = 1,
-		.ops = &msm_common_be_ops,
-		SND_SOC_DAILINK_REG(rx_dma_rx1),
-	},
-	{
-		.name = LPASS_BE_RX_CDC_DMA_RX_2,
-		.stream_name = LPASS_BE_RX_CDC_DMA_RX_2,
-		.playback_only = 1,
-		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
-			SND_SOC_DPCM_TRIGGER_POST},
-		.ignore_pmdown_time = 1,
-		.ignore_suspend = 1,
-		.ops = &msm_common_be_ops,
-		SND_SOC_DAILINK_REG(rx_dma_rx2),
-	},
-	{
-		.name = LPASS_BE_RX_CDC_DMA_RX_3,
-		.stream_name = LPASS_BE_RX_CDC_DMA_RX_3,
-		.playback_only = 1,
-		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
-			SND_SOC_DPCM_TRIGGER_POST},
-		.ignore_pmdown_time = 1,
-		.ignore_suspend = 1,
-		.ops = &msm_common_be_ops,
-		SND_SOC_DAILINK_REG(rx_dma_rx3),
-	},
-	{
-		.name = LPASS_BE_RX_CDC_DMA_RX_5,
-		.stream_name = LPASS_BE_RX_CDC_DMA_RX_5,
-		.playback_only = 1,
-		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
-			SND_SOC_DPCM_TRIGGER_POST},
-		.ignore_pmdown_time = 1,
-		.ignore_suspend = 1,
-		.ops = &msm_common_be_ops,
-		SND_SOC_DAILINK_REG(rx_dma_rx5),
-	},
-#endif
 	/* TX CDC DMA Backend DAI Links */
 	{
 		.name = LPASS_BE_TX_CDC_DMA_TX_3,
@@ -855,9 +792,7 @@ static struct snd_soc_dai_link msm_rx_tx_cdc_dma_be_dai_links[] = {
 		.ignore_suspend = 1,
 		.ops = &msm_common_be_ops,
 		SND_SOC_DAILINK_REG(tx_dma_tx3),
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 		.init = msm_rx_tx_codec_init,
-#endif
 	},
 	{
 		.name = LPASS_BE_TX_CDC_DMA_TX_4,
@@ -1094,43 +1029,19 @@ static struct snd_soc_dai_link msm_mi2s_dai_links[] = {
 		.name = LPASS_BE_SEC_MI2S_RX,
 		.stream_name = LPASS_BE_SEC_MI2S_RX,
 		.playback_only = 1,
-#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
-		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
-			SND_SOC_DPCM_TRIGGER_POST},
-#endif
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 		.ops = &cs35l45_be_ops,
 		.init = cs35l45_init,
-#else
-		.ops = &msm_common_be_ops,
-#endif
 		.ignore_suspend = 1,
 		.ignore_pmdown_time = 1,
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 		SND_SOC_DAILINK_REG(secondary_smartpa_aif),
-#else
-		SND_SOC_DAILINK_REG(sec_mi2s_rx),
-#endif
 	},
 	{
 		.name = LPASS_BE_SEC_MI2S_TX,
 		.stream_name = LPASS_BE_SEC_MI2S_TX,
 		.capture_only = 1,
-#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
-		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
-			SND_SOC_DPCM_TRIGGER_POST},
-#endif
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 		.ops = &cs35l45_be_ops,
-#else
-		.ops = &msm_common_be_ops,
-#endif
 		.ignore_suspend = 1,
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 		SND_SOC_DAILINK_REG(secondary_smartpa_aif),
-#else
-		SND_SOC_DAILINK_REG(sec_mi2s_tx),
-#endif
 	},
 	{
 		.name = LPASS_BE_TERT_MI2S_RX,
@@ -1543,7 +1454,6 @@ static struct snd_soc_dai_link msm_stub_be_dai_links[] = {
 	},
 };
 
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 static struct snd_soc_dai_link meizu_stub_be_dai_links[] = {
 	/* Backend DAI Links */
 	{
@@ -1566,7 +1476,6 @@ static struct snd_soc_dai_link meizu_stub_be_dai_links[] = {
 	},
 };
 
-#endif
 
 static struct snd_soc_dai_link msm_stub_dai_links[
 			 ARRAY_SIZE(msm_stub_be_dai_links)];
@@ -1652,16 +1561,12 @@ static int msm_snd_card_late_probe(struct snd_soc_card *card)
 {
 	int ret;
 
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	/* Original init failure does not prevent the rest of card setup. */
 	if (!usbc_analog_detect_init(card))
 		usbc_analog_detect_start(card);
-#endif
 	ret = msm_snd_card_late_probe_body(card);
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	if (ret)
 		usbc_analog_detect_deinit(card);
-#endif
 	return ret;
 }
 
@@ -1683,10 +1588,8 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 
 	if (!strcmp(match->data, "codec")) {
 		card = &snd_soc_card_kalama_msm;
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 		card->codec_conf = cs35l45_codec_conf;
 		card->num_configs = ARRAY_SIZE(cs35l45_codec_conf);
-#endif
 
 		/* late probe uses dai link at index '0' to get wcd component */
 		memcpy(msm_kalama_dai_links + total_links,
@@ -1797,12 +1700,10 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 	} else if (!strcmp(match->data, "stub_codec")) {
 		card = &snd_soc_card_stub_msm;
 
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 		if (strcmp(card->name, "kalama-stub-snd-card"))
 			memcpy(msm_stub_dai_links, meizu_stub_be_dai_links,
 			       sizeof(meizu_stub_be_dai_links));
 		else
-#endif
 		memcpy(msm_stub_dai_links,
 			   msm_stub_be_dai_links,
 			   sizeof(msm_stub_be_dai_links));
@@ -1816,9 +1717,7 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 		card->num_links = total_links;
 		if (!strcmp(match->data, "codec")) {
 			card->late_probe = msm_snd_card_late_probe;
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 			card->remove = meizu_card_remove;
-#endif
 		}
 	}
 
@@ -2036,11 +1935,6 @@ static int msm_rx_tx_codec_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_ignore_suspend(dapm, "Analog Mic3");
 	snd_soc_dapm_ignore_suspend(dapm, "Analog Mic4");
 	snd_soc_dapm_ignore_suspend(dapm, "Analog Mic5");
-#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
-	snd_soc_dapm_ignore_suspend(dapm, "Analog Mic6");
-
-	lpass_cdc_set_port_map(lpass_cdc_component, ARRAY_SIZE(sm_port_map), sm_port_map);
-#endif
 
 	card = rtd->card->snd_card;
 	if (!pdata->codec_root) {
@@ -2404,15 +2298,11 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 	/* parse upd configuration */
 	msm_parse_upd_configuration(pdev, pdata);
 
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	/* Common stream state must exist before ALSA publishes the card. */
 	ret = msm_common_snd_init(pdev, card);
 	if (ret)
 		goto err;
 	ret = snd_soc_register_card(card);
-#else
-	ret = devm_snd_soc_register_card(&pdev->dev, card);
-#endif
 	if (ret == -EPROBE_DEFER) {
 		if (codec_reg_done)
 			ret = -EINVAL;
@@ -2461,9 +2351,6 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 	if (pdata->dmic67_gpio_p)
 		msm_cdc_pinctrl_set_wakeup_capable(pdata->dmic67_gpio_p, false);
 
-#ifndef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
-	msm_common_snd_init(pdev, card);
-#endif
 
 	/* Register LPASS audio hw vote */
 	lpass_audio_hw_vote = devm_clk_get(&pdev->dev, "lpass_audio_hw_vote");
@@ -2490,15 +2377,11 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 
 	return 0;
 err:
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	usbc_analog_detect_deinit(card);
 	if (card && snd_soc_card_get_drvdata(card)) {
 		msm_common_snd_deinit(msm_common_get_pdata(card));
 		msm_common_set_pdata(card, NULL);
 	}
-#else
-	devm_kfree(&pdev->dev, pdata);
-#endif
 	return ret;
 }
 
@@ -2514,7 +2397,6 @@ static int msm_asoc_machine_remove(struct platform_device *pdev)
 	if (pdata)
 		common_pdata = pdata->common_pdata;
 
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	usbc_analog_detect_deinit(card);
 	snd_event_master_deregister(&pdev->dev);
 	/* Shutdown callbacks still need common state until ALSA is drained. */
@@ -2527,11 +2409,6 @@ static int msm_asoc_machine_remove(struct platform_device *pdev)
 	of_node_put(pdata->dmic23_gpio_p);
 	of_node_put(pdata->dmic45_gpio_p);
 	of_node_put(pdata->dmic67_gpio_p);
-#else
-	msm_common_snd_deinit(common_pdata);
-	snd_event_master_deregister(&pdev->dev);
-	snd_soc_unregister_card(card);
-#endif
 	return 0;
 }
 
@@ -2549,7 +2426,6 @@ static struct platform_driver kalama_asoc_machine_driver = {
 
 static int __init msm_asoc_machine_init(void)
 {
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	int ret = snd_card_sysfs_init();
 
 	if (ret)
@@ -2558,19 +2434,13 @@ static int __init msm_asoc_machine_init(void)
 	if (ret)
 		snd_card_sysfs_exit();
 	return ret;
-#else
-	snd_card_sysfs_init();
-	return platform_driver_register(&kalama_asoc_machine_driver);
-#endif
 }
 module_init(msm_asoc_machine_init);
 
 static void __exit msm_asoc_machine_exit(void)
 {
 	platform_driver_unregister(&kalama_asoc_machine_driver);
-#ifdef CONFIG_M2391_AUDIO_MACHINE_RECOVERY
 	snd_card_sysfs_exit();
-#endif
 }
 module_exit(msm_asoc_machine_exit);
 
