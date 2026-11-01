@@ -145,7 +145,8 @@ static void _adreno_coresight_set(struct adreno_device *adreno_dev,
 
 /* Generic function to enable coresight debug bus on adreno devices */
 static int adreno_coresight_enable(struct coresight_device *csdev,
-				struct perf_event *event, u32 mode)
+				struct perf_event *event, enum cs_mode mode,
+				struct coresight_path *path)
 {
 	struct adreno_coresight_device *adreno_csdev = dev_get_drvdata(&csdev->dev);
 	const struct adreno_coresight *coresight = adreno_csdev->coresight;
@@ -187,7 +188,8 @@ void adreno_coresight_start(struct adreno_device *adreno_dev)
 	_adreno_coresight_set(adreno_dev, &adreno_dev->cx_coresight);
 }
 
-static int adreno_coresight_trace_id(struct coresight_device *csdev)
+static int adreno_coresight_trace_id(struct coresight_device *csdev, enum cs_mode mode,
+				     struct coresight_device *sink)
 {
 	struct adreno_coresight_device *adreno_csdev = dev_get_drvdata(&csdev->dev);
 
@@ -195,12 +197,12 @@ static int adreno_coresight_trace_id(struct coresight_device *csdev)
 }
 
 static const struct coresight_ops_source adreno_coresight_source_ops = {
-	.trace_id = adreno_coresight_trace_id,
 	.enable = adreno_coresight_enable,
 	.disable = adreno_coresight_disable,
 };
 
 static const struct coresight_ops adreno_coresight_ops = {
+	.trace_id = adreno_coresight_trace_id,
 	.source_ops = &adreno_coresight_source_ops,
 };
 
@@ -213,8 +215,8 @@ void adreno_coresight_remove(struct adreno_device *adreno_dev)
 		coresight_unregister(adreno_dev->cx_coresight.dev);
 }
 
-static int funnel_gfx_enable(struct coresight_device *csdev, int inport,
-			 int outport)
+static int funnel_gfx_enable(struct coresight_device *csdev, struct coresight_connection *inport,
+			 struct coresight_connection *outport)
 {
 	struct kgsl_device *device = kgsl_get_device(0);
 	struct adreno_device *adreno_dev = ADRENO_DEVICE(device);
@@ -238,8 +240,8 @@ err:
 	return ret;
 }
 
-static void funnel_gfx_disable(struct coresight_device *csdev, int inport,
-			   int outport)
+static void funnel_gfx_disable(struct coresight_device *csdev, struct coresight_connection *inport,
+			   struct coresight_connection *outport)
 {
 	struct kgsl_device *device = kgsl_get_device(0);
 	struct adreno_device *adreno_dev = ADRENO_DEVICE(device);
@@ -278,17 +280,17 @@ static void adreno_coresight_dev_probe(struct kgsl_device *device,
 		struct device_node *node)
 {
 	struct platform_device *pdev = of_find_device_by_node(node);
-	struct coresight_desc desc;
+	struct coresight_desc desc = {};
 	u32 atid;
 
 	if (!pdev)
 		return;
 
-	if (of_property_read_u32(node, "coresight-atid", &atid))
+	if (of_property_read_u32(node, "coresight-atid", &atid) ||
+	    of_property_read_string(node, "coresight-name", &desc.name)) {
+		platform_device_put(pdev);
 		return;
-
-	if (of_property_read_string(node, "coresight-name", &desc.name))
-		return;
+	}
 
 	desc.pdata = coresight_get_platform_data(&pdev->dev);
 	platform_device_put(pdev);
@@ -317,7 +319,7 @@ void adreno_coresight_add_device(struct adreno_device *adreno_dev, const char *n
 		struct adreno_coresight_device *adreno_csdev)
 {
 	struct kgsl_device *device = KGSL_DEVICE(adreno_dev);
-	struct device_node *node = of_find_compatible_node(device->pdev->dev.of_node, NULL, name);
+	struct device_node *node = of_find_compatible_node(NULL, NULL, name);
 	struct adreno_funnel_device *funnel_gfx = &adreno_dev->funnel_gfx;
 
 	if (!node)
