@@ -4,7 +4,7 @@
  * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
-#include <dt-bindings/soc/qcom,ipcc.h>
+#include <dt-bindings/mailbox/qcom-ipcc.h>
 #include <linux/soc/qcom/msm_hw_fence.h>
 #include <soc/qcom/msm_performance.h>
 
@@ -1973,7 +1973,7 @@ static void adreno_hwsched_create_hw_fence(struct adreno_device *adreno_dev,
 	 */
 	if (device->state != KGSL_STATE_ACTIVE) {
 		dev_err_ratelimited(device->dev,
-			"GMU shouldn't be in SLUMBER because ctx:%d fence ts:%d is not retired\n",
+			"GMU shouldn't be in SLUMBER because ctx:%d retired:%u fence ts:%u is not retired\n",
 			context->id, retired, kfence->timestamp);
 		msm_hw_fence_destroy(kfence->hw_fence_handle, &kfence->fence);
 		goto decrement;

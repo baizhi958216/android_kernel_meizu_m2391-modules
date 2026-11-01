@@ -481,7 +481,6 @@ struct kgsl_syncsource_fence {
 	struct list_head child_list;
 };
 
-static const struct dma_fence_ops kgsl_syncsource_fence_ops;
 
 long kgsl_ioctl_syncsource_create(struct kgsl_device_private *dev_priv,
 					unsigned int cmd, void *data)
