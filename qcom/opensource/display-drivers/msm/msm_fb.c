@@ -321,8 +321,10 @@ int msm_fb_obj_get_attrs(struct drm_gem_object *obj,
 	int nelems = 0;
 	int i, ret = 0;
 
-	if (!(msm_obj->flags & MSM_BO_EXTBUF))
+	if (!(msm_obj->flags & MSM_BO_EXTBUF)) {
+		*fb_ns = 1;
 		return 0;
+	}
 
 	if (!obj->import_attach) {
 		DRM_DEBUG("NULL attachment in drm gem object flags:0x%x\n",
@@ -348,6 +350,8 @@ int msm_fb_obj_get_attrs(struct drm_gem_object *obj,
 		*fb_ns = 1;
 	else {
 		for (i = 0; i < nelems; i++) {
+			if (!(perms_list[i] & PERM_READ))
+				continue;
 			if (vmid_list[i] == VMID_CP_PIXEL)
 				*fb_sec = 1;
 			else if (vmid_list[i] == VMID_CP_SEC_DISPLAY ||

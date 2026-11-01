@@ -739,13 +739,13 @@ static int _sde_plane_get_aspace(
 	switch (mode) {
 	case SDE_DRM_FB_NON_SEC:
 		*aspace = kms->aspace[MSM_SMMU_DOMAIN_UNSECURE];
-		if (!aspace)
-			return -EINVAL;
+		if (!*aspace)
+			return -ENODEV;
 		break;
 	case SDE_DRM_FB_SEC:
 		*aspace = kms->aspace[MSM_SMMU_DOMAIN_SECURE];
-		if (!aspace)
-			return -EINVAL;
+		if (!*aspace)
+			return -ENODEV;
 		break;
 	case SDE_DRM_FB_NON_SEC_DIR_TRANS:
 	case SDE_DRM_FB_SEC_DIR_TRANS:
@@ -2080,7 +2080,6 @@ static int _sde_plane_validate_fb(struct sde_plane *psde,
 	struct sde_plane_state *pstate;
 	struct sde_kms *sde_kms;
 	struct drm_framebuffer *fb;
-	int fb_ns = 0, fb_sec = 0, fb_sec_dir = 0;
 	int mode, num_planes;
 	int i, ret;
 
@@ -2105,9 +2104,13 @@ static int _sde_plane_validate_fb(struct sde_plane *psde,
 		return 0;
 
 	for (i = 0; i < num_planes; i++) {
+		int fb_ns = 0, fb_sec = 0, fb_sec_dir = 0;
+
 		ret = msm_fb_obj_get_attrs(fb->obj[i], &fb_ns, &fb_sec,
 				&fb_sec_dir);
-		if (ret != 0 || ((fb_ns && (mode != SDE_DRM_FB_NON_SEC)) ||
+		if (ret || !(fb_ns || fb_sec || fb_sec_dir) ||
+		    ((fb_ns && mode != SDE_DRM_FB_NON_SEC &&
+		      !(mode == SDE_DRM_FB_NON_SEC_DIR_TRANS && !fb->obj[i]->import_attach)) ||
 			(fb_sec && (mode != SDE_DRM_FB_SEC)) ||
 			(fb_sec_dir && (mode != SDE_DRM_FB_SEC_DIR_TRANS)))) {
 			SDE_ERROR_PLANE(psde,
