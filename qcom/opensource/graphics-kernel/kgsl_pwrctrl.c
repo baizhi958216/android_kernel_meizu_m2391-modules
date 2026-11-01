@@ -4,7 +4,7 @@
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  */
 
-#include <linux/clk/qcom.h>
+#include <linux/clk/qcom-kalama.h>
 #include <linux/interconnect.h>
 #include <linux/iopoll.h>
 #include <linux/of_device.h>
@@ -1374,9 +1374,8 @@ int kgsl_pwrctrl_enable_cx_gdsc(struct kgsl_device *device)
 
 	ret = wait_for_completion_timeout(&pwr->cx_gdsc_gate, msecs_to_jiffies(5000));
 	if (!ret) {
-		dev_err(device->dev, "GPU CX wait timeout. Dumping CX votes:\n");
-		/* Dump the cx regulator consumer list */
-		qcom_clk_dump(NULL, regulator, false);
+		dev_err(device->dev, "GPU CX wait timed out, regulator enabled=%d\n",
+			regulator_is_enabled(regulator));
 	}
 
 	ret = regulator_enable(regulator);
@@ -1497,7 +1496,7 @@ static int kgsl_cx_gdsc_event(struct notifier_block *nb,
 	return 0;
 }
 
-int kgsl_register_gdsc_notifier(struct kgsl_device *device)
+static int kgsl_register_gdsc_notifier(struct kgsl_device *device)
 {
 	struct kgsl_pwrctrl *pwr = &device->pwrctrl;
 
@@ -1717,7 +1716,7 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 			DEV_PM_QOS_MAX_FREQUENCY,
 			PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
 	if (result < 0)
-		dev_err(device->dev, "PM QoS thermal request failed:\n", result);
+		dev_err(device->dev, "PM QoS thermal request failed: %d\n", result);
 
 	for (i = 0; i < pwr->num_pwrlevels; i++) {
 		freq = pwr->pwrlevels[i].gpu_freq;

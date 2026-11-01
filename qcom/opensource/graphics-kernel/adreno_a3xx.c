@@ -4,7 +4,7 @@
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
-#include <linux/clk/qcom.h>
+#include <linux/clk/qcom-kalama.h>
 #include <linux/firmware.h>
 #include <linux/of.h>
 #include <linux/of_device.h>

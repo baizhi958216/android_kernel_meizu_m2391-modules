@@ -20,8 +20,7 @@
 #include <linux/trace.h>
 #include <linux/version.h>
 #include <soc/qcom/dcvs.h>
-#include <soc/qcom/socinfo.h>
-#include <soc/qcom/boot_stats.h>
+#include <linux/soc/qcom/socinfo.h>
 
 #include "adreno.h"
 #include "adreno_a3xx.h"
@@ -538,12 +537,15 @@ static struct {
 
 static int adreno_get_chipid(struct platform_device *pdev, u32 *chipid)
 {
+	struct qcom_socinfo_adreno gpu;
 	u32 id;
 
 	if (!of_property_read_u32(pdev->dev.of_node, "qcom,chipid", chipid))
 		return 0;
 
-	id = socinfo_get_partinfo_chip_id(SOCINFO_PART_GPU);
+	if (qcom_socinfo_get_adreno(&gpu))
+		return -ENODATA;
+	id = gpu.chip_id;
 	if (id)
 		*chipid = id;
 
@@ -753,7 +755,7 @@ static int adreno_of_get_legacy_pwrlevels(struct adreno_device *adreno_dev,
 	struct device_node *node;
 	int ret;
 
-	node = of_find_node_by_name(parent, "qcom,gpu-pwrlevels");
+	node = of_get_child_by_name(parent, "qcom,gpu-pwrlevels");
 
 	if (node == NULL) {
 		dev_err(&device->pdev->dev,
@@ -777,16 +779,18 @@ static int adreno_of_get_pwrlevels(struct adreno_device *adreno_dev,
 {
 	struct kgsl_device *device = KGSL_DEVICE(adreno_dev);
 	struct device_node *node, *child;
-	int feature_code, pcode;
+	struct qcom_socinfo_adreno gpu;
+	u32 feature_code, pcode;
 	u32 soc_code;
 
-	node = of_find_node_by_name(parent, "qcom,gpu-pwrlevel-bins");
+	node = of_get_child_by_name(parent, "qcom,gpu-pwrlevel-bins");
 	if (node == NULL)
 		return adreno_of_get_legacy_pwrlevels(adreno_dev, parent);
 
-	feature_code = max_t(int, socinfo_get_feature_code(), SOCINFO_FC_UNKNOWN);
-	pcode = (feature_code >= SOCINFO_FC_Y0 && feature_code < SOCINFO_FC_INT_RESERVE) ?
-		max_t(int, socinfo_get_pcode(), SOCINFO_PCODE_UNKNOWN) : SOCINFO_PCODE_UNKNOWN;
+	qcom_socinfo_get_adreno(&gpu);
+	feature_code = gpu.feature_code <= SOCINFO_FC_INT_MAX ? gpu.feature_code : SOCINFO_FC_UNKNOWN;
+	pcode = feature_code >= SOCINFO_FC_Yn(0) && gpu.pcode < SOCINFO_PC_RESERVE ?
+		gpu.pcode : SOCINFO_PC_UNKNOWN;
 
 	soc_code = FIELD_PREP(GENMASK(31, 16), pcode) | FIELD_PREP(GENMASK(15, 0), feature_code);
 
@@ -995,7 +999,7 @@ adreno_get_gpu_model_node(struct platform_device *pdev)
 	if (fuse_model < 0)
 		return NULL;
 
-	node = of_find_node_by_name(pdev->dev.of_node, "qcom,gpu-models");
+	node = of_get_child_by_name(pdev->dev.of_node, "qcom,gpu-models");
 	if (node == NULL)
 		return NULL;
 
@@ -1020,6 +1024,7 @@ const char *adreno_get_gpu_model(struct kgsl_device *device)
 {
 	struct device_node *node;
 	static char gpu_model[32];
+	struct qcom_socinfo_adreno gpu;
 	const char *model;
 	int ret;
 
@@ -1036,11 +1041,12 @@ const char *adreno_get_gpu_model(struct kgsl_device *device)
 	if (!ret)
 		goto done;
 
-	model = socinfo_get_partinfo_part_name(SOCINFO_PART_GPU);
-	if (model)
+	if (!qcom_socinfo_get_adreno(&gpu) && gpu.part_name[0]) {
+		model = gpu.part_name;
 		goto done;
+	}
 
-	scnprintf(gpu_model, sizeof(gpu_model), "Adreno%d%d%dv%d",
+	scnprintf(gpu_model, sizeof(gpu_model), "Adreno%lu%lu%luv%lu",
 		ADRENO_CHIPID_CORE(ADRENO_DEVICE(device)->chipid),
 		ADRENO_CHIPID_MAJOR(ADRENO_DEVICE(device)->chipid),
 		ADRENO_CHIPID_MINOR(ADRENO_DEVICE(device)->chipid),
@@ -1057,7 +1063,7 @@ static u32 adreno_get_vk_device_id(struct kgsl_device *device)
 {
 	struct device_node *node;
 	static u32 device_id;
-	u32 vk_id;
+	struct qcom_socinfo_adreno gpu;
 	int ret;
 
 	if (device_id)
@@ -1072,8 +1078,8 @@ static u32 adreno_get_vk_device_id(struct kgsl_device *device)
 	if (!ret)
 		return device_id;
 
-	vk_id = socinfo_get_partinfo_vulkan_id(SOCINFO_PART_GPU);
-	device_id = vk_id ? vk_id : ADRENO_DEVICE(device)->chipid;
+	qcom_socinfo_get_adreno(&gpu);
+	device_id = gpu.vulkan_id ?: ADRENO_DEVICE(device)->chipid;
 
 	return device_id;
 }
@@ -1206,7 +1212,7 @@ int adreno_device_probe(struct platform_device *pdev,
 	int status;
 	u32 size;
 
-	place_marker("M - DRIVER GPU Init");
+	trace_kgsl_boot_marker("M - DRIVER GPU Init");
 
 	/* Initialize the adreno device structure */
 	adreno_setup_device(adreno_dev);
@@ -1370,7 +1376,7 @@ int adreno_device_probe(struct platform_device *pdev,
 
 	kgsl_qcom_va_md_register(device);
 
-	place_marker("M - DRIVER GPU Ready");
+	trace_kgsl_boot_marker("M - DRIVER GPU Ready");
 
 	return 0;
 err:
@@ -3369,11 +3375,11 @@ static int adreno_probe(struct platform_device *pdev)
 			&adreno_ops, match);
 }
 
-static int adreno_remove(struct platform_device *pdev)
+static void adreno_remove(struct platform_device *pdev)
 {
 	component_master_del(&pdev->dev, &adreno_ops);
 
-	return 0;
+	return;
 }
 
 #if IS_ENABLED(CONFIG_QCOM_KGSL_HIBERNATION)
@@ -3625,5 +3631,5 @@ MODULE_DESCRIPTION("3D Graphics driver");
 MODULE_LICENSE("GPL v2");
 MODULE_SOFTDEP("pre: arm_smmu nvmem_qfprom socinfo");
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0))
-MODULE_IMPORT_NS(DMA_BUF);
+MODULE_IMPORT_NS("DMA_BUF");
 #endif
