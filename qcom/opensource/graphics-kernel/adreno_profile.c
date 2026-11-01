@@ -3,6 +3,7 @@
  * Copyright (c) 2013-2021, The Linux Foundation. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/ctype.h>
 #include <linux/debugfs.h>
 #include <linux/sched/signal.h>

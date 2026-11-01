@@ -3,6 +3,7 @@
  * Copyright (c) 2013-2021, The Linux Foundation. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/slab.h>
 
 #include "adreno.h"

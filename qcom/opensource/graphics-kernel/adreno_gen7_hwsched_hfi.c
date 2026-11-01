@@ -1901,7 +1901,7 @@ static void populate_ibs(struct adreno_device *adreno_dev,
 
 #define DISPQ_IRQ_BIT(_idx) BIT((_idx) + HFI_DSP_IRQ_BASE)
 
-int gen7_gmu_context_queue_write(struct adreno_device *adreno_dev,
+static int gen7_gmu_context_queue_write(struct adreno_device *adreno_dev,
 	struct adreno_context *drawctxt, u32 *msg,
 	struct kgsl_drawobj_cmd *cmdobj, struct adreno_submit_time *time)
 {

@@ -1157,7 +1157,7 @@ static void gen7_err_callback(struct adreno_device *adreno_dev, int bit)
 		kgsl_regread(device, GEN7_RBBM_SECVID_TSB_STATUS_LO, &lo);
 		kgsl_regread(device, GEN7_RBBM_SECVID_TSB_STATUS_HI, &hi);
 
-		dev_crit_ratelimited(dev, "TSB: Write error interrupt: Address: 0x%llx MID: %d\n",
+		dev_crit_ratelimited(dev, "TSB: Write error interrupt: Address: 0x%lx MID: %lu\n",
 			FIELD_GET(GENMASK(16, 0), hi) << 32 | lo,
 			FIELD_GET(GENMASK(31, 23), hi));
 		break;
@@ -1506,7 +1506,7 @@ static u32 _get_pipeid(u32 groupid)
 		return PIPE_NONE;
 }
 
-int gen7_perfcounter_remove(struct adreno_device *adreno_dev,
+static int gen7_perfcounter_remove(struct adreno_device *adreno_dev,
 	struct adreno_perfcount_register *reg, u32 groupid)
 {
 	void *ptr = adreno_dev->pwrup_reglist->hostptr;
