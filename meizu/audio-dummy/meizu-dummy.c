@@ -38,14 +38,8 @@ static const struct snd_soc_component_driver soc_meizu_stub = {
 static int meizu_stub_dev_probe(struct platform_device *pdev)
 {
 	dev_info(&pdev->dev, "dev name %s\n", dev_name(&pdev->dev));
-	return snd_soc_register_component(&pdev->dev, &soc_meizu_stub,
+	return devm_snd_soc_register_component(&pdev->dev, &soc_meizu_stub,
 		meizu_stub_dais, ARRAY_SIZE(meizu_stub_dais));
-}
-
-static int meizu_stub_dev_remove(struct platform_device *pdev)
-{
-	snd_soc_unregister_component(&pdev->dev);
-	return 0;
 }
 
 static const struct of_device_id meizu_stub_codec_dt_match[] = {
@@ -62,7 +56,6 @@ static struct platform_driver meizu_stub_driver = {
 		.suppress_bind_attrs = true,
 	},
 	.probe = meizu_stub_dev_probe,
-	.remove = meizu_stub_dev_remove,
 };
 module_platform_driver(meizu_stub_driver);
 MODULE_DESCRIPTION("Meizu dummy audio codec");

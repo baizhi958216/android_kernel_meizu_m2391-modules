@@ -188,7 +188,6 @@ static const struct file_operations crus_fops = {
 #ifdef CONFIG_COMPAT
 	.compat_ioctl = crus_compat_ioctl,
 #endif
-	.llseek = no_llseek,
 };
 static struct miscdevice crus_misc = {
 	.minor = MISC_DYNAMIC_MINOR,
