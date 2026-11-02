@@ -31,8 +31,8 @@ static int set_carrier_locked(struct pwm_ir *ir, unsigned int carrier)
  else if (carrier == 36000)
   ir->carrier = 36000;
  else
-  pr_err("pwm_ir not support carrier=%d\n", carrier);
- return 0; /* Original retains previous carrier for other nonzero values. */
+  return -EINVAL;
+ return 0;
 }
 static int pwm_ir_set_carrier(struct rc_dev *rc, u32 carrier)
 {
@@ -57,18 +57,22 @@ static int pwm_ir_tx_locked(struct pwm_ir *ir, unsigned int *buffer,
        unsigned int count)
 {
  unsigned int i, period, duty;
- int ret;
+ int ret, stop_ret;
  ret = clk_set_rate(ir->clk, ir->carrier);
+ if (ret)
+  return ret;
+ /* The GP2 RCG parks in CXO/bypass while disabled. set_rate only caches
+  * the requested M/N until enable, so setting duty before enable fails
+  * with -EINVAL. Keep the output asleep while configuring the clock.
+  */
+ ret = clk_prepare_enable(ir->clk);
  if (ret)
   return ret;
  period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, ir->carrier);
  duty = DIV_ROUND_CLOSEST(ir->duty_cycle * period, 100);
  ret = clk_set_duty_cycle(ir->clk, duty, period);
  if (ret)
-  return ret;
- ret = clk_prepare_enable(ir->clk);
- if (ret)
-  return ret;
+  goto out_sleep;
  for (i = 0; i < count; i++) {
   ktime_t edge = ktime_get();
   s64 delta;
@@ -79,8 +83,11 @@ static int pwm_ir_tx_locked(struct pwm_ir *ir, unsigned int *buffer,
   if (delta > 0)
    udelay(delta);
  }
- /* Always leave the output inactive, including an odd-length RC buffer. */
- pinctrl_select_state(ir->pins, ir->sleep);
+out_sleep:
+ /* Also unwind the clock if duty programming or a pin transition fails. */
+ stop_ret = pinctrl_select_state(ir->pins, ir->sleep);
+ if (!ret)
+  ret = stop_ret;
  clk_disable_unprepare(ir->clk);
  return ret ? ret : count;
 }
@@ -163,6 +170,9 @@ static int pwm_ir_probe(struct platform_device *pdev)
  ir->sleep = pinctrl_lookup_state(ir->pins, "ir_sleep");
  if (IS_ERR(ir->sleep))
   return PTR_ERR(ir->sleep);
+ ret = pinctrl_select_state(ir->pins, ir->sleep);
+ if (ret)
+  return ret;
  rc = devm_rc_allocate_device(dev, RC_DRIVER_IR_RAW_TX);
  if (!rc)
   return -ENOMEM;
