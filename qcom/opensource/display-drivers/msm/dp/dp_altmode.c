@@ -9,7 +9,8 @@
 #include <linux/module.h>
 #include <linux/kthread.h>
 #include <linux/soc/qcom/altmode-glink.h>
-#include <linux/usb/dwc3-msm.h>
+#include <linux/of_platform.h>
+#include <linux/usb/dwc3-qcom.h>
 #include <linux/usb/pd_vdo.h>
 
 #include "dp_altmode.h"
@@ -47,6 +48,7 @@ static int dp_altmode_set_usb_dp_mode(struct dp_altmode_private *altmode)
 	struct device_node *np;
 	struct device_node *usb_node;
 	struct platform_device *usb_pdev;
+	enum typec_orientation orientation = TYPEC_ORIENTATION_NONE;
 	int timeout = 250;
 
 	if (!altmode || !altmode->dev) {
@@ -69,8 +71,14 @@ static int dp_altmode_set_usb_dp_mode(struct dp_altmode_private *altmode)
 		return -EINVAL;
 	}
 
+	if (altmode->dp_altmode.base.orientation == ORIENTATION_CC1)
+		orientation = TYPEC_ORIENTATION_NORMAL;
+	else if (altmode->dp_altmode.base.orientation == ORIENTATION_CC2)
+		orientation = TYPEC_ORIENTATION_REVERSE;
 	while (timeout) {
-		rc = dwc3_msm_set_dp_mode(&usb_pdev->dev, altmode->connected, altmode->lanes);
+		rc = dwc3_qcom_set_dp_lanes(&usb_pdev->dev,
+					    altmode->connected ? altmode->lanes : 0,
+					    orientation);
 		if (rc != -EBUSY && rc != -EAGAIN)
 			break;
 
@@ -171,8 +179,11 @@ static int dp_altmode_notify(void *priv, void *data, size_t len)
 		altmode->dp_altmode.base.orientation = orientation;
 
 		rc = dp_altmode_set_usb_dp_mode(altmode);
-		if (rc)
+		if (rc) {
+			altmode->connected = false;
+			altmode->dp_altmode.base.alt_mode_cfg_done = false;
 			return rc;
+		}
 
 		if (altmode->dp_cb && altmode->dp_cb->configure)
 			altmode->dp_cb->configure(altmode->dev);
