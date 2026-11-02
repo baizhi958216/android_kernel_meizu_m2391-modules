@@ -5060,6 +5060,8 @@ int dsi_panel_switch(struct dsi_panel *panel)
 		       panel->name, rc);
 
 	mutex_unlock(&panel->panel_lock);
+	if (!rc && dsi_panel_is_m2391(panel))
+		dsi_panel_meizu_set_adfr(panel, panel->meizu_adfr_fps, true);
 	return rc;
 }
 
@@ -5117,9 +5119,15 @@ int dsi_panel_enable(struct dsi_panel *panel)
 		}
 	}
 	panel->panel_initialized = true;
+	if (dsi_panel_is_m2391(panel)) {
+		panel->meizu_aod_active = false;
+		dsi_panel_meizu_recover_brightness(panel);
+	}
 
 error:
 	mutex_unlock(&panel->panel_lock);
+	if (!rc && dsi_panel_is_m2391(panel))
+		dsi_panel_meizu_set_adfr(panel, panel->meizu_adfr_fps, true);
 	return rc;
 }
 
