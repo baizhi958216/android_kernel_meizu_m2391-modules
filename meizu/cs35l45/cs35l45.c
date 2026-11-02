@@ -25,23 +25,8 @@
 #include "cs35l45.h"
 #include <sound/cs35l45.h>
 
-/* Original M2391 private layout; lifecycle ownership fields follow it. */
-static_assert(sizeof(struct wm_adsp) == 368);
-static_assert(offsetof(struct wm_adsp, cal_ambient) == 92);
-static_assert(offsetof(struct wm_adsp, cal_r) == 96);
-static_assert(offsetof(struct wm_adsp, cal_status) == 100);
-static_assert(offsetof(struct wm_adsp, cal_checksum) == 104);
-static_assert(offsetof(struct wm_adsp, ctl_list) == 176);
-static_assert(offsetof(struct wm_adsp, boot_work) == 192);
-static_assert(offsetof(struct wm_adsp, pwr_lock) == 272);
-static_assert(offsetof(struct wm_adsp, data_word_mask) == 352);
-static_assert(offsetof(struct wm_adsp, fwevent_cb) == 360);
-static_assert(offsetof(struct cs35l45_private, dev) == 368);
-static_assert(offsetof(struct cs35l45_private, regmap) == 376);
-static_assert(offsetof(struct cs35l45_private, reset_gpio) == 384);
-static_assert(offsetof(struct cs35l45_private, external_switch_gpio) == 388);
-static_assert(offsetof(struct cs35l45_private, supplies) == 392);
-static_assert(offsetof(struct cs35l45_private, component) == 1632);
+/* The component driver publishes its embedded DSP as the first member. */
+static_assert(offsetof(struct cs35l45_private, dsp) == 0);
 
 #define DRV_NAME "cs35l45"
 
@@ -1143,10 +1128,10 @@ static int cs35l45_dai_set_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
 	unsigned int asp_fmt, fsync_inv, bclk_inv, master_mode;
 
 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-	case SND_SOC_DAIFMT_CBM_CFM:
+	case SND_SOC_DAIFMT_CBP_CFP:
 		master_mode = 1;
 		break;
-	case SND_SOC_DAIFMT_CBS_CFS:
+	case SND_SOC_DAIFMT_CBC_CFC:
 		master_mode = 0;
 		break;
 	default:
@@ -1343,6 +1328,10 @@ static const struct snd_soc_dai_ops cs35l45_dai_ops = {
 		       SNDRV_PCM_RATE_88200 | \
 		       SNDRV_PCM_RATE_96000)
 
+static const struct snd_soc_dai_ops cs35l45_dsp_log_ops = {
+	.compress_new = snd_soc_new_compress,
+};
+
 static struct snd_soc_dai_driver cs35l45_dai[] = {
 	{
 		.name = "cs35l45",
@@ -1371,7 +1360,7 @@ static struct snd_soc_dai_driver cs35l45_dai[] = {
 			.rates = CS35L45_RATES,
 			.formats = CS35L45_FORMATS,
 		},
-		.compress_new = &snd_soc_new_compress,
+		.ops = &cs35l45_dsp_log_ops,
 	},
 	{
 		.name = "cs35l45-dsp-dsplog",
@@ -1424,15 +1413,19 @@ static int cs35l45_compr_open(struct snd_soc_component *component,
 					struct snd_compr_stream *stream)
 {
 	struct snd_soc_pcm_runtime *rtd = stream->private_data;
-	struct snd_soc_dai *codec_dai = asoc_rtd_to_codec(rtd, 2);
+	struct snd_soc_dai *codec_dai;
+	int i;
 	struct cs35l45_private *cs35l45 = snd_soc_component_get_drvdata(component);
 	__be32 buffer_size;
 	int ret;
 
-	if (strcmp(codec_dai->name, "cs35l45-dsp-dsplog")) {
+	for_each_rtd_codec_dais(rtd, i, codec_dai)
+		if (codec_dai->component == component &&
+		    !strcmp(codec_dai->name, "cs35l45-dsp-dsplog"))
+			break;
+	if (i == rtd->dai_link->num_codecs) {
 		dev_info(cs35l45->dev,
-			"No suitable compressed stream for DAI '%s'\n",
-			codec_dai->name);
+			"No DSP log codec DAI for this stream\n");
 		return -EINVAL;
 	}
 
@@ -1481,13 +1474,13 @@ static int cs35l45_compr_free(struct snd_soc_component *component,
 	struct cs35l45_compr *compr = stream->runtime->private_data;
 	struct wm_adsp *dsp = compr->dsp;
 
-	flush_scheduled_work();
-
-	cancel_work_sync(&compr->start_work);
-	cancel_work_sync(&compr->stop_work);
+	flush_work(&compr->start_work);
+	flush_work(&compr->stop_work);
 
 	mutex_lock(&dsp->pwr_lock);
 
+	container_of(dsp, struct cs35l45_private, dsp)->compr = NULL;
+	stream->runtime->private_data = NULL;
 	kfree(compr->raw_buf);
 	kfree(compr);
 
@@ -1599,7 +1592,7 @@ static int cs35l45_buffer_update_avail(struct cs35l45_private *cs35l45)
 
 static int cs35l45_compr_pointer(struct snd_soc_component *component,
 				 struct snd_compr_stream *stream,
-				 struct snd_compr_tstamp *tstamp)
+				 struct snd_compr_tstamp64 *tstamp)
 {
 	struct cs35l45_compr *compr = stream->runtime->private_data;
 	struct wm_adsp *dsp = compr->dsp;

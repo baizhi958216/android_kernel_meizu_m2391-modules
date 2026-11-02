@@ -18,8 +18,7 @@
 
 /*mtk_spk_type register*/
 
-static int cs35l45_i2c_probe(struct i2c_client *client,
-			     const struct i2c_device_id *id)
+static int cs35l45_i2c_probe(struct i2c_client *client)
 {
 	struct cs35l45_private *cs35l45;
 	struct device *dev = &client->dev;
@@ -57,11 +56,11 @@ static int cs35l45_i2c_probe(struct i2c_client *client,
 	return 0;
 }
 
-static int cs35l45_i2c_remove(struct i2c_client *client)
+static void cs35l45_i2c_remove(struct i2c_client *client)
 {
 	struct cs35l45_private *cs35l45 = i2c_get_clientdata(client);
 
-	return cs35l45_remove(cs35l45);
+	cs35l45_remove(cs35l45);
 }
 
 static const struct of_device_id cs35l45_of_match[] = {
