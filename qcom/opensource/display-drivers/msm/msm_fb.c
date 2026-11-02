@@ -107,30 +107,18 @@ uint32_t msm_framebuffer_iova(struct drm_framebuffer *fb,
 	if (!fb->obj[plane])
 		return 0;
 
-	return msm_gem_iova(fb->obj[plane], aspace) + fb->offsets[plane];
+	{
+		u64 addr = msm_gem_iova(fb->obj[plane], aspace);
+
+		return addr && addr + fb->offsets[plane] <= U32_MAX ?
+			addr + fb->offsets[plane] : 0;
+	}
 }
 
 uint32_t msm_framebuffer_phys(struct drm_framebuffer *fb,
 		int plane)
 {
-	struct msm_framebuffer *msm_fb;
-	dma_addr_t phys_addr;
-
-	if (!fb) {
-		DRM_ERROR("from:%pS null fb\n", __builtin_return_address(0));
-		return -EINVAL;
-	}
-
-	msm_fb = to_msm_framebuffer(fb);
-
-	if (!msm_fb->base.obj[plane])
-		return 0;
-
-	phys_addr = msm_gem_get_dma_addr(msm_fb->base.obj[plane]);
-	if (!phys_addr)
-		return 0;
-
-	return phys_addr + fb->offsets[plane];
+	return msm_framebuffer_iova(fb, NULL, plane);
 }
 
 struct drm_gem_object *msm_framebuffer_bo(struct drm_framebuffer *fb, int plane)

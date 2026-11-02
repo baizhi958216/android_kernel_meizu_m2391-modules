@@ -638,7 +638,7 @@ static void dsi_display_aspace_cb_locked(void *cb_data, bool is_detach)
 {
 	struct dsi_display *display;
 	struct dsi_display_ctrl *display_ctrl;
-	int rc, cnt;
+	int cnt;
 
 	if (!cb_data) {
 		DSI_ERR("aspace cb called with invalid cb_data\n");
@@ -662,10 +662,9 @@ static void dsi_display_aspace_cb_locked(void *cb_data, bool is_detach)
 		display->vaddr = NULL;
 
 	} else {
-		rc = msm_gem_get_iova(display->tx_cmd_buf,
-				display->aspace, &(display->cmd_buffer_iova));
-		if (rc) {
-			DSI_ERR("failed to get the iova rc %d\n", rc);
+		display->cmd_buffer_iova = msm_gem_iova(display->tx_cmd_buf, display->aspace);
+		if (!display->cmd_buffer_iova) {
+			DSI_ERR("command buffer was not remapped\n");
 			goto end;
 		}
 

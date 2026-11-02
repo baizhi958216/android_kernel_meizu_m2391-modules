@@ -38,10 +38,6 @@ struct msm_gem_aspace_ops {
 		unsigned int flags);
 
 	void (*destroy)(struct msm_gem_address_space *space);
-	void (*add_to_active)(struct msm_gem_address_space *space,
-		struct msm_gem_object *obj);
-	void (*remove_from_active)(struct msm_gem_address_space *space,
-		struct msm_gem_object *obj);
 	int (*register_cb)(struct msm_gem_address_space *space,
 			void (*cb)(void *cb, bool data),
 			void *cb_data);
@@ -73,7 +69,7 @@ struct msm_gem_address_space {
 	struct list_head active_list;
 	/* list of clients */
 	struct list_head clients;
-	struct mutex list_lock; /* Protects active_list & clients */
+	struct mutex list_lock; /* Protects callback registration and invocation */
 };
 
 struct msm_gem_vma {
@@ -81,8 +77,11 @@ struct msm_gem_vma {
 	uint64_t iova;
 	struct msm_gem_address_space *aspace;
 	struct list_head list;    /* node in msm_gem_object::vmas */
-	bool mapped;
-	int inuse;
+	struct list_head active;  /* node in aspace->active_list */
+	struct msm_gem_object *object;
+	struct dma_buf_attachment *attach;
+	struct sg_table *sgt;
+	unsigned int inuse;
 };
 
 struct msm_gem_object {
@@ -131,16 +130,9 @@ struct msm_gem_object {
 	 */
 	struct drm_mm_node *vram_node;
 	struct mutex lock; /* Protects resources associated with bo */
-	struct list_head iova_list;
 
 	struct msm_gem_address_space *aspace;
-	bool in_active_list;
 	char name[32]; /* Identifier to print for the debugfs files */
-
-	/* Indicates whether object  needs to request for
-	 * new pagetables due to cb switch
-	 */
-	bool obj_dirty;
 
 	/* iova address and aligned offset */
 	uint64_t iova;

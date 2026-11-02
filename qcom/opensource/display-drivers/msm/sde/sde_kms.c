@@ -2437,15 +2437,17 @@ static int sde_kms_mmu_switch(struct msm_gem_address_space *aspace, bool attach)
 		ret = mmu->funcs->attach(mmu, (const char **)iommu_ports, ARRAY_SIZE(iommu_ports));
 		if (ret)
 			return ret;
-		aspace->domain_attached = true;
-		msm_gem_aspace_domain_attach_detach_update(aspace, false);
+		ret = msm_gem_aspace_domain_attach_detach_update(aspace, false);
+		if (ret) {
+			mmu->funcs->detach(mmu, (const char **)iommu_ports, ARRAY_SIZE(iommu_ports));
+			return ret;
+		}
 	} else {
-		aspace->domain_attached = false;
 		msm_gem_aspace_domain_attach_detach_update(aspace, true);
 		ret = mmu->funcs->detach(mmu, (const char **)iommu_ports, ARRAY_SIZE(iommu_ports));
 		if (ret) {
-			aspace->domain_attached = true;
-			msm_gem_aspace_domain_attach_detach_update(aspace, false);
+			if (msm_gem_aspace_domain_attach_detach_update(aspace, false))
+				DRM_ERROR("failed to restore bank mappings after detach error\n");
 			return ret;
 		}
 	}

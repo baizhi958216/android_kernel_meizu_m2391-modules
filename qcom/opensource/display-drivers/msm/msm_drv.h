@@ -1158,21 +1158,6 @@ msm_gem_smmu_address_space_create(struct drm_device *dev, struct msm_mmu *mmu,
 		const char *name);
 
 /**
- * msm_gem_add_obj_to_aspace_active_list: adds obj to active obj list in aspace
- */
-void msm_gem_add_obj_to_aspace_active_list(
-		struct msm_gem_address_space *aspace,
-		struct drm_gem_object *obj);
-
-/**
- * msm_gem_remove_obj_from_aspace_active_list: removes obj from  active obj
- * list in aspace
- */
-void msm_gem_remove_obj_from_aspace_active_list(
-		struct msm_gem_address_space *aspace,
-		struct drm_gem_object *obj);
-
-/**
  * msm_gem_smmu_address_space_get: returns the aspace pointer for the requested
  * domain
  */
@@ -1186,7 +1171,7 @@ void msm_unregister_mmu(struct drm_device *dev, struct msm_mmu *mmu);
  * msm_gem_aspace_domain_attach_detach: function to inform the attach/detach
  * of the domain for this aspace
  */
-void msm_gem_aspace_domain_attach_detach_update(
+int msm_gem_aspace_domain_attach_detach_update(
 		struct msm_gem_address_space *aspace,
 		bool is_detach);
 
@@ -1226,7 +1211,6 @@ struct page **msm_gem_get_pages(struct drm_gem_object *obj);
 void msm_gem_put_pages(struct drm_gem_object *obj);
 void msm_gem_put_iova(struct drm_gem_object *obj,
 		struct msm_gem_address_space *aspace);
-dma_addr_t msm_gem_get_dma_addr(struct drm_gem_object *obj);
 int msm_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
 		struct drm_mode_create_dumb *args);
 int msm_gem_dumb_map_offset(struct drm_file *file, struct drm_device *dev,
@@ -1262,7 +1246,6 @@ struct drm_gem_object *msm_gem_import(struct drm_device *dev,
 __printf(2, 3)
 void msm_gem_object_set_name(struct drm_gem_object *bo, const char *fmt, ...);
 
-int msm_gem_delayed_import(struct drm_gem_object *obj);
 
 #define MSM_FB_CACHE_NONE	0x0
 #define MSM_FB_CACHE_WRITE_EN	0x1

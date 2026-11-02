@@ -2035,7 +2035,7 @@ static int sde_plane_prepare_fb(struct drm_plane *plane,
 		return 0;
 	}
 
-	if (pstate->aspace && fb) {
+	if (fb) {
 		ret = msm_framebuffer_prepare(fb,
 				pstate->aspace);
 		if (ret) {
@@ -2051,6 +2051,7 @@ static int sde_plane_prepare_fb(struct drm_plane *plane,
 			fb, &layout);
 	if (ret) {
 		SDE_ERROR_PLANE(psde, "failed to get format layout, %d\n", ret);
+		msm_framebuffer_cleanup(fb, pstate->aspace);
 		return ret;
 	}
 
@@ -2070,7 +2071,8 @@ static void sde_plane_cleanup_fb(struct drm_plane *plane,
 
 	SDE_DEBUG_PLANE(psde, "FB[%u]\n", old_state->fb->base.id);
 
-	msm_framebuffer_cleanup(old_state->fb, old_pstate->aspace);
+	if (!old_pstate->defer_prepare_fb)
+		msm_framebuffer_cleanup(old_state->fb, old_pstate->aspace);
 
 }
 
@@ -2119,7 +2121,7 @@ static int _sde_plane_validate_fb(struct sde_plane *psde,
 			SDE_EVT32(psde->base.base.id, fb->base.id,
 				fb_ns, fb_sec, fb_sec_dir, ret,
 				SDE_EVTLOG_ERROR);
-			return ret;
+			return ret ?: -EACCES;
 		}
 	}
 

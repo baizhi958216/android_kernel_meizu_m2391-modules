@@ -1079,7 +1079,6 @@ static void sde_reg_dma_aspace_cb_locked(void *cb_data, bool is_detach)
 	struct sde_reg_dma_buffer *dma_buf = NULL;
 	struct msm_gem_address_space *aspace = NULL;
 	u32 iova_aligned, offset;
-	int rc;
 
 	if (!cb_data) {
 		DRM_ERROR("aspace cb called with invalid dma_buf\n");
@@ -1098,16 +1097,15 @@ static void sde_reg_dma_aspace_cb_locked(void *cb_data, bool is_detach)
 		msm_gem_vunmap(dma_buf->buf, OBJ_LOCK_NORMAL);
 
 	} else {
-		rc = msm_gem_get_iova(dma_buf->buf, aspace,
-				&dma_buf->iova);
-		if (rc) {
-			DRM_ERROR("failed to get the iova rc %d\n", rc);
+		dma_buf->iova = msm_gem_iova(dma_buf->buf, aspace);
+		if (!dma_buf->iova) {
+			DRM_ERROR("register DMA buffer was not remapped\n");
 			return;
 		}
 
 		dma_buf->vaddr = msm_gem_get_vaddr(dma_buf->buf);
 		if (IS_ERR_OR_NULL(dma_buf->vaddr)) {
-			DRM_ERROR("failed to get va rc %d\n", rc);
+			DRM_ERROR("failed to map register DMA buffer\n");
 			return;
 		}
 
@@ -1209,7 +1207,7 @@ static int dealloc_reg_dma_v1(struct sde_reg_dma_buffer *dma_buf)
 	}
 
 	if (dma_buf->buf) {
-		msm_gem_put_iova(dma_buf->buf, 0);
+		msm_gem_put_iova(dma_buf->buf, dma_buf->aspace);
 		msm_gem_address_space_unregister_cb(dma_buf->aspace,
 				sde_reg_dma_aspace_cb_locked, dma_buf);
 		drm_gem_object_put(dma_buf->buf);

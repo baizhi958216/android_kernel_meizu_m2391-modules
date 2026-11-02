@@ -97,29 +97,28 @@ void msm_gem_prime_unpin(struct drm_gem_object *obj)
 struct drm_gem_object *msm_gem_prime_import(struct drm_device *dev,
 					    struct dma_buf *dma_buf)
 {
-	struct msm_drm_private *priv = dev->dev_private;
-	struct device *attach_dev = dev->dev;
-	struct msm_kms *kms;
+	struct dma_buf_attachment *attach;
+	struct drm_gem_object *obj;
 
-	if (!dma_buf || !priv)
-		return ERR_PTR(-EINVAL);
-
-	kms = priv->kms;
-	if (!kms || !kms->funcs->get_address_space_device)
-		return ERR_PTR(-ENODEV);
-
-	/*
-	 * A secure transition can temporarily take the nonsecure context bank
-	 * offline. The GEM mapping path attaches to the requested SDE domain
-	 * before supplying an IOVA to the display engine.
-	 */
-	if (priv->has_iommu) {
-		struct device *cb;
-
-		cb = kms->funcs->get_address_space_device(kms, MSM_SMMU_DOMAIN_UNSECURE);
-		if (cb)
-			attach_dev = cb;
+	if (drm_gem_is_prime_exported_dma_buf(dev, dma_buf)) {
+		obj = dma_buf->priv;
+		drm_gem_object_get(obj);
+		return obj;
 	}
 
-	return drm_gem_prime_import_dev(dev, dma_buf, attach_dev);
+	/* Keep the import alive without mapping it into the nonsecure bank.
+	 * Each scanout VMA attaches to the context bank chosen by its plane.
+	 */
+	attach = dma_buf_attach(dma_buf, dev->dev);
+	if (IS_ERR(attach))
+		return ERR_CAST(attach);
+	obj = msm_gem_import(dev, dma_buf, NULL);
+	if (IS_ERR(obj)) {
+		dma_buf_detach(dma_buf, attach);
+		return obj;
+	}
+	get_dma_buf(dma_buf);
+	obj->import_attach = attach;
+	obj->resv = dma_buf->resv;
+	return obj;
 }
