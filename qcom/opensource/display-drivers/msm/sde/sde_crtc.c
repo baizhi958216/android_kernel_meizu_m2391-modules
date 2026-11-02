@@ -610,6 +610,8 @@ static void sde_crtc_event_notify(struct drm_crtc *crtc, uint32_t type, void *pa
 			DRMID(crtc), type, payload, *data);
 }
 
+static void frame_data_put(struct sde_frame_data *data);
+
 static void sde_crtc_destroy(struct drm_crtc *crtc)
 {
 	struct sde_crtc *sde_crtc = to_sde_crtc(crtc);
@@ -634,6 +636,7 @@ static void sde_crtc_destroy(struct drm_crtc *crtc)
 	sde_fence_deinit(sde_crtc->output_fence);
 	_sde_crtc_deinit_events(sde_crtc);
 
+	frame_data_put(sde_crtc->frame_data);
 	drm_crtc_cleanup(crtc);
 	mutex_destroy(&sde_crtc->crtc_lock);
 	kfree(sde_crtc);
@@ -2632,108 +2635,85 @@ static void _sde_crtc_dest_scaler_setup(struct drm_crtc *crtc)
 	}
 }
 
-static void _sde_crtc_put_frame_data_buffer(struct sde_frame_data_buffer *buf)
+static void frame_data_release(struct kref *ref)
 {
-	if (!buf)
-		return;
+	struct sde_frame_data *data = container_of(ref, struct sde_frame_data, ref);
+	int i;
 
-	msm_gem_put_buffer(buf->gem);
-	kfree(buf);
-	buf = NULL;
+	for (i = 0; i < data->cnt; i++) {
+		msm_gem_put_buffer(data->buf[i].gem);
+		drm_framebuffer_put(data->buf[i].fb);
+	}
+	kfree(data);
 }
 
-static int _sde_crtc_get_frame_data_buffer(struct drm_crtc *crtc, uint32_t fd)
+static void frame_data_put(struct sde_frame_data *data)
 {
-	struct sde_crtc *sde_crtc;
-	struct sde_frame_data_buffer *buf;
-	uint32_t cur_buf;
-
-	sde_crtc = to_sde_crtc(crtc);
-	cur_buf = sde_crtc->frame_data.cnt;
-
-	buf = kzalloc(sizeof(struct sde_frame_data_buffer), GFP_KERNEL);
-	if (!buf)
-		return -ENOMEM;
-
-	sde_crtc->frame_data.buf[cur_buf] = buf;
-	buf->fd = fd;
-	buf->fb = drm_framebuffer_lookup(crtc->dev, NULL, fd);
-	if (!buf->fb) {
-		SDE_ERROR("unable to get fb");
-		return -EINVAL;
-	}
-
-	buf->gem = msm_framebuffer_bo(buf->fb, 0);
-	if (!buf->gem) {
-		SDE_ERROR("unable to get drm gem");
-		return -EINVAL;
-	}
-
-	return msm_gem_get_buffer(buf->gem, crtc->dev, buf->fb,
-			sizeof(struct sde_drm_frame_data_packet));
+	if (data)
+		kref_put(&data->ref, frame_data_release);
 }
 
-static void _sde_crtc_set_frame_data_buffers(struct drm_crtc *crtc,
-			struct sde_crtc_state *cstate, void __user *usr)
+static int sde_crtc_set_frame_data_buffers(struct drm_crtc *crtc, struct sde_crtc_state *state,
+					   void __user *arg)
 {
-	struct sde_crtc *sde_crtc;
 	struct sde_drm_frame_data_buffers_ctrl ctrl;
+	struct sde_frame_data *data = NULL;
 	int i, ret;
 
-	if (!crtc || !cstate || !usr)
-		return;
-
-	sde_crtc = to_sde_crtc(crtc);
-
-	ret = copy_from_user(&ctrl, usr, sizeof(ctrl));
-	if (ret) {
-		SDE_ERROR("failed to copy frame data ctrl, ret %d\n", ret);
-		return;
+	if (copy_from_user(&ctrl, arg, sizeof(ctrl)))
+		return -EFAULT;
+	if (ctrl.num_buffers > SDE_FRAME_DATA_BUFFER_MAX)
+		return -EINVAL;
+	if (ctrl.num_buffers) {
+		data = kzalloc(sizeof(*data), GFP_KERNEL);
+		if (!data)
+			return -ENOMEM;
+		kref_init(&data->ref);
 	}
-
-	if (!ctrl.num_buffers) {
-		SDE_DEBUG("clearing frame data buffers");
-		goto exit;
-	} else if (ctrl.num_buffers > SDE_FRAME_DATA_BUFFER_MAX) {
-		SDE_ERROR("invalid number of buffers %d", ctrl.num_buffers);
-		return;
-	}
-
 	for (i = 0; i < ctrl.num_buffers; i++) {
-		if (_sde_crtc_get_frame_data_buffer(crtc, ctrl.fds[i])) {
-			SDE_ERROR("unable to set buffer for fd %d", ctrl.fds[i]);
-			goto exit;
+		struct sde_frame_data_buffer *buf = &data->buf[i];
+
+		buf->fd = ctrl.fds[i];
+		buf->fb = drm_framebuffer_lookup(crtc->dev, NULL, buf->fd);
+		if (!buf->fb) {
+			ret = -ENOENT;
+			goto fail;
 		}
-		sde_crtc->frame_data.cnt++;
+		buf->gem = msm_framebuffer_bo(buf->fb, 0);
+		if (IS_ERR_OR_NULL(buf->gem))
+			ret = -EINVAL;
+		else
+			ret = msm_gem_get_buffer(buf->gem, crtc->dev, buf->fb,
+						 sizeof(struct sde_drm_frame_data_packet));
+		if (ret) {
+			drm_framebuffer_put(buf->fb);
+			goto fail;
+		}
+		data->cnt++;
 	}
 
-	return;
-exit:
-	while (sde_crtc->frame_data.cnt--)
-		_sde_crtc_put_frame_data_buffer(
-				sde_crtc->frame_data.buf[sde_crtc->frame_data.cnt]);
-	sde_crtc->frame_data.cnt = 0;
+	frame_data_put(state->frame_data);
+	state->frame_data = data;
+	return 0;
+fail:
+	frame_data_put(data);
+	return ret;
 }
 
-static void _sde_crtc_frame_data_notify(struct drm_crtc *crtc,
-		struct sde_drm_frame_data_packet *frame_data_packet)
+static void sde_crtc_commit_frame_data(struct drm_crtc *crtc, struct drm_atomic_state *state)
 {
-	struct sde_crtc *sde_crtc;
-	struct sde_drm_frame_data_buf buf;
-	struct msm_gem_object *msm_gem;
-	u32 cur_buf;
+	struct sde_crtc *sde_crtc = to_sde_crtc(crtc);
+	struct drm_crtc_state *new = drm_atomic_get_new_crtc_state(state, crtc);
+	struct sde_frame_data *data = new && new->active ? to_sde_crtc_state(new)->frame_data : NULL;
+	struct sde_frame_data *old;
 
-	sde_crtc = to_sde_crtc(crtc);
-	cur_buf = sde_crtc->frame_data.idx;
-	msm_gem = to_msm_bo(sde_crtc->frame_data.buf[cur_buf]->gem);
-
-	buf.fd = sde_crtc->frame_data.buf[cur_buf]->fd;
-	buf.offset = msm_gem->offset;
-
-	sde_crtc_event_notify(crtc, DRM_EVENT_FRAME_DATA, &buf,
-			sizeof(struct sde_drm_frame_data_buf));
-
-	sde_crtc->frame_data.idx = ++sde_crtc->frame_data.idx % sde_crtc->frame_data.cnt;
+	mutex_lock(&sde_crtc->frame_data_lock);
+	old = sde_crtc->frame_data;
+	if (data)
+		kref_get(&data->ref);
+	sde_crtc->frame_data = data;
+	mutex_unlock(&sde_crtc->frame_data_lock);
+	frame_data_put(old);
 }
 
 static void sde_crtc_get_frame_data(struct drm_crtc *crtc)
@@ -2749,12 +2729,16 @@ static void sde_crtc_get_frame_data(struct drm_crtc *crtc)
 		return;
 
 	sde_crtc = to_sde_crtc(crtc);
-	frame_data = &sde_crtc->frame_data;
+	mutex_lock(&sde_crtc->frame_data_lock);
+	frame_data = sde_crtc->frame_data;
+	if (frame_data)
+		kref_get(&frame_data->ref);
+	mutex_unlock(&sde_crtc->frame_data_lock);
 
-	if (frame_data->cnt) {
+	if (frame_data) {
 		struct msm_gem_object *msm_gem;
 
-		msm_gem = to_msm_bo(frame_data->buf[frame_data->idx]->gem);
+		msm_gem = to_msm_bo(frame_data->buf[frame_data->idx].gem);
 		data = (struct sde_drm_frame_data_packet *)
 				(((u8 *)msm_gem->vaddr) + msm_gem->offset);
 	} else {
@@ -2770,8 +2754,17 @@ static void sde_crtc_get_frame_data(struct drm_crtc *crtc)
 			sde_plane_get_frame_data(plane, &data->plane_frame_data[i++]);
 	}
 
-	if (frame_data->cnt)
-		_sde_crtc_frame_data_notify(crtc, data);
+	if (frame_data) {
+		struct sde_frame_data_buffer *slot = &frame_data->buf[frame_data->idx];
+		struct sde_drm_frame_data_buf event = {
+			.fd = slot->fd,
+			.offset = to_msm_bo(slot->gem)->offset,
+		};
+
+		sde_crtc_event_notify(crtc, DRM_EVENT_FRAME_DATA, &event, sizeof(event));
+		frame_data->idx = (frame_data->idx + 1) % frame_data->cnt;
+		frame_data_put(frame_data);
+	}
 }
 
 static void sde_crtc_frame_event_cb(void *data, u32 event, ktime_t ts)
@@ -4279,6 +4272,7 @@ static void sde_crtc_atomic_flush_common(struct drm_crtc *crtc,
 		return;
 	}
 
+	sde_crtc_commit_frame_data(crtc, state);
 	if (!crtc->state->enable) {
 		SDE_DEBUG("crtc%d -> enable %d, skip atomic_flush\n",
 				crtc->base.id, crtc->state->enable);
@@ -4426,6 +4420,7 @@ static void sde_crtc_destroy_state(struct drm_crtc *crtc,
 	drm_for_each_encoder_mask(enc, crtc->dev, state->encoder_mask)
 		sde_rm_release(&sde_kms->rm, enc, true);
 
+	frame_data_put(cstate->frame_data);
 	sde_cp_clear_state_info(state);
 	__drm_atomic_helper_crtc_destroy_state(state);
 
@@ -4886,6 +4881,8 @@ static struct drm_crtc_state *sde_crtc_duplicate_state(struct drm_crtc *crtc)
 	msm_property_duplicate_state(&sde_crtc->property_info,
 			old_cstate, cstate,
 			&cstate->property_state, cstate->property_values);
+	if (cstate->frame_data)
+		kref_get(&cstate->frame_data->ref);
 	sde_cp_duplicate_state_info(&old_cstate->base, &cstate->base);
 
 	/* duplicate base helper */
@@ -6832,7 +6829,7 @@ static int sde_crtc_atomic_set_property(struct drm_crtc *crtc,
 					(void __user *)(uintptr_t)val);
 		break;
 	case CRTC_PROP_FRAME_DATA_BUF:
-		_sde_crtc_set_frame_data_buffers(crtc, cstate, (void __user *)(uintptr_t)val);
+		ret = sde_crtc_set_frame_data_buffers(crtc, cstate, u64_to_user_ptr(val));
 		break;
 	default:
 		/* nothing to do */
@@ -8014,6 +8011,7 @@ struct drm_crtc *sde_crtc_init(struct drm_device *dev, struct drm_plane *plane)
 	crtc->dev = dev;
 
 	mutex_init(&sde_crtc->crtc_lock);
+	mutex_init(&sde_crtc->frame_data_lock);
 	spin_lock_init(&sde_crtc->spin_lock);
 	spin_lock_init(&sde_crtc->fevent_spin_lock);
 	atomic_set(&sde_crtc->frame_pending, 0);

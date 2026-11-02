@@ -227,9 +227,10 @@ struct sde_frame_data_buffer {
  * @buf : list of frame data buffers
  */
 struct sde_frame_data {
+	struct kref ref;
 	u32 idx;
 	u32 cnt;
-	struct sde_frame_data_buffer *buf[SDE_FRAME_DATA_BUFFER_MAX];
+	struct sde_frame_data_buffer buf[SDE_FRAME_DATA_BUFFER_MAX];
 };
 
 /**
@@ -454,7 +455,8 @@ struct sde_crtc {
 	u32 skip_blend_plane_h;
 	u32 line_time_in_ns;
 
-	struct sde_frame_data frame_data;
+	struct mutex frame_data_lock;
+	struct sde_frame_data *frame_data;
 
 	struct sde_opr_value previous_opr_value;
 	bool opr_event_notify_enabled;
@@ -527,6 +529,7 @@ struct sde_line_insertion_param {
  */
 struct sde_crtc_state {
 	struct drm_crtc_state base;
+	struct sde_frame_data *frame_data;
 
 	struct drm_connector *connectors[MAX_CONNECTORS];
 	int num_connectors;
