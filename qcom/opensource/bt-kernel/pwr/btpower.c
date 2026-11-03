@@ -264,7 +264,7 @@ static int btpower_get_temperature(struct btpower_platform_data *pdata,
 
 	thermal_dev = thermal_zone_get_zone_by_name(pdata->tsens);
 	if (IS_ERR(thermal_dev)) {
-		pr_err("Fail to get thermal zone. ret: %d\n",
+		pr_err("Fail to get thermal zone. ret: %ld\n",
 			PTR_ERR(thermal_dev));
 		return PTR_ERR(thermal_dev);
 	}
@@ -277,7 +277,7 @@ static int btpower_get_temperature(struct btpower_platform_data *pdata,
 }
 
 #ifdef CONFIG_BT_HW_SECURE_DISABLE
-int perisec_cnss_bt_hw_disable_check(struct btpower_platform_data *plat_priv)
+static int perisec_cnss_bt_hw_disable_check(struct btpower_platform_data *plat_priv)
 {
 	struct Object client_env;
 	struct Object app_object;
@@ -338,7 +338,7 @@ end:
 	return ret;
 }
 #else
-int perisec_cnss_bt_hw_disable_check(struct btpower_platform_data *plat_priv)
+static int perisec_cnss_bt_hw_disable_check(struct btpower_platform_data *plat_priv)
 {
 	return 0;
 }
@@ -943,7 +943,7 @@ static int bt_dt_parse_vreg_info(struct device *dev,
 	pr_debug("%s: vreg dev tree parse for %s\n", __func__, vreg_name);
 
 	snprintf(prop_name, sizeof(prop_name), "%s-supply", vreg_name);
-	if (of_parse_phandle(np, prop_name, 0)) {
+	if (of_property_present(np, prop_name)) {
 		vreg->reg = regulator_get(dev, vreg_name);
 		if (IS_ERR(vreg->reg)) {
 			ret = PTR_ERR(vreg->reg);
@@ -1036,7 +1036,11 @@ static int bt_power_vreg_get(struct platform_device *pdev)
 	}
 
 	memcpy(&bt_power_pdata->compatible, &data->compatible, MAX_PROP_SIZE);
-	bt_power_pdata->vreg_info = data->vregs;
+	bt_power_pdata->vreg_info = devm_kmemdup(&pdev->dev, data->vregs,
+						  sizeof(*data->vregs) * data->num_vregs,
+						  GFP_KERNEL);
+	if (!bt_power_pdata->vreg_info)
+		return -ENOMEM;
 	num_vregs = bt_power_pdata->num_vregs = data->num_vregs;
 	for (; i < num_vregs; i++) {
 		ret = bt_dt_parse_vreg_info(&(pdev->dev),
@@ -1125,9 +1129,12 @@ static int bt_power_populate_dt_pinfo(struct platform_device *pdev)
 					continue;
 				pr_info("%s: bt_kiwi device node found", __func__);
 			}
+			bt_power_pdata->board_node = pdev->dev.of_node;
 			pdev->dev.of_node = child;
 			break;
 		}
+		if (!bt_power_pdata->board_node)
+			return -ENODEV;
 	}
 	if (pdev->dev.of_node) {
 		rc = bt_power_vreg_get(pdev);
@@ -1208,23 +1215,33 @@ static inline bool bt_is_converged_dt(struct platform_device *plat_dev)
 	return of_property_read_bool(plat_dev->dev.of_node, "qcom,converged-dt");
 }
 
-static void bt_power_pdc_init_params (struct btpower_platform_data *pdata)
+static int bt_power_pdc_init_params(struct btpower_platform_data *pdata)
 {
-	int ret;
 	struct device *dev = &pdata->pdev->dev;
-	pdata->pdc_init_table_len = of_property_count_strings(dev->of_node,
-				"qcom,pdc_init_table");
-	if (pdata->pdc_init_table_len > 0) {
-		pdata->pdc_init_table = kcalloc(pdata->pdc_init_table_len,
-				sizeof(char *), GFP_KERNEL);
-		ret = of_property_read_string_array(dev->of_node, "qcom,pdc_init_table",
-			pdata->pdc_init_table, pdata->pdc_init_table_len);
-		if (ret < 0)
-			pr_err("Failed to get PDC Init Table\n");
-		else
-			pr_info("PDC Init table configured\n");
-	} else {
-		pr_debug("PDC Init Table not configured\n");
+	int count, ret;
+
+	if (!of_property_present(dev->of_node, "qcom,pdc_init_table"))
+		return 0;
+	count = of_property_count_strings(dev->of_node, "qcom,pdc_init_table");
+	if (count <= 0)
+		return count ?: -EINVAL;
+	pdata->pdc_init_table = devm_kcalloc(dev, count, sizeof(*pdata->pdc_init_table),
+					     GFP_KERNEL);
+	if (!pdata->pdc_init_table)
+		return -ENOMEM;
+	ret = of_property_read_string_array(dev->of_node, "qcom,pdc_init_table",
+					    pdata->pdc_init_table, count);
+	if (ret < 0)
+		return ret;
+	pdata->pdc_init_table_len = count;
+	return 0;
+}
+
+static void bt_power_restore_board_node(struct platform_device *pdev)
+{
+	if (bt_power_pdata->board_node) {
+		of_node_put(pdev->dev.of_node);
+		pdev->dev.of_node = bt_power_pdata->board_node;
 	}
 }
 
@@ -1259,7 +1276,11 @@ static int bt_power_probe(struct platform_device *pdev)
 		} else {
 			bt_power_pdata->wlan_sw_ctrl_gpio = -EINVAL;
 		}
-		gpio_value = gpio_get_value(bt_power_pdata->wlan_sw_ctrl_gpio);
+		if (bt_power_pdata->wlan_sw_ctrl_gpio < 0) {
+			ret = bt_power_pdata->wlan_sw_ctrl_gpio;
+			goto free_pdata;
+		}
+		gpio_value = gpio_get_value_cansleep(bt_power_pdata->wlan_sw_ctrl_gpio);
 		pr_info("%s:WLAN_SW_CNTRL_GPIO value= %d\n", __func__, gpio_value);
 		if(gpio_value) {
 			bt_power_pdata->bt_device_type =
@@ -1293,30 +1314,46 @@ static int bt_power_probe(struct platform_device *pdev)
 		pr_err("%s: Failed to get platform data\n", __func__);
 		goto free_pdata;
 	}
-	if (btpower_rfkill_probe(pdev) < 0)
+	ret = bt_power_pdc_init_params(bt_power_pdata);
+	if (ret)
 		goto free_pdata;
-        bt_power_pdc_init_params(bt_power_pdata);
-	btpower_aop_mbox_init(bt_power_pdata);
+	if (of_property_present(pdev->dev.of_node, "mboxes")) {
+		ret = btpower_aop_mbox_init(bt_power_pdata);
+		if (ret)
+			goto free_pdata;
+	}
+	ret = btpower_rfkill_probe(pdev);
+	if (ret)
+		goto free_pdata;
 
 	probe_finished = true;
 	return 0;
 
 free_pdata:
+	if (bt_power_pdata->mbox_chan)
+		mbox_free_channel(bt_power_pdata->mbox_chan);
+	bt_power_vreg_put();
+	bt_power_restore_board_node(pdev);
+	pdev->dev.platform_data = NULL;
 	kfree(bt_power_pdata);
+	bt_power_pdata = NULL;
 	return ret;
 }
 
-static int bt_power_remove(struct platform_device *pdev)
+static void bt_power_remove(struct platform_device *pdev)
 {
 	dev_dbg(&pdev->dev, "%s\n", __func__);
 
 	probe_finished = false;
 	btpower_rfkill_remove(pdev);
+	if (bt_power_pdata->mbox_chan)
+		mbox_free_channel(bt_power_pdata->mbox_chan);
 	bt_power_vreg_put();
+	bt_power_restore_board_node(pdev);
+	pdev->dev.platform_data = NULL;
 
 	kfree(bt_power_pdata);
-
-	return 0;
+	bt_power_pdata = NULL;
 }
 
 int btpower_register_slimdev(struct device *dev)
@@ -1567,7 +1604,7 @@ static int __init btpower_init(void)
 		goto chrdev_err;
 	}
 
-	bt_class = class_create(THIS_MODULE, "bt-dev");
+	bt_class = class_create("bt-dev");
 	if (IS_ERR(bt_class)) {
 		pr_err("%s: coudn't create class\n", __func__);
 		ret = -1;
@@ -1606,20 +1643,17 @@ driver_err:
  *
  * Return: 0 for success
  */
- int bt_aop_send_msg(struct btpower_platform_data *plat_priv, char *mbox_msg)
- {
-	struct qmp_pkt pkt;
-	int ret = 0;
-	pkt.size = BTPOWER_MBOX_MSG_MAX_LEN;
-	pkt.data = mbox_msg;
-	ret = mbox_send_message(plat_priv->mbox_chan, &pkt);
-	if (ret < 0)
-		pr_err("Failed to send AOP mbox msg: %s\n", mbox_msg);
-	else
-		ret =0;
-	return ret;
+static int bt_aop_send_msg(struct btpower_platform_data *pdata, const char *message)
+{
+	struct qmp_pkt pkt = { .size = strlen(message) + 1, .data = (void *)message };
+	int ret;
 
- }
+	if (pkt.size > BTPOWER_MBOX_MSG_MAX_LEN)
+		return -EMSGSIZE;
+	ret = mbox_send_message(pdata->mbox_chan, &pkt);
+	return ret < 0 ? ret : 0;
+}
+
 int bt_aop_pdc_reconfig(struct btpower_platform_data *pdata)
 {
 
@@ -1629,7 +1663,7 @@ int bt_aop_pdc_reconfig(struct btpower_platform_data *pdata)
 		return 0;
         pr_debug("Setting PDC defaults");
 	for (i = 0; i < pdata->pdc_init_table_len; i++) {
-		ret =bt_aop_send_msg(pdata,(char *)pdata->pdc_init_table[i]);
+		ret = bt_aop_send_msg(pdata, pdata->pdc_init_table[i]);
 		if (ret < 0)
 			break;
 	}
@@ -1668,7 +1702,7 @@ int btpower_aop_mbox_init(struct btpower_platform_data *pdata)
 	if (ret)
 		pr_err("Failed to reconfig BT WLAN PDC, err = %d\n", ret);
 
-	return 0;
+	return ret;
 }
 
 static int btpower_aop_set_vreg_param(struct btpower_platform_data *pdata,
@@ -1676,7 +1710,6 @@ static int btpower_aop_set_vreg_param(struct btpower_platform_data *pdata,
 				   enum btpower_vreg_param param,
 				   enum btpower_tcs_seq seq, int val)
 {
-	struct qmp_pkt pkt;
 	char mbox_msg[BTPOWER_MBOX_MSG_MAX_LEN];
 	static const char * const vreg_param_str[] = {"v", "m", "e"};
 	static const char *const tcs_seq_str[] = {"upval", "dwnval", "enable"};
@@ -1690,10 +1723,7 @@ static int btpower_aop_set_vreg_param(struct btpower_platform_data *pdata,
 		 vreg_param_str[param], tcs_seq_str[seq], val);
 
 	pr_info("%s: sending AOP Mbox msg: %s\n", __func__, mbox_msg);
-	pkt.size = BTPOWER_MBOX_MSG_MAX_LEN;
-	pkt.data = mbox_msg;
-
-	ret = mbox_send_message(pdata->mbox_chan, &pkt);
+	ret = bt_aop_send_msg(pdata, mbox_msg);
 	if (ret < 0)
 		pr_err("%s:Failed to send AOP mbox msg(%s), err(%d)\n",
 					__func__, mbox_msg, ret);

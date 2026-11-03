@@ -58,7 +58,7 @@ struct btpower_platform_data {
 	int wl_gpio_sys_rst;                   /* Wlan reset gpio */
 	int bt_gpio_sw_ctrl;                   /* Bluetooth sw_ctrl gpio */
 	int bt_gpio_debug;                     /* Bluetooth debug gpio */
-	unsigned int wlan_sw_ctrl_gpio;        /* Wlan switch control gpio*/
+	int wlan_sw_ctrl_gpio;        /* Wlan switch control gpio*/
 #ifdef CONFIG_MSM_BT_OOBS
 	int bt_gpio_dev_wake;                  /* Bluetooth bt_wake */
 	int bt_gpio_host_wake;                 /* Bluetooth bt_host_wake */
@@ -75,6 +75,7 @@ struct btpower_platform_data {
 	struct mbox_chan *mbox_chan;
 	const char *vreg_ipa;
 	bool is_converged_dt;
+	struct device_node *board_node;
 	int pdc_init_table_len;
 	const char **pdc_init_table;
 	int bt_device_type;
