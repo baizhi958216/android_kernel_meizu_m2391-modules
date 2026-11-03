@@ -1309,7 +1309,7 @@ void rtc6226_rds_handler(struct work_struct *worker)
 	case RDS_TYPE_0A:
 		if (radio->bler[2] <= CORRECTED_THREE_TO_FIVE)
 			rtc6226_update_af_list(radio);
-		/*  fall through */
+		fallthrough;
 	case RDS_TYPE_0B:
 		addr = (radio->block[1] & PS_MASK) * NO_OF_CHARS_IN_EACH_ADD;
 		FMDBG("%s RDS is PS\n", __func__);
@@ -1399,7 +1399,7 @@ int rtc6226_reset_rds_data(struct rtc6226_device *radio)
 	return 0;
 }
 
-int rtc6226_set_rssi_threshold(struct rtc6226_device *radio, u16 rssi)
+static int rtc6226_set_rssi_threshold(struct rtc6226_device *radio, u16 rssi)
 {
 	int retval = 0;
 
@@ -1593,7 +1593,7 @@ static unsigned int rtc6226_fops_poll(struct file *file,
 }
 
 /* static */
-int rtc6226_vidioc_g_ctrl(struct file *file, void *priv,
+static int rtc6226_vidioc_g_ctrl(struct file *file, void *priv,
 	struct v4l2_control *ctrl)
 {
 	struct rtc6226_device *radio = video_drvdata(file);
@@ -1645,7 +1645,7 @@ int rtc6226_vidioc_g_ctrl(struct file *file, void *priv,
 	case V4L2_CID_PRIVATE_RTC6226_RDSGROUP_PROC:
 		break;
 	case V4L2_CID_PRIVATE_RTC6226_SIGNAL_TH:
-	/* intentional fallthrough */
+	fallthrough;
 	case V4L2_CID_PRIVATE_RTC6226_RSSI_TH:
 		ctrl->value = radio->rssi_th;
 		break;
@@ -1780,7 +1780,7 @@ done:
 
 }
 
-bool rtc6226_is_valid_srch_mode(int srch_mode)
+static bool rtc6226_is_valid_srch_mode(int srch_mode)
 {
 	if ((srch_mode >= RTC6226_MIN_SRCH_MODE) &&
 			(srch_mode <= RTC6226_MAX_SRCH_MODE))
@@ -1792,7 +1792,7 @@ bool rtc6226_is_valid_srch_mode(int srch_mode)
 /*
  * rtc6226_vidioc_s_ctrl - set the value of a control
  */
-int rtc6226_vidioc_s_ctrl(struct file *file, void *priv,
+static int rtc6226_vidioc_s_ctrl(struct file *file, void *priv,
 	struct v4l2_control *ctrl)
 {
 	struct rtc6226_device *radio = video_drvdata(file);
@@ -2073,7 +2073,7 @@ static int rtc6226_vidioc_g_audio(struct file *file, void *priv,
 {
 	/* driver constants */
 	audio->index = 0;
-	strlcpy(audio->name, "Radio", sizeof(audio->name));
+	strscpy(audio->name, "Radio", sizeof(audio->name));
 	audio->capability = V4L2_AUDCAP_STEREO;
 	audio->mode = 0;
 
@@ -2102,7 +2102,7 @@ static int rtc6226_vidioc_g_tuner(struct file *file, void *priv,
 		goto done;
 
 	/* driver constants */
-	strlcpy(tuner->name, "FM", sizeof(tuner->name));
+	strscpy(tuner->name, "FM", sizeof(tuner->name));
 	tuner->type = V4L2_TUNER_RADIO;
 	tuner->capability = V4L2_TUNER_CAP_LOW | V4L2_TUNER_CAP_STEREO |
 		V4L2_TUNER_CAP_RDS | V4L2_TUNER_CAP_RDS_BLOCK_IO;
@@ -2310,12 +2310,33 @@ static int rtc6226_vidioc_s_hw_freq_seek(struct file *file, void *priv,
 	return retval;
 }
 
+/* Flyme uses legacy V4L2_CID_PRIVATE_BASE offsets, which are rejected
+ * by the extended-control compatibility path in the V4L2 core.
+ */
+static long rtc6226_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+{
+	struct v4l2_control control;
+	void __user *user_control = (void __user *)arg;
+	int ret;
+
+	if (cmd != VIDIOC_G_CTRL && cmd != VIDIOC_S_CTRL)
+		return video_ioctl2(file, cmd, arg);
+
+	if (copy_from_user(&control, user_control, sizeof(control)))
+		return -EFAULT;
+	if (cmd == VIDIOC_G_CTRL)
+		ret = rtc6226_vidioc_g_ctrl(file, NULL, &control);
+	else
+		ret = rtc6226_vidioc_s_ctrl(file, NULL, &control);
+
+	if (!ret && copy_to_user(user_control, &control, sizeof(control)))
+		return -EFAULT;
+	return ret;
+}
+
 static const struct v4l2_file_operations rtc6226_fops = {
 	.owner			= THIS_MODULE,
-	.unlocked_ioctl	= video_ioctl2,
-#ifdef CONFIG_COMPAT
-	.compat_ioctl32	= v4l2_compat_ioctl32,
-#endif
+	.unlocked_ioctl	= rtc6226_ioctl,
 	.read			= rtc6226_fops_read,
 	.poll			= rtc6226_fops_poll,
 	.open			= rtc6226_fops_open,
@@ -2331,8 +2352,6 @@ const struct v4l2_ioctl_ops rtc6226_ioctl_ops = {
 	.vidioc_g_audio             =   rtc6226_vidioc_g_audio,
 	.vidioc_g_tuner             =   rtc6226_vidioc_g_tuner,
 	.vidioc_s_tuner             =   rtc6226_vidioc_s_tuner,
-	.vidioc_g_ctrl              =   rtc6226_vidioc_g_ctrl,
-	.vidioc_s_ctrl              =   rtc6226_vidioc_s_ctrl,
 	.vidioc_g_frequency         =   rtc6226_vidioc_g_frequency,
 	.vidioc_s_frequency         =   rtc6226_vidioc_s_frequency,
 	.vidioc_s_hw_freq_seek      =   rtc6226_vidioc_s_hw_freq_seek,

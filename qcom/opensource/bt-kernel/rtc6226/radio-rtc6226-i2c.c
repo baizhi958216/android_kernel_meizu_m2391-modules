@@ -34,6 +34,7 @@
 #include <media/v4l2-ioctl.h>
 #include <linux/uaccess.h>
 #include <linux/regulator/consumer.h>
+#include <linux/pinctrl/consumer.h>
 #include "radio-rtc6226.h"
 #include <linux/workqueue.h>
 
@@ -210,8 +211,8 @@ int rtc6226_vidioc_querycap(struct file *file, void *priv,
 	struct v4l2_capability *capability)
 {
 	FMDBG("%s enter\n", __func__);
-	strlcpy(capability->driver, DRIVER_NAME, sizeof(capability->driver));
-	strlcpy(capability->card, DRIVER_CARD, sizeof(capability->card));
+	strscpy(capability->driver, DRIVER_NAME, sizeof(capability->driver));
+	strscpy(capability->card, DRIVER_CARD, sizeof(capability->card));
 	capability->device_caps = V4L2_CAP_HW_FREQ_SEEK | V4L2_CAP_READWRITE |
 		V4L2_CAP_TUNER | V4L2_CAP_RADIO | V4L2_CAP_RDS_CAPTURE;
 	capability->capabilities = capability->device_caps |
@@ -544,7 +545,7 @@ int rtc6226_fops_open(struct file *file)
 	struct rtc6226_device *radio = video_drvdata(file);
 	int retval;
 
-	FMDBG("%s enter user num = %d\n", __func__, radio->users);
+	FMDBG("%s enter user num = %d\n", __func__, atomic_read(&radio->users));
 	if (atomic_inc_return(&radio->users) != 1) {
 		FMDERR("Device already in use. Try again later\n");
 		atomic_dec(&radio->users);
@@ -697,12 +698,10 @@ static int rtc6226_dt_parse_vreg_info(struct device *dev,
 /*
  * rtc6226_i2c_probe - probe for the device
  */
-static int rtc6226_i2c_probe(struct i2c_client *client,
-	const struct i2c_device_id *id)
+static int rtc6226_i2c_probe(struct i2c_client *client)
 {
 	struct rtc6226_device *radio;
 	struct v4l2_device *v4l2_dev;
-	struct v4l2_ctrl_handler *hdl;
 	struct regulator *vddvreg = NULL;
 	struct regulator *viovreg = NULL;
 	int retval = 0;
@@ -757,7 +756,6 @@ static int rtc6226_i2c_probe(struct i2c_client *client,
 	}
 
 	FMDBG("v4l2_device_register successfully\n");
-	hdl = &radio->ctrl_handler;
 
 	/* initialize the device count */
 	atomic_set(&radio->users, 0);
@@ -929,7 +927,7 @@ err_vreg:
 /*
  * rtc6226_i2c_remove - remove the device
  */
-static int rtc6226_i2c_remove(struct i2c_client *client)
+static void rtc6226_i2c_remove(struct i2c_client *client)
 {
 	struct rtc6226_device *radio = i2c_get_clientdata(client);
 
@@ -943,7 +941,6 @@ static int rtc6226_i2c_remove(struct i2c_client *client)
 	kfree(radio);
 	FMDBG("%s exit\n", __func__);
 
-	return 0;
 }
 
 #ifdef CONFIG_PM
