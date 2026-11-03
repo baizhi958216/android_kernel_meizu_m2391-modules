@@ -43,10 +43,6 @@
 #define kstrtoul strict_strtoul
 #endif
 
-#if defined(timer_setup) && defined(from_timer)
-#define HAVE_TIMER_SETUP
-#endif
-
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 7, 0)
 #define VFL_TYPE_VIDEO VFL_TYPE_GRABBER
 #endif
@@ -762,7 +758,7 @@ static int vidioc_querycap(struct file *file, void *priv,
 			->device_nr;
 	__u32 capabilities = V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
 
-	strlcpy(cap->driver, "v4l2 loopback", sizeof(cap->driver));
+	strscpy(cap->driver, "v4l2 loopback", sizeof(cap->driver));
 	snprintf(cap->card, sizeof(cap->card), "%s", dev->card_label);
 	snprintf(cap->bus_info, sizeof(cap->bus_info),
 		 "platform:v4l2loopback-%03d", device_nr);
@@ -1273,7 +1269,7 @@ static int __attribute__((unused)) vidioc_queryctrl(struct file *file, void *fh,
 	if (!cnf)
 		BUG();
 
-	strlcpy(q->name, cnf->name, sizeof(q->name));
+	strscpy(q->name, cnf->name, sizeof(q->name));
 	q->default_value = cnf->def;
 	q->type = cnf->type;
 	q->minimum = cnf->min;
@@ -1379,7 +1375,7 @@ static int vidioc_enum_output(struct file *file, void *fh,
 	memset(outp, 0, sizeof(*outp));
 
 	outp->index = index;
-	strlcpy(outp->name, "loopback in", sizeof(outp->name));
+	strscpy(outp->name, "loopback in", sizeof(outp->name));
 	outp->type = V4L2_OUTPUT_TYPE_ANALOG;
 	outp->audioset = 0;
 	outp->modulator = 0;
@@ -1438,7 +1434,7 @@ static int vidioc_enum_input(struct file *file, void *fh,
 	memset(inp, 0, sizeof(*inp));
 
 	inp->index = index;
-	strlcpy(inp->name, "loopback", sizeof(inp->name));
+	strscpy(inp->name, "loopback", sizeof(inp->name));
 	inp->type = V4L2_INPUT_TYPE_CAMERA;
 	inp->audioset = 0;
 	inp->tuner = 0;
@@ -1603,8 +1599,8 @@ static int vidioc_querybuf(struct file *file, void *fh, struct v4l2_buffer *b)
 static void buffer_written(struct v4l2_loopback_device *dev,
 			   struct v4l2l_buffer *buf)
 {
-	del_timer_sync(&dev->sustain_timer);
-	del_timer_sync(&dev->timeout_timer);
+	timer_delete_sync(&dev->sustain_timer);
+	timer_delete_sync(&dev->timeout_timer);
 	spin_lock_bh(&dev->lock);
 
 	dev->bufpos2index[dev->write_position % dev->used_buffers] =
@@ -2040,9 +2036,7 @@ static int v4l2_loopback_open_locked(struct file *file)
 	dev->timeout_image_io = 0;
 
 	v4l2_fh_init(&opener->fh, video_devdata(file));
-	file->private_data = &opener->fh;
-
-	v4l2_fh_add(&opener->fh);
+	v4l2_fh_add(&opener->fh, file);
 	dprintk("opened dev:%p with image:%p\n", dev, dev ? dev->image : NULL);
 	MARK();
 	return 0;
@@ -2077,12 +2071,12 @@ static int v4l2_loopback_close_locked(struct file *file)
 
 	atomic_dec(&dev->open_count);
 	if (dev->open_count.counter == 0) {
-		del_timer_sync(&dev->sustain_timer);
-		del_timer_sync(&dev->timeout_timer);
+		timer_delete_sync(&dev->sustain_timer);
+		timer_delete_sync(&dev->timeout_timer);
 	}
 	try_free_buffers(dev);
 
-	v4l2_fh_del(&opener->fh);
+	v4l2_fh_del(&opener->fh, file);
 	v4l2_fh_exit(&opener->fh);
 
 	kfree(opener);
@@ -2387,16 +2381,9 @@ static void check_timers(struct v4l2_loopback_device *dev)
 		mod_timer(&dev->sustain_timer,
 			  jiffies + dev->frame_jiffies * 3 / 2);
 }
-#ifdef HAVE_TIMER_SETUP
 static void sustain_timer_clb(struct timer_list *t)
 {
-	struct v4l2_loopback_device *dev = from_timer(dev, t, sustain_timer);
-#else
-static void sustain_timer_clb(unsigned long nr)
-{
-	struct v4l2_loopback_device *dev =
-		idr_find(&v4l2loopback_index_idr, nr);
-#endif
+	struct v4l2_loopback_device *dev = timer_container_of(dev, t, sustain_timer);
 	spin_lock(&dev->lock);
 	if (dev->sustain_framerate) {
 		dev->reread_count++;
@@ -2412,16 +2399,9 @@ static void sustain_timer_clb(unsigned long nr)
 	}
 	spin_unlock(&dev->lock);
 }
-#ifdef HAVE_TIMER_SETUP
 static void timeout_timer_clb(struct timer_list *t)
 {
-	struct v4l2_loopback_device *dev = from_timer(dev, t, timeout_timer);
-#else
-static void timeout_timer_clb(unsigned long nr)
-{
-	struct v4l2_loopback_device *dev =
-		idr_find(&v4l2loopback_index_idr, nr);
-#endif
+	struct v4l2_loopback_device *dev = timer_container_of(dev, t, timeout_timer);
 	spin_lock(&dev->lock);
 	if (dev->timeout_jiffies > 0) {
 		dev->timeout_happened = 1;
@@ -2578,13 +2558,8 @@ static int v4l2_loopback_add(struct v4l2_loopback_config *conf, int *ret_nr)
 	dev->buffer_size = 0;
 	dev->image = NULL;
 	dev->imagesize = 0;
-#ifdef HAVE_TIMER_SETUP
 	timer_setup(&dev->sustain_timer, sustain_timer_clb, 0);
 	timer_setup(&dev->timeout_timer, timeout_timer_clb, 0);
-#else
-	setup_timer(&dev->sustain_timer, sustain_timer_clb, nr);
-	setup_timer(&dev->timeout_timer, timeout_timer_clb, nr);
-#endif
 	dev->reread_count = 0;
 	dev->timeout_jiffies = 0;
 	dev->timeout_image = NULL;
@@ -2664,8 +2639,8 @@ static void v4l2_loopback_remove(struct v4l2_loopback_device *dev)
 {
 	/* Remove/drain sysfs before releasing any callback-visible state. */
 	v4l2loopback_remove_sysfs(dev->vdev);
-	del_timer_sync(&dev->sustain_timer);
-	del_timer_sync(&dev->timeout_timer);
+	timer_shutdown_sync(&dev->sustain_timer);
+	timer_shutdown_sync(&dev->timeout_timer);
 	free_buffers(dev);
 	kfree(video_get_drvdata(dev->vdev));
 	video_set_drvdata(dev->vdev, NULL);
