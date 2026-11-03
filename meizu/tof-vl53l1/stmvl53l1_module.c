@@ -1979,7 +1979,7 @@ static const struct attribute_group stmvl53l1_attr_group = {
 };
 
 static ssize_t stmvl53l1_calib_data_read(struct file *filp,
-	struct kobject *kobj, struct bin_attribute *attr,
+	struct kobject *kobj, const struct bin_attribute *attr,
 	char *buf, loff_t off, size_t count)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -1990,7 +1990,7 @@ static ssize_t stmvl53l1_calib_data_read(struct file *filp,
 
 	mutex_lock(&data->work_mutex);
 
-	vl53l1_dbgmsg("off = %lld / count = %d", off, count);
+	vl53l1_dbgmsg("off = %lld / count = %zu", off, count);
 
 	/* sanity check */
 	if (off < 0 || off > sizeof(VL53L1_CalibrationData_t))
@@ -2026,7 +2026,7 @@ error:
 }
 
 static ssize_t stmvl53l1_calib_data_write(struct file *filp,
-	struct kobject *kobj, struct bin_attribute *attr,
+	struct kobject *kobj, const struct bin_attribute *attr,
 	char *buf, loff_t off, size_t count)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -2035,7 +2035,7 @@ static ssize_t stmvl53l1_calib_data_write(struct file *filp,
 
 	mutex_lock(&data->work_mutex);
 
-	vl53l1_dbgmsg("off = %lld / count = %d", off, count);
+	vl53l1_dbgmsg("off = %lld / count = %zu", off, count);
 
 	if (data->enable_sensor) {
 		rc = -EBUSY;
@@ -2081,7 +2081,7 @@ static struct bin_attribute stmvl53l1_calib_data_attr = {
 };
 
 static ssize_t stmvl53l1_zone_calib_data_read(struct file *filp,
-	struct kobject *kobj, struct bin_attribute *attr,
+	struct kobject *kobj, const struct bin_attribute *attr,
 	char *buf, loff_t off, size_t count)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -2091,7 +2091,7 @@ static ssize_t stmvl53l1_zone_calib_data_read(struct file *filp,
 
 	mutex_lock(&data->work_mutex);
 
-	vl53l1_dbgmsg("off = %lld / count = %d", off, count);
+	vl53l1_dbgmsg("off = %lld / count = %zu", off, count);
 
 	/* sanity check */
 	if (off < 0 || off > sizeof(stmvl531_zone_calibration_data_t))
@@ -2128,7 +2128,7 @@ error:
 }
 
 static ssize_t stmvl53l1_zone_calib_data_write(struct file *filp,
-	struct kobject *kobj, struct bin_attribute *attr,
+	struct kobject *kobj, const struct bin_attribute *attr,
 	char *buf, loff_t off, size_t count)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -2138,7 +2138,7 @@ static ssize_t stmvl53l1_zone_calib_data_write(struct file *filp,
 
 	mutex_lock(&data->work_mutex);
 
-	vl53l1_dbgmsg("off = %lld / count = %d", off, count);
+	vl53l1_dbgmsg("off = %lld / count = %zu", off, count);
 
 	/* implementation if quite fragile. We suppose successive access. We
 	 * trigger set on last byte write if amount is exact.
@@ -3820,7 +3820,7 @@ static void stmvl53l1_input_push_data_multiobject(struct stmvl53l1_data *data)
 	/* ABS_HAT0X  -	Time in Sec(32) */
 
 	input_report_abs(input, ABS_HAT0X, tv.tv_sec);
-	vl53l1_dbgmsg("ABS_HAT0X : %ld, %zu\n", tv.tv_sec, sizeof(tv.tv_sec));
+	vl53l1_dbgmsg("ABS_HAT0X : %lld, %zu\n", tv.tv_sec, sizeof(tv.tv_sec));
 	/* ABS_HAT0Y   - Time in uSec(32) */
 	/* REVISIT : The following code may cause loss of data due to */
 	/* 8 bytes to 32 bits conversion */

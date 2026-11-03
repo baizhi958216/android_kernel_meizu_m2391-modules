@@ -211,7 +211,6 @@ static const struct file_operations dtof_fops = {
 	.open = dtof_open,
 	.release = dtof_release,
 	.unlocked_ioctl = dtof_unlocked_ioctl,
-	.llseek = no_llseek,
 };
 
 static ssize_t version_show(struct device *dev, struct device_attribute *attr,
@@ -283,8 +282,7 @@ static struct attribute *dtof_attrs[] = {
 };
 static const struct attribute_group dtof_group = { .attrs = dtof_attrs };
 
-static int dtof_i2c_probe(struct i2c_client *client,
-		const struct i2c_device_id *id)
+static int dtof_i2c_probe(struct i2c_client *client)
 {
 	struct dtof_chip *chip;
 	u16 chip_id = 0;
@@ -373,7 +371,7 @@ free_chip:
 	return rc;
 }
 
-static int dtof_i2c_remove(struct i2c_client *client)
+static void dtof_i2c_remove(struct i2c_client *client)
 {
 	struct dtof_chip *chip = i2c_get_clientdata(client);
 
@@ -392,7 +390,6 @@ static int dtof_i2c_remove(struct i2c_client *client)
 		ipc_log_context_destroy(chip->ipclog);
 	mutex_unlock(&dtof_registry_lock);
 	kref_put(&chip->ref, dtof_free);
-	return 0;
 }
 
 static const struct of_device_id dtof_of_match[] = {

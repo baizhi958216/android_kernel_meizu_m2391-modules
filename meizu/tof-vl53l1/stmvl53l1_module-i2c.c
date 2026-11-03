@@ -435,8 +435,7 @@ static void stmvl53l1_release_gpios(struct i2c_data *i2c_data)
  * dependency without expanding either chip's OF compatible table. */
 extern int s_module_load_state;
 
-static int stmvl53l1_probe(struct i2c_client *client,
-				const struct i2c_device_id *id)
+static int stmvl53l1_probe(struct i2c_client *client)
 {
 	int rc = 0;
 	struct stmvl53l1_data *vl53l1_data = NULL;
@@ -501,7 +500,7 @@ done_freemem:
 	return rc;
 }
 
-static int stmvl53l1_remove(struct i2c_client *client)
+static void stmvl53l1_remove(struct i2c_client *client)
 {
 	struct stmvl53l1_data *data = i2c_get_clientdata(client);
 	struct i2c_data *i2c_data = (struct i2c_data *)data->client_object;
@@ -516,8 +515,6 @@ static int stmvl53l1_remove(struct i2c_client *client)
 	stmvl53l1_put(data->client_object);
 
 	vl53l1_dbgmsg("End\n");
-
-	return 0;
 }
 
 #ifdef CONFIG_PM_SLEEP

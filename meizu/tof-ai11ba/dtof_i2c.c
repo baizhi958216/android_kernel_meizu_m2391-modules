@@ -7,7 +7,7 @@
 #include <linux/ipc_logging.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 #include "dtof.h"
 
 static int dtof_transfer(struct dtof_chip *chip, struct i2c_msg *msg,
