@@ -106,17 +106,20 @@ int btfm_slim_enable_ch(struct btfmslim *btfmslim, struct btfmslim_ch *ch,
 	BTFMSLIM_DBG("port: %d ch: %d", ch->port, ch->ch);
 
 	chan->dai.sruntime = slim_stream_allocate(btfmslim->slim_pgd, "BTFM_SLIM");
-	if (chan->dai.sruntime == NULL) {
-		BTFMSLIM_ERR("slim_stream_allocate failed");
-		return -EINVAL;
+	if (IS_ERR(chan->dai.sruntime)) {
+		ret = PTR_ERR(chan->dai.sruntime);
+		chan->dai.sruntime = NULL;
+		return ret;
 	}
 	chan->dai.sconfig.bps = btfmslim->bps;
 	chan->dai.sconfig.direction = btfmslim->direction;
 	chan->dai.sconfig.rate = rates;
 	chan->dai.sconfig.ch_count = nchan;
 	chan->dai.sconfig.chs = kcalloc(nchan, sizeof(unsigned int), GFP_KERNEL);
-	if (!chan->dai.sconfig.chs)
-		return -ENOMEM;
+	if (!chan->dai.sconfig.chs) {
+		ret = -ENOMEM;
+		goto error;
+	}
 
 	for (i = 0; i < nchan; i++, ch++) {
 		/* Enable port through registration setting */
@@ -155,6 +158,7 @@ int btfm_slim_enable_ch(struct btfmslim *btfmslim, struct btfmslim_ch *ch,
 	ret = slim_stream_enable(chan->dai.sruntime);
 	if (ret) {
 		BTFMSLIM_ERR("slim_stream_enable failed = %d", ret);
+		slim_stream_unprepare(chan->dai.sruntime);
 		goto error;
 	}
 
@@ -163,6 +167,13 @@ int btfm_slim_enable_ch(struct btfmslim *btfmslim, struct btfmslim_ch *ch,
 	BTFMSLIM_INFO("btfm_num_ports_open: %d", btfm_num_ports_open);
 	return ret;
 error:
+	while (i > 0 && btfmslim->vendor_port_en) {
+		i--;
+		btfmslim->vendor_port_en(btfmslim, chan[i].port, rxport, 0);
+	}
+	slim_stream_free(chan->dai.sruntime);
+	chan->dai.sruntime = NULL;
+	chan->dai.sconfig.port_mask = 0;
 	BTFMSLIM_INFO("error %d while opening port, btfm_num_ports_open: %d",
 			ret, btfm_num_ports_open);
 	kfree(chan->dai.sconfig.chs);
@@ -213,9 +224,9 @@ int btfm_slim_disable_ch(struct btfmslim *btfmslim, struct btfmslim_ch *ch,
 		BTFMSLIM_ERR("slim_stream_unprepare failed returned val = %d", ret);
 
 	/* Disable port through registration setting */
-	for (i = 0; i < nchan; i++, ch++) {
+	for (i = 0; i < nchan; i++) {
 		if (btfmslim->vendor_port_en) {
-			ret = btfmslim->vendor_port_en(btfmslim, ch->port,
+			ret = btfmslim->vendor_port_en(btfmslim, ch[i].port,
 				rxport, 0);
 			if (ret < 0) {
 				BTFMSLIM_ERR("vendor_port_en failed [%d]", ret);
@@ -234,6 +245,7 @@ int btfm_slim_disable_ch(struct btfmslim *btfmslim, struct btfmslim_ch *ch,
 	if (btfm_num_ports_open > 0)
 		btfm_num_ports_open--;
 
+	slim_stream_free(ch->dai.sruntime);
 	ch->dai.sruntime = NULL;
 
 	BTFMSLIM_INFO("btfm_num_ports_open: %d", btfm_num_ports_open);
@@ -525,12 +537,8 @@ int btfm_slim_hw_deinit(struct btfmslim *btfmslim)
 	return ret;
 }
 
-#if IS_ENABLED (CONFIG_BTFM_SLIM)
-void btfm_slim_get_hwep_details(struct slim_device *dev, struct btfmslim *btfm_slim)
-{
-}
-#else
-void btfm_slim_get_hwep_details(struct slim_device *slim, struct btfmslim *btfm_slim)
+#if !IS_ENABLED(CONFIG_BTFM_SLIM)
+static void btfm_slim_get_hwep_details(struct slim_device *slim, struct btfmslim *btfm_slim)
 {
 	struct device_node *np = slim->dev.of_node;
 	const __be32 *prop;
@@ -687,7 +695,7 @@ static int btfm_slim_probe(struct slim_device *slim)
 		goto register_err;
 	}
 
-	btfm_slim_class = class_create(THIS_MODULE, "btfmslim-dev");
+	btfm_slim_class = class_create("btfmslim-dev");
 	if (IS_ERR(btfm_slim_class)) {
 		BTFMSLIM_ERR("%s: coudn't create class\n", __func__);
 		ret = -1;
@@ -742,7 +750,8 @@ static const struct slim_device_id btfm_slim_id[] = {
 	.prod_code = 0x220,
 	.dev_index = 0x1,
 	.instance = 0x0,
-	}
+	},
+	{}
 };
 
 MODULE_DEVICE_TABLE(slim, btfm_slim_id);
