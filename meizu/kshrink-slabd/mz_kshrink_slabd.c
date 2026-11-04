@@ -99,8 +99,10 @@ static int slabd_thread(void *unused)
 	current->reclaim_state = &reclaim_state;
 	set_freezable();
 	while (!kthread_freezable_should_stop(NULL)) {
+		/* Let freezer wakeups reach the stop-aware refrigerator above. */
 		wait_event_interruptible(request_wait,
-			smp_load_acquire(&busy) || kthread_should_stop());
+			smp_load_acquire(&busy) || kthread_should_stop() ||
+			freezing(current));
 		if (kthread_should_stop())
 			break;
 		if (!smp_load_acquire(&busy))
