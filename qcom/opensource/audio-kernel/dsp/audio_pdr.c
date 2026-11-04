@@ -23,22 +23,27 @@ static struct audio_pdr_service audio_pdr_services[AUDIO_PDR_DOMAIN_MAX] = {
 
 void *audio_pdr_service_register(int domain_id, void (*cb)(int, char *, void *))
 {
+	struct audio_pdr_service *service;
+	struct pdr_handle *handle;
+	struct pdr_service *lookup;
+
 	if ((domain_id < 0) ||
 	    (domain_id >= AUDIO_PDR_DOMAIN_MAX)) {
 		pr_err("%s: Invalid service ID %d\n", __func__, domain_id);
 		return ERR_PTR(-EINVAL);
 	}
 
-	audio_pdr_services[domain_id].pdr_handle = pdr_handle_alloc(cb, NULL);
-
-	if (domain_id == AUDIO_PDR_DOMAIN_ADSP)
-		return pdr_add_service_lookup(audio_pdr_services[domain_id].pdr_handle,
-				audio_pdr_services[domain_id].service_name,
-				audio_pdr_services[domain_id].service_path);
-	else
-		return pdr_add_lookup(audio_pdr_services[domain_id].pdr_handle,
-			      audio_pdr_services[domain_id].service_name,
-			      audio_pdr_services[domain_id].service_path);
+	service = &audio_pdr_services[domain_id];
+	handle = pdr_handle_alloc(cb, NULL);
+	if (IS_ERR(handle))
+		return handle;
+	lookup = pdr_add_service_lookup(handle, service->service_name, service->service_path);
+	if (IS_ERR(lookup)) {
+		pdr_handle_release(handle);
+		return lookup;
+	}
+	service->pdr_handle = handle;
+	return lookup;
 }
 EXPORT_SYMBOL(audio_pdr_service_register);
 
@@ -49,7 +54,10 @@ int audio_pdr_service_deregister(int domain_id)
 		pr_err("%s: Invalid service ID %d\n", __func__, domain_id);
 		return -EINVAL;
 	}
-	pdr_handle_release(audio_pdr_services[domain_id].pdr_handle);
+	if (audio_pdr_services[domain_id].pdr_handle) {
+		pdr_handle_release(audio_pdr_services[domain_id].pdr_handle);
+		audio_pdr_services[domain_id].pdr_handle = NULL;
+	}
 
 	return 0;
 }

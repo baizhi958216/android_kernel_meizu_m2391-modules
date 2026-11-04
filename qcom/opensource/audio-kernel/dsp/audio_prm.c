@@ -73,7 +73,8 @@ static int audio_prm_callback(struct gpr_device *adev, void *data)
 		default:
 			pr_err("%s: hit default case",__func__);
 			break;
-		};
+		}
+		break;
 	default:
 		break;
 	};
@@ -190,7 +191,7 @@ int audio_prm_set_lpass_hw_core_req(struct clk_cfg *cfg, uint32_t hw_core_id, ui
 
         prm_rsc_request.hw_core_id = hw_core_id; // HW_CORE_ID_LPASS;
 
-        memcpy(&pkt->payload, &prm_rsc_request, sizeof(prm_cmd_request_hw_core_t));
+        memcpy(pkt->payload, &prm_rsc_request, sizeof(prm_cmd_request_hw_core_t));
 
         ret = prm_gpr_send_pkt(pkt, &g_prm.wait);
 
@@ -243,7 +244,7 @@ int audio_prm_set_lpass_core_clk_req(struct clk_cfg *cfg, uint32_t hw_core_id, u
 
 	prm_rsc_request.hw_core_id = hw_core_id; // HW_CORE_ID_LPASS;
 
-	memcpy(&pkt->payload, &prm_rsc_request, sizeof(prm_cmd_request_hw_core_t));
+	memcpy(pkt->payload, &prm_rsc_request, sizeof(prm_cmd_request_hw_core_t));
 
 	ret = prm_gpr_send_pkt(pkt, &g_prm.wait);
 
@@ -312,7 +313,7 @@ static int audio_prm_set_lpass_clk_cfg_req(struct clk_cfg *cfg)
 	else
 		prm_rsc_request.clock_ids_t[0].clock_root = cfg->clk_root;
 
-	memcpy(&pkt->payload, &prm_rsc_request, sizeof(prm_cmd_request_rsc_t));
+	memcpy(pkt->payload, &prm_rsc_request, sizeof(prm_cmd_request_rsc_t));
 
 	ret = prm_gpr_send_pkt(pkt, &g_prm.wait);
 
@@ -362,7 +363,7 @@ static int audio_prm_set_lpass_clk_cfg_rel(struct clk_cfg *cfg)
 
         prm_rsc_release.clock_ids_t[0].clock_id = cfg->clk_id;
 
-        memcpy(&pkt->payload, &prm_rsc_release, sizeof(prm_cmd_release_rsc_t));
+        memcpy(pkt->payload, &prm_rsc_release, sizeof(prm_cmd_release_rsc_t));
 
         ret = prm_gpr_send_pkt(pkt, &g_prm.wait);
 
@@ -454,7 +455,7 @@ int audio_prm_set_cdc_earpa_duty_cycling_req(struct prm_earpa_hw_intf_config *ea
 	prm_rsc_request_reg_info.hw_codec_reg_info_t.hw_codec_reg[1].hw_codec_op[1].hw_codec_op_value =
 					earpa_config->ear_pa_pkd_cfg.ear_pa_disable_pkd_reg_addr;
 
-	memcpy(&pkt->payload, &prm_rsc_request_reg_info, sizeof(prm_cmd_request_cdc_duty_cycling_t));
+	memcpy(pkt->payload, &prm_rsc_request_reg_info, sizeof(prm_cmd_request_cdc_duty_cycling_t));
 	ret = prm_gpr_send_pkt(pkt, &g_prm.wait);
 	kfree(pkt);
 	return ret;
@@ -502,7 +503,7 @@ int audio_prm_set_vote_against_sleep(uint8_t enable)
 
 	prm_rsc_request.hw_core_id = HW_CORE_ID_LPASS;
 
-	memcpy(&pkt->payload, &prm_rsc_request, sizeof(prm_cmd_request_hw_core_t));
+	memcpy(pkt->payload, &prm_rsc_request, sizeof(prm_cmd_request_hw_core_t));
 	ret = prm_gpr_send_pkt(pkt, &g_prm.wait);
 	if (ret < 0) {
 		pr_err("%s: Unable to send packet %d\n", __func__, ret);
