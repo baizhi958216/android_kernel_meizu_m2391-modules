@@ -7,6 +7,7 @@
 #include <linux/io.h>
 #include <linux/err.h>
 #include <linux/module.h>
+#include "audio-ext-clk-up.h"
 #include <linux/of.h>
 #include <linux/clk.h>
 #include <linux/clk-provider.h>
@@ -721,11 +722,10 @@ static int audio_ref_clk_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static int audio_ref_clk_remove(struct platform_device *pdev)
+static void audio_ref_clk_remove(struct platform_device *pdev)
 {
 	audio_put_pinctrl(pdev);
 
-	return 0;
 }
 
 static const struct of_device_id audio_ref_clk_match[] = {

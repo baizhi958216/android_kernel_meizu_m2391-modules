@@ -12,7 +12,9 @@
 #include <linux/platform_device.h>
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
-#include <linux/pinctrl/qcom-pinctrl.h>
+#include <linux/of_platform.h>
+#include <linux/pinctrl/consumer.h>
+#include <linux/pinctrl/kalama.h>
 #include <asoc/msm-cdc-pinctrl.h>
 
 #define MAX_GPIOS 16
@@ -55,6 +57,7 @@ static struct msm_cdc_pinctrl_info *msm_cdc_pinctrl_get_gpiodata(
 		dev_err_ratelimited(&pdev->dev, "%s: cannot find cdc gpio info\n",
 			__func__);
 
+	put_device(&pdev->dev);
 	return gpio_data;
 }
 
@@ -119,7 +122,7 @@ int msm_cdc_pinctrl_select_alt_active_state(struct device_node *np)
 	if (!gpio_data)
 		return -EINVAL;
 
-	if (!gpio_data->pinctrl_alt_active) {
+	if (IS_ERR_OR_NULL(gpio_data->pinctrl_alt_active)) {
 		pr_err_ratelimited("%s: pinctrl alt_active state is null\n", __func__);
 		return -EINVAL;
 	}
@@ -193,7 +196,7 @@ int msm_cdc_pinctrl_set_wakeup_capable(struct device_node *np, bool enable)
 
 	if (gpio_data->wakeup_capable) {
 		for (i = 0; i < gpio_data->count; i++) {
-			ret = msm_gpio_mpm_wake_set(gpio_data->tlmm_gpio[i],
+			ret = kalama_gpio_set_wake_gate(gpio_data->tlmm_gpio[i],
 						    enable);
 			if (ret < 0)
 				goto exit;
@@ -279,6 +282,8 @@ static int msm_cdc_pinctrl_probe(struct platform_device *pdev)
 	count = of_property_count_u32_elems(pdev->dev.of_node, "qcom,chip-wakeup-reg");
 	if (count <= 0)
 		goto cdc_tlmm_gpio;
+	if (count > MAX_GPIOS)
+		return -EINVAL;
 	if (!of_property_read_u32_array(pdev->dev.of_node, "qcom,chip-wakeup-reg",
 				chip_wakeup_reg, count)) {
 		if (of_property_read_u32_array(pdev->dev.of_node,
@@ -292,6 +297,10 @@ static int msm_cdc_pinctrl_probe(struct platform_device *pdev)
 		for (i = 0; i < count; i++) {
 			gpio_data->chip_wakeup_register[i] =
 				devm_ioremap(&pdev->dev, chip_wakeup_reg[i], 0x4);
+			if (!gpio_data->chip_wakeup_register[i])
+				return -ENOMEM;
+			if (gpio_data->chip_wakeup_maskbit[i] >= 32)
+				return -EINVAL;
 		}
 		if (!of_property_read_u32_array(pdev->dev.of_node,
 					"qcom,chip-wakeup-default-val",
@@ -314,6 +323,8 @@ cdc_tlmm_gpio:
 	count = of_property_count_u32_elems(pdev->dev.of_node, "qcom,tlmm-pins");
 	if (count <= 0)
 		goto cdc_rst;
+	if (count > MAX_GPIOS)
+		return -EINVAL;
 	if (!of_property_read_u32_array(pdev->dev.of_node, "qcom,tlmm-pins",
 				tlmm_gpio, count)) {
 		gpio_data->wakeup_capable = true;
@@ -344,7 +355,7 @@ err_pctrl_get:
 	return ret;
 }
 
-static int msm_cdc_pinctrl_remove(struct platform_device *pdev)
+static void msm_cdc_pinctrl_remove(struct platform_device *pdev)
 {
 	struct msm_cdc_pinctrl_info *gpio_data;
 
@@ -360,8 +371,6 @@ static int msm_cdc_pinctrl_remove(struct platform_device *pdev)
 	}
 
 	devm_kfree(&pdev->dev, gpio_data);
-
-	return 0;
 }
 
 static const struct of_device_id msm_cdc_pinctrl_match[] = {
