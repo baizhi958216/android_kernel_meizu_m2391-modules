@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /* Original M2391 CS35L45 links and USB-C analog jack protocol. */
-#include <linux/usb/ucsi_glink.h>
+#include <linux/usb/pmic_glink_audio.h>
 #include <sound/jack.h>
 
 static struct snd_soc_codec_conf cs35l45_codec_conf[] = {
@@ -55,7 +55,7 @@ static int cs35l45_hw_params(struct snd_pcm_substream *substream,
 	}
 	clock = width * params_rate(params) * 2;
 	for_each_rtd_codec_dais(rtd, i, codec) {
-		ret = snd_soc_dai_set_fmt(codec, SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS);
+		ret = snd_soc_dai_set_fmt(codec, SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBC_CFC);
 		if (ret < 0)
 			return ret;
 		ret = snd_soc_component_set_sysclk(codec->component, 0, 0, clock, SND_SOC_CLOCK_IN);
@@ -92,13 +92,11 @@ static void usbc_analog_work_fn(struct work_struct *work)
 }
 static int usbc_event_changed(struct notifier_block *nb, unsigned long event, void *data)
 {
-	const struct ucsi_glink_constat_info *info = data;
-	int state;
+	bool state = event;
 
-	if (!info || !smp_load_acquire(&usbc_analog.active))
+	if (!smp_load_acquire(&usbc_analog.active))
 		return NOTIFY_DONE;
-	state = info->acc;
-	if ((state == 0 || state == 1) && atomic_xchg(&usbc_analog.state, state) != state)
+	if (atomic_xchg(&usbc_analog.state, state) != state)
 		schedule_work(&usbc_analog.work);
 	return NOTIFY_DONE;
 }
@@ -114,7 +112,7 @@ static int usbc_analog_detect_init(struct snd_soc_card *card)
 	INIT_WORK(&usbc_analog.work, usbc_analog_work_fn);
 	atomic_set(&usbc_analog.state, 0);
 	ret = snd_soc_card_jack_new(card, "USBC Jack", SND_JACK_HEADSET | SND_JACK_LINEOUT,
-		&usbc_analog.jack, NULL, 0);
+		&usbc_analog.jack);
 	if (ret)
 		goto unlock;
 	usbc_analog.card = card;
@@ -132,7 +130,7 @@ static void usbc_analog_detect_start(struct snd_soc_card *card)
 	mutex_lock(&usbc_analog_lock);
 	if (usbc_analog.card == card) {
 		smp_store_release(&usbc_analog.active, true);
-		ret = register_ucsi_glink_notifier(&usbc_analog.notifier);
+		ret = pmic_glink_audio_register(&usbc_analog.notifier);
 		if (ret) {
 			smp_store_release(&usbc_analog.active, false);
 			cancel_work_sync(&usbc_analog.work);
@@ -146,7 +144,7 @@ static void usbc_analog_detect_deinit(struct snd_soc_card *card)
 	if (card && usbc_analog.card == card) {
 		if (smp_load_acquire(&usbc_analog.active)) {
 			smp_store_release(&usbc_analog.active, false);
-			unregister_ucsi_glink_notifier(&usbc_analog.notifier);
+			pmic_glink_audio_unregister(&usbc_analog.notifier);
 		}
 		cancel_work_sync(&usbc_analog.work);
 		usbc_analog.card = NULL;

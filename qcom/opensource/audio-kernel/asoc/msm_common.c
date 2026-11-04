@@ -4,6 +4,7 @@
  * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/cpu.h>
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
 #include <linux/platform_device.h>
@@ -374,7 +375,7 @@ static int get_tdm_clk_id(int index)
 	return clk_id;
 }
 
-int mi2s_tdm_hw_vote_req(struct msm_common_pdata *pdata, int enable)
+static int mi2s_tdm_hw_vote_req(struct msm_common_pdata *pdata, int enable)
 {
 	int ret = 0;
 
@@ -847,7 +848,7 @@ void msm_common_snd_deinit(struct msm_common_pdata *common_pdata)
 	kobject_put(&common_pdata->aud_dev_kobj);
 }
 
-int msm_channel_map_info(struct snd_kcontrol *kcontrol,
+static int msm_channel_map_info(struct snd_kcontrol *kcontrol,
 			struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_BYTES;
@@ -856,7 +857,7 @@ int msm_channel_map_info(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
-int msm_channel_map_get(struct snd_kcontrol *kcontrol,
+static int msm_channel_map_get(struct snd_kcontrol *kcontrol,
 			struct snd_ctl_elem_value *ucontrol)
 {
 	struct chmap_pdata *kctl_pdata =
@@ -976,7 +977,7 @@ int msm_channel_map_get(struct snd_kcontrol *kcontrol,
 	return ret;
 }
 
-void msm_common_get_backend_name(const char *stream_name, char **backend_name)
+static void msm_common_get_backend_name(const char *stream_name, char **backend_name)
 {
 	char arg[ARRAY_SZ] = {0};
 	char value[61] = {0};
@@ -986,7 +987,7 @@ void msm_common_get_backend_name(const char *stream_name, char **backend_name)
 	if (!(*backend_name))
 		return;
 
-	strlcpy(*backend_name, arg, ARRAY_SZ);
+	strscpy(*backend_name, arg, ARRAY_SZ);
 }
 
 static void msm_audio_update_qos_request(u32 latency)
@@ -1146,7 +1147,7 @@ static int msm_register_pm_qos_latency_controls(struct snd_soc_pcm_runtime *rtd)
 
 int msm_common_dai_link_init(struct snd_soc_pcm_runtime *rtd)
 {
-	struct snd_soc_dai *codec_dai = asoc_rtd_to_codec(rtd, 0);
+	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
 	struct snd_soc_component *component = NULL;
 	struct snd_soc_dai_link *dai_link = rtd->dai_link;
 	struct device *dev = rtd->card->dev;
@@ -1219,8 +1220,8 @@ int msm_common_dai_link_init(struct snd_soc_pcm_runtime *rtd)
 			pdata->id = SLIM;
 		} else {
 			pdata->id = CODEC_DMA;
-			if (rtd->num_codecs <= MAX_CODEC_DAI) {
-				pdata->num_codec_dai = rtd->num_codecs;
+			if (rtd->dai_link->num_codecs <= MAX_CODEC_DAI) {
+				pdata->num_codec_dai = rtd->dai_link->num_codecs;
 				for_each_rtd_codec_dais(rtd, index, codec_dai) {
 					pdata->dai[index] = codec_dai;
 				}
