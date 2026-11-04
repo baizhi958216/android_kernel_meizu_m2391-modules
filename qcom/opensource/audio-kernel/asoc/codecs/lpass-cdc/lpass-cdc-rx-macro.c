@@ -420,7 +420,7 @@ static int lpass_cdc_rx_macro_core_vote(void *handle, bool enable);
 static int lpass_cdc_rx_macro_hw_params(struct snd_pcm_substream *substream,
 			       struct snd_pcm_hw_params *params,
 			       struct snd_soc_dai *dai);
-static int lpass_cdc_rx_macro_get_channel_map(struct snd_soc_dai *dai,
+static int lpass_cdc_rx_macro_get_channel_map(const struct snd_soc_dai *dai,
 				unsigned int *tx_num, unsigned int *tx_slot,
 				unsigned int *rx_num, unsigned int *rx_slot);
 static int lpass_cdc_rx_macro_int_dem_inp_mux_put(struct snd_kcontrol *kcontrol,
@@ -1192,7 +1192,7 @@ static int lpass_cdc_rx_macro_hw_params(struct snd_pcm_substream *substream,
 	return 0;
 }
 
-static int lpass_cdc_rx_macro_get_channel_map(struct snd_soc_dai *dai,
+static int lpass_cdc_rx_macro_get_channel_map(const struct snd_soc_dai *dai,
 				unsigned int *tx_num, unsigned int *tx_slot,
 				unsigned int *rx_num, unsigned int *rx_slot)
 {
@@ -1234,7 +1234,7 @@ static int lpass_cdc_rx_macro_get_channel_map(struct snd_soc_dai *dai,
 		*rx_slot = ch_mask;
 		*rx_num = rx_priv->active_ch_cnt[dai->id];
 		dev_dbg(rx_priv->dev,
-			"%s: dai->id:%d, ch_mask:0x%x, active_ch_cnt:%d active_mask: 0x%x\n",
+			"%s: dai->id:%d, ch_mask:0x%x, active_ch_cnt:%d active_mask: 0x%lx\n",
 			__func__, dai->id, *rx_slot, *rx_num, rx_priv->active_ch_mask[dai->id]);
 		break;
 	case RX_MACRO_AIF5_PB:
@@ -2153,7 +2153,7 @@ static int lpass_cdc_rx_macro_get_compander(struct snd_kcontrol *kcontrol,
 {
 	struct snd_soc_component *component =
 				snd_soc_kcontrol_component(kcontrol);
-	int comp = ((struct soc_multi_mixer_control *)
+	int comp = ((struct soc_mixer_control *)
 		    kcontrol->private_value)->shift;
 	struct device *rx_dev = NULL;
 	struct lpass_cdc_rx_macro_priv *rx_priv = NULL;
@@ -2170,7 +2170,7 @@ static int lpass_cdc_rx_macro_set_compander(struct snd_kcontrol *kcontrol,
 {
 	struct snd_soc_component *component =
 				snd_soc_kcontrol_component(kcontrol);
-	int comp = ((struct soc_multi_mixer_control *)
+	int comp = ((struct soc_mixer_control *)
 		    kcontrol->private_value)->shift;
 	int value = ucontrol->value.integer.value[0];
 	struct device *rx_dev = NULL;
@@ -2868,9 +2868,9 @@ static int lpass_cdc_rx_macro_iir_enable_audio_mixer_get(struct snd_kcontrol *kc
 {
 	struct snd_soc_component *component =
 				snd_soc_kcontrol_component(kcontrol);
-	int iir_idx = ((struct soc_multi_mixer_control *)
+	int iir_idx = ((struct soc_mixer_control *)
 					kcontrol->private_value)->reg;
-	int band_idx = ((struct soc_multi_mixer_control *)
+	int band_idx = ((struct soc_mixer_control *)
 					kcontrol->private_value)->shift;
 	/* IIR filter band registers are at integer multiples of 0x80 */
 	u16 iir_reg = LPASS_CDC_RX_SIDETONE_IIR0_IIR_CTL + 0x80 * iir_idx;
@@ -2890,9 +2890,9 @@ static int lpass_cdc_rx_macro_iir_enable_audio_mixer_put(struct snd_kcontrol *kc
 {
 	struct snd_soc_component *component =
 				snd_soc_kcontrol_component(kcontrol);
-	int iir_idx = ((struct soc_multi_mixer_control *)
+	int iir_idx = ((struct soc_mixer_control *)
 					kcontrol->private_value)->reg;
-	int band_idx = ((struct soc_multi_mixer_control *)
+	int band_idx = ((struct soc_mixer_control *)
 					kcontrol->private_value)->shift;
 	bool iir_band_en_status = 0;
 	int value = ucontrol->value.integer.value[0];
@@ -3575,7 +3575,7 @@ static int lpass_cdc_rx_macro_fir_coeff_num_get(struct snd_kcontrol *kcontrol,
 {
 	struct snd_soc_component *component =
 				snd_soc_kcontrol_component(kcontrol);
-	unsigned int path_idx = ((struct soc_multi_mixer_control *)
+	unsigned int path_idx = ((struct soc_mixer_control *)
 				kcontrol->private_value)->shift;
 	struct device *rx_dev = NULL;
 	struct lpass_cdc_rx_macro_priv *rx_priv = NULL;
@@ -3604,7 +3604,7 @@ static int lpass_cdc_rx_macro_fir_coeff_num_put(struct snd_kcontrol *kcontrol,
 {
 	struct snd_soc_component *component =
 				snd_soc_kcontrol_component(kcontrol);
-	unsigned int path_idx = ((struct soc_multi_mixer_control *)
+	unsigned int path_idx = ((struct soc_mixer_control *)
 				kcontrol->private_value)->shift;
 	u8 fir_total_coeff_num = ucontrol->value.bytes.data[0];
 	struct device *rx_dev = NULL;
@@ -4577,10 +4577,10 @@ static void lpass_cdc_rx_macro_add_child_devices(struct work_struct *work)
 			rx_swr_master_node = true;
 
 		if(rx_swr_master_node)
-			strlcpy(plat_dev_name, "rx_swr_ctrl",
+			strscpy(plat_dev_name, "rx_swr_ctrl",
 				(RX_SWR_STRING_LEN - 1));
 		else
-			strlcpy(plat_dev_name, node->name,
+			strscpy(plat_dev_name, node->name,
 				(RX_SWR_STRING_LEN - 1));
 
 		pdev = platform_device_alloc(plat_dev_name, -1);
@@ -4793,7 +4793,7 @@ err_reg_macro:
 	return ret;
 }
 
-static int lpass_cdc_rx_macro_remove(struct platform_device *pdev)
+static void lpass_cdc_rx_macro_remove(struct platform_device *pdev)
 {
 	struct lpass_cdc_rx_macro_priv *rx_priv = NULL;
 	u16 count = 0;
@@ -4801,7 +4801,7 @@ static int lpass_cdc_rx_macro_remove(struct platform_device *pdev)
 	rx_priv = dev_get_drvdata(&pdev->dev);
 
 	if (!rx_priv)
-		return -EINVAL;
+		return;
 
 	for (count = 0; count < rx_priv->child_count &&
 		count < LPASS_CDC_RX_MACRO_CHILD_DEVICES_MAX; count++)
@@ -4813,7 +4813,6 @@ static int lpass_cdc_rx_macro_remove(struct platform_device *pdev)
 	mutex_destroy(&rx_priv->mclk_lock);
 	mutex_destroy(&rx_priv->swr_clk_lock);
 	kfree(rx_priv->swr_ctrl_data);
-	return 0;
 }
 
 static const struct of_device_id lpass_cdc_rx_macro_dt_match[] = {

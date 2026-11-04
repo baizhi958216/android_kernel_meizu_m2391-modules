@@ -679,18 +679,17 @@ err:
 	return ret;
 }
 
-static int lpass_cdc_clk_rsc_remove(struct platform_device *pdev)
+static void lpass_cdc_clk_rsc_remove(struct platform_device *pdev)
 {
 	struct lpass_cdc_clk_rsc *priv = dev_get_drvdata(&pdev->dev);
 
 	lpass_cdc_unregister_res_clk(&pdev->dev);
 	of_platform_depopulate(&pdev->dev);
 	if (!priv)
-		return -EINVAL;
+		return;
 	mutex_destroy(&priv->rsc_clk_lock);
 	mutex_destroy(&priv->fs_gen_lock);
 
-	return 0;
 }
 
 static const struct of_device_id lpass_cdc_clk_rsc_dt_match[] = {
