@@ -465,7 +465,7 @@ ramp_down:
 			break;
 		wcd939x_mbhc->rdown_prev_iter = val;
 	}
-	del_timer(&wcd939x_mbhc->rdown_timer);
+	timer_delete(&wcd939x_mbhc->rdown_timer);
 }
 
 static void wcd939x_mbhc_zdet_ramp(struct snd_soc_component *component,
@@ -1009,7 +1009,7 @@ static ssize_t usbcss_sysfs_store(struct kobject *kobj,
 
 	if (strcmp(attr->attr.name, "rdson") == 0) {
 		if (val > MAX_USBCSS_HS_IMPEDANCE_MOHMS) {
-			dev_err(wcd939x->dev, "%s: Value %d out of HS impedance range %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of HS impedance range %d\n",
 			__func__, val, MAX_USBCSS_HS_IMPEDANCE_MOHMS);
 			return count;
 		}
@@ -1017,14 +1017,14 @@ static ssize_t usbcss_sysfs_store(struct kobject *kobj,
 		update_linearizer = usbcss_hs->xtalk_config == XTALK_ANALOG;
 	} else if (strcmp(attr->attr.name, "r2") == 0) {
 		if (val > MAX_USBCSS_HS_IMPEDANCE_MOHMS) {
-			dev_err(wcd939x->dev, "%s: Value %d out of HS impedance range %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of HS impedance range %d\n",
 			__func__, val, MAX_USBCSS_HS_IMPEDANCE_MOHMS);
 			return count;
 		}
 		usbcss_hs->r_conn_par_load_pos_mohms = val;
 	} else if (strcmp(attr->attr.name, "r3") == 0) {
 		if (val > MAX_USBCSS_HS_IMPEDANCE_MOHMS) {
-			dev_err(wcd939x->dev, "%s: Value %d out of HS impedance range %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of HS impedance range %d\n",
 			__func__, val, MAX_USBCSS_HS_IMPEDANCE_MOHMS);
 			return count;
 		}
@@ -1032,7 +1032,7 @@ static ssize_t usbcss_sysfs_store(struct kobject *kobj,
 		update_linearizer = true;
 	} else if (strcmp(attr->attr.name, "r4") == 0) {
 		if (val > MAX_USBCSS_HS_IMPEDANCE_MOHMS) {
-			dev_err(wcd939x->dev, "%s: Value %d out of HS impedance range %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of HS impedance range %d\n",
 			__func__, val, MAX_USBCSS_HS_IMPEDANCE_MOHMS);
 			return count;
 		}
@@ -1054,7 +1054,7 @@ static ssize_t usbcss_sysfs_store(struct kobject *kobj,
 		}
 	} else if (strcmp(attr->attr.name, "r5") == 0) {
 		if (val > MAX_USBCSS_HS_IMPEDANCE_MOHMS) {
-			dev_err(wcd939x->dev, "%s: Value %d out of HS impedance range %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of HS impedance range %d\n",
 			__func__, val, MAX_USBCSS_HS_IMPEDANCE_MOHMS);
 			return count;
 		}
@@ -1075,7 +1075,7 @@ static ssize_t usbcss_sysfs_store(struct kobject *kobj,
 		}
 	} else if (strcmp(attr->attr.name, "r6") == 0) {
 		if (val > MAX_USBCSS_HS_IMPEDANCE_MOHMS) {
-			dev_err(wcd939x->dev, "%s: Value %d out of HS impedance range %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of HS impedance range %d\n",
 			__func__, val, MAX_USBCSS_HS_IMPEDANCE_MOHMS);
 			return count;
 		}
@@ -1096,7 +1096,7 @@ static ssize_t usbcss_sysfs_store(struct kobject *kobj,
 		}
 	} else if (strcmp(attr->attr.name, "r7") == 0) {
 		if (val > MAX_USBCSS_HS_IMPEDANCE_MOHMS) {
-			dev_err(wcd939x->dev, "%s: Value %d out of HS impedance range %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of HS impedance range %d\n",
 			__func__, val, MAX_USBCSS_HS_IMPEDANCE_MOHMS);
 			return count;
 		}
@@ -1117,7 +1117,7 @@ static ssize_t usbcss_sysfs_store(struct kobject *kobj,
 		}
 	} else if (strcmp(attr->attr.name, "lin-k-aud") == 0) {
 		if (val < MIN_K_TIMES_100 || val > MAX_K_TIMES_100) {
-			dev_err(wcd939x->dev, "%s: Value %d out of bounds. Min: %d, Max: %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of bounds. Min: %d, Max: %d\n",
 			__func__, val, MIN_K_TIMES_100, MAX_K_TIMES_100);
 			return count;
 		}
@@ -1125,7 +1125,7 @@ static ssize_t usbcss_sysfs_store(struct kobject *kobj,
 		update_linearizer = true;
 	} else if (strcmp(attr->attr.name, "lin-k-gnd") == 0) {
 		if (val < MIN_K_TIMES_100 || val > MAX_K_TIMES_100) {
-			dev_err(wcd939x->dev, "%s: Value %d out of bounds. Min: %d, Max: %d\n",
+			dev_err(wcd939x->dev, "%s: Value %ld out of bounds. Min: %d, Max: %d\n",
 			__func__, val, MIN_K_TIMES_100, MAX_K_TIMES_100);
 			return count;
 		}
@@ -2007,7 +2007,7 @@ int wcd939x_mbhc_init(struct wcd939x_mbhc **mbhc,
 	return 0;
 err:
 	if (wcd939x_mbhc)
-		del_timer(&wcd939x_mbhc->rdown_timer);
+		timer_delete(&wcd939x_mbhc->rdown_timer);
 	return ret;
 }
 EXPORT_SYMBOL(wcd939x_mbhc_init);
@@ -2034,7 +2034,7 @@ void wcd939x_mbhc_deinit(struct snd_soc_component *component)
 
 	wcd939x_mbhc = wcd939x->mbhc;
 	if (wcd939x_mbhc) {
-		del_timer(&wcd939x_mbhc->rdown_timer);
+		timer_delete(&wcd939x_mbhc->rdown_timer);
 		wcd_mbhc_deinit(&wcd939x_mbhc->wcd_mbhc);
 	}
 }

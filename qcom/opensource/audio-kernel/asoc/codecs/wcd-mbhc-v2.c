@@ -21,7 +21,7 @@
 #if IS_ENABLED(CONFIG_QCOM_WCD_USBSS_I2C)
 #include <linux/soc/qcom/wcd939x-i2c.h>
 #endif
-#if IS_ENABLED(CONFIG_QCOM_FSA4480_I2C)
+#if IS_ENABLED(CONFIG_TYPEC_MUX_FSA4480)
 #include <linux/soc/qcom/fsa4480-i2c.h>
 #endif
 #include <linux/usb/typec.h>
@@ -1707,7 +1707,7 @@ static int wcd_mbhc_set_keycode(struct wcd_mbhc *mbhc)
 	return result;
 }
 
-#if IS_ENABLED(CONFIG_QCOM_FSA4480_I2C) || IS_ENABLED(CONFIG_QCOM_WCD_USBSS_I2C)
+#if IS_ENABLED(CONFIG_TYPEC_MUX_FSA4480) || IS_ENABLED(CONFIG_QCOM_WCD_USBSS_I2C)
 static int wcd_mbhc_usbc_ana_event_handler(struct notifier_block *nb,
 					   unsigned long mode, void *ptr)
 {
@@ -2026,7 +2026,7 @@ int wcd_mbhc_init(struct wcd_mbhc *mbhc, struct snd_soc_component *component,
 	if (mbhc->headset_jack.jack == NULL) {
 		ret = snd_soc_card_jack_new(component->card,
 					    "Headset Jack", WCD_MBHC_JACK_MASK,
-					    &mbhc->headset_jack, NULL, 0);
+					    &mbhc->headset_jack);
 		if (ret) {
 			pr_err("%s: Failed to create new jack\n", __func__);
 			return ret;
@@ -2035,7 +2035,7 @@ int wcd_mbhc_init(struct wcd_mbhc *mbhc, struct snd_soc_component *component,
 		ret = snd_soc_card_jack_new(component->card,
 					    "Button Jack",
 					    WCD_MBHC_JACK_BUTTON_MASK,
-					    &mbhc->button_jack, NULL, 0);
+					    &mbhc->button_jack);
 		if (ret) {
 			pr_err("Failed to create new jack\n");
 			return ret;

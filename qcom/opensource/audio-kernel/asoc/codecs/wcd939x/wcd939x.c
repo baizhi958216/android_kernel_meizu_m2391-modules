@@ -24,7 +24,6 @@
 #include <asoc/msm-cdc-supply.h>
 #include <asoc/wcd-mbhc-v2-api.h>
 #include <bindings/audio-codec-port-types.h>
-#include <linux/qti-regmap-debugfs.h>
 #include "wcd939x-registers.h"
 #include "wcd939x.h"
 #include "internal.h"
@@ -178,7 +177,6 @@ static struct regmap_irq_chip wcd939x_regmap_irq_chip = {
 	.num_regs = 3,
 	.status_base = WCD939X_INTR_STATUS_0,
 	.mask_base = WCD939X_INTR_MASK_0,
-	.type_base = WCD939X_INTR_LEVEL_0,
 	.ack_base = WCD939X_INTR_CLEAR_0,
 	.use_ack = 1,
 	.runtime_pm = false,
@@ -2259,7 +2257,7 @@ static int wcd939x_get_adc_mode(int val)
 	return ret;
 }
 
-int wcd939x_tx_channel_config(struct snd_soc_component *component,
+static int wcd939x_tx_channel_config(struct snd_soc_component *component,
 				  int channel, int mode)
 {
 	int reg = WCD939X_TX_CH2, mask = 0, val = 0;
@@ -3521,7 +3519,7 @@ static int wcd939x_tx_master_ch_put(struct snd_kcontrol *kcontrol,
 		return -EINVAL;
 
 	dev_dbg(component->dev, "%s: slave_ch_idx: %d", __func__, slave_ch_idx);
-	dev_dbg(component->dev, "%s: ucontrol->value.enumerated.item[0] = %ld\n",
+	dev_dbg(component->dev, "%s: ucontrol->value.enumerated.item[0] = %u\n",
 			__func__, ucontrol->value.enumerated.item[0]);
 
 	idx = ucontrol->value.enumerated.item[0];
@@ -4524,7 +4522,6 @@ static int wcd939x_soc_codec_probe(struct snd_soc_component *component)
 	wcd939x->component = component;
 	snd_soc_component_init_regmap(component, wcd939x->regmap);
 
-	devm_regmap_qti_debugfs_register(&wcd939x->tx_swr_dev->dev, wcd939x->regmap);
 
 	/*Harmonium contains only one variant i.e wcd9395*/
 	wcd939x->variant = WCD9395;
@@ -4999,7 +4996,7 @@ static int wcd939x_reset_low(struct device *dev)
 	return rc;
 }
 
-struct wcd939x_pdata *wcd939x_populate_dt_data(struct device *dev)
+static struct wcd939x_pdata *wcd939x_populate_dt_data(struct device *dev)
 {
 	struct wcd939x_pdata *pdata = NULL;
 
@@ -5412,7 +5409,7 @@ err:
 	return ret;
 }
 
-static int wcd939x_remove(struct platform_device *pdev)
+static void wcd939x_remove(struct platform_device *pdev)
 {
 	struct wcd939x_priv *wcd939x = NULL;
 
@@ -5422,7 +5419,6 @@ static int wcd939x_remove(struct platform_device *pdev)
 	mutex_destroy(&wcd939x->wakeup_lock);
 	dev_set_drvdata(&pdev->dev, NULL);
 
-	return 0;
 }
 
 #ifdef CONFIG_PM_SLEEP

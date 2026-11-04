@@ -22,7 +22,6 @@
 #include <asoc/msm-cdc-pinctrl.h>
 #include <bindings/audio-codec-port-types.h>
 #include <asoc/msm-cdc-supply.h>
-#include <linux/qti-regmap-debugfs.h>
 
 #include "wcd937x-registers.h"
 #include "wcd937x.h"
@@ -69,6 +68,8 @@ static const DECLARE_TLV_DB_SCALE(line_gain, 0, 7, 1);
 static const DECLARE_TLV_DB_SCALE(analog_gain, 0, 25, 1);
 
 static int wcd937x_handle_post_irq(void *data);
+static int wcd937x_mask_sync(int index, unsigned int mask,
+			     unsigned int value, void *data);
 static int wcd937x_reset(struct device *dev);
 static int wcd937x_reset_low(struct device *dev);
 
@@ -105,8 +106,7 @@ static struct regmap_irq_chip wcd937x_regmap_irq_chip = {
 	.ack_base = WCD937X_DIGITAL_INTR_CLEAR_0,
 	.use_ack = 1,
 	.clear_ack = 1,
-	.mask_writeonly = 1,
-	.type_base = WCD937X_DIGITAL_INTR_LEVEL_0,
+	.handle_mask_sync = wcd937x_mask_sync,
 	.runtime_pm = false,
 	.handle_post_irq = wcd937x_handle_post_irq,
 	.irq_drv_data = NULL,
@@ -135,6 +135,15 @@ static struct snd_soc_dai_driver wcd937x_dai[] = {
 		},
 	},
 };
+
+static int wcd937x_mask_sync(int index, unsigned int mask,
+			     unsigned int value, void *data)
+{
+	struct wcd937x_priv *wcd937x = data;
+
+	return regmap_write_bits(wcd937x->regmap, WCD937X_DIGITAL_INTR_MASK_0 + index,
+				 mask, value);
+}
 
 static int wcd937x_handle_post_irq(void *data)
 {
@@ -1754,7 +1763,7 @@ static int wcd937x_get_logical_addr(struct swr_device *swr_dev)
 		ret = swr_get_logical_dev_num(swr_dev, swr_dev->addr, &devnum);
 		if (ret) {
 			dev_err(&swr_dev->dev,
-				"%s get devnum %d for dev addr %lx failed\n",
+				"%s get devnum %d for dev addr %llx failed\n",
 				__func__, devnum, swr_dev->addr);
 			/* retry after 1ms */
 			usleep_range(1000, 1010);
@@ -2263,7 +2272,7 @@ static int wcd937x_tx_master_ch_put(struct snd_kcontrol *kcontrol,
 		return -EINVAL;
 
 	dev_dbg(component->dev, "%s: slave_ch_idx: %d", __func__, slave_ch_idx);
-	dev_dbg(component->dev, "%s: ucontrol->value.enumerated.item[0] = %ld\n",
+	dev_dbg(component->dev, "%s: ucontrol->value.enumerated.item[0] = %u\n",
 			__func__, ucontrol->value.enumerated.item[0]);
 
 	idx = ucontrol->value.enumerated.item[0];
@@ -2980,7 +2989,6 @@ static int wcd937x_soc_codec_probe(struct snd_soc_component *component)
 	wcd937x->component = component;
 	snd_soc_component_init_regmap(component, wcd937x->regmap);
 
-	devm_regmap_qti_debugfs_register(&wcd937x->tx_swr_dev->dev, wcd937x->regmap);
 
 	variant = (snd_soc_component_read(
 			component, WCD937X_DIGITAL_EFUSE_REG_0) & 0x1E) >> 1;
@@ -3281,7 +3289,7 @@ static int wcd937x_reset_low(struct device *dev)
 	return rc;
 }
 
-struct wcd937x_pdata *wcd937x_populate_dt_data(struct device *dev)
+static struct wcd937x_pdata *wcd937x_populate_dt_data(struct device *dev)
 {
 	struct wcd937x_pdata *pdata = NULL;
 
@@ -3605,12 +3613,11 @@ static int wcd937x_probe(struct platform_device *pdev)
 					&wcd937x_comp_ops, match);
 }
 
-static int wcd937x_remove(struct platform_device *pdev)
+static void wcd937x_remove(struct platform_device *pdev)
 {
 	component_master_del(&pdev->dev, &wcd937x_comp_ops);
 	dev_set_drvdata(&pdev->dev, NULL);
 
-	return 0;
 }
 
 #ifdef CONFIG_PM_SLEEP
