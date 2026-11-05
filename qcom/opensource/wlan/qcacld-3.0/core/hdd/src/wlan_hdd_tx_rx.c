@@ -886,7 +886,7 @@ static void wlan_hdd_update_txq_timestamp(struct net_device *dev)
 		 */
 		if (!hdd_netdev_queue_is_locked(txq)) {
 			if (__netif_tx_trylock(txq)) {
-				txq_trans_update(txq);
+				txq_trans_update(dev, txq);
 				__netif_tx_unlock(txq);
 			}
 		}

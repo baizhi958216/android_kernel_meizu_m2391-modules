@@ -6322,7 +6322,7 @@ hdd_alloc_station_adapter(struct hdd_context *hdd_ctx, tSirMacAddr mac_addr,
 	qdf_atomic_init(&adapter->cache_sta_count);
 
 	/* Init the net_device structure */
-	strlcpy(dev->name, name, IFNAMSIZ);
+	strscpy(dev->name, name, IFNAMSIZ);
 
 	qdf_net_update_net_device_dev_addr(dev, mac_addr, sizeof(tSirMacAddr));
 	qdf_mem_copy(adapter->mac_addr.bytes, mac_addr, sizeof(tSirMacAddr));
@@ -9216,7 +9216,7 @@ static void hdd_delete_sta(struct hdd_adapter *adapter)
 
 	hdd_debug("[SSR] send restart supplicant");
 	/* event supplicant to restart */
-	cfg80211_del_sta(adapter->dev,
+	cfg80211_del_sta(adapter->dev->ieee80211_ptr,
 			 (const u8 *)&bcast_mac.bytes[0],
 			 GFP_KERNEL);
 }

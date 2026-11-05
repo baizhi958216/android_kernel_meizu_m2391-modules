@@ -97,7 +97,7 @@ __wlan_hdd_sysfs_freq_show(struct hdd_context *hdd_ctx,
 			   struct kobj_attribute *attr, char *buf)
 {
 	int ret = 0;
-	struct regulatory_channel chan_list[NUM_6GHZ_CHANNELS];
+	struct regulatory_channel *chan_list __free(kfree) = NULL;
 	QDF_STATUS status;
 	uint32_t i;
 
@@ -114,10 +114,15 @@ __wlan_hdd_sysfs_freq_show(struct hdd_context *hdd_ctx,
 	if (!strcmp(wlan_reg_get_power_string(hdd_ctx->power_type), "INVALID"))
 		return -EINVAL;
 
+	chan_list = kcalloc(NUM_6GHZ_CHANNELS, sizeof(*chan_list), GFP_KERNEL);
+	if (!chan_list)
+		return -ENOMEM;
 	status = wlan_reg_get_6g_ap_master_chan_list(
 						hdd_ctx->pdev,
 						hdd_ctx->power_type,
 						chan_list);
+	if (QDF_IS_STATUS_ERROR(status))
+		return qdf_status_to_os_return(status);
 
 	for (i = 0; i < NUM_6GHZ_CHANNELS; i++) {
 		if ((chan_list[i].state != CHANNEL_STATE_DISABLE) &&

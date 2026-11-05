@@ -415,20 +415,31 @@ static bool
 wlan_is_nan_allowed_on_6ghz_freq(struct wlan_objmgr_pdev *pdev, uint32_t freq)
 {
 	QDF_STATUS status;
-	struct regulatory_channel chan_list[NUM_6GHZ_CHANNELS];
+	struct regulatory_channel *chan_list;
+	bool allowed = false;
 	uint16_t i;
 
+	chan_list = qdf_mem_malloc(sizeof(*chan_list) * NUM_6GHZ_CHANNELS);
+	if (!chan_list)
+		return false;
 	status = wlan_reg_get_6g_ap_master_chan_list(pdev,
 						     REG_VERY_LOW_POWER_AP,
 						     chan_list);
 
+	if (QDF_IS_STATUS_ERROR(status))
+		goto free_list;
+
 	for (i = 0; i < NUM_6GHZ_CHANNELS; i++) {
 		if ((freq == chan_list[i].center_freq) &&
-		    (chan_list[i].state == CHANNEL_STATE_ENABLE))
-			return true;
+		    (chan_list[i].state == CHANNEL_STATE_ENABLE)) {
+			allowed = true;
+			break;
+		}
 	}
 
-	return false;
+free_list:
+	qdf_mem_free(chan_list);
+	return allowed;
 }
 
 bool wlan_is_nan_allowed_on_freq(struct wlan_objmgr_pdev *pdev, uint32_t freq)
