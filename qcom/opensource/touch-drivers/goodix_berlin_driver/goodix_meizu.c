@@ -32,6 +32,8 @@ struct goodix_meizu {
 	u8 single_frames;
 	bool stopping;
 	bool wake_enabled;
+	bool game_mode;
+	bool game_mode_configured;
 	bool group_created;
 	bool linked;
 	struct notifier_block power_notifier;
@@ -51,6 +53,21 @@ bool goodix_meizu_is_ready(struct goodix_ts_core *cd)
 
 static int meizu_write(struct goodix_ts_core *cd, const u8 *cmd, size_t len,
 		bool settle);
+
+static int meizu_set_game_mode(struct goodix_ts_core *cd, bool enabled)
+{
+	static const u8 game_mode[2][7] = {
+		{ 0, 0, 5, 0xc0, 0, 0xc5, 0 },
+		{ 0, 0, 5, 0xc0, 1, 0xc6, 0 },
+	};
+	static const u8 rate_120hz[] = { 0, 0, 5, 0x9d, 1, 0xa3, 0 };
+	int ret;
+
+	ret = meizu_write(cd, game_mode[enabled], sizeof(game_mode[0]), true);
+	if (!ret && !enabled)
+		ret = meizu_write(cd, rate_120hz, sizeof(rate_120hz), true);
+	return ret;
+}
 
 /* Original .text0x14e0 has four seven-byte packets: wire on/off=1/10,
  * wireless on/off=2/20. Register and packet checksums are literal OEM values.
@@ -117,10 +134,15 @@ static int meizu_power_event(struct notifier_block *nb, unsigned long event, voi
 
 void goodix_meizu_resume_complete(struct goodix_ts_core *cd)
 {
-	mutex_lock(&cd->meizu->state_lock);
-	if (!cd->meizu->stopping)
-		meizu_charge(cd, cd->meizu->charge_mode);
-	mutex_unlock(&cd->meizu->state_lock);
+	struct goodix_meizu *mz = cd->meizu;
+
+	mutex_lock(&mz->state_lock);
+	if (!mz->stopping) {
+		meizu_charge(cd, mz->charge_mode);
+		if (mz->game_mode_configured && meizu_set_game_mode(cd, mz->game_mode))
+			dev_warn(&cd->pdev->dev, "Failed to restore touch game mode\n");
+	}
+	mutex_unlock(&mz->state_lock);
 }
 
 void goodix_meizu_input_capabilities(struct input_dev *input)
@@ -478,16 +500,44 @@ static ssize_t charge_enable_node_store(struct device *dev,
 	return ret < 0 ? ret : count;
 }
 
+static ssize_t game_mode_node_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct goodix_ts_core *cd = dev_get_drvdata(dev);
+	struct goodix_meizu *mz = cd->meizu;
+	bool enabled;
+	int ret;
+
+	ret = kstrtobool(buf, &enabled);
+	if (ret)
+		return ret;
+
+	mutex_lock(&mz->state_lock);
+	if (mz->stopping)
+		ret = -ENODEV;
+	else if (!atomic_read(&cd->suspended))
+		ret = meizu_set_game_mode(cd, enabled);
+
+	if (!ret) {
+		mz->game_mode = enabled;
+		mz->game_mode_configured = true;
+	}
+	mutex_unlock(&mz->state_lock);
+	return ret ? ret : count;
+}
+
 /* Original nodes have mode 0220 and no show handler. */
 static DEVICE_ATTR(gesture_info, 0220, NULL, gesture_info_store);
 static DEVICE_ATTR(fod_report, 0220, NULL, fod_report_store);
 static DEVICE_ATTR(goodix_ts_FOD_node, 0220, NULL, goodix_ts_FOD_node_store);
 static DEVICE_ATTR(charge_enable_node, 0220, NULL, charge_enable_node_store);
+static DEVICE_ATTR(game_mode_node, 0220, NULL, game_mode_node_store);
 static struct attribute *meizu_attrs[] = {
 	&dev_attr_gesture_info.attr,
 	&dev_attr_fod_report.attr,
 	&dev_attr_goodix_ts_FOD_node.attr,
 	&dev_attr_charge_enable_node.attr,
+	&dev_attr_game_mode_node.attr,
 	NULL,
 };
 static const struct attribute_group meizu_group = { .attrs = meizu_attrs };
