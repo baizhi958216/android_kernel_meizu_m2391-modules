@@ -228,7 +228,7 @@ struct gpr_hdr {
 
 struct gpr_pkt {
        struct gpr_hdr hdr;
-       uint8_t payload[0];
+       uint8_t payload[];
 };
 
 #define GPR_IBASIC_RSP_RESULT 0x02001005
@@ -243,7 +243,8 @@ struct gpr_device {
 	uint16_t	domain_id;
 	uint32_t	version;
 	char name[GPR_NAME_SIZE];
-	spinlock_t	lock;
+	struct mutex	tx_lock;
+	bool		online;
 	struct list_head node;
 };
 
@@ -283,6 +284,8 @@ void gpr_driver_unregister(struct gpr_driver *drv);
 
 int gpr_send_pkt(struct gpr_device *adev, struct gpr_pkt *pkt);
 
+void gpr_set_modem_state(enum gpr_subsys_state state);
+int gpr_set_q6_state(enum gpr_subsys_state state);
 enum gpr_subsys_state gpr_get_modem_state(void);
 enum gpr_subsys_state gpr_get_q6_state(void);
 #endif /* __QCOM_GPR_H_ */
