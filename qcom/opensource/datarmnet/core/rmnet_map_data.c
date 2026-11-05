@@ -384,8 +384,11 @@ struct sk_buff *rmnet_map_deaggregate(struct sk_buff *skb,
 		if (!skbn)
 			return NULL;
 
-		skb_append_pagefrags(skbn, page, frag0->bv_offset,
-				     packet_len);
+		if (packet_len > skb_frag_size(frag0) ||
+		    skb_append_pagefrags(skbn, page, skb_frag_off(frag0), packet_len, MAX_SKB_FRAGS)) {
+			kfree_skb(skbn);
+			return NULL;
+		}
 		skbn->data_len += packet_len;
 		skbn->len += packet_len;
 	} else {
@@ -447,7 +450,7 @@ int rmnet_map_checksum_downlink_packet(struct sk_buff *skb, u16 len)
 }
 EXPORT_SYMBOL(rmnet_map_checksum_downlink_packet);
 
-void rmnet_map_v4_checksum_uplink_packet(struct sk_buff *skb,
+static void rmnet_map_v4_checksum_uplink_packet(struct sk_buff *skb,
 					 struct net_device *orig_dev)
 {
 	struct rmnet_priv *priv = netdev_priv(orig_dev);
@@ -511,7 +514,7 @@ static void rmnet_map_v5_check_priority(struct sk_buff *skb,
 	}
 }
 
-void rmnet_map_v5_checksum_uplink_packet(struct sk_buff *skb,
+static void rmnet_map_v5_checksum_uplink_packet(struct sk_buff *skb,
 					 struct rmnet_port *port,
 					 struct net_device *orig_dev)
 {
@@ -662,7 +665,7 @@ pull:
 		skb_set_transport_header(skb, ip_len);
 }
 
-static void rmnet_map_nonlinear_copy(struct sk_buff *coal_skb,
+static bool rmnet_map_nonlinear_copy(struct sk_buff *coal_skb,
 				     struct rmnet_map_coal_metadata *coal_meta,
 				     struct sk_buff *dest)
 {
@@ -674,17 +677,19 @@ static void rmnet_map_nonlinear_copy(struct sk_buff *coal_skb,
 		skb_frag_t *frag0 = skb_shinfo(coal_skb)->frags;
 		struct page *page = skb_frag_page(frag0);
 
-		skb_append_pagefrags(dest, page,
-				     frag0->bv_offset + coal_meta->ip_len +
-				     coal_meta->trans_len +
-				     coal_meta->data_offset,
-				     copy_len);
+		u32 offset = coal_meta->ip_len + coal_meta->trans_len + coal_meta->data_offset;
+
+		if (offset > skb_frag_size(frag0) || copy_len > skb_frag_size(frag0) - offset ||
+		    skb_append_pagefrags(dest, page, skb_frag_off(frag0) + offset, copy_len,
+					 MAX_SKB_FRAGS))
+			return false;
 		dest->data_len += copy_len;
 		dest->len += copy_len;
 	} else {
 		skb_put_data(dest, data_start + coal_meta->data_offset,
 			     copy_len);
 	}
+	return true;
 }
 
 /* Fill in GSO metadata to allow the SKB to be segmented by the NW stack
@@ -771,7 +776,10 @@ __rmnet_map_segment_coal_skb(struct sk_buff *coal_skb,
 		return;
 
 	skb_reserve(skbn, hlen);
-	rmnet_map_nonlinear_copy(coal_skb, coal_meta, skbn);
+	if (!rmnet_map_nonlinear_copy(coal_skb, coal_meta, skbn)) {
+		kfree_skb(skbn);
+		return;
+	}
 
 	/* Push transport header and update necessary fields */
 	skb_push(skbn, coal_meta->trans_len);
@@ -1283,7 +1291,7 @@ static void rmnet_map_flush_tx_packet_work(struct work_struct *work)
 	spin_unlock_bh(&state->agg_lock);
 }
 
-enum hrtimer_restart rmnet_map_flush_tx_packet_queue(struct hrtimer *t)
+static enum hrtimer_restart rmnet_map_flush_tx_packet_queue(struct hrtimer *t)
 {
 	struct rmnet_aggregation_state *state;
 
@@ -1580,9 +1588,8 @@ void rmnet_map_tx_aggregate_init(struct rmnet_port *port)
 
 		spin_lock_init(&state->agg_lock);
 		INIT_LIST_HEAD(&state->agg_list);
-		hrtimer_init(&state->hrtimer, CLOCK_MONOTONIC,
-			     HRTIMER_MODE_REL);
-		state->hrtimer.function = rmnet_map_flush_tx_packet_queue;
+		hrtimer_setup(&state->hrtimer, rmnet_map_flush_tx_packet_queue,
+			      CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 		INIT_WORK(&state->agg_wq, rmnet_map_flush_tx_packet_work);
 		state->stats = &port->stats.agg;
 

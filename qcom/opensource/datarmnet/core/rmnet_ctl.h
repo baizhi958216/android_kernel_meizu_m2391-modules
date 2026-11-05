@@ -22,6 +22,10 @@ struct rmnet_ctl_client_hooks {
 	void (*ctl_dl_client_hook)(struct sk_buff *skb);
 };
 
+void *rmnet_ctl_register_client(struct rmnet_ctl_client_hooks *hook);
+int rmnet_ctl_unregister_client(void *handle);
+int rmnet_ctl_send_client(void *handle, struct sk_buff *skb);
+
 struct rmnet_ctl_client_if {
 	void *	(*reg)(struct rmnet_ctl_client_hooks *hook);
 	int	(*dereg)(void *handle);

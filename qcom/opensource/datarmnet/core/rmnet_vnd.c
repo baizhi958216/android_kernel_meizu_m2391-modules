@@ -16,6 +16,8 @@
  *
  */
 
+
+#include <net/gso.h>
 #include <linux/etherdevice.h>
 #include <linux/if_arp.h>
 #include <linux/ip.h>
@@ -278,12 +280,12 @@ static void rmnet_get_stats64(struct net_device *dev,
 		pcpu_ptr = per_cpu_ptr(priv->pcpu_stats, cpu);
 
 		do {
-			start = u64_stats_fetch_begin_irq(&pcpu_ptr->syncp);
+			start = u64_stats_fetch_begin(&pcpu_ptr->syncp);
 			total_stats.rx_pkts += pcpu_ptr->stats.rx_pkts;
 			total_stats.rx_bytes += pcpu_ptr->stats.rx_bytes;
 			total_stats.tx_pkts += pcpu_ptr->stats.tx_pkts;
 			total_stats.tx_bytes += pcpu_ptr->stats.tx_bytes;
-		} while (u64_stats_fetch_retry_irq(&pcpu_ptr->syncp, start));
+		} while (u64_stats_fetch_retry(&pcpu_ptr->syncp, start));
 
 		total_stats.tx_drops += pcpu_ptr->stats.tx_drops;
 	}
@@ -710,7 +712,7 @@ void rmnet_vnd_setup(struct net_device *rmnet_dev)
 	rmnet_dev->netdev_ops = &rmnet_vnd_ops;
 	rmnet_dev->mtu = RMNET_DFLT_PACKET_SIZE;
 	rmnet_dev->needed_headroom = RMNET_NEEDED_HEADROOM;
-	random_ether_addr(rmnet_dev->perm_addr);
+	eth_random_addr(rmnet_dev->perm_addr);
 	rmnet_dev->tx_queue_len = RMNET_TX_QUEUE_LEN;
 
 	/* Raw IP mode */
@@ -807,5 +809,5 @@ void rmnet_vnd_reset_mac_addr(struct net_device *dev)
 	if (dev->netdev_ops != &rmnet_vnd_ops)
 		return;
 
-	random_ether_addr(dev->perm_addr);
+	eth_random_addr(dev->perm_addr);
 }

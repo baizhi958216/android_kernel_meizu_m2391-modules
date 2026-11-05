@@ -286,9 +286,7 @@ int rmnet_frag_descriptor_add_frag(struct rmnet_frag_descriptor *frag_desc,
 
 	INIT_LIST_HEAD(&frag->list);
 	get_page(p);
-	__skb_frag_set_page(&frag->frag, p);
-	skb_frag_size_set(&frag->frag, len);
-	skb_frag_off_set(&frag->frag, page_offset);
+	skb_frag_fill_page_desc(&frag->frag, p, page_offset, len);
 	list_add_tail(&frag->list, &frag_desc->frags);
 	frag_desc->len += len;
 	return 0;
@@ -1885,7 +1883,7 @@ recycle:
 rmnet_perf_chain_hook_t rmnet_perf_chain_end __rcu __read_mostly;
 EXPORT_SYMBOL(rmnet_perf_chain_end);
 
-void rmnet_descriptor_classify_chain_count(u64 chain_count,
+static void rmnet_descriptor_classify_chain_count(u64 chain_count,
 					   struct rmnet_port *port)
 {
 	u64 index;
@@ -1900,7 +1898,7 @@ void rmnet_descriptor_classify_chain_count(u64 chain_count,
 	port->stats.dl_chain_stat[index] += chain_count;
 }
 
-void rmnet_descriptor_classify_frag_count(u64 frag_count,
+static void rmnet_descriptor_classify_frag_count(u64 frag_count,
 					  struct rmnet_port *port)
 {
 	u64 index;

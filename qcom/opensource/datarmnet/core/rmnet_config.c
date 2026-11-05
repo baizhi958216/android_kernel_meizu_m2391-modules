@@ -184,10 +184,11 @@ static void rmnet_unregister_bridge(struct net_device *dev,
 	}
 }
 
-static int rmnet_newlink(struct net *src_net, struct net_device *dev,
-			 struct nlattr *tb[], struct nlattr *data[],
+static int rmnet_newlink(struct net_device *dev, struct rtnl_newlink_params *params,
 			 struct netlink_ext_ack *extack)
 {
+	struct net *src_net = rtnl_newlink_link_net(params);
+	struct nlattr **tb = params->tb, **data = params->data;
 	struct net_device *real_dev;
 	int mode = RMNET_EPMODE_VND;
 	struct rmnet_endpoint *ep;
@@ -711,10 +712,10 @@ void rmnet_get_packets(void *port, u64 *rx, u64 *tx)
 		for_each_possible_cpu(cpu) {
 			ps = per_cpu_ptr(priv->pcpu_stats, cpu);
 			do {
-				start = u64_stats_fetch_begin_irq(&ps->syncp);
+				start = u64_stats_fetch_begin(&ps->syncp);
 				*tx += ps->stats.tx_pkts;
 				*rx += ps->stats.rx_pkts;
-			} while (u64_stats_fetch_retry_irq(&ps->syncp, start));
+			} while (u64_stats_fetch_retry(&ps->syncp, start));
 		}
 	}
 	rcu_read_unlock();
@@ -877,4 +878,5 @@ static void __exit rmnet_exit(void)
 
 module_init(rmnet_init)
 module_exit(rmnet_exit)
+MODULE_DESCRIPTION("Qualcomm MAP modem data interfaces and aggregation");
 MODULE_LICENSE("GPL v2");

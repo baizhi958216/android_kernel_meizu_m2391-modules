@@ -6,32 +6,7 @@
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM rmnet
 #undef TRACE_INCLUDE_PATH
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,5,0)
-	#ifdef CONFIG_ARCH_SDXNIGHTJAR
-		#define TRACE_INCLUDE_PATH ../../../../../../../datarmnet/core
-	#else
-		#define TRACE_INCLUDE_PATH ../../../../../../../src/datarmnet/core
-	#endif /* CONFIG_ARCH_SDXNIGHTJAR */
-#else
-	#ifdef CONFIG_ARCH_SCUBA
-            #if defined(RMNET_LA_PLATFORM)
-                #define TRACE_INCLUDE_PATH ../../../../vendor/qcom/opensource/datarmnet/core
-            #else
-		#define TRACE_INCLUDE_PATH ../../../../../../../src/datarmnet/core
-            #endif
-        #elif defined(CONFIG_ARCH_KHAJE)
-            #if defined(RMNET_LA_PLATFORM)
-                #define TRACE_INCLUDE_PATH ../../../../vendor/qcom/opensource/datarmnet/core
-            #else
-                #define TRACE_INCLUDE_PATH ../../../../../../../src/datarmnet/core
-            #endif
-	#elif defined(__arch_um__)
-		#define TRACE_INCLUDE_PATH ../../../../datarmnet/core
-	#else
-		#define TRACE_INCLUDE_PATH ../../../m2391-modules/qcom/opensource/datarmnet/core
-	#endif /* CONFIG_ARCH_KHAJE */
-#endif /* endif LINUX_VERSION_CODE < KERNEL_VERSION(5,5,0) */
+#define TRACE_INCLUDE_PATH .
 
 #define TRACE_INCLUDE_FILE rmnet_trace
 
@@ -56,7 +31,7 @@ TRACE_EVENT(rmnet_xmit_skb,
 	),
 
 	TP_fast_assign(
-		__assign_str(dev_name, skb->dev->name);
+		__assign_str(dev_name);
 		__entry->len = skb->len;
 	),
 
@@ -155,8 +130,8 @@ TRACE_EVENT(print_skb_gso,
 		__entry->dest = dest;
 		__entry->ip_proto = ip_proto;
 		__entry->xport_proto = xport_proto;
-		__assign_str(saddr, saddr);
-		__assign_str(daddr, daddr);
+		__assign_str(saddr);
+		__assign_str(daddr);
 	),
 
 	TP_printk("GSO: skbaddr=%pK, len=%d, data_len=%d, [%s][%s] src=%s %u dest=%s %u",
@@ -190,8 +165,8 @@ DECLARE_EVENT_CLASS(print_icmp,
 		__entry->ip_proto = ip_proto;
 		__entry->type = type;
 		__entry->sequence = sequence;
-		__assign_str(saddr, saddr);
-		__assign_str(daddr, daddr);
+		__assign_str(saddr);
+		__assign_str(daddr);
 	),
 
 	TP_printk("ICMP: skbaddr=%pK, len=%d, [%s] type=%u sequence=%u source=%s dest=%s",
@@ -243,8 +218,8 @@ DECLARE_EVENT_CLASS(print_tcp,
 	TP_fast_assign(
 		__entry->skbaddr = skb;
 		__entry->len = skb->len;
-		__assign_str(saddr, saddr);
-		__assign_str(daddr, daddr);
+		__assign_str(saddr);
+		__assign_str(daddr);
 		__entry->source = tp->source;
 		__entry->dest = tp->dest;
 		__entry->seq = tp->seq;
@@ -300,8 +275,8 @@ DECLARE_EVENT_CLASS(print_udp,
 	TP_fast_assign(
 		__entry->skbaddr = skb;
 		__entry->len = skb->len;
-		__assign_str(saddr, saddr);
-		__assign_str(daddr, daddr);
+		__assign_str(saddr);
+		__assign_str(daddr);
 		__entry->source = uh->source;
 		__entry->dest = uh->dest;
 		__entry->ip_id = ip_id;
