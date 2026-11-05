@@ -27,17 +27,10 @@
 #include "qdf_util.h"
 #include <linux/netdevice.h>
 
-QDF_STATUS
-qdf_net_if_create_dummy_if(struct qdf_net_if *nif)
+struct net_device *
+qdf_net_if_create_dummy_if(void)
 {
-	int ret;
-
-	if (!nif)
-		return QDF_STATUS_E_INVAL;
-
-	ret = init_dummy_netdev((struct net_device *)nif);
-
-	return qdf_status_from_os_return(ret);
+	return alloc_netdev_dummy(0);
 }
 
 qdf_export_symbol(qdf_net_if_create_dummy_if);

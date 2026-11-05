@@ -163,8 +163,7 @@ static inline void  __qdf_hrtimer_init(__qdf_hrtimer_data_t *timer,
 		mode |= HRTIMER_MODE_SOFT;
 
 	hrt_mode = __qdf_hrtimer_get_mode(mode);
-	hrtimer_init(hrtimer, clock, hrt_mode);
-	hrtimer->function = __qdf_hrtimer_cb;
+	hrtimer_setup(hrtimer, __qdf_hrtimer_cb, clock, hrt_mode);
 }
 #else
 static inline void  __qdf_hrtimer_init(__qdf_hrtimer_data_t *timer,

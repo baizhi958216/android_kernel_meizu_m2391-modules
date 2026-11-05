@@ -316,7 +316,7 @@ struct qca_napi_stat {
  * instances.
  */
 struct qca_napi_info {
-	struct net_device    netdev; /* dummy net_dev */
+	struct net_device *netdev; /* dummy net_dev */
 	void                 *hif_ctx;
 	struct napi_struct   napi;
 	uint8_t              scale;   /* currently same on all instances */
@@ -329,7 +329,7 @@ struct qca_napi_info {
 	/* will only be present for data rx CE's */
 	void (*offld_flush_cb)(void *);
 	struct napi_struct   rx_thread_napi;
-	struct net_device    rx_thread_netdev;
+	struct net_device *rx_thread_netdev;
 #endif /* RECEIVE_OFFLOAD */
 	qdf_lro_ctx_t        lro_ctx;
 };

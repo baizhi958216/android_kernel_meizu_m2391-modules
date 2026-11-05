@@ -18,6 +18,7 @@
  *  DOC: osif_dp_txrx.c
  *  This file contains DP component's TX/RX osif API implementation
  */
+#include <net/gro.h>
 #include "os_if_dp.h"
 #include "os_if_dp_lro.h"
 #include <wlan_dp_public_struct.h>
@@ -227,10 +228,10 @@ void osif_dp_rx_thread_napi_gro_flush(struct napi_struct *napi,
 		if (flush_code != DP_RX_GRO_LOW_TPUT_FLUSH)
 			napi_gro_flush(napi, false);
 
-		if (napi->rx_count) {
-			netif_receive_skb_list(&napi->rx_list);
-			qdf_init_list_head(&napi->rx_list);
-			napi->rx_count = 0;
+		if (napi->gro.rx_count) {
+			netif_receive_skb_list(&napi->gro.rx_list);
+			INIT_LIST_HEAD(&napi->gro.rx_list);
+			napi->gro.rx_count = 0;
 		}
 	}
 }

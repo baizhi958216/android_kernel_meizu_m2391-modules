@@ -831,8 +831,7 @@ static int dp_rx_tm_thread_napi_poll(qdf_napi_struct *napi, int budget)
 static void dp_rx_tm_thread_napi_init(struct dp_rx_thread *rx_thread)
 {
 	/* Todo - optimize to use only one dummy netdev for all thread napis */
-	qdf_net_if_create_dummy_if((struct qdf_net_if *)&rx_thread->netdev);
-	qdf_netif_napi_add(&rx_thread->netdev, &rx_thread->napi,
+	qdf_netif_napi_add(rx_thread->netdev, &rx_thread->napi,
 			   dp_rx_tm_thread_napi_poll, 64);
 	qdf_napi_enable(&rx_thread->napi);
 }
@@ -845,7 +844,10 @@ static void dp_rx_tm_thread_napi_init(struct dp_rx_thread *rx_thread)
  */
 static void dp_rx_tm_thread_napi_deinit(struct dp_rx_thread *rx_thread)
 {
+	qdf_napi_disable(&rx_thread->napi);
 	qdf_netif_napi_del(&rx_thread->napi);
+	free_netdev(rx_thread->netdev);
+	rx_thread->netdev = NULL;
 }
 
 /*
@@ -869,6 +871,12 @@ static QDF_STATUS dp_rx_tm_thread_init(struct dp_rx_thread *rx_thread,
 		dp_err("rx_thread is null!");
 		return QDF_STATUS_E_FAULT;
 	}
+	if (cdp_cfg_get(dp_rx_tm_get_soc_handle(rx_thread->rtm_handle_cmn),
+			cfg_dp_gro_enable)) {
+		rx_thread->netdev = qdf_net_if_create_dummy_if();
+		if (!rx_thread->netdev)
+			return QDF_STATUS_E_NOMEM;
+	}
 	rx_thread->id = id;
 	rx_thread->event_flag = 0;
 	qdf_nbuf_queue_head_init(&rx_thread->nbuf_queue);
@@ -885,14 +893,15 @@ static QDF_STATUS dp_rx_tm_thread_init(struct dp_rx_thread *rx_thread,
 	qdf_scnprintf(thread_name, sizeof(thread_name), "dp_rx_thread_%u", id);
 	dp_info("%s %u", thread_name, id);
 
-	if (cdp_cfg_get(dp_rx_tm_get_soc_handle(rx_thread->rtm_handle_cmn),
-			cfg_dp_gro_enable))
+	if (rx_thread->netdev)
 		dp_rx_tm_thread_napi_init(rx_thread);
 
 	rx_thread->task = qdf_create_thread(dp_rx_thread_loop,
 					    rx_thread, thread_name);
 	if (!rx_thread->task) {
 		dp_err("could not create dp_rx_thread %d", id);
+		if (rx_thread->netdev)
+			dp_rx_tm_thread_napi_deinit(rx_thread);
 		return QDF_STATUS_E_FAILURE;
 	}
 
@@ -925,8 +934,7 @@ static QDF_STATUS dp_rx_tm_thread_deinit(struct dp_rx_thread *rx_thread)
 	for (i = 0; i < WLAN_PDEV_MAX_VDEVS; i++)
 		qdf_event_destroy(&rx_thread->vdev_del_event[i]);
 
-	if (cdp_cfg_get(dp_rx_tm_get_soc_handle(rx_thread->rtm_handle_cmn),
-			cfg_dp_gro_enable))
+	if (rx_thread->netdev)
 		dp_rx_tm_thread_napi_deinit(rx_thread);
 
 	return QDF_STATUS_SUCCESS;

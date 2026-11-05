@@ -151,7 +151,7 @@ qdf_thread_t *qdf_thread_run(qdf_thread_func callback, void *context)
 {
 	struct task_struct *thread;
 
-	thread = kthread_create((qdf_thread_os_func)callback, context,
+	thread = kthread_create(callback, context,
 				"qdf %u", qdf_thread_id++);
 	if (IS_ERR(thread))
 		return NULL;
