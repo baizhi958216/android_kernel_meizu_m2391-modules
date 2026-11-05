@@ -19,6 +19,7 @@
 /*====================================================================================*/
 
 /* NXP UCI/HBCI transport, with M2391 power/clock/ABI recovered from nxp-sr100.ko. */
+#include <linux/atomic.h>
 #include <linux/clk.h>
 #include <linux/delay.h>
 #include <linux/fs.h>
@@ -75,6 +76,9 @@ struct sr100_dev {
 	spinlock_t irq_enabled_lock;
 	u8 *tx_buffer, *rx_buffer;
 	unsigned int write_count, read_count;
+	/* UCI packets may be read as a header followed by a separate payload. */
+	unsigned int rx_pending, rx_offset, rx_generation;
+	atomic_t transport_generation;
 	struct mutex sr100_access_lock;
 	size_t totalBtyesToRead, IsExtndLenIndication;
 	int mode;
@@ -242,6 +246,8 @@ static long sr100_dev_ioctl(struct file *file, unsigned int cmd,
 	mutex_lock(&d->control_mutex);
 	switch (cmd) {
 	case SR100_SET_PWR:
+		if (arg <= 2)
+			atomic_inc(&d->transport_generation);
 		if (arg == 1) {
 			clock_rc = sr100_set_slpclk(d, true);
 			if (clock_rc)
@@ -265,6 +271,7 @@ static long sr100_dev_ioctl(struct file *file, unsigned int cmd,
 		break;
 	case SR100_SET_FWD:
 		if (arg <= 1) {
+			atomic_inc(&d->transport_generation);
 			WRITE_ONCE(d->is_fw_dwnld_enabled, !!arg);
 			if (arg)
 				WRITE_ONCE(d->read_abort_requested, false);
@@ -448,6 +455,8 @@ static ssize_t sr100_dev_read(struct file *file, char __user *buffer,
 {
 	struct sr100_dev *d = file->private_data;
 	bool firmware;
+	unsigned int generation;
+	size_t bytes;
 	int rc = sr100_begin(d);
 
 	if (rc)
@@ -462,6 +471,17 @@ static ssize_t sr100_dev_read(struct file *file, char __user *buffer,
 		goto out;
 	}
 	firmware = READ_ONCE(d->is_fw_dwnld_enabled);
+	generation = atomic_read(&d->transport_generation);
+	if (d->rx_generation != generation) {
+		d->rx_pending = 0;
+		d->rx_offset = 0;
+		d->rx_generation = generation;
+	}
+	if (READ_ONCE(d->read_abort_requested))
+		goto abort;
+	/* Drain the cached packet even if the chip has already lowered IRQ. */
+	if (!firmware && d->rx_pending)
+		goto copy_pending;
 	d->timeOutInMs = msecs_to_jiffies(500);
 	memset(d->rx_buffer, 0, SR100_BUFSIZE);
 	if (!gpio_get_value(d->irq_gpio) && (file->f_flags & O_NONBLOCK)) {
@@ -518,15 +538,29 @@ again:
 				rc = -EIO;
 			goto out;
 		}
-	}
-	if (d->read_count > count) {
-		rc = -EMSGSIZE;
-		goto out;
+		d->rx_offset = 0;
+		d->rx_pending = d->read_count;
+		goto copy_pending;
 	}
 	rc = copy_to_user(buffer, d->rx_buffer, d->read_count) ?
 		-EFAULT : d->read_count;
 	goto out;
+copy_pending:
+	if (READ_ONCE(d->read_abort_requested) ||
+	    generation != atomic_read(&d->transport_generation))
+		goto abort;
+	bytes = min_t(size_t, count, d->rx_pending);
+	if (copy_to_user(buffer, d->rx_buffer + d->rx_offset, bytes)) {
+		rc = -EFAULT;
+		goto out;
+	}
+	d->rx_offset += bytes;
+	d->rx_pending -= bytes;
+	rc = bytes;
+	goto out;
 abort:
+	d->rx_pending = 0;
+	d->rx_offset = 0;
 	WRITE_ONCE(d->read_abort_requested, false);
 	rc = 0;
 out:
@@ -673,6 +707,7 @@ static int sr100_probe(struct spi_device *spi)
 	sr100_dbg("probe chip_select=%d bus_num=%d\n",
 		    spi->chip_select, spi->master->bus_num);
 	kref_init(&d->ref);
+	atomic_set(&d->transport_generation, 0);
 	init_rwsem(&d->operation_sem);
 	init_waitqueue_head(&d->read_wq);
 	spin_lock_init(&d->irq_enabled_lock);
