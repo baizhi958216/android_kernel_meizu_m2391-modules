@@ -4,6 +4,7 @@
  * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/of_platform.h>
 #include <linux/delay.h>
 #include <linux/devcoredump.h>
 #include <linux/elf.h>
@@ -562,12 +563,15 @@ size_t cnss_get_platform_name(struct cnss_plat_data *plat_priv,
 
 			model = of_get_property(root, "model", NULL);
 			if (model) {
-				model_len = strlcpy(buf, model, buf_len);
+				model_len = strlen(model);
+				strscpy(buf, model, buf_len);
 				cnss_pr_dbg("Platform name: %s (%zu)\n",
 					    buf, model_len);
 
+				of_node_put(root);
 				return model_len;
 			}
+			of_node_put(root);
 		}
 	}
 
@@ -1290,7 +1294,7 @@ static int cnss_fw_ready_hdlr(struct cnss_plat_data *plat_priv)
 	}
 
 	cnss_pr_dbg("Processing FW Init Done..\n");
-	del_timer(&plat_priv->fw_boot_timer);
+	timer_delete(&plat_priv->fw_boot_timer);
 	set_bit(CNSS_FW_READY, &plat_priv->driver_state);
 	clear_bit(CNSS_DEV_ERR_NOTIFY, &plat_priv->driver_state);
 
@@ -1638,7 +1642,7 @@ int cnss_idle_restart(struct device *dev)
 
 	if (test_bit(CNSS_IN_REBOOT, &plat_priv->driver_state)) {
 		cnss_pr_dbg("Reboot or shutdown is in progress, ignore idle restart\n");
-		del_timer(&plat_priv->fw_boot_timer);
+		timer_delete(&plat_priv->fw_boot_timer);
 		ret = -EINVAL;
 		goto out;
 	}
@@ -3714,7 +3718,7 @@ static int cnss_init_dump_entry(struct cnss_plat_data *plat_priv)
 	ramdump_info->dump_data.len = ramdump_info->ramdump_size;
 	ramdump_info->dump_data.version = CNSS_DUMP_FORMAT_VER;
 	ramdump_info->dump_data.magic = CNSS_DUMP_MAGIC_VER_V2;
-	strlcpy(ramdump_info->dump_data.name, CNSS_DUMP_NAME,
+	strscpy(ramdump_info->dump_data.name, CNSS_DUMP_NAME,
 		sizeof(ramdump_info->dump_data.name));
 	dump_entry.id = MSM_DUMP_DATA_CNSS_WLAN;
 	dump_entry.addr = virt_to_phys(&ramdump_info->dump_data);
@@ -3849,7 +3853,7 @@ static int cnss_register_ramdump_v2(struct cnss_plat_data *plat_priv)
 	dump_data->version = CNSS_DUMP_FORMAT_VER_V2;
 	dump_data->magic = CNSS_DUMP_MAGIC_VER_V2;
 	dump_data->seg_version = CNSS_DUMP_SEG_VER;
-	strlcpy(dump_data->name, CNSS_DUMP_NAME,
+	strscpy(dump_data->name, CNSS_DUMP_NAME,
 		sizeof(dump_data->name));
 	dump_entry.id = MSM_DUMP_DATA_CNSS_WLAN;
 	dump_entry.addr = virt_to_phys(dump_data);
@@ -3959,7 +3963,7 @@ int cnss_register_ramdump(struct cnss_plat_data *plat_priv)
 	dump_data->version = CNSS_DUMP_FORMAT_VER_V2;
 	dump_data->magic = CNSS_DUMP_MAGIC_VER_V2;
 	dump_data->seg_version = CNSS_DUMP_SEG_VER;
-	strlcpy(dump_data->name, CNSS_DUMP_NAME,
+	strscpy(dump_data->name, CNSS_DUMP_NAME,
 		sizeof(dump_data->name));
 
 	info_v2->ramdump_dev = dev;
@@ -4531,7 +4535,7 @@ static ssize_t shutdown_store(struct device *dev,
 	if (plat_priv) {
 		set_bit(CNSS_IN_REBOOT, &plat_priv->driver_state);
 		cnss_bus_update_status(plat_priv, CNSS_SYS_REBOOT);
-		del_timer(&plat_priv->fw_boot_timer);
+		timer_delete(&plat_priv->fw_boot_timer);
 		complete_all(&plat_priv->power_up_complete);
 		complete_all(&plat_priv->cal_complete);
 		cnss_pr_dbg("Shutdown notification handled\n");
@@ -4853,7 +4857,7 @@ static int cnss_reboot_notifier(struct notifier_block *nb,
 
 	set_bit(CNSS_IN_REBOOT, &plat_priv->driver_state);
 	cnss_bus_update_status(plat_priv, CNSS_SYS_REBOOT);
-	del_timer(&plat_priv->fw_boot_timer);
+	timer_delete(&plat_priv->fw_boot_timer);
 	complete_all(&plat_priv->power_up_complete);
 	complete_all(&plat_priv->cal_complete);
 	cnss_pr_dbg("Reboot is in progress with action %d\n", action);
@@ -5080,7 +5084,7 @@ static void cnss_misc_deinit(struct cnss_plat_data *plat_priv)
 	complete_all(&plat_priv->daemon_connected);
 	device_init_wakeup(&plat_priv->plat_dev->dev, false);
 	unregister_reboot_notifier(&plat_priv->reboot_nb);
-	del_timer(&plat_priv->fw_boot_timer);
+	timer_delete(&plat_priv->fw_boot_timer);
 	wakeup_source_unregister(plat_priv->recovery_ws);
 	cnss_deinit_sol_gpio(plat_priv);
 	cnss_sram_dump_deinit(plat_priv);

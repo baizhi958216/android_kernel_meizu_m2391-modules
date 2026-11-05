@@ -9,7 +9,8 @@
 #include <linux/of.h>
 #include <linux/of_gpio.h>
 #include <linux/pinctrl/consumer.h>
-#include <linux/pinctrl/qcom-pinctrl.h>
+#include <linux/gpio/driver.h>
+#include <linux/interrupt.h>
 #include <linux/regulator/consumer.h>
 #if IS_ENABLED(CONFIG_QCOM_COMMAND_DB)
 #include <soc/qcom/cmd-db.h>
@@ -783,6 +784,37 @@ static int cnss_clk_off(struct cnss_plat_data *plat_priv,
 	return 0;
 }
 
+static void cnss_disable_gpio_wake(void *data)
+{
+	disable_irq_wake((unsigned long)data);
+}
+
+static int cnss_enable_gpio_wake(struct device *dev, u32 offset)
+{
+	struct device_node *node __free(device_node) =
+		of_parse_phandle(dev->of_node, "wlan-en-gpio", 0);
+	struct gpio_device *gdev __free(gpio_device_put) =
+		gpio_device_find_by_fwnode(of_fwnode_handle(node));
+	struct gpio_desc *desc;
+	int irq, ret;
+
+	if (!node)
+		return -EINVAL;
+	if (!gdev)
+		return -EPROBE_DEFER;
+	desc = gpio_device_get_desc(gdev, offset);
+	if (IS_ERR(desc))
+		return PTR_ERR(desc);
+	irq = gpiod_to_irq(desc);
+	if (irq < 0)
+		return irq;
+	ret = enable_irq_wake(irq);
+	if (ret)
+		return ret;
+	return devm_add_action_or_reset(dev, cnss_disable_gpio_wake,
+					(void *)(unsigned long)irq);
+}
+
 int cnss_get_pinctrl(struct cnss_plat_data *plat_priv)
 {
 	int ret = 0;
@@ -935,7 +967,7 @@ int cnss_get_pinctrl(struct cnss_plat_data *plat_priv)
 				continue;
 			}
 
-			ret = msm_gpio_mpm_wake_set(gpio_id, 1);
+			ret = cnss_enable_gpio_wake(dev, gpio_id);
 			if (ret < 0) {
 				cnss_pr_err("Failed to setup gpio_id: %d as interrupt wakeup capable, ret: %d\n",
 					    ret);
@@ -1905,7 +1937,7 @@ int cnss_aop_ol_cpr_cfg_setup(struct cnss_plat_data *plat_priv,
 			u32 wake_volt = 0, sleep_volt = 0;
 
 			if (plat_vreg_param[j].vreg[0] == '\0')
-				strlcpy(plat_vreg_param[j].vreg, vreg,
+				strscpy(plat_vreg_param[j].vreg, vreg,
 					sizeof(plat_vreg_param[j].vreg));
 			else if (!strnstr(plat_vreg_param[j].vreg, vreg,
 					  strlen(plat_vreg_param[j].vreg)))

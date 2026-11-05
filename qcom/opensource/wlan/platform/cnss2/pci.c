@@ -4,6 +4,7 @@
  * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/bitfield.h>
 #include <linux/completion.h>
 #include <linux/io.h>
 #include <linux/irq.h>
@@ -1874,7 +1875,7 @@ int cnss_pci_shutdown_cleanup(struct cnss_pci_data *pci_priv)
 		return -ENODEV;
 	}
 
-	ret = del_timer(&pci_priv->dev_rddm_timer);
+	ret = timer_delete(&pci_priv->dev_rddm_timer);
 	cnss_pr_dbg("%s RDDM timer deleted", ret ? "Active" : "Inactive");
 	return ret;
 }
@@ -2727,7 +2728,7 @@ retry:
 	mod_timer(&pci_priv->boot_debug_timer,
 		  jiffies + msecs_to_jiffies(BOOT_DEBUG_TIMEOUT_MS));
 	ret = cnss_pci_set_mhi_state(pci_priv, CNSS_MHI_POWER_ON);
-	del_timer_sync(&pci_priv->boot_debug_timer);
+	timer_delete_sync(&pci_priv->boot_debug_timer);
 	if (ret == 0)
 		cnss_wlan_adsp_pc_enable(pci_priv, false);
 
@@ -3628,7 +3629,7 @@ static int cnss_qca6290_shutdown(struct cnss_pci_data *pci_priv)
 	     test_bit(CNSS_DRIVER_IDLE_SHUTDOWN, &plat_priv->driver_state) ||
 	     test_bit(CNSS_IN_COLD_BOOT_CAL, &plat_priv->driver_state)) &&
 	    test_bit(CNSS_DEV_ERR_NOTIFY, &plat_priv->driver_state)) {
-		del_timer(&pci_priv->dev_rddm_timer);
+		timer_delete(&pci_priv->dev_rddm_timer);
 		cnss_pci_collect_dump_info(pci_priv, false);
 
 		if (!plat_priv->recovery_enabled)
@@ -3874,7 +3875,7 @@ static void cnss_wlan_reg_driver_work(struct work_struct *work)
 			return;
 		}
 
-		del_timer(&plat_priv->fw_boot_timer);
+		timer_delete(&plat_priv->fw_boot_timer);
 		if (test_bit(CNSS_IN_COLD_BOOT_CAL, &plat_priv->driver_state) &&
 		    !test_bit(CNSS_IN_REBOOT, &plat_priv->driver_state)) {
 			cnss_pr_err("Timeout waiting for calibration to complete\n");
@@ -5656,7 +5657,7 @@ int cnss_get_soc_info(struct device *dev, struct cnss_soc_info *info)
 	info->board_id = plat_priv->board_info.board_id;
 	info->soc_id = plat_priv->soc_info.soc_id;
 	info->fw_version = plat_priv->fw_version_info.fw_version;
-	strlcpy(info->fw_build_timestamp,
+	strscpy(info->fw_build_timestamp,
 		plat_priv->fw_version_info.fw_build_timestamp,
 		sizeof(info->fw_build_timestamp));
 	memcpy(&info->device_version, &plat_priv->device_version,
@@ -6211,7 +6212,7 @@ int cnss_pci_recover_link_down(struct cnss_pci_data *pci_priv)
 	ret = cnss_resume_pci_link(pci_priv);
 	if (ret) {
 		cnss_pr_err("Failed to resume PCI link, err = %d\n", ret);
-		del_timer(&pci_priv->dev_rddm_timer);
+		timer_delete(&pci_priv->dev_rddm_timer);
 		return ret;
 	}
 
@@ -6230,7 +6231,7 @@ retry:
 	msleep(RDDM_LINK_RECOVERY_RETRY_DELAY_MS);
 	mhi_ee = mhi_get_exec_env(pci_priv->mhi_ctrl);
 	if (mhi_ee == MHI_EE_RDDM) {
-		del_timer(&pci_priv->dev_rddm_timer);
+		timer_delete(&pci_priv->dev_rddm_timer);
 		cnss_pr_info("Device in RDDM after link recovery, try to collect dump\n");
 		cnss_schedule_recovery(&pci_priv->pci_dev->dev,
 				       CNSS_REASON_RDDM);
@@ -6904,7 +6905,7 @@ static char *cnss_mhi_notify_status_to_str(enum mhi_callback status)
 static void cnss_dev_rddm_timeout_hdlr(struct timer_list *t)
 {
 	struct cnss_pci_data *pci_priv =
-		from_timer(pci_priv, t, dev_rddm_timer);
+		timer_container_of(pci_priv, t, dev_rddm_timer);
 	enum mhi_ee_type mhi_ee;
 
 	if (!pci_priv)
@@ -6934,7 +6935,7 @@ static void cnss_dev_rddm_timeout_hdlr(struct timer_list *t)
 static void cnss_boot_debug_timeout_hdlr(struct timer_list *t)
 {
 	struct cnss_pci_data *pci_priv =
-		from_timer(pci_priv, t, boot_debug_timer);
+		timer_container_of(pci_priv, t, boot_debug_timer);
 
 	if (!pci_priv)
 		return;
@@ -6968,7 +6969,7 @@ static int cnss_pci_handle_mhi_sys_err(struct cnss_pci_data *pci_priv)
 
 	cnss_ignore_qmi_failure(true);
 	set_bit(CNSS_DEV_ERR_NOTIFY, &plat_priv->driver_state);
-	del_timer(&plat_priv->fw_boot_timer);
+	timer_delete(&plat_priv->fw_boot_timer);
 	reinit_completion(&pci_priv->wake_event_complete);
 	mod_timer(&pci_priv->dev_rddm_timer,
 		  jiffies + msecs_to_jiffies(DEV_RDDM_TIMEOUT));
@@ -7007,7 +7008,7 @@ static void cnss_mhi_notify_status(struct mhi_controller *mhi_ctrl,
 	case MHI_CB_FATAL_ERROR:
 		cnss_ignore_qmi_failure(true);
 		set_bit(CNSS_DEV_ERR_NOTIFY, &plat_priv->driver_state);
-		del_timer(&plat_priv->fw_boot_timer);
+		timer_delete(&plat_priv->fw_boot_timer);
 		cnss_pci_update_status(pci_priv, CNSS_FW_DOWN);
 		cnss_reason = CNSS_REASON_DEFAULT;
 		break;
@@ -7017,8 +7018,8 @@ static void cnss_mhi_notify_status(struct mhi_controller *mhi_ctrl,
 	case MHI_CB_EE_RDDM:
 		cnss_ignore_qmi_failure(true);
 		set_bit(CNSS_DEV_ERR_NOTIFY, &plat_priv->driver_state);
-		del_timer(&plat_priv->fw_boot_timer);
-		del_timer(&pci_priv->dev_rddm_timer);
+		timer_delete(&plat_priv->fw_boot_timer);
+		timer_delete(&pci_priv->dev_rddm_timer);
 		cnss_pci_update_status(pci_priv, CNSS_FW_DOWN);
 		cnss_reason = CNSS_REASON_RDDM;
 		break;
@@ -7135,78 +7136,24 @@ static void cnss_mhi_write_reg(struct mhi_controller *mhi_ctrl,
 	writel_relaxed(val, addr);
 }
 
-#if IS_ENABLED(CONFIG_MHI_BUS_MISC)
-/**
- * __cnss_get_mhi_soc_info - Get SoC info before registering mhi controller
- * @mhi_ctrl: MHI controller
- *
- * Return: 0 for success, error code on failure
- */
-static inline int __cnss_get_mhi_soc_info(struct mhi_controller *mhi_ctrl)
-{
-	return mhi_get_soc_info(mhi_ctrl);
-}
-#else
-#define SOC_HW_VERSION_OFFS (0x224)
-#define SOC_HW_VERSION_FAM_NUM_BMSK (0xF0000000)
-#define SOC_HW_VERSION_FAM_NUM_SHFT (28)
-#define SOC_HW_VERSION_DEV_NUM_BMSK (0x0FFF0000)
-#define SOC_HW_VERSION_DEV_NUM_SHFT (16)
-#define SOC_HW_VERSION_MAJOR_VER_BMSK (0x0000FF00)
-#define SOC_HW_VERSION_MAJOR_VER_SHFT (8)
-#define SOC_HW_VERSION_MINOR_VER_BMSK (0x000000FF)
-#define SOC_HW_VERSION_MINOR_VER_SHFT (0)
-
-static int __cnss_get_mhi_soc_info(struct mhi_controller *mhi_ctrl)
-{
-	u32 soc_info;
-	int ret;
-
-	ret = mhi_ctrl->read_reg(mhi_ctrl,
-				 mhi_ctrl->regs + SOC_HW_VERSION_OFFS,
-				 &soc_info);
-	if (ret)
-		return ret;
-
-	mhi_ctrl->family_number = (soc_info & SOC_HW_VERSION_FAM_NUM_BMSK) >>
-		SOC_HW_VERSION_FAM_NUM_SHFT;
-	mhi_ctrl->device_number = (soc_info & SOC_HW_VERSION_DEV_NUM_BMSK) >>
-		SOC_HW_VERSION_DEV_NUM_SHFT;
-	mhi_ctrl->major_version = (soc_info & SOC_HW_VERSION_MAJOR_VER_BMSK) >>
-		SOC_HW_VERSION_MAJOR_VER_SHFT;
-	mhi_ctrl->minor_version = (soc_info & SOC_HW_VERSION_MINOR_VER_BMSK) >>
-		SOC_HW_VERSION_MINOR_VER_SHFT;
-	return 0;
-}
-#endif
+#define SOC_HW_VERSION_OFFS	0x224
 
 static int cnss_get_mhi_soc_info(struct cnss_plat_data *plat_priv,
 				 struct mhi_controller *mhi_ctrl)
 {
-	int ret = 0;
+	u32 version;
+	int ret;
 
-	ret = __cnss_get_mhi_soc_info(mhi_ctrl);
-	if (ret) {
-		cnss_pr_err("failed to get mhi soc info, ret %d\n", ret);
-		goto exit;
-	}
-
-	plat_priv->device_version.family_number = mhi_ctrl->family_number;
-	plat_priv->device_version.device_number = mhi_ctrl->device_number;
-	plat_priv->device_version.major_version = mhi_ctrl->major_version;
-	plat_priv->device_version.minor_version = mhi_ctrl->minor_version;
-
-	cnss_pr_dbg("Get device version info, family number: 0x%x, device number: 0x%x, major version: 0x%x, minor version: 0x%x\n",
-		    plat_priv->device_version.family_number,
-		    plat_priv->device_version.device_number,
-		    plat_priv->device_version.major_version,
-		    plat_priv->device_version.minor_version);
-
-	/* Only keep lower 4 bits as real device major version */
-	plat_priv->device_version.major_version &= DEVICE_MAJOR_VERSION_MASK;
-
-exit:
-	return ret;
+	ret = mhi_ctrl->read_reg(mhi_ctrl, mhi_ctrl->regs + SOC_HW_VERSION_OFFS,
+				 &version);
+	if (ret)
+		return ret;
+	plat_priv->device_version.family_number = FIELD_GET(GENMASK(31, 28), version);
+	plat_priv->device_version.device_number = FIELD_GET(GENMASK(27, 16), version);
+	plat_priv->device_version.major_version = FIELD_GET(GENMASK(15, 8), version) &
+						 DEVICE_MAJOR_VERSION_MASK;
+	plat_priv->device_version.minor_version = FIELD_GET(GENMASK(7, 0), version);
+	return 0;
 }
 
 static bool cnss_is_tme_supported(struct cnss_pci_data *pci_priv)
@@ -7287,10 +7234,7 @@ static int cnss_pci_register_mhi(struct cnss_pci_data *pci_priv)
 	mhi_ctrl->cntrl_dev = &pci_dev->dev;
 
 	mhi_ctrl->fw_image = plat_priv->firmware_name;
-#if IS_ENABLED(CONFIG_MHI_BUS_MISC) && \
-(LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0))
 	mhi_ctrl->fallback_fw_image = plat_priv->fw_fallback_name;
-#endif
 
 	mhi_ctrl->regs = pci_priv->bar;
 	mhi_ctrl->reg_len = pci_resource_len(pci_priv->pci_dev, PCI_BAR_NUM);
@@ -8014,8 +7958,8 @@ static void cnss_pci_remove(struct pci_dev *pci_dev)
 	case MANGO_DEVICE_ID:
 	case PEACH_DEVICE_ID:
 		cnss_pci_wake_gpio_deinit(pci_priv);
-		del_timer(&pci_priv->boot_debug_timer);
-		del_timer(&pci_priv->dev_rddm_timer);
+		timer_delete(&pci_priv->boot_debug_timer);
+		timer_delete(&pci_priv->dev_rddm_timer);
 		break;
 	default:
 		break;
