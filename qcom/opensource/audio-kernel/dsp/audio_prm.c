@@ -42,7 +42,10 @@ static bool is_apm_ready_check_done = false;
 static int audio_prm_callback(struct gpr_device *adev, void *data)
 {
 	struct gpr_hdr *hdr = (struct gpr_hdr *)data;
-	uint32_t *payload =  GPR_PKT_GET_PAYLOAD(uint32_t, data);
+	uint32_t *payload = GPR_PKT_GET_PAYLOAD(uint32_t, data);
+
+	if (GPR_PKT_GET_PAYLOAD_BYTE_SIZE(hdr->header) < 2 * sizeof(*payload))
+		return -EINVAL;
 
 	//dev_err(&adev->dev, "%s: Payload %x", __func__, hdr->opcode);
 	switch (hdr->opcode) {
@@ -109,8 +112,7 @@ static int prm_gpr_send_pkt(struct gpr_pkt *pkt, wait_queue_head_t *wait)
 			msleep(APM_READY_WAIT_DURATION);
 			++retry;
 		}
-		is_apm_ready_check_done = true;
-		pr_info("%s: apm ready check done\n", __func__);
+		is_apm_ready_check_done = retry < MAX_RETRY_COUNT;
 	}
 	g_prm.resp_received = false;
 	ret = gpr_send_pkt(g_prm.adev, pkt);
@@ -579,10 +581,10 @@ static int audio_prm_probe(struct gpr_device *adev)
 
 	dev_set_drvdata(&adev->dev, &g_prm);
 
+	mutex_lock(&g_prm.lock);
 	g_prm.adev = adev;
-
-	init_waitqueue_head(&g_prm.wait);
-	g_prm.is_adsp_up = true;
+	g_prm.is_adsp_up = gpr_get_q6_state() == GPR_SUBSYS_LOADED;
+	mutex_unlock(&g_prm.lock);
 	pr_err("%s: prm probe success\n", __func__);
 	return ret;
 }
@@ -618,20 +620,20 @@ static struct gpr_driver qcom_audio_prm_driver = {
 static int __init audio_prm_module_init(void)
 {
 	int ret;
+	mutex_init(&g_prm.lock);
+	init_waitqueue_head(&g_prm.wait);
 	ret = gpr_driver_register(&qcom_audio_prm_driver);
 
 	if (ret)
 		pr_err("%s: gpr driver register failed = %d\n", __func__, ret);
-
-	mutex_init(&g_prm.lock);
 
 	return ret;
 }
 
 static void __exit audio_prm_module_exit(void)
 {
-	mutex_destroy(&g_prm.lock);
 	gpr_driver_unregister(&qcom_audio_prm_driver);
+	mutex_destroy(&g_prm.lock);
 }
 
 module_init(audio_prm_module_init);

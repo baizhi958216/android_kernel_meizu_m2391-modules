@@ -47,10 +47,13 @@ struct spf_core_private {
 	struct mutex lock;
         struct spf_core *spf_core_drv;
         bool is_initial_boot;
-        struct work_struct add_chld_dev_work;
+        struct delayed_work add_chld_dev_work;
 };
 
-static struct spf_core_private *spf_core_priv;
+static struct spf_core_private spf_state = {
+	.lock = __MUTEX_INITIALIZER(spf_state.lock),
+};
+static struct spf_core_private * const spf_core_priv = &spf_state;
 
 /* used to decode basic responses from Gecko */
 struct spf_cmd_basic_rsp {
@@ -81,6 +84,8 @@ static int spf_core_callback(struct gpr_device *adev, void *data)
 	dev_info_ratelimited(&adev->dev, "%s: Payload %x", __func__, hdr->opcode);
 	switch (hdr->opcode) {
 	case GPR_IBASIC_RSP_RESULT:
+		if (GPR_PKT_GET_PAYLOAD_BYTE_SIZE(hdr->header) < sizeof(*basic_rsp))
+			return -EINVAL;
 		basic_rsp = GPR_PKT_GET_PAYLOAD(
 				struct spf_cmd_basic_rsp,
 				data);
@@ -95,6 +100,8 @@ static int spf_core_callback(struct gpr_device *adev, void *data)
 		core->resp_received = true;
 		break;
 	case APM_CMD_RSP_GET_SPF_STATE:
+		if (GPR_PKT_GET_PAYLOAD_BYTE_SIZE(hdr->header) < sizeof(*spf_status_rsp))
+			return -EINVAL;
 		spf_status_rsp =
 				GPR_PKT_GET_PAYLOAD(
 					struct apm_cmd_rsp_get_spf_status_t,
@@ -117,7 +124,7 @@ static int spf_core_callback(struct gpr_device *adev, void *data)
 static bool __spf_core_is_apm_ready(struct spf_core *core)
 {
 	struct gpr_device *adev = core->adev;
-	struct gpr_pkt pkt;
+	struct gpr_pkt pkt = {};
 	int rc;
 	bool ret = false;
 
@@ -131,7 +138,7 @@ static bool __spf_core_is_apm_ready(struct spf_core *core)
 	pkt.hdr.src_domain_id = GPR_IDS_DOMAIN_ID_APPS_V;
 	pkt.hdr.opcode = APM_CMD_GET_SPF_STATE;
 
-	dev_err_ratelimited(spf_core_priv->dev, "%s: send_command ret\n", __func__);
+	dev_dbg(spf_core_priv->dev, "%s: querying APM state\n", __func__);
 
 	rc = gpr_send_pkt(adev, &pkt);
 	if (rc < 0) {
@@ -164,9 +171,6 @@ bool spf_core_is_apm_ready(int timeout_ms)
 	unsigned long  timeout;
 	bool ret = false;
 	struct spf_core *core;
-
-	if (!spf_core_priv)
-		return ret;
 
 	mutex_lock(&spf_core_priv->lock);
 	core = spf_core_priv->spf_core_drv;
@@ -206,11 +210,8 @@ void spf_core_apm_close_all(void)
 {
 	int rc = 0;
 	struct spf_core *core;
-	struct gpr_pkt pkt;
+	struct gpr_pkt pkt = {};
 	struct gpr_device *adev = NULL;
-
-	if (!spf_core_priv)
-		return;
 
 	mutex_lock(&spf_core_priv->lock);
 	core = spf_core_priv->spf_core_drv;
@@ -281,10 +282,6 @@ static int spf_core_probe(struct gpr_device *adev)
 {
 	struct spf_core *core;
 	pr_err("%s",__func__);
-	if (!spf_core_priv) {
-		pr_err("%s: spf_core platform probe not yet done\n", __func__);
-		return -EPROBE_DEFER;
-	}
 	mutex_lock(&spf_core_priv->lock);
 	core = kzalloc(sizeof(*core), GFP_KERNEL);
 	if (!core) {
@@ -299,7 +296,7 @@ static int spf_core_probe(struct gpr_device *adev)
 	init_waitqueue_head(&core->wait);
 	spf_core_priv->spf_core_drv = core;
 	if (spf_core_priv->is_initial_boot)
-		schedule_work(&spf_core_priv->add_chld_dev_work);
+		schedule_delayed_work(&spf_core_priv->add_chld_dev_work, 0);
 	mutex_unlock(&spf_core_priv->lock);
 
 	return 0;
@@ -308,14 +305,11 @@ static int spf_core_probe(struct gpr_device *adev)
 static int spf_core_exit(struct gpr_device *adev)
 {
 	struct spf_core *core = dev_get_drvdata(&adev->dev);
-	if (!spf_core_priv) {
-		pr_err("%s: spf_core platform probe not yet done\n", __func__);
-		return -1;
-	}
 	mutex_lock(&spf_core_priv->lock);
 	spf_core_priv->spf_core_drv = NULL;
+	mutex_unlock(&spf_core_priv->lock);
+	cancel_delayed_work_sync(&spf_core_priv->add_chld_dev_work);
 	kfree(core);
-        mutex_unlock(&spf_core_priv->lock);
 	return 0;
 }
 
@@ -337,70 +331,42 @@ static struct gpr_driver qcom_spf_core_driver = {
 
 static void spf_core_add_child_devices(struct work_struct *work)
 {
-	int ret;
-        pr_err("%s:enumarate machine driver\n", __func__);
+	int ret = -EAGAIN;
 
-	if (spf_core_is_apm_ready(ADD_CHILD_DEVICES_APM_TIMEOUT_MS)) {
-		dev_err(spf_core_priv->dev, "%s: apm is up\n",
-			__func__);
-	} else {
-		dev_err(spf_core_priv->dev, "%s: apm is not up\n",
-			__func__);
-		return;
+	if (spf_core_is_apm_ready(ADD_CHILD_DEVICES_APM_TIMEOUT_MS))
+		ret = of_platform_populate(spf_core_priv->dev->of_node, NULL, NULL,
+					   spf_core_priv->dev);
+
+	mutex_lock(&spf_core_priv->lock);
+	if (!ret) {
+		spf_core_priv->is_initial_boot = false;
+	} else if (spf_core_priv->spf_core_drv) {
+		/* ADSP firmware and its audio protection domain start asynchronously. */
+		schedule_delayed_work(&spf_core_priv->add_chld_dev_work, HZ);
 	}
-
-	ret = of_platform_populate(spf_core_priv->dev->of_node,
-			NULL, NULL, spf_core_priv->dev);
-	if (ret)
-		dev_err(spf_core_priv->dev, "%s: failed to add child nodes, ret=%d\n",
-			__func__, ret);
-
-        spf_core_priv->is_initial_boot = false;
-
+	mutex_unlock(&spf_core_priv->lock);
 }
 
 static int spf_core_platform_driver_probe(struct platform_device *pdev)
 {
-	int ret = 0;
-        pr_err("%s",__func__);
-
-	spf_core_priv = devm_kzalloc(&pdev->dev, sizeof(struct spf_core_private), GFP_KERNEL);
-	if (!spf_core_priv)
-		return -ENOMEM;
+	int ret;
 
 	spf_core_priv->dev = &pdev->dev;
-
-	mutex_init(&spf_core_priv->lock);
-
-	INIT_WORK(&spf_core_priv->add_chld_dev_work, spf_core_add_child_devices);
-
 	spf_core_priv->is_initial_boot = true;
+	INIT_DELAYED_WORK(&spf_core_priv->add_chld_dev_work, spf_core_add_child_devices);
+	digital_cdc_rsc_mgr_init();
 	ret = gpr_driver_register(&qcom_spf_core_driver);
-	if (ret) {
-		pr_err("%s: gpr driver register failed = %d\n",
-			__func__, ret);
-		ret = 0;
-	}
-
-#if 0
-	ret = snd_event_client_register(&pdev->dev, &gpr_ssr_ops, NULL);
-	if (ret) {
-		pr_err("%s: Registration with SND event fwk failed ret = %d\n",
-			__func__, ret);
-		ret = 0;
-	}
-#endif
-    digital_cdc_rsc_mgr_init();
-
+	if (ret)
+		digital_cdc_rsc_mgr_exit();
 	return ret;
 }
 
 static void spf_core_platform_driver_remove(struct platform_device *pdev)
 {
-	//snd_event_client_deregister(&pdev->dev);
-        gpr_driver_unregister(&qcom_spf_core_driver);
-	spf_core_priv = NULL;
-    digital_cdc_rsc_mgr_exit();
+	gpr_driver_unregister(&qcom_spf_core_driver);
+	cancel_delayed_work_sync(&spf_core_priv->add_chld_dev_work);
+	of_platform_depopulate(&pdev->dev);
+	digital_cdc_rsc_mgr_exit();
 }
 
 static const struct of_device_id spf_core_of_match[]  = {
