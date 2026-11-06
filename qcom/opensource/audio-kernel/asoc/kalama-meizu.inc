@@ -4,13 +4,13 @@
 #include <sound/jack.h>
 
 static struct snd_soc_codec_conf cs35l45_codec_conf[] = {
-	{ .dlc = { .name = "cs35l45.0-0031" }, .name_prefix = "SPK" },
-	{ .dlc = { .name = "cs35l45.0-0030" }, .name_prefix = "RCV" },
+	{ .dlc = { .name = "cs35l45_spk" }, .name_prefix = "SPK" },
+	{ .dlc = { .name = "cs35l45_rcv" }, .name_prefix = "RCV" },
 };
 SND_SOC_DAILINK_DEFS(secondary_smartpa_aif,
 	DAILINK_COMP_ARRAY(COMP_CPU("snd-soc-dummy-dai")),
-	DAILINK_COMP_ARRAY(COMP_CODEC("cs35l45.0-0030", "cs35l45"),
-		COMP_CODEC("cs35l45.0-0031", "cs35l45")),
+	DAILINK_COMP_ARRAY(COMP_CODEC("cs35l45_rcv", "cs35l45"),
+		COMP_CODEC("cs35l45_spk", "cs35l45")),
 	DAILINK_COMP_ARRAY(COMP_PLATFORM("snd-soc-dummy")));
 
 static int cs35l45_init(struct snd_soc_pcm_runtime *rtd)

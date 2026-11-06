@@ -89,7 +89,6 @@ static unsigned int vote_against_sleep_cnt;
 
 static struct dev_pm_qos_request latency_pm_qos_req; /* pm_qos request */
 static unsigned int qos_client_active_cnt;
-static int cluster_first_cpu[MAX_CPU_CLUSTER] = {-1, };
 static struct dev_pm_qos_request *msm_audio_req = NULL;
 static bool kregister_pm_qos_latency_controls = false;
 #define MSM_LL_QOS_VALUE	300 /* time in us to ensure LPM doesn't go in C3/C4 */
@@ -636,68 +635,39 @@ void msm_common_snd_shutdown(struct snd_pcm_substream *substream)
 
 static void msm_audio_add_qos_request(void)
 {
-	int num_req = 0;
-	int cpu = 0;
-	int ret = 0;
-	int cid, prev_cid = -1;
-	int cluster_num = 0;
-	cpumask_t* cluster_cpu_mask = NULL;
+	unsigned long capacity = ULONG_MAX;
+	int cpu, added = 0;
 
-	msm_audio_req = kcalloc(num_possible_cpus(),
-			sizeof(struct dev_pm_qos_request), GFP_KERNEL);
+	msm_audio_req = kcalloc(nr_cpu_ids, sizeof(*msm_audio_req), GFP_KERNEL);
 	if (!msm_audio_req)
 		return;
 
-	for_each_cpu(cpu, cpu_possible_mask) {
-		cid = topology_cluster_id(cpu);
-		if(cid != prev_cid) {
-			cluster_first_cpu[cluster_num++] = cpu;
-			prev_cid = cid;
-		}
-	}
+	for_each_possible_cpu(cpu)
+		capacity = min(capacity, arch_scale_cpu_capacity(cpu));
+	for_each_possible_cpu(cpu) {
+		struct device *dev = get_cpu_device(cpu);
 
-	/* Pick the first cluster as it represents the Silver cluster. */
-	cluster_cpu_mask = topology_core_cpumask(cluster_first_cpu[0]);
-
-	for_each_cpu(cpu, cluster_cpu_mask) {
-		ret = dev_pm_qos_add_request(get_cpu_device(cpu),
-			    &msm_audio_req[cpu],
-			    DEV_PM_QOS_RESUME_LATENCY,
-			    PM_QOS_CPU_LATENCY_DEFAULT_VALUE);
-		if (ret < 0)
-			pr_err("%s error (%d) adding resume latency to cpu %d.\n",
-                                                __func__, ret, cpu);
-		pr_debug("%s set cpu affinity to logical core %d.\n", __func__, cpu);
-
-		/* Limit the request to 2 silver cpu cores. */
-		if (++num_req == 2)
+		if (!dev || arch_scale_cpu_capacity(cpu) != capacity)
+			continue;
+		if (dev_pm_qos_add_request(dev, &msm_audio_req[cpu],
+					   DEV_PM_QOS_RESUME_LATENCY, PM_QOS_CPU_LATENCY_DEFAULT_VALUE) < 0)
+			continue;
+		if (++added == 2)
 			break;
 	}
 }
 
 static void msm_audio_remove_qos_request(void)
 {
-	int cpu = 0;
-	int ret = 0;
-	cpumask_t* cluster_cpu_mask = NULL;
+	int cpu;
 
-	cluster_cpu_mask = topology_core_cpumask(cluster_first_cpu[0]);
-
-	if (msm_audio_req) {
-		for_each_cpu(cpu, cluster_cpu_mask) {
-			/* Only the first two CPUs receive requests; add may also fail. */
-			if (!dev_pm_qos_request_active(&msm_audio_req[cpu]))
-				continue;
-			ret = dev_pm_qos_remove_request(
-				    &msm_audio_req[cpu]);
-			if (ret < 0)
-				pr_err("%s error (%d) removing request from cpu %d.\n",
-                                                __func__, ret, cpu);
-			pr_debug("%s remove cpu affinity of core %d.\n", __func__, cpu);
-		}
-		kfree(msm_audio_req);
-		msm_audio_req = NULL;
-	}
+	if (!msm_audio_req)
+		return;
+	for_each_possible_cpu(cpu)
+		if (dev_pm_qos_request_active(&msm_audio_req[cpu]))
+			dev_pm_qos_remove_request(&msm_audio_req[cpu]);
+	kfree(msm_audio_req);
+	msm_audio_req = NULL;
 }
 
 int msm_common_snd_init(struct platform_device *pdev, struct snd_soc_card *card)
@@ -730,13 +700,11 @@ int msm_common_snd_init(struct platform_device *pdev, struct snd_soc_card *card)
 	}
 
 	/* Register LPASS audio hw vote */
-	lpass_audio_hw_vote = devm_clk_get(&pdev->dev, "lpass_audio_hw_vote");
+	lpass_audio_hw_vote = devm_clk_get_optional(&pdev->dev, "lpass_audio_hw_vote");
 	if (IS_ERR(lpass_audio_hw_vote)) {
 		ret = PTR_ERR(lpass_audio_hw_vote);
-		dev_dbg(&pdev->dev, "%s: clk get %s failed %d\n",
-			__func__, "lpass_audio_hw_vote", ret);
-		lpass_audio_hw_vote = NULL;
-		ret = 0;
+		kfree(common_pdata);
+		return ret;
 	}
 	common_pdata->lpass_audio_hw_vote = lpass_audio_hw_vote;
 
@@ -801,6 +769,8 @@ int msm_common_snd_init(struct platform_device *pdev, struct snd_soc_card *card)
 			"qcom,sep-mi2s-gpios", 0);
 	common_pdata->aud_dev_state = kcalloc(card->num_links, sizeof(uint8_t), GFP_KERNEL);
 	if (!common_pdata->aud_dev_state) {
+		for (count = 0; count < MI2S_TDM_AUXPCM_MAX; count++)
+			of_node_put(common_pdata->mi2s_gpio_p[count]);
 		kfree(common_pdata);
 		return -ENOMEM;
 	}
@@ -992,32 +962,13 @@ static void msm_common_get_backend_name(const char *stream_name, char **backend_
 
 static void msm_audio_update_qos_request(u32 latency)
 {
-	int cpu = 0;
-	int ret = -1;
-	int num_req = 0;
-	cpumask_t* cluster_cpu_mask = NULL;
+	int cpu;
 
-	cluster_cpu_mask = topology_core_cpumask(cluster_first_cpu[0]);
-
-	if (msm_audio_req) {
-		for_each_cpu(cpu, cluster_cpu_mask) {
-			ret = dev_pm_qos_update_request(
-					&msm_audio_req[cpu], latency);
-			if (1 == ret ) {
-				pr_debug("%s: updated latency of core %d to %u.\n",
-								__func__, cpu, latency);
-			} else if (0 == ret) {
-				pr_debug("%s: latency of core %d not changed. latency %u.\n",
-								__func__, cpu, latency);
-			} else {
-				pr_err("%s: failed to update latency of core %d, error %d \n",
-								__func__, cpu, ret);
-			}
-			/* Limit the request to 2 Silver CPU cores. */
-			if (++num_req == 2)
-				break;
-		}
-	}
+	if (!msm_audio_req)
+		return;
+	for_each_possible_cpu(cpu)
+		if (dev_pm_qos_request_active(&msm_audio_req[cpu]))
+			dev_pm_qos_update_request(&msm_audio_req[cpu], latency);
 }
 
 static int msm_qos_ctl_put(struct snd_kcontrol *kcontrol,

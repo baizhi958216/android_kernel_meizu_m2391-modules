@@ -100,8 +100,6 @@ struct msm_asoc_mach_data {
 	int wcd_used;
 };
 
-static bool is_initial_boot;
-static bool codec_reg_done;
 static struct snd_soc_card snd_soc_card_kalama_msm;
 static int dmic_0_1_gpio_cnt;
 static int dmic_2_3_gpio_cnt;
@@ -1300,117 +1298,89 @@ static struct snd_soc_dai_link msm_tdm_dai_links[] = {
 	},
 };
 
-static struct snd_soc_dai_link msm_kalama_dai_links[
-			ARRAY_SIZE(msm_wsa_cdc_dma_be_dai_links) +
-			ARRAY_SIZE(msm_wsa2_cdc_dma_be_dai_links) +
-			ARRAY_SIZE(msm_wsa_wsa2_cdc_dma_be_dai_links) +
-			ARRAY_SIZE(msm_rx_tx_cdc_dma_be_dai_links) +
-			ARRAY_SIZE(msm_va_cdc_dma_be_dai_links) +
-			ARRAY_SIZE(ext_disp_be_dai_link) +
-			ARRAY_SIZE(msm_common_be_dai_links) +
-			ARRAY_SIZE(msm_wcn_be_dai_links) +
-			ARRAY_SIZE(msm_mi2s_dai_links) +
-			ARRAY_SIZE(msm_tdm_dai_links)];
+enum { KALAMA_MAX_LINKS = ARRAY_SIZE(msm_common_be_dai_links) +
+	ARRAY_SIZE(msm_swr_haptics_be_dai_links) + ARRAY_SIZE(msm_wcn_be_dai_links) +
+	ARRAY_SIZE(ext_disp_be_dai_link) + ARRAY_SIZE(msm_wsa_cdc_dma_be_dai_links) +
+	ARRAY_SIZE(msm_wsa2_cdc_dma_be_dai_links) + ARRAY_SIZE(msm_wsa_wsa2_cdc_dma_be_dai_links) +
+	ARRAY_SIZE(msm_rx_tx_cdc_dma_be_dai_links) + ARRAY_SIZE(msm_va_cdc_dma_be_dai_links) +
+	ARRAY_SIZE(iot_vc_dai_links) + ARRAY_SIZE(msm_mi2s_dai_links) + ARRAY_SIZE(msm_tdm_dai_links) };
 
-
-static int msm_populate_dai_link_component_of_node(
-					struct snd_soc_card *card)
+static void msm_codec_node_put(void *data)
 {
-	int i, j, index, ret = 0;
-	struct device *cdev = card->dev;
-	struct snd_soc_dai_link *dai_link = card->dai_link;
-	struct device_node *np = NULL;
-	int codecs_enabled = 0;
-	struct snd_soc_dai_link_component *codecs_comp = NULL;
+	of_node_put(data);
+}
 
-	if (!cdev) {
-		dev_err_ratelimited(cdev, "%s: Sound card device memory NULL\n", __func__);
+/* Resolve a board codec alias and hold its node for the card's lifetime. */
+static int msm_resolve_codec(struct device *dev, struct snd_soc_dai_link_component *codec)
+{
+	struct device_node *np;
+	int index, ret;
+
+	if (!codec->name)
+		return -ENOENT;
+	index = of_property_match_string(dev->of_node, "asoc-codec-names", codec->name);
+	if (index < 0)
+		return -ENOENT;
+	np = of_parse_phandle(dev->of_node, "asoc-codec", index);
+	if (!np)
+		return -EINVAL;
+	if (!of_device_is_available(np)) {
+		of_node_put(np);
 		return -ENODEV;
 	}
+	ret = devm_add_action_or_reset(dev, msm_codec_node_put, np);
+	if (ret)
+		return ret;
+	codec->name = NULL;
+	codec->of_node = np;
+	return 0;
+}
+
+static int msm_populate_dai_link_component_of_node(struct snd_soc_card *card)
+{
+	int i, j, ret;
 
 	for (i = 0; i < card->num_links; i++) {
-		if (dai_link[i].init == NULL)
-			dai_link[i].init = &msm_common_dai_link_init;
+		struct snd_soc_dai_link *link = &card->dai_link[i];
+		struct snd_soc_dai_link_component *codecs;
+		int found = 0, enabled = 0;
 
-		/* populate codec_of_node for snd card dai links */
-		if (dai_link[i].num_codecs > 0) {
-			for (j = 0; j < dai_link[i].num_codecs; j++) {
-				if (dai_link[i].codecs[j].of_node ||
-						!dai_link[i].codecs[j].name)
-					continue;
+		if (!link->init)
+			link->init = msm_common_dai_link_init;
+		codecs = devm_kcalloc(card->dev, link->num_codecs, sizeof(*codecs), GFP_KERNEL);
+		if (!codecs)
+			return -ENOMEM;
+		for (j = 0; j < link->num_codecs; j++) {
+			struct snd_soc_dai_link_component codec = link->codecs[j];
 
-				index = of_property_match_string(cdev->of_node,
-						"asoc-codec-names",
-						dai_link[i].codecs[j].name);
-				if (index < 0)
-					continue;
-				np = of_parse_phandle(cdev->of_node,
-							  "asoc-codec",
-							  index);
-				if (!np) {
-					dev_err_ratelimited(cdev,
-						"%s: retrieving phandle for codec %s failed\n",
-						__func__,
-						dai_link[i].codecs[j].name);
-					ret = -ENODEV;
-					goto err;
-				}
-				dai_link[i].codecs[j].of_node = np;
-				dai_link[i].codecs[j].name = NULL;
-			}
+			ret = msm_resolve_codec(card->dev, &codec);
+			if (ret == -ENOENT)
+				continue;
+			found++;
+			if (ret == -ENODEV)
+				continue;
+			if (ret)
+				return ret;
+			codecs[enabled++] = codec;
 		}
+		/* Single name-based devices (e.g. BTFM) bind by their registered
+		 * component name. For a board-selected array use its available
+		 * phandles, leaving the shared DAI templates intact for reprobe.
+		 */
+		if (!found)
+			continue;
+		if (!enabled)
+			return dev_err_probe(card->dev, -ENODEV,
+					     "no available codec for %s\n", link->name);
+		link->codecs = codecs;
+		link->num_codecs = enabled;
 	}
-
-	/* In multi-codec scenario, check if codecs are enabled for this platform */
-	for (i = 0; i < card->num_links; i++) {
-		codecs_enabled = 0;
-		if (dai_link[i].num_codecs > 1) {
-			for (j = 0; j < dai_link[i].num_codecs; j++) {
-				if (!dai_link[i].codecs[j].of_node)
-					continue;
-
-				np = dai_link[i].codecs[j].of_node;
-				if (!of_device_is_available(np)) {
-					dev_err_ratelimited(cdev, "%s: codec is disabled: %s\n",
-								__func__,
-								np->full_name);
-							dai_link[i].codecs[j].of_node = NULL;
-							continue;
-				}
-
-				codecs_enabled++;
-			}
-			if (codecs_enabled > 0 &&
-					codecs_enabled < dai_link[i].num_codecs) {
-				codecs_comp = devm_kzalloc(cdev,
-					sizeof(struct snd_soc_dai_link_component)
-					* codecs_enabled, GFP_KERNEL);
-				if (!codecs_comp) {
-					dev_err_ratelimited(cdev,
-						"%s: %s dailink codec component alloc failed\n",
-						__func__, dai_link[i].name);
-					ret = -ENOMEM;
-					goto err;
-				}
-				index = 0;
-				for (j = 0; j < dai_link[i].num_codecs; j++) {
-					if (dai_link[i].codecs[j].of_node) {
-						codecs_comp[index].of_node =
-						  dai_link[i].codecs[j].of_node;
-						codecs_comp[index].dai_name =
-						  dai_link[i].codecs[j].dai_name;
-						codecs_comp[index].name = NULL;
-						index++;
-					}
-				}
-				dai_link[i].codecs = codecs_comp;
-				dai_link[i].num_codecs = codecs_enabled;
-			}
-		}
+	for (i = 0; i < card->num_configs; i++) {
+		ret = msm_resolve_codec(card->dev, &card->codec_conf[i].dlc);
+		if (ret)
+			return ret;
 	}
-
-err:
-	return ret;
+	return 0;
 }
 
 static int msm_audrx_stub_init(struct snd_soc_pcm_runtime *rtd)
@@ -1477,8 +1447,6 @@ static struct snd_soc_dai_link meizu_stub_be_dai_links[] = {
 };
 
 
-static struct snd_soc_dai_link msm_stub_dai_links[
-			 ARRAY_SIZE(msm_stub_be_dai_links)];
 
 static const struct of_device_id kalama_asoc_machine_of_match[]  = {
 	{ .compatible = "qcom,kalama-asoc-snd",
@@ -1587,12 +1555,18 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 	}
 
 	if (!strcmp(match->data, "codec")) {
-		card = &snd_soc_card_kalama_msm;
-		card->codec_conf = cs35l45_codec_conf;
+		card = devm_kmemdup(dev, &snd_soc_card_kalama_msm, sizeof(*card), GFP_KERNEL);
+		dailink = devm_kcalloc(dev, KALAMA_MAX_LINKS, sizeof(*dailink), GFP_KERNEL);
+		if (!card || !dailink)
+			return NULL;
+		card->codec_conf = devm_kmemdup(dev, cs35l45_codec_conf,
+					       sizeof(cs35l45_codec_conf), GFP_KERNEL);
+		if (!card->codec_conf)
+			return NULL;
 		card->num_configs = ARRAY_SIZE(cs35l45_codec_conf);
 
 		/* late probe uses dai link at index '0' to get wcd component */
-		memcpy(msm_kalama_dai_links + total_links,
+		memcpy(dailink + total_links,
 			   msm_rx_tx_cdc_dma_be_dai_links,
 			   sizeof(msm_rx_tx_cdc_dma_be_dai_links));
 		total_links +=
@@ -1601,18 +1575,18 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 		switch (wsa_max_devs) {
 		case MONO_SPEAKER:
 		case STEREO_SPEAKER:
-			memcpy(msm_kalama_dai_links + total_links,
+			memcpy(dailink + total_links,
 				   msm_wsa_cdc_dma_be_dai_links,
 				   sizeof(msm_wsa_cdc_dma_be_dai_links));
 			total_links += ARRAY_SIZE(msm_wsa_cdc_dma_be_dai_links);
 			break;
 		case QUAD_SPEAKER:
-			memcpy(msm_kalama_dai_links + total_links,
+			memcpy(dailink + total_links,
 				   msm_wsa2_cdc_dma_be_dai_links,
 				   sizeof(msm_wsa2_cdc_dma_be_dai_links));
 			total_links += ARRAY_SIZE(msm_wsa2_cdc_dma_be_dai_links);
 
-			memcpy(msm_kalama_dai_links + total_links,
+			memcpy(dailink + total_links,
 				   msm_wsa_wsa2_cdc_dma_be_dai_links,
 				   sizeof(msm_wsa_wsa2_cdc_dma_be_dai_links));
 			total_links += ARRAY_SIZE(msm_wsa_wsa2_cdc_dma_be_dai_links);
@@ -1624,12 +1598,12 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 			break;
 		}
 
-		memcpy(msm_kalama_dai_links + total_links,
+		memcpy(dailink + total_links,
 			   msm_va_cdc_dma_be_dai_links,
 			   sizeof(msm_va_cdc_dma_be_dai_links));
 		total_links += ARRAY_SIZE(msm_va_cdc_dma_be_dai_links);
 
-		memcpy(msm_kalama_dai_links + total_links,
+		memcpy(dailink + total_links,
 			   msm_common_be_dai_links,
 			   sizeof(msm_common_be_dai_links));
 		total_links += ARRAY_SIZE(msm_common_be_dai_links);
@@ -1638,7 +1612,7 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 				"qcom,mi2s-audio-intf", &val);
 		if (!rc && val) {
 			dev_info(dev, "Add mi2s-audio-intf DAI link\n");
-			memcpy(msm_kalama_dai_links + total_links,
+			memcpy(dailink + total_links,
 					msm_mi2s_dai_links,
 					sizeof(msm_mi2s_dai_links));
 			total_links += ARRAY_SIZE(msm_mi2s_dai_links);
@@ -1648,7 +1622,7 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 				"qcom,iot-vc-mi2s-audio-intf", &val);
 			if (!rc && val) {
 				dev_info(dev, "Add iot-vc-mi2s-audio-intf DAI link\n");
-				memcpy(msm_kalama_dai_links + total_links,
+				memcpy(dailink + total_links,
 						iot_vc_dai_links,
 						sizeof(iot_vc_dai_links));
 				total_links += ARRAY_SIZE(iot_vc_dai_links);
@@ -1658,7 +1632,7 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 		rc = of_property_read_u32(dev->of_node,
 				"qcom,tdm-audio-intf", &val);
 		if (!rc && val) {
-			memcpy(msm_kalama_dai_links + total_links,
+			memcpy(dailink + total_links,
 					msm_tdm_dai_links,
 					sizeof(msm_tdm_dai_links));
 			total_links += ARRAY_SIZE(msm_tdm_dai_links);
@@ -1670,7 +1644,7 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 			if (!qcom_socinfo_part_disabled(QCOM_SOCINFO_PART_DISPLAY)) {
 				dev_dbg(dev, "%s(): ext disp audio supported\n",
 					__func__);
-				memcpy(msm_kalama_dai_links + total_links,
+				memcpy(dailink + total_links,
 					ext_disp_be_dai_link,
 						sizeof(ext_disp_be_dai_link));
 				total_links += ARRAY_SIZE(ext_disp_be_dai_link);
@@ -1681,7 +1655,7 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 		if (!rc && val) {
 			dev_dbg(dev, "%s(): WCN BT support present\n",
 				__func__);
-			memcpy(msm_kalama_dai_links + total_links,
+			memcpy(dailink + total_links,
 				   msm_wcn_be_dai_links,
 				   sizeof(msm_wcn_be_dai_links));
 			total_links += ARRAY_SIZE(msm_wcn_be_dai_links);
@@ -1690,29 +1664,30 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev, int w
 					NULL)) {
 			dev_dbg(dev, "%s(): swr haptics support not present\n", __func__);
 		} else {
-			memcpy(msm_kalama_dai_links + total_links,
+			memcpy(dailink + total_links,
 					msm_swr_haptics_be_dai_links,
 					sizeof(msm_swr_haptics_be_dai_links));
 			total_links += ARRAY_SIZE(msm_swr_haptics_be_dai_links);
 		}
 
-		dailink = msm_kalama_dai_links;
-	} else if (!strcmp(match->data, "stub_codec")) {
-		card = &snd_soc_card_stub_msm;
+	} else {
+		const char *model;
+		struct snd_soc_dai_link *links = msm_stub_be_dai_links;
 
-		if (strcmp(card->name, "kalama-stub-snd-card"))
-			memcpy(msm_stub_dai_links, meizu_stub_be_dai_links,
-			       sizeof(meizu_stub_be_dai_links));
-		else
-		memcpy(msm_stub_dai_links,
-			   msm_stub_be_dai_links,
-			   sizeof(msm_stub_be_dai_links));
-
-		dailink = msm_stub_dai_links;
+		card = devm_kmemdup(dev, &snd_soc_card_stub_msm, sizeof(*card), GFP_KERNEL);
+		if (!card)
+			return NULL;
+		if (!of_property_read_string(dev->of_node, "qcom,model", &model) &&
+		    !strcmp(model, "meizu-stub-snd-card"))
+			links = meizu_stub_be_dai_links;
 		total_links = ARRAY_SIZE(msm_stub_be_dai_links);
+		dailink = devm_kmemdup_array(dev, links, total_links, sizeof(*links), GFP_KERNEL);
+		if (!dailink)
+			return NULL;
 	}
 
 	if (card) {
+		card->owner = THIS_MODULE;
 		card->dai_link = dailink;
 		card->num_links = total_links;
 		if (!strcmp(match->data, "codec")) {
@@ -2025,7 +2000,6 @@ static int msm_rx_tx_codec_init(struct snd_soc_pcm_runtime *rtd)
 	}
 
 done:
-	codec_reg_done = true;
 	msm_common_dai_link_init(rtd);
 exit:
 	return ret;
@@ -2228,7 +2202,6 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 	struct snd_soc_card *card = NULL;
 	struct msm_asoc_mach_data *pdata = NULL;
 	int ret = 0;
-	struct clk *lpass_audio_hw_vote = NULL;
 	const struct of_device_id *match;
 
 	if (!pdev->dev.of_node) {
@@ -2290,10 +2263,8 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 	}
 
 	ret = msm_populate_dai_link_component_of_node(card);
-	if (ret) {
-		ret = -EPROBE_DEFER;
+	if (ret)
 		goto err;
-	}
 
 	/* parse upd configuration */
 	msm_parse_upd_configuration(pdev, pdata);
@@ -2302,12 +2273,11 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 	ret = msm_common_snd_init(pdev, card);
 	if (ret)
 		goto err;
+	pdata->lpass_audio_hw_vote = msm_common_get_pdata(card)->lpass_audio_hw_vote;
 	ret = snd_soc_register_card(card);
-	if (ret == -EPROBE_DEFER) {
-		if (codec_reg_done)
-			ret = -EINVAL;
+	if (ret == -EPROBE_DEFER)
 		goto err;
-	} else if (ret) {
+	if (ret) {
 		dev_err(&pdev->dev, "%s: snd_soc_register_card failed (%d)\n",
 			__func__, ret);
 		goto err;
@@ -2352,16 +2322,6 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 		msm_cdc_pinctrl_set_wakeup_capable(pdata->dmic67_gpio_p, false);
 
 
-	/* Register LPASS audio hw vote */
-	lpass_audio_hw_vote = devm_clk_get(&pdev->dev, "lpass_audio_hw_vote");
-	if (IS_ERR(lpass_audio_hw_vote)) {
-		ret = PTR_ERR(lpass_audio_hw_vote);
-		dev_dbg(&pdev->dev, "%s: clk get %s failed %d\n",
-			__func__, "lpass_audio_hw_vote", ret);
-		lpass_audio_hw_vote = NULL;
-		ret = 0;
-	}
-	pdata->lpass_audio_hw_vote = lpass_audio_hw_vote;
 	pdata->core_audio_vote_count = 0;
 
 	ret = msm_audio_ssr_register(&pdev->dev);
@@ -2369,7 +2329,6 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 		pr_err("%s: Registration with SND event FWK failed ret = %d\n",
 			__func__, ret);
 
-	is_initial_boot = true;
 
 	/* change card status to ONLINE */
 	dev_dbg(&pdev->dev, "%s: setting snd_card to ONLINE\n", __func__);
