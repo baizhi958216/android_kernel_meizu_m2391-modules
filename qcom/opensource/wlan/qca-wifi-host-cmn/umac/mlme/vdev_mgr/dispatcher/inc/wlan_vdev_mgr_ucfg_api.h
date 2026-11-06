@@ -197,12 +197,10 @@ void ucfg_wlan_vdev_mgr_get_param_bssid(
  * ucfg_wlan_vdev_mgr_get_beacon_buffer() – ucfg MLME API to
  * get beacon buffer from mlme vdev mgr component
  * @vdev: pointer to vdev object
- * @buf: pointer to store the beacon buffer
  *
- * Return: void
+ * Return: the beacon buffer, or NULL if MLME has no buffer
  */
-void ucfg_wlan_vdev_mgr_get_beacon_buffer(struct wlan_objmgr_vdev *vdev,
-					  qdf_nbuf_t buf);
+qdf_nbuf_t ucfg_wlan_vdev_mgr_get_beacon_buffer(struct wlan_objmgr_vdev *vdev);
 
 /**
  * ucfg_wlan_vdev_mgr_get_trans_bssid() – ucfg MLME API to

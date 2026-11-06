@@ -94,7 +94,7 @@ struct wlan_diag_data {
 	unsigned int word0;             /* type, length */
 	unsigned int target_time;
 	unsigned int code;              /* Diag log or event Code */
-	uint8_t payload[0];
+	uint8_t payload[];
 };
 
 struct dbglog_slot {
@@ -103,7 +103,7 @@ struct dbglog_slot {
 	unsigned int length;
 	unsigned int dropped;
 	/* max ATH6KL_FWLOG_PAYLOAD_SIZE bytes */
-	uint8_t payload[0];
+	uint8_t payload[];
 } __packed;
 
 typedef struct event_report_s {
