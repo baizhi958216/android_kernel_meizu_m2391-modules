@@ -4,6 +4,7 @@
 */
 
 #include "gsihal_i.h"
+#include "gsihal.h"
 #include "gsihal_reg.h"
 
 struct gsihal_context *gsihal_ctx;
@@ -19,7 +20,8 @@ int gsihal_init(enum gsi_ver gsi_ver, void __iomem *base)
 		GSIDBG("gsihal already initialized\n");
 		if (base != gsihal_ctx->base) {
 			GSIERR(
-				"base address of early init is differnet (%pK - %pK)\n"
+				"base address of early init differs (%pK - %pK)\n",
+				gsihal_ctx->base, base
 			);
 			WARN_ON(1);
 		}
