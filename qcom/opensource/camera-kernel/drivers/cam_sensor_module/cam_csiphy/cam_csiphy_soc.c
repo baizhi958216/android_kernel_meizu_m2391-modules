@@ -260,6 +260,7 @@ int32_t cam_csiphy_disable_hw(struct csiphy_device *csiphy_dev)
 		return 0;
 	}
 
+	cam_csiphy_cphy_irq_disable(csiphy_dev);
 	cam_csiphy_reset(csiphy_dev);
 
 	cam_soc_util_disable_platform_resource(soc_info, true, true);

@@ -45,8 +45,7 @@ int flashlight_dev_unregister(uint32_t index)
 }
 EXPORT_SYMBOL(flashlight_dev_unregister);
 
-static int meizu_flash_i2c_probe(struct i2c_client *client,
-		const struct i2c_device_id *id)
+static int meizu_flash_i2c_probe(struct i2c_client *client)
 {
 	struct meizu_flash_provider *provider;
 	u32 index, address;
@@ -84,7 +83,7 @@ static int meizu_flash_i2c_probe(struct i2c_client *client,
 	return 0;
 }
 
-static int meizu_flash_i2c_remove(struct i2c_client *client)
+static void meizu_flash_i2c_remove(struct i2c_client *client)
 {
 	struct meizu_flash_provider *provider = i2c_get_clientdata(client);
 
@@ -95,7 +94,6 @@ static int meizu_flash_i2c_remove(struct i2c_client *client)
 	}
 	i2c_set_clientdata(client, NULL);
 	mutex_unlock(&meizu_flash_registry_lock);
-	return 0;
 }
 
 static const struct of_device_id meizu_flash_i2c_match[] = {

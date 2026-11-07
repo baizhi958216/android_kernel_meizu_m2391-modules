@@ -9,7 +9,7 @@
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
 #include <linux/delay.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 #include "cam_eeprom_meizu.h"
 #include "cam_eeprom_meizu_golden.h"
 #include "cam_debug_util.h"

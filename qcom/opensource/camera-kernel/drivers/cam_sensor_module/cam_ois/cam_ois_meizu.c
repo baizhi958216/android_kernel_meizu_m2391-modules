@@ -6,7 +6,7 @@
 #include <linux/of.h>
 #include <linux/delay.h>
 #include <linux/vmalloc.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 #include <linux/swab.h>
 #include "cam_ois_meizu.h"
 #include "cam_ois_meizu_firmware.h"

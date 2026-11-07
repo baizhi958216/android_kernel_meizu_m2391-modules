@@ -13,7 +13,7 @@
 #include "cam_sensor_soc.h"
 #include "cam_soc_util.h"
 
-int32_t cam_sensor_get_sub_module_index(struct device_node *of_node,
+static int32_t cam_sensor_get_sub_module_index(struct device_node *of_node,
 	struct cam_sensor_board_info *s_info)
 {
 	int rc = 0, i = 0;

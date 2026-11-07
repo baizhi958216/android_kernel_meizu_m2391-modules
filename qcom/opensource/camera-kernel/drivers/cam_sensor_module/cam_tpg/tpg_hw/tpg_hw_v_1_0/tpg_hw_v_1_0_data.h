@@ -13,6 +13,7 @@ struct tpg_hw_ops tpg_hw_v_1_0_ops = {
 	.start = tpg_hw_v_1_0_start,
 	.stop  = tpg_hw_v_1_0_stop,
 	.init = tpg_hw_v_1_0_init,
+	.process_cmd = tpg_hw_v_1_0_process_cmd,
 };
 
 struct tpg_hw_info tpg_v_1_0_hw_info = {

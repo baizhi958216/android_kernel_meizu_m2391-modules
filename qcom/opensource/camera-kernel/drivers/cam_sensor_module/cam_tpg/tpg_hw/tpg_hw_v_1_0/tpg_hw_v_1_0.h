@@ -59,6 +59,8 @@ struct cam_tpg_ver1_reg_offset {
  *
  * @return : return 0 on success
  */
+int tpg_hw_v_1_0_process_cmd(struct tpg_hw *hw, uint32_t cmd, void *arg);
+
 int tpg_hw_v_1_0_init(struct tpg_hw *hw, void *data);
 
 /**

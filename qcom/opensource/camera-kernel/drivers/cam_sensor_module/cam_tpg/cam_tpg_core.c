@@ -21,7 +21,7 @@ int cam_tpg_shutdown(struct cam_tpg_device *tpg_dev)
 	return 0;
 }
 
-int cam_tpg_publish_dev_info(
+static int cam_tpg_publish_dev_info(
 	struct cam_req_mgr_device_info *info)
 {
 	int rc = 0;
@@ -39,7 +39,7 @@ int cam_tpg_publish_dev_info(
 	}
 
 	info->dev_id = CAM_REQ_MGR_DEVICE_TPG;
-	strlcpy(info->name, CAM_TPG_NAME, sizeof(info->name));
+	strscpy(info->name, CAM_TPG_NAME, sizeof(info->name));
 	/* Hard code for now */
 	info->p_delay = 2;
 	info->trigger = CAM_TRIGGER_POINT_SOF;
@@ -47,7 +47,7 @@ int cam_tpg_publish_dev_info(
 	return rc;
 }
 
-int cam_tpg_setup_link(
+static int cam_tpg_setup_link(
 	struct cam_req_mgr_core_dev_link_setup *link)
 {
 	struct cam_tpg_device *tpg_dev = NULL;

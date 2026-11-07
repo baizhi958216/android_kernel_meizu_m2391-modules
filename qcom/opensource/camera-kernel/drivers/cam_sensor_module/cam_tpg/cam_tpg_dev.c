@@ -4,6 +4,7 @@
  * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/of_device.h>
 #include "cam_tpg_dev.h"
 #include "cam_tpg_core.h"
 #include "camera_main.h"
@@ -131,7 +132,7 @@ static const struct v4l2_subdev_internal_ops tpg_subdev_intern_ops = {
 	.close = cam_tpg_subdev_close,
 };
 
-irqreturn_t cam_tpg_irq_handler(int irq_num, void *data)
+static irqreturn_t cam_tpg_irq_handler(int irq_num, void *data)
 {
 	CAM_DBG(CAM_TPG, "tpg irq handler");
 	return IRQ_HANDLED;
@@ -222,7 +223,7 @@ static int tpg_register_cpas_client(struct cam_tpg_device *tpg_dev,
 	cpas_parms.dev = &pdev->dev;
 	cpas_parms.userdata = tpg_dev;
 
-	strlcpy(cpas_parms.identifier, "tpg", CAM_HW_IDENTIFIER_LENGTH);
+	strscpy(cpas_parms.identifier, "tpg", CAM_HW_IDENTIFIER_LENGTH);
 
 	rc = cam_cpas_register_client(&cpas_parms);
 	if (rc) {
@@ -293,7 +294,7 @@ static int cam_tpg_component_bind(struct device *dev,
 		return -ENOMEM;
 	}
 
-	strlcpy(tpg_dev->device_name, CAMX_TPG_DEV_NAME,
+	strscpy(tpg_dev->device_name, CAMX_TPG_DEV_NAME,
 		sizeof(tpg_dev->device_name));
 	mutex_init(&tpg_dev->mutex);
 	tpg_dev->tpg_subdev.pdev = pdev;
@@ -367,10 +368,9 @@ static int32_t cam_tpg_platform_probe(struct platform_device *pdev)
 }
 
 
-static int32_t cam_tpg_device_remove(struct platform_device *pdev)
+static void cam_tpg_device_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_tpg_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_tpg_dt_match[] = {

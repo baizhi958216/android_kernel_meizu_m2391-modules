@@ -28,13 +28,13 @@ static int cam_io_tpg_dump(void __iomem *base_addr,
 	p_str = line_str;
 	for (i = 0; i < size; i++) {
 		if (i % NUM_REGISTER_PER_LINE == 0) {
-			snprintf(p_str, 12, "0x%08x: ",
+			p_str += scnprintf(p_str, line_str + sizeof(line_str) - p_str,
+					   "0x%08x: ",
 				REG_OFFSET(start_offset, i));
-			p_str += 11;
 		}
 		data = cam_io_r(base_addr + REG_OFFSET(start_offset, i));
-		snprintf(p_str, 9, "%08x ", data);
-		p_str += 8;
+		p_str += scnprintf(p_str, line_str + sizeof(line_str) - p_str,
+					   "%08x ", data);
 		if ((i + 1) % NUM_REGISTER_PER_LINE == 0) {
 			CAM_DBG(CAM_TPG, "%s", line_str);
 			line_str[0] = '\0';
@@ -476,7 +476,7 @@ int tpg_hw_release(struct tpg_hw *hw)
 	return rc;
 }
 
-enum cam_vote_level get_tpg_clk_level(
+static enum cam_vote_level get_tpg_clk_level(
 		struct tpg_hw *hw)
 {
 	uint32_t cam_vote_level = 0;

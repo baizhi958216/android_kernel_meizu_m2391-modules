@@ -47,7 +47,7 @@ bool cam_flash_meizu_matches(struct cam_flash_ctrl *ctrl)
 static int meizu_flash_power(struct cam_flash_ctrl *ctrl, bool enable)
 {
 	struct cam_soc_gpio_data *gpios = ctrl->soc_info.gpio_data;
-	struct gpio *table;
+	struct cam_gpio *table;
 	unsigned int count, i;
 	int rc = 0;
 
@@ -75,7 +75,7 @@ static int meizu_flash_power(struct cam_flash_ctrl *ctrl, bool enable)
 	} else if (meizu_flash_power_users && !--meizu_flash_power_users) {
 		for (i = 0; i < count; i++)
 			gpio_set_value_cansleep(table[i].gpio, 0);
-		gpio_free_array(table, count);
+		cam_gpio_free_array(table, count);
 	}
 out:
 	mutex_unlock(&meizu_flash_power_lock);
@@ -411,8 +411,7 @@ void cam_flash_meizu_pattern_init(struct cam_flash_meizu_pattern *pattern,
 	memset(pattern, 0, sizeof(*pattern));
 	pattern->ctrl = ctrl;
 	INIT_WORK(&pattern->work, meizu_flash_pattern_work);
-	hrtimer_init(&pattern->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-	pattern->timer.function = meizu_flash_pattern_timer;
+	hrtimer_setup(&pattern->timer, meizu_flash_pattern_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 }
 
 /* Caller holds flash_mutex; matches store_flash4 ignoring input contents. */

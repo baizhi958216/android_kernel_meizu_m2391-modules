@@ -174,7 +174,7 @@ static int cam_eeprom_init_subdev(struct cam_eeprom_ctrl_t *e_ctrl)
 
 	e_ctrl->v4l2_dev_str.internal_ops = &cam_eeprom_internal_ops;
 	e_ctrl->v4l2_dev_str.ops = &cam_eeprom_subdev_ops;
-	strlcpy(e_ctrl->device_name, CAM_EEPROM_NAME,
+	strscpy(e_ctrl->device_name, CAM_EEPROM_NAME,
 		sizeof(e_ctrl->device_name));
 	e_ctrl->v4l2_dev_str.name = e_ctrl->device_name;
 	e_ctrl->v4l2_dev_str.sd_flags =
@@ -325,16 +325,10 @@ const static struct component_ops cam_eeprom_i2c_component_ops = {
 	.unbind = cam_eeprom_i2c_component_unbind,
 };
 
-static int cam_eeprom_i2c_driver_probe(struct i2c_client *client,
-	const struct i2c_device_id *id)
+static int cam_eeprom_i2c_driver_probe(struct i2c_client *client)
 {
 	int rc = 0;
 
-	if (client == NULL || id == NULL) {
-		CAM_ERR(CAM_EEPROM, "Invalid Args client: %pK id: %pK",
-			client, id);
-		return -EINVAL;
-	}
 
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
 		CAM_ERR(CAM_EEPROM, "%s :: i2c_check_functionality failed",
@@ -350,11 +344,9 @@ static int cam_eeprom_i2c_driver_probe(struct i2c_client *client,
 	return rc;
 }
 
-static int cam_eeprom_i2c_driver_remove(struct i2c_client *client)
+static void cam_eeprom_i2c_driver_remove(struct i2c_client *client)
 {
 	component_del(&client->dev, &cam_eeprom_i2c_component_ops);
-
-	return 0;
 }
 
 static int cam_eeprom_spi_setup(struct spi_device *spi)
@@ -452,7 +444,7 @@ static int cam_eeprom_spi_driver_probe(struct spi_device *spi)
 	return cam_eeprom_spi_setup(spi);
 }
 
-static int cam_eeprom_spi_driver_remove(struct spi_device *sdev)
+static void cam_eeprom_spi_driver_remove(struct spi_device *sdev)
 {
 	int                             i;
 	struct v4l2_subdev             *sd = spi_get_drvdata(sdev);
@@ -462,13 +454,13 @@ static int cam_eeprom_spi_driver_remove(struct spi_device *sdev)
 
 	if (!sd) {
 		CAM_ERR(CAM_EEPROM, "Subdevice is NULL");
-		return -EINVAL;
+		return;
 	}
 
 	e_ctrl = (struct cam_eeprom_ctrl_t *)v4l2_get_subdevdata(sd);
 	if (!e_ctrl) {
 		CAM_ERR(CAM_EEPROM, "eeprom device is NULL");
-		return -EINVAL;
+		return;
 	}
 
 	soc_info = &e_ctrl->soc_info;
@@ -492,8 +484,6 @@ static int cam_eeprom_spi_driver_remove(struct spi_device *sdev)
 	}
 	v4l2_set_subdevdata(&e_ctrl->v4l2_dev_str.sd, NULL);
 	kfree(e_ctrl);
-
-	return 0;
 }
 
 static int cam_eeprom_component_bind(struct device *dev,
@@ -636,10 +626,9 @@ static int32_t cam_eeprom_platform_driver_probe(
 	return rc;
 }
 
-static int cam_eeprom_platform_driver_remove(struct platform_device *pdev)
+static void cam_eeprom_platform_driver_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_eeprom_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_eeprom_dt_match[] = {

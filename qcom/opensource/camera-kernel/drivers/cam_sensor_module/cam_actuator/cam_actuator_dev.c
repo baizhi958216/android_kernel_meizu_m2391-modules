@@ -159,7 +159,7 @@ static int cam_actuator_init_subdev(struct cam_actuator_ctrl_t *a_ctrl)
 		&cam_actuator_internal_ops;
 	a_ctrl->v4l2_dev_str.ops =
 		&cam_actuator_subdev_ops;
-	strlcpy(a_ctrl->device_name, CAMX_ACTUATOR_DEV_NAME,
+	strscpy(a_ctrl->device_name, CAMX_ACTUATOR_DEV_NAME,
 		sizeof(a_ctrl->device_name));
 	a_ctrl->v4l2_dev_str.name =
 		a_ctrl->device_name;
@@ -310,16 +310,10 @@ const static struct component_ops cam_actuator_i2c_component_ops = {
 	.unbind = cam_actuator_i2c_component_unbind,
 };
 
-static int32_t cam_actuator_driver_i2c_probe(struct i2c_client *client,
-	const struct i2c_device_id *id)
+static int32_t cam_actuator_driver_i2c_probe(struct i2c_client *client)
 {
 	int rc = 0;
 
-	if (client == NULL || id == NULL) {
-		CAM_ERR(CAM_ACTUATOR, "Invalid Args client: %pK id: %pK",
-			client, id);
-		return -EINVAL;
-	}
 
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
 		CAM_ERR(CAM_ACTUATOR, "%s :: i2c_check_functionality failed",
@@ -335,11 +329,10 @@ static int32_t cam_actuator_driver_i2c_probe(struct i2c_client *client,
 	return rc;
 }
 
-static int32_t cam_actuator_driver_i2c_remove(
+static void cam_actuator_driver_i2c_remove(
 	struct i2c_client *client)
 {
 	component_del(&client->dev, &cam_actuator_i2c_component_ops);
-	return 0;
 }
 
 static int cam_actuator_platform_component_bind(struct device *dev,
@@ -494,11 +487,10 @@ const static struct component_ops cam_actuator_platform_component_ops = {
 	.unbind = cam_actuator_platform_component_unbind,
 };
 
-static int32_t cam_actuator_platform_remove(
+static void cam_actuator_platform_remove(
 	struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_actuator_platform_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_actuator_driver_dt_match[] = {

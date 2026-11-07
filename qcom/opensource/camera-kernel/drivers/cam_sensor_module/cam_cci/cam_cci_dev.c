@@ -486,7 +486,7 @@ static int cam_cci_component_bind(struct device *dev,
 		&cci_subdev_intern_ops;
 	new_cci_dev->v4l2_dev_str.ops =
 		&cci_subdev_ops;
-	strlcpy(new_cci_dev->device_name, CAMX_CCI_DEV_NAME,
+	strscpy(new_cci_dev->device_name, CAMX_CCI_DEV_NAME,
 		sizeof(new_cci_dev->device_name));
 	new_cci_dev->v4l2_dev_str.name =
 		new_cci_dev->device_name;
@@ -518,7 +518,7 @@ static int cam_cci_component_bind(struct device *dev,
 	cpas_parms.cell_index = soc_info->index;
 	cpas_parms.dev = &pdev->dev;
 	cpas_parms.userdata = new_cci_dev;
-	strlcpy(cpas_parms.identifier, "cci", CAM_HW_IDENTIFIER_LENGTH);
+	strscpy(cpas_parms.identifier, "cci", CAM_HW_IDENTIFIER_LENGTH);
 	rc = cam_cpas_register_client(&cpas_parms);
 	if (rc) {
 		CAM_ERR(CAM_CCI, "CPAS registration failed rc:%d", rc);
@@ -581,10 +581,9 @@ static int cam_cci_platform_probe(struct platform_device *pdev)
 	return rc;
 }
 
-static int cam_cci_device_remove(struct platform_device *pdev)
+static void cam_cci_device_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_cci_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_cci_dt_match[] = {

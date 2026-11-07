@@ -4,6 +4,7 @@
  * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/pinctrl/consumer.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -547,7 +548,7 @@ end:
 EXPORT_SYMBOL(cam_res_mgr_gpio_request);
 
 bool cam_res_mgr_util_check_if_gpio_is_shared(
-	struct gpio *gpio_tbl, uint8_t size)
+	struct cam_gpio *gpio_tbl, uint8_t size)
 {
 	int i = 0;
 	bool found = false;
@@ -649,7 +650,7 @@ static void cam_res_mgr_gpio_free(struct device *dev, uint gpio)
 }
 
 void cam_res_mgr_gpio_free_arry(struct device *dev,
-		const struct gpio *array, size_t num)
+		const struct cam_gpio *array, size_t num)
 {
 	while (num--)
 		cam_res_mgr_gpio_free(dev, (array[num]).gpio);
@@ -961,10 +962,9 @@ static int cam_res_mgr_probe(struct platform_device *pdev)
 	return rc;
 }
 
-static int cam_res_mgr_remove(struct platform_device *pdev)
+static void cam_res_mgr_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_res_mgr_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_res_mgr_dt_match[] = {
