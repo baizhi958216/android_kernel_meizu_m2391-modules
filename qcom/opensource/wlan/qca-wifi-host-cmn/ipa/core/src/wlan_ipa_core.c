@@ -4803,7 +4803,7 @@ QDF_STATUS wlan_ipa_uc_ol_deinit(struct wlan_ipa_priv *ipa_ctx)
  */
 static QDF_STATUS wlan_ipa_uc_send_evt(qdf_netdev_t net_dev,
 				       qdf_ipa_wlan_event type,
-				       uint8_t *mac_addr,
+				       const uint8_t *mac_addr,
 				       struct wlan_ipa_priv *ipa_priv)
 {
 	struct wlan_ipa_priv *ipa_ctx;
@@ -5190,7 +5190,7 @@ int wlan_ipa_wdi_opt_dpath_flt_add_cb(
 	ipa_info("opt_dp: op %d, pdev_id %d. num_flts %d,",
 		 dp_flt_param->op, dp_flt_param->pdev_id, num_flts);
 	for (i = 0; i < num_flts; i++)
-		ipa_info("version %d, valid %d, src addr_ %08lx, evnt reqd %d",
+		ipa_info("version %d, valid %d, src addr %pI4, evnt reqd %d",
 			 dp_flt_param->flt_addr_params[i].l3_type,
 			 dp_flt_param->flt_addr_params[i].valid,
 			 dp_flt_param->flt_addr_params[i].src_ipv4_addr,
@@ -5265,7 +5265,7 @@ int wlan_ipa_wdi_opt_dpath_flt_rem_cb(
 	ipa_info("opt_dp: op %d, pdev_id %d. num_flts %d,",
 		 dp_flt_params->op, dp_flt_params->pdev_id, num_flts);
 	for (i = 0; i < num_flts; i++)
-		ipa_info("version %d, valid %d, src addr_ %08lx, evnt_reqd %d",
+		ipa_info("version %d, valid %d, src addr %pI4, evnt_reqd %d",
 			 dp_flt_params->flt_addr_params[i].l3_type,
 			 dp_flt_params->flt_addr_params[i].valid,
 			 dp_flt_params->flt_addr_params[i].src_ipv4_addr,

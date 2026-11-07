@@ -2889,7 +2889,7 @@ dp_ipa_set_wdi_vlan_hdr_type(qdf_ipa_wdi_hdr_info_t *hdr_info)
  *
  * Return: QDF_STATUS
  */
-QDF_STATUS dp_ipa_setup_iface(char *ifname, uint8_t *mac_addr,
+QDF_STATUS dp_ipa_setup_iface(char *ifname, const uint8_t *mac_addr,
 			      qdf_ipa_client_type_t prod_client,
 			      qdf_ipa_client_type_t cons_client,
 			      uint8_t session_id, bool is_ipv6_enabled,
@@ -3192,7 +3192,7 @@ QDF_STATUS dp_ipa_setup(struct cdp_soc_t *soc_hdl, uint8_t pdev_id,
  *
  * Return: QDF_STATUS
  */
-QDF_STATUS dp_ipa_setup_iface(char *ifname, uint8_t *mac_addr,
+QDF_STATUS dp_ipa_setup_iface(char *ifname, const uint8_t *mac_addr,
 			      qdf_ipa_client_type_t prod_client,
 			      qdf_ipa_client_type_t cons_client,
 			      uint8_t session_id, bool is_ipv6_enabled,

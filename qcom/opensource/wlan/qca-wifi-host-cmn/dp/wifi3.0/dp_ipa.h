@@ -279,10 +279,10 @@ QDF_STATUS dp_ipa_cleanup(struct cdp_soc_t *soc_hdl, uint8_t pdev_id,
 			  uint32_t tx_pipe_handle,
 			  uint32_t rx_pipe_handle, qdf_ipa_wdi_hdl_t hdl);
 QDF_STATUS dp_ipa_remove_header(char *name);
-int dp_ipa_add_header_info(char *ifname, uint8_t *mac_addr,
+int dp_ipa_add_header_info(char *ifname, const uint8_t *mac_addr,
 		uint8_t session_id, bool is_ipv6_enabled);
 int dp_ipa_register_interface(char *ifname, bool is_ipv6_enabled);
-QDF_STATUS dp_ipa_setup_iface(char *ifname, uint8_t *mac_addr,
+QDF_STATUS dp_ipa_setup_iface(char *ifname, const uint8_t *mac_addr,
 		qdf_ipa_client_type_t prod_client,
 		qdf_ipa_client_type_t cons_client,
 		uint8_t session_id, bool is_ipv6_enabled,

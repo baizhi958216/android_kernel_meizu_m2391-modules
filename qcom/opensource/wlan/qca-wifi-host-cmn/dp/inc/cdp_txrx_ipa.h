@@ -526,7 +526,7 @@ cdp_ipa_cleanup(ol_txrx_soc_handle soc, uint8_t pdev_id,
  * Return: QDF_STATUS
  */
 static inline QDF_STATUS
-cdp_ipa_setup_iface(ol_txrx_soc_handle soc, char *ifname, uint8_t *mac_addr,
+cdp_ipa_setup_iface(ol_txrx_soc_handle soc, char *ifname, const uint8_t *mac_addr,
 		    qdf_ipa_client_type_t prod_client,
 		    qdf_ipa_client_type_t cons_client,
 		    uint8_t session_id, bool is_ipv6_enabled,
