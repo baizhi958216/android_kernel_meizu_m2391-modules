@@ -262,7 +262,7 @@ struct cam_cpas_axi_port {
 	bool is_rt;
 	struct device_node *axi_port_node;
 	uint32_t drv_idx;
-	const struct device *cam_rsc_dev;
+	struct device *cam_rsc_dev;
 	bool is_drv_started;
 	struct cam_cpas_axi_bw_info curr_bw;
 	uint64_t camnoc_bw;

@@ -366,15 +366,13 @@ static int cam_cpas_util_axi_cleanup(struct cam_cpas *cpas_core,
 	for (i = 0; i < cpas_core->num_axi_ports; i++) {
 		cam_cpas_util_unregister_bus_client(
 			&cpas_core->axi_port[i].bus_client);
-		of_node_put(cpas_core->axi_port[i].axi_port_node);
-		cpas_core->axi_port[i].axi_port_node = NULL;
+		put_device(cpas_core->axi_port[i].cam_rsc_dev);
+		cpas_core->axi_port[i].cam_rsc_dev = NULL;
 	}
 
 	for (i = 0; i < cpas_core->num_camnoc_axi_ports; i++) {
 		cam_cpas_util_unregister_bus_client(
 			&cpas_core->camnoc_axi_port[i].bus_client);
-		of_node_put(cpas_core->camnoc_axi_port[i].axi_port_node);
-		cpas_core->camnoc_axi_port[i].axi_port_node = NULL;
 	}
 
 	return 0;
@@ -394,7 +392,20 @@ static int cam_cpas_util_axi_setup(struct cam_cpas *cpas_core,
 	}
 
 	for (i = 0; i < cpas_core->num_axi_ports; i++) {
-		axi_port_mnoc_node = cpas_core->axi_port[i].axi_port_node;
+		struct cam_cpas_axi_port *port = &cpas_core->axi_port[i];
+
+		axi_port_mnoc_node = port->axi_port_node;
+		if (port->bus_client.common_data.is_drv_port) {
+			struct device *voter;
+
+			voter = cam_cpas_get_rsc_dev_for_drv(soc_info->dev, axi_port_mnoc_node,
+							     port->drv_idx);
+			if (IS_ERR(voter)) {
+				rc = PTR_ERR(voter);
+				goto bus_register_fail;
+			}
+			port->cam_rsc_dev = voter;
+		}
 		rc = cam_cpas_util_register_bus_client(soc_info,
 			axi_port_mnoc_node, &cpas_core->axi_port[i].bus_client);
 		if (rc)
@@ -412,7 +423,7 @@ static int cam_cpas_util_axi_setup(struct cam_cpas *cpas_core,
 
 	return 0;
 bus_register_fail:
-	of_node_put(cpas_core->axi_port[i].axi_port_node);
+	cam_cpas_util_axi_cleanup(cpas_core, soc_info);
 	return rc;
 }
 
@@ -2592,7 +2603,7 @@ static void cam_cpas_update_monitor_array(struct cam_hw_info *cpas_hw,
 	entry = &cpas_core->monitor_entries[iterator];
 
 	CAM_GET_TIMESTAMP(entry->timestamp);
-	strlcpy(entry->identifier_string, identifier_string,
+	strscpy(entry->identifier_string, identifier_string,
 		sizeof(entry->identifier_string));
 
 	entry->identifier_value = identifier_value;

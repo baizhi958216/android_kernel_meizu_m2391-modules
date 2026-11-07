@@ -11,9 +11,8 @@
 #include <linux/platform_device.h>
 #include <linux/component.h>
 #include <linux/iommu.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/list_sort.h>
-#include <linux/dma-iommu.h>
 #include <soc/qcom/of_common.h>
 
 #include "cam_csiphy_dev.h"
@@ -55,7 +54,8 @@ void cam_compat_util_put_dmabuf_va(struct dma_buf *dmabuf, void *vaddr);
 void cam_smmu_util_iommu_custom(struct device *dev,
 	dma_addr_t discard_start, size_t discard_length);
 
-const struct device *cam_cpas_get_rsc_dev_for_drv(uint32_t index);
+struct device *cam_cpas_get_rsc_dev_for_drv(struct device *consumer, struct device_node *node,
+	u32 path_index);
 
 int cam_cpas_start_drv_for_dev(const struct device *dev);
 

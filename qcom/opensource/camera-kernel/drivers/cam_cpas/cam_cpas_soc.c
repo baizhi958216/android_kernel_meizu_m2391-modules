@@ -100,6 +100,15 @@ int cam_cpas_node_tree_cleanup(struct cam_cpas *cpas_core,
 {
 	int i = 0;
 
+	for (i = 0; i < cpas_core->num_axi_ports; i++) {
+		of_node_put(cpas_core->axi_port[i].axi_port_node);
+		cpas_core->axi_port[i].axi_port_node = NULL;
+	}
+	for (i = 0; i < cpas_core->num_camnoc_axi_ports; i++) {
+		of_node_put(cpas_core->camnoc_axi_port[i].axi_port_node);
+		cpas_core->camnoc_axi_port[i].axi_port_node = NULL;
+	}
+
 	for (i = 0; i < CAM_CPAS_MAX_TREE_NODES; i++) {
 		if (soc_private->tree_node[i]) {
 			kfree(soc_private->tree_node[i]->bw_info);
@@ -148,43 +157,26 @@ static int cam_cpas_util_path_type_to_idx(uint32_t *path_data_type)
 }
 
 static int cam_cpas_update_camnoc_node(struct cam_cpas *cpas_core,
-	struct device_node *curr_node,
-	struct cam_cpas_tree_node *cpas_node_ptr,
+	struct device_node *curr_node, struct cam_cpas_tree_node *cpas_node_ptr,
 	int *camnoc_idx)
-
 {
-	struct device_node *camnoc_node;
+	struct device_node *camnoc_node __free(device_node) =
+		of_get_child_by_name(curr_node, "qcom,axi-port-camnoc");
+	struct cam_cpas_axi_port *port;
 	int rc;
 
-	camnoc_node = of_find_node_by_name(curr_node,
-			"qcom,axi-port-camnoc");
-	if (camnoc_node) {
-
-		if (*camnoc_idx >=
-			CAM_CPAS_MAX_AXI_PORTS) {
-			CAM_ERR(CAM_CPAS, "CAMNOC axi index overshoot %d",
-				*camnoc_idx);
-			return -EINVAL;
-		}
-
-		cpas_core->camnoc_axi_port[*camnoc_idx]
-			.axi_port_node = camnoc_node;
-		rc = of_property_read_string(
-			curr_node,
-			"qcom,axi-port-name",
-			&cpas_core->camnoc_axi_port[*camnoc_idx]
-			.axi_port_name);
-
-		if (rc) {
-			CAM_ERR(CAM_CPAS,
-				"fail to read camnoc-port-name rc=%d",
-				rc);
-			return rc;
-		}
-		cpas_node_ptr->camnoc_axi_port_idx = *camnoc_idx;
-		cpas_core->num_camnoc_axi_ports++;
-		(*camnoc_idx)++;
-	}
+	if (!camnoc_node)
+		return 0;
+	if (*camnoc_idx >= CAM_CPAS_MAX_AXI_PORTS)
+		return -EINVAL;
+	port = &cpas_core->camnoc_axi_port[*camnoc_idx];
+	rc = of_property_read_string(curr_node, "qcom,axi-port-name", &port->axi_port_name);
+	if (rc)
+		return rc;
+	port->bus_client.common_data.name = port->axi_port_name;
+	port->axi_port_node = no_free_ptr(camnoc_node);
+	cpas_node_ptr->camnoc_axi_port_idx = (*camnoc_idx)++;
+	cpas_core->num_camnoc_axi_ports++;
 	return 0;
 }
 
@@ -222,7 +214,6 @@ static int cam_cpas_parse_mnoc_node(struct cam_cpas *cpas_core,
 				return -EINVAL;
 			}
 
-			cpas_core->axi_port[*mnoc_idx].axi_port_node = mnoc_node;
 			rc = of_property_read_string_index(mnoc_node, "interconnect-names", i,
 				&cpas_core->axi_port[*mnoc_idx].bus_client.common_data.name);
 			if (rc) {
@@ -277,16 +268,7 @@ static int cam_cpas_parse_mnoc_node(struct cam_cpas *cpas_core,
 					CAM_CPAS_VOTE_TYPE_DRV;
 				cpas_core->axi_port[*mnoc_idx].applied_bw.vote_type =
 					CAM_CPAS_VOTE_TYPE_DRV;
-				cpas_core->axi_port[*mnoc_idx].cam_rsc_dev =
-					cam_cpas_get_rsc_dev_for_drv(i - CAM_CPAS_PORT_DRV_0);
-				if (!cpas_core->axi_port[*mnoc_idx].cam_rsc_dev) {
-					CAM_ERR(CAM_CPAS,
-						"Port[%s][%d] Failed to get rsc device drv_idx:%d",
-						cpas_core->axi_port[*mnoc_idx].axi_port_name,
-						*mnoc_idx, i);
-					rc = -ENODEV;
-					goto err;
-				}
+
 			}
 
 			/*
@@ -301,6 +283,7 @@ static int cam_cpas_parse_mnoc_node(struct cam_cpas *cpas_core,
 				cpas_core->axi_port[*mnoc_idx].bus_client.common_data.src_id,
 				cpas_core->axi_port[*mnoc_idx].bus_client.common_data.dst_id,
 				*mnoc_idx);
+			cpas_core->axi_port[*mnoc_idx].axi_port_node = of_node_get(mnoc_node);
 			(*mnoc_idx)++;
 			cpas_core->num_axi_ports++;
 		}
@@ -315,7 +298,6 @@ static int cam_cpas_parse_mnoc_node(struct cam_cpas *cpas_core,
 			return -EINVAL;
 		}
 
-		cpas_core->axi_port[*mnoc_idx].axi_port_node = mnoc_node;
 		rc =  of_property_read_string(curr_node_ptr->tree_dev_node, "qcom,axi-port-name",
 			&cpas_core->axi_port[*mnoc_idx].bus_client.common_data.name);
 		if (rc) {
@@ -330,11 +312,11 @@ static int cam_cpas_parse_mnoc_node(struct cam_cpas *cpas_core,
 		curr_node_ptr->axi_port_idx_arr[0] = *mnoc_idx;
 		cpas_core->axi_port[*mnoc_idx].ib_bw_voting_needed = ib_voting_needed;
 		cpas_core->axi_port[*mnoc_idx].is_rt = is_rt_port;
+		cpas_core->axi_port[*mnoc_idx].axi_port_node = of_node_get(mnoc_node);
 		(*mnoc_idx)++;
 		cpas_core->num_axi_ports++;
 	}
 
-err:
 	return rc;
 }
 
@@ -343,8 +325,6 @@ static int cam_cpas_parse_node_tree(struct cam_cpas *cpas_core,
 {
 	struct device_node *camera_bus_node;
 	struct device_node *level_node;
-	struct device_node *curr_node;
-	struct device_node *parent_node;
 	struct device_node *mnoc_node;
 	int mnoc_idx = 0, camnoc_idx = 0, level_idx = 0;
 	uint32_t path_idx;
@@ -364,18 +344,19 @@ static int cam_cpas_parse_node_tree(struct cam_cpas *cpas_core,
 
 	soc_private->camera_bus_node = camera_bus_node;
 
-	for_each_available_child_of_node(camera_bus_node, level_node) {
-		rc = of_property_read_u32(level_node, "level-index", &level_idx);
+	for_each_available_child_of_node_scoped(camera_bus_node, child) {
+		rc = of_property_read_u32(child, "level-index", &level_idx);
 		if (rc) {
 			CAM_ERR(CAM_CPAS, "Error reading level idx rc: %d", rc);
 			return rc;
 		}
-		if (level_idx >= CAM_CPAS_MAX_TREE_LEVELS) {
+		if (level_idx < 0 || level_idx >= CAM_CPAS_MAX_TREE_LEVELS ||
+			soc_private->level_node[level_idx]) {
 			CAM_ERR(CAM_CPAS, "Invalid level idx: %d", level_idx);
 			return -EINVAL;
 		}
 
-		soc_private->level_node[level_idx] = level_node;
+		soc_private->level_node[level_idx] = of_node_get(child);
 	}
 
 	if (soc_private->enable_smart_qos)
@@ -395,15 +376,17 @@ static int cam_cpas_parse_node_tree(struct cam_cpas *cpas_core,
 		CAM_DBG(CAM_CPAS, "Parsing level %d nodes", level_idx);
 
 		camnoc_max_needed = of_property_read_bool(level_node, "camnoc-max-needed");
-		for_each_available_child_of_node(level_node, curr_node) {
+		for_each_available_child_of_node_scoped(level_node, curr_node) {
+			struct device_node *parent_node __free(device_node) = NULL;
+
 			curr_node_ptr = kzalloc(sizeof(struct cam_cpas_tree_node), GFP_KERNEL);
 			if (!curr_node_ptr)
 				return -ENOMEM;
 
-			curr_node_ptr->tree_dev_node = curr_node;
 			rc = of_property_read_u32(curr_node, "cell-index",
 				&curr_node_ptr->cell_idx);
 			if (rc) {
+				kfree(curr_node_ptr);
 				CAM_ERR(CAM_CPAS, "Node index not found");
 				return rc;
 			}
@@ -412,11 +395,13 @@ static int cam_cpas_parse_node_tree(struct cam_cpas *cpas_core,
 					curr_node_ptr->cell_idx);
 
 			if (curr_node_ptr->cell_idx >=
-				CAM_CPAS_MAX_TREE_NODES) {
-				CAM_ERR(CAM_CPAS, "Invalid cell idx: %d", curr_node_ptr->cell_idx);
+				CAM_CPAS_MAX_TREE_NODES || soc_private->tree_node[curr_node_ptr->cell_idx]) {
+				CAM_ERR(CAM_CPAS, "Invalid or duplicate cell idx: %d", curr_node_ptr->cell_idx);
+				kfree(curr_node_ptr);
 				return -EINVAL;
 			}
 
+			curr_node_ptr->tree_dev_node = of_node_get(curr_node);
 			soc_private->tree_node[curr_node_ptr->cell_idx] = curr_node_ptr;
 			curr_node_ptr->level_idx = level_idx;
 
@@ -491,6 +476,7 @@ static int cam_cpas_parse_node_tree(struct cam_cpas *cpas_core,
 			if (mnoc_node) {
 				rc = cam_cpas_parse_mnoc_node(cpas_core, soc_private, curr_node_ptr,
 					mnoc_node, &mnoc_idx);
+				of_node_put(mnoc_node);
 				if (rc) {
 					CAM_ERR(CAM_CPAS, "failed to parse mnoc node info rc=%d",
 						rc);
@@ -597,7 +583,9 @@ static int cam_cpas_parse_node_tree(struct cam_cpas *cpas_core,
 
 			parent_node = of_parse_phandle(curr_node, "parent-node", 0);
 			if (parent_node) {
-				of_property_read_u32(parent_node, "cell-index", &cell_idx);
+				if (of_property_read_u32(parent_node, "cell-index", &cell_idx) ||
+					cell_idx >= CAM_CPAS_MAX_TREE_NODES || !soc_private->tree_node[cell_idx])
+					return -EINVAL;
 				curr_node_ptr->parent_node = soc_private->tree_node[cell_idx];
 			} else {
 				CAM_DBG(CAM_CPAS, "no parent node at this level");
@@ -611,7 +599,7 @@ static int cam_cpas_parse_node_tree(struct cam_cpas *cpas_core,
 	return 0;
 }
 
-int cam_cpas_get_hw_features(struct platform_device *pdev,
+static int cam_cpas_get_hw_features(struct platform_device *pdev,
 	struct cam_cpas_private_soc *soc_private)
 {
 	struct device_node *of_node;
@@ -942,7 +930,7 @@ err:
 	return rc;
 }
 
-int cam_cpas_get_custom_dt_info(struct cam_hw_info *cpas_hw,
+static int cam_cpas_get_custom_dt_info(struct cam_hw_info *cpas_hw,
 	struct platform_device *pdev, struct cam_cpas_private_soc *soc_private)
 {
 	struct device_node *of_node;

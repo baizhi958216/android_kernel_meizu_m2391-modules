@@ -264,7 +264,7 @@ int cam_cpas_dump_camnoc_buff_fill_info(uint32_t client_handle)
 }
 EXPORT_SYMBOL(cam_cpas_dump_camnoc_buff_fill_info);
 
-bool cam_cpas_is_part_supported(uint32_t flag, uint32_t hw_map, uint32_t part_info)
+static bool cam_cpas_is_part_supported(uint32_t flag, uint32_t hw_map, uint32_t part_info)
 {
 	int32_t i;
 	struct cam_hw_info *cpas_hw = g_cpas_intf->hw_intf->hw_priv;
@@ -904,7 +904,7 @@ bool cam_cpas_query_domain_id_security_support(void)
 }
 EXPORT_SYMBOL(cam_cpas_query_domain_id_security_support);
 
-int cam_cpas_subdev_cmd(struct cam_cpas_intf *cpas_intf,
+static int cam_cpas_subdev_cmd(struct cam_cpas_intf *cpas_intf,
 	struct cam_control *cmd)
 {
 	int rc = 0;
@@ -1247,10 +1247,9 @@ static int cam_cpas_dev_probe(struct platform_device *pdev)
 	return rc;
 }
 
-static int cam_cpas_dev_remove(struct platform_device *pdev)
+static void cam_cpas_dev_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_cpas_dev_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_cpas_dt_match[] = {

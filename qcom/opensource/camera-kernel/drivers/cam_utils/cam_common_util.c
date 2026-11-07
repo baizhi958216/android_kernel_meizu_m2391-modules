@@ -213,7 +213,7 @@ static int cam_common_md_notify_handler(struct notifier_block *this,
 	int rc = 0;
 
 	cbentry.vaddr = 0x0;
-	strlcpy(cbentry.owner, "Camera", sizeof(cbentry.owner));
+	strscpy(cbentry.owner, "Camera", sizeof(cbentry.owner));
 	cbentry.size = CAM_COMMON_MINI_DUMP_SIZE;
 	cbentry.cb = cam_common_mini_dump_handler;
 	rc = qcom_va_md_add_region(&cbentry);
@@ -519,7 +519,7 @@ static int cam_err_inject_get(char *buffer,
 				strscpy(hw_name, "undef", 10);
 			}
 			ret += scnprintf(buffer+ret, buff_max_size,
-				"hw_name: %s req_id: %u err_type: %u err_code: %u dev_hdl: %d\n",
+				"hw_name: %s req_id: %llu err_type: %u err_code: %u dev_hdl: %llu\n",
 				hw_name, err_param->req_id, err_param->err_type,
 				err_param->err_code, err_param->dev_hdl);
 

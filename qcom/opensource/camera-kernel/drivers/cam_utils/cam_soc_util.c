@@ -9,7 +9,8 @@
 #include <linux/slab.h>
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
-#include <linux/clk/qcom.h>
+#include <linux/clk/qcom-kalama.h>
+#include <linux/pinctrl/consumer.h>
 #include "cam_soc_util.h"
 #include "cam_debug_util.h"
 #include "cam_cx_ipeak.h"
@@ -92,7 +93,7 @@ static DEFINE_MUTEX(aggregate_lock);
 static LIST_HEAD(aggregate_clk_list);
 
 #if IS_REACHABLE(CONFIG_MSM_MMRM)
-bool cam_is_mmrm_supported_on_current_chip(void)
+static bool cam_is_mmrm_supported_on_current_chip(void)
 {
 	bool is_supported;
 
@@ -104,7 +105,7 @@ bool cam_is_mmrm_supported_on_current_chip(void)
 	return is_supported;
 }
 
-int cam_mmrm_notifier_callback(
+static int cam_mmrm_notifier_callback(
 	struct mmrm_client_notifier_data *notifier_data)
 {
 	if (!notifier_data) {
@@ -126,7 +127,7 @@ int cam_mmrm_notifier_callback(
 	return 0;
 }
 
-int cam_soc_util_register_mmrm_client(
+static int cam_soc_util_register_mmrm_client(
 	uint32_t clk_id, struct clk *clk, bool is_nrt_dev,
 	struct cam_hw_soc_info *soc_info, const char *clk_name,
 	void **mmrm_handle)
@@ -174,7 +175,7 @@ int cam_soc_util_register_mmrm_client(
 	return 0;
 }
 
-int cam_soc_util_unregister_mmrm_client(
+static int cam_soc_util_unregister_mmrm_client(
 	void *mmrm_handle)
 {
 	int rc = 0;
@@ -2061,8 +2062,8 @@ int cam_soc_util_dump_clk(struct cam_hw_soc_info *soc_info)
 		return -EINVAL;
 
 	for (i = 0; i < soc_info->num_clk; i++) {
-		CAM_INFO(CAM_UTIL, "Dumping clock = %s", soc_info->clk_name[i]);
-		qcom_clk_dump(soc_info->clk[i], NULL, false);
+		CAM_INFO(CAM_UTIL, "%s rate=%lu Hz", soc_info->clk_name[i],
+			 clk_get_rate(soc_info->clk[i]));
 	}
 
 	return rc;
@@ -2089,7 +2090,7 @@ static int cam_soc_util_get_dt_gpio_req_tbl(struct device_node *of_node,
 	if (!val_array)
 		return -ENOMEM;
 
-	gconf->cam_gpio_req_tbl = kcalloc(count, sizeof(struct gpio),
+	gconf->cam_gpio_req_tbl = kcalloc(count, sizeof(struct cam_gpio),
 		GFP_KERNEL);
 	if (!gconf->cam_gpio_req_tbl) {
 		rc = -ENOMEM;
@@ -2158,7 +2159,7 @@ static int cam_soc_util_get_gpio_info(struct cam_hw_soc_info *soc_info)
 {
 	int32_t rc = 0, i = 0;
 	uint16_t *gpio_array = NULL;
-	int16_t gpio_array_size = 0;
+	int gpio_array_size;
 	struct cam_soc_gpio_data *gconf = NULL;
 	struct device_node *of_node = NULL;
 
@@ -2173,25 +2174,37 @@ static int cam_soc_util_get_gpio_info(struct cam_hw_soc_info *soc_info)
 		return -EINVAL;
 	}
 
-	gpio_array_size = of_gpio_count(of_node);
+	gpio_array_size = of_count_phandle_with_args(of_node, "gpios", "#gpio-cells");
 
-	if (gpio_array_size <= 0)
+	if (gpio_array_size < 0)
+		return of_property_present(of_node, "gpios") ? gpio_array_size : 0;
+	if (!gpio_array_size)
 		return 0;
+	if (gpio_array_size > U16_MAX)
+		return -EOVERFLOW;
 
 	CAM_DBG(CAM_UTIL, "gpio count %d", gpio_array_size);
 
 	gpio_array = kcalloc(gpio_array_size, sizeof(uint16_t), GFP_KERNEL);
 	if (!gpio_array)
-		goto free_gpio_conf;
+		return -ENOMEM;
 
 	for (i = 0; i < gpio_array_size; i++) {
-		gpio_array[i] = of_get_gpio(of_node, i);
+		int gpio = of_get_named_gpio(of_node, "gpios", i);
+
+		if (gpio < 0 || gpio > U16_MAX) {
+			rc = gpio < 0 ? gpio : -ERANGE;
+			goto free_gpio_array;
+		}
+		gpio_array[i] = gpio;
 		CAM_DBG(CAM_UTIL, "gpio_array[%d] = %d", i, gpio_array[i]);
 	}
 
 	gconf = kzalloc(sizeof(*gconf), GFP_KERNEL);
-	if (!gconf)
-		return -ENOMEM;
+	if (!gconf) {
+		rc = -ENOMEM;
+		goto free_gpio_array;
+	}
 
 	rc = cam_soc_util_get_dt_gpio_req_tbl(of_node, gconf, gpio_array,
 		gpio_array_size);
@@ -2201,7 +2214,7 @@ static int cam_soc_util_get_gpio_info(struct cam_hw_soc_info *soc_info)
 	}
 
 	gconf->cam_gpio_common_tbl = kcalloc(gpio_array_size,
-				sizeof(struct gpio), GFP_KERNEL);
+				sizeof(struct cam_gpio), GFP_KERNEL);
 	if (!gconf->cam_gpio_common_tbl) {
 		rc = -ENOMEM;
 		goto free_gpio_array;
@@ -2218,7 +2231,6 @@ static int cam_soc_util_get_gpio_info(struct cam_hw_soc_info *soc_info)
 
 free_gpio_array:
 	kfree(gpio_array);
-free_gpio_conf:
 	kfree(gconf);
 	soc_info->gpio_data = NULL;
 
@@ -2232,7 +2244,7 @@ static int cam_soc_util_request_gpio_table(
 	uint8_t size = 0;
 	struct cam_soc_gpio_data *gpio_conf =
 			soc_info->gpio_data;
-	struct gpio *gpio_tbl = NULL;
+	struct cam_gpio *gpio_tbl = NULL;
 
 
 	if (!gpio_conf) {
@@ -2270,7 +2282,7 @@ static int cam_soc_util_request_gpio_table(
 			}
 		}
 	} else {
-		gpio_free_array(gpio_tbl, size);
+		cam_gpio_free_array(gpio_tbl, size);
 	}
 
 	return rc;
@@ -2822,7 +2834,7 @@ static bool cam_soc_util_is_presil_address_space(unsigned long mem_block_start)
 }
 
 #ifndef CONFIG_CAM_PRESIL
-void __iomem * cam_soc_util_get_mem_base(
+static void __iomem * cam_soc_util_get_mem_base(
 	unsigned long mem_block_start,
 	unsigned long mem_block_size,
 	const char *mem_block_name,
@@ -2850,7 +2862,7 @@ void __iomem * cam_soc_util_get_mem_base(
 	return mem_base;
 }
 
-int cam_soc_util_request_irq(struct device *dev,
+static int cam_soc_util_request_irq(struct device *dev,
 	unsigned int irq_line_start,
 	irq_handler_t handler,
 	unsigned long irqflags,

@@ -5,6 +5,8 @@
  */
 
 #include <linux/dma-mapping.h>
+#include <linux/of_platform.h>
+#include "cam_cpas_hw.h"
 #include <linux/dma-buf.h>
 #include <linux/of_address.h>
 #include <linux/slab.h>
@@ -17,23 +19,38 @@
 #include "camera_main.h"
 
 #if KERNEL_VERSION(5, 10, 0) <= LINUX_VERSION_CODE
-#include <soc/qcom/socinfo.h>
+#include <linux/soc/qcom/socinfo.h>
 #endif
 
 #if IS_ENABLED(CONFIG_USE_RPMH_DRV_API)
-#define CAM_RSC_DRV_IDENTIFIER "cam_rsc"
-
-const struct device *cam_cpas_get_rsc_dev_for_drv(uint32_t index)
+struct device *cam_cpas_get_rsc_dev_for_drv(struct device *consumer, struct device_node *node,
+	u32 path_index)
 {
-	const struct device *rsc_dev;
+	struct device_node *voter_node __free(device_node) = NULL;
+	struct platform_device *voter;
+	struct of_phandle_args src;
+	char name[24];
+	int i, rc;
 
-	rsc_dev = rpmh_get_device(CAM_RSC_DRV_IDENTIFIER, index);
-	if (!rsc_dev) {
-		CAM_ERR(CAM_CPAS, "Invalid dev for index: %u", index);
-		return NULL;
+	rc = of_parse_phandle_with_args(node, "interconnects", "#interconnect-cells",
+					2 * path_index, &src);
+	if (rc)
+		return ERR_PTR(rc);
+	snprintf(name, sizeof(name), "cam_ife_%u", path_index - CAM_CPAS_PORT_DRV_0);
+	i = of_property_match_string(src.np, "qcom,bcm-voter-names", name);
+	if (i >= 0)
+		voter_node = of_parse_phandle(src.np, "qcom,bcm-voters", i);
+	of_node_put(src.np);
+	if (!voter_node)
+		return ERR_PTR(-EINVAL);
+	voter = of_find_device_by_node(voter_node);
+	if (!voter)
+		return ERR_PTR(-EPROBE_DEFER);
+	if (!device_link_add(consumer, &voter->dev, DL_FLAG_AUTOREMOVE_CONSUMER)) {
+		put_device(&voter->dev);
+		return ERR_PTR(-ENOMEM);
 	}
-
-	return rsc_dev;
+	return &voter->dev;
 }
 
 int cam_cpas_start_drv_for_dev(const struct device *dev)
@@ -45,7 +62,7 @@ int cam_cpas_start_drv_for_dev(const struct device *dev)
 		return -EINVAL;
 	}
 
-	rc = rpmh_drv_start(dev);
+	rc = rpmh_hw_channel_start(dev);
 	if (rc) {
 		CAM_ERR(CAM_CPAS, "[%s] Failed in DRV start", dev_name(dev));
 		return rc;
@@ -63,7 +80,7 @@ int cam_cpas_stop_drv_for_dev(const struct device *dev)
 		return -EINVAL;
 	}
 
-	rc = rpmh_drv_stop(dev);
+	rc = rpmh_hw_channel_stop(dev);
 	if (rc) {
 		CAM_ERR(CAM_CPAS, "[%s] Failed in DRV stop", dev_name(dev));
 		return rc;
@@ -81,7 +98,7 @@ int cam_cpas_drv_channel_switch_for_dev(const struct device *dev)
 		return -EINVAL;
 	}
 
-	rc = rpmh_write_sleep_and_wake_no_child(dev);
+	rc = rpmh_write_sleep_and_wake(dev);
 	if (rc) {
 		CAM_ERR(CAM_CPAS, "[%s] Failed in DRV channel switch", dev_name(dev));
 		return rc;
@@ -91,9 +108,10 @@ int cam_cpas_drv_channel_switch_for_dev(const struct device *dev)
 }
 
 #else
-const struct device *cam_cpas_get_rsc_dev_for_drv(uint32_t index)
+struct device *cam_cpas_get_rsc_dev_for_drv(struct device *consumer, struct device_node *node,
+	u32 path_index)
 {
-	return NULL;
+	return ERR_PTR(-EOPNOTSUPP);
 }
 
 int cam_cpas_start_drv_for_dev(const struct device *dev)
@@ -135,6 +153,8 @@ int cam_reserve_icp_fw(struct cam_fw_alloc_info *icp_fw, size_t fw_length)
 		CAM_ERR(CAM_SMMU, "Unable to get start of FW mem carveout");
 		goto end;
 	}
+	if (!fw_length || fw_length > resource_size(&res))
+		return -EFBIG;
 	icp_fw->fw_hdl = res.start;
 	icp_fw->fw_kva = ioremap_wc(icp_fw->fw_hdl, fw_length);
 	if (!icp_fw->fw_kva) {
@@ -180,7 +200,7 @@ int cam_csiphy_notify_secure_mode(struct csiphy_device *csiphy_dev,
 {
 	int rc = 0;
 
-	if (offset >= CSIPHY_MAX_INSTANCES_PER_PHY) {
+	if (offset < 0 || offset >= CSIPHY_MAX_INSTANCES_PER_PHY) {
 		CAM_ERR(CAM_CSIPHY, "Invalid CSIPHY offset");
 		rc = -EINVAL;
 	} else if (qcom_scm_camera_protect_phy_lanes(protect,
@@ -270,7 +290,7 @@ int cam_csiphy_notify_secure_mode(struct csiphy_device *csiphy_dev,
 			.csiphy_cpas_cp_reg_mask,
 	};
 
-	if (offset >= CSIPHY_MAX_INSTANCES_PER_PHY) {
+	if (offset < 0 || offset >= CSIPHY_MAX_INSTANCES_PER_PHY) {
 		CAM_ERR(CAM_CSIPHY, "Invalid CSIPHY offset");
 		rc = -EINVAL;
 	} else if (scm_call2(SCM_SIP_FNID(0x18, 0x7), &description)) {
@@ -443,27 +463,27 @@ int cam_req_mgr_ordered_list_cmp(void *priv,
 
 int cam_compat_util_get_dmabuf_va(struct dma_buf *dmabuf, uintptr_t *vaddr)
 {
-	struct dma_buf_map mapping;
-	int error_code = dma_buf_vmap(dmabuf, &mapping);
+	struct iosys_map map = {};
+	int ret;
 
-	if (error_code) {
-		*vaddr = 0;
-	} else {
-		*vaddr = (mapping.is_iomem) ?
-			(uintptr_t)mapping.vaddr_iomem : (uintptr_t)mapping.vaddr;
-		CAM_DBG(CAM_MEM,
-			"dmabuf=%p, *vaddr=%p, is_iomem=%d, vaddr_iomem=%p, vaddr=%p",
-			dmabuf, *vaddr, mapping.is_iomem, mapping.vaddr_iomem, mapping.vaddr);
+	*vaddr = 0;
+	ret = dma_buf_vmap_unlocked(dmabuf, &map);
+	if (ret)
+		return ret;
+	/* Command packets are accessed as normal memory by the hardware managers. */
+	if (map.is_iomem) {
+		dma_buf_vunmap_unlocked(dmabuf, &map);
+		return -ENXIO;
 	}
-
-	return error_code;
+	*vaddr = (uintptr_t)map.vaddr;
+	return 0;
 }
 
 void cam_compat_util_put_dmabuf_va(struct dma_buf *dmabuf, void *vaddr)
 {
-	struct dma_buf_map mapping = DMA_BUF_MAP_INIT_VADDR(vaddr);
+	struct iosys_map map = IOSYS_MAP_INIT_VADDR(vaddr);
 
-	dma_buf_vunmap(dmabuf, &mapping);
+	dma_buf_vunmap_unlocked(dmabuf, &map);
 }
 
 void cam_i3c_driver_remove(struct i3c_device *client)
@@ -538,22 +558,11 @@ long cam_dma_buf_set_name(struct dma_buf *dmabuf, const char *name)
 #if KERNEL_VERSION(5, 10, 0) <= LINUX_VERSION_CODE
 int cam_get_subpart_info(uint32_t *part_info, int *num_cam)
 {
-	int rc = 0;
+	int rc = qcom_socinfo_get_subpart(QCOM_SOCINFO_PART_CAMERA, part_info);
 
-	*num_cam = socinfo_get_part_count(PART_CAMERA);
-	CAM_DBG(CAM_CPAS, "number of cameras: %d", *num_cam);
-
-	/*
-	 * If bit value in part_info is "0" then HW is available.
-	 * If bit value in part_info is "1" then HW is unavailable.
-	 */
-	rc = socinfo_get_subpart_info(PART_CAMERA, part_info, *num_cam);
-	if (rc) {
-		CAM_ERR(CAM_CPAS, "Failed while getting subpart_info, rc = %d.", rc);
-		return rc;
-	}
-
-	return 0;
+	if (!rc)
+		*num_cam = 1;
+	return rc;
 }
 #else
 int cam_get_subpart_info(uint32_t *part_info, int *num_cam)

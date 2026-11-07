@@ -96,7 +96,11 @@ int cam_soc_bus_client_register(struct platform_device *pdev,
 {
 	struct cam_soc_bus_client *bus_client = NULL;
 	struct cam_soc_bus_client_data *bus_client_data = NULL;
-	int rc = 0;
+	int rc = 0, path_index;
+
+	path_index = of_property_match_string(dev_node, "interconnect-names", common_data->name);
+	if (path_index < 0)
+		return path_index;
 
 	bus_client = kzalloc(sizeof(struct cam_soc_bus_client), GFP_KERNEL);
 	if (!bus_client) {
@@ -118,25 +122,24 @@ int cam_soc_bus_client_register(struct platform_device *pdev,
 	bus_client->client_data = bus_client_data;
 	bus_client->common_data = common_data;
 	if (bus_client->common_data->is_drv_port) {
-		bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_HIGH] = icc_get(&pdev->dev,
-			bus_client->common_data->src_id, bus_client->common_data->dst_id);
+		bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_HIGH] = of_icc_get_from_node(&pdev->dev, dev_node, path_index);
 		if (IS_ERR_OR_NULL(bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_HIGH])) {
 			CAM_ERR(CAM_UTIL,
 				"Failed to register DRV bus client Bus Client=[%s] : src=%d, dst=%d bus_path:%d",
-				bus_client->common_data->src_id, bus_client->common_data->dst_id,
+				common_data->name, common_data->src_id, common_data->dst_id,
 				CAM_SOC_BUS_PATH_DATA_DRV_HIGH);
-			rc = -EINVAL;
+			rc = PTR_ERR(bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_HIGH]) ?: -ENODEV;
 			goto error;
 		}
 
-		bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_LOW] = icc_get(&pdev->dev,
-			bus_client->common_data->src_id, bus_client->common_data->dst_id);
+		bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_LOW] = of_icc_get_from_node(&pdev->dev, dev_node, path_index);
 		if (IS_ERR_OR_NULL(bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_LOW])) {
 			CAM_ERR(CAM_UTIL,
 				"Failed to register DRV bus client Bus Client=[%s] : src=%d, dst=%d bus_path:%d",
-				bus_client->common_data->src_id, bus_client->common_data->dst_id,
+				common_data->name, common_data->src_id, common_data->dst_id,
 				CAM_SOC_BUS_PATH_DATA_DRV_LOW);
-			rc = -EINVAL;
+			rc = PTR_ERR(bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_LOW]) ?: -ENODEV;
+			icc_put(bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_DRV_HIGH]);
 			goto error;
 		}
 
@@ -160,11 +163,10 @@ int cam_soc_bus_client_register(struct platform_device *pdev,
 			goto fail_unregister_client;
 		}
 	} else {
-		bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_HLOS] = icc_get(&pdev->dev,
-			bus_client->common_data->src_id, bus_client->common_data->dst_id);
+		bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_HLOS] = of_icc_get_from_node(&pdev->dev, dev_node, path_index);
 		if (IS_ERR_OR_NULL(bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_HLOS])) {
 			CAM_ERR(CAM_UTIL, "failed to register HLOS bus client");
-			rc = -EINVAL;
+			rc = PTR_ERR(bus_client_data->icc_data[CAM_SOC_BUS_PATH_DATA_HLOS]) ?: -ENODEV;
 			goto error;
 		}
 
