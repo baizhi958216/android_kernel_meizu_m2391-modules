@@ -34,19 +34,19 @@ struct cam_dma_fence_device {
 static atomic64_t g_cam_dma_fence_seq_no;
 static struct cam_dma_fence_device *g_cam_dma_fence_dev;
 
-bool __cam_dma_fence_enable_signaling(
+static bool __cam_dma_fence_enable_signaling(
 	struct dma_fence *fence)
 {
 	return true;
 }
 
-const char *__cam_dma_fence_get_driver_name(
+static const char *__cam_dma_fence_get_driver_name(
 	struct dma_fence *fence)
 {
 	return "Camera DMA fence driver";
 }
 
-void __cam_dma_fence_free(struct dma_fence *fence)
+static void __cam_dma_fence_free(struct dma_fence *fence)
 {
 	CAM_DBG(CAM_DMA_FENCE,
 		"Free memory for dma fence seqno: %llu", fence->seqno);
@@ -140,7 +140,7 @@ static void __cam_dma_fence_init_row(const char *name,
 	spin_unlock_bh(&g_cam_dma_fence_dev->row_spinlocks[idx]);
 }
 
-void __cam_dma_fence_signal_cb(
+static void __cam_dma_fence_signal_cb(
 	struct dma_fence *fence, struct dma_fence_cb *cb)
 {
 	struct cam_dma_fence_signal_sync_obj signal_sync_obj;

@@ -4,6 +4,7 @@
  * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/irqflags.h>
@@ -11,7 +12,7 @@
 #include <linux/platform_device.h>
 #include <linux/debugfs.h>
 #if IS_REACHABLE(CONFIG_MSM_GLOBAL_SYNX)
-#include <synx_api.h>
+#include <media/msm-synx.h>
 #endif
 #include "cam_sync_util.h"
 #include "cam_debug_util.h"
@@ -1698,7 +1699,7 @@ static struct v4l2_subscribed_event_ops cam_sync_v4l2_ops = {
 	.merge = cam_sync_event_queue_notify_error,
 };
 
-int cam_sync_subscribe_event(struct v4l2_fh *fh,
+static int cam_sync_subscribe_event(struct v4l2_fh *fh,
 		const struct v4l2_event_subscription *sub)
 {
 	if (!((sub->type == CAM_SYNC_V4L_EVENT) ||
@@ -1713,7 +1714,7 @@ int cam_sync_subscribe_event(struct v4l2_fh *fh,
 		&cam_sync_v4l2_ops);
 }
 
-int cam_sync_unsubscribe_event(struct v4l2_fh *fh,
+static int cam_sync_unsubscribe_event(struct v4l2_fh *fh,
 		const struct v4l2_event_subscription *sub)
 {
 	if (!((sub->type == CAM_SYNC_V4L_EVENT) ||
@@ -1754,7 +1755,7 @@ static int cam_sync_media_controller_init(struct sync_device *sync_dev,
 		return -ENOMEM;
 
 	media_device_init(sync_dev->v4l2_dev.mdev);
-	strlcpy(sync_dev->v4l2_dev.mdev->model, CAM_SYNC_DEVICE_NAME,
+	strscpy(sync_dev->v4l2_dev.mdev->model, CAM_SYNC_DEVICE_NAME,
 			sizeof(sync_dev->v4l2_dev.mdev->model));
 	sync_dev->v4l2_dev.mdev->dev = &(pdev->dev);
 
@@ -1830,7 +1831,7 @@ end:
 }
 
 #if IS_REACHABLE(CONFIG_MSM_GLOBAL_SYNX)
-int cam_synx_sync_signal(int32_t sync_obj, uint32_t synx_status)
+static int cam_synx_sync_signal(int32_t sync_obj, uint32_t synx_status)
 {
 	int rc = 0;
 	uint32_t sync_status = synx_status;
@@ -1935,7 +1936,7 @@ static int cam_sync_component_bind(struct device *dev,
 	if (rc < 0)
 		goto register_fail;
 
-	strlcpy(sync_dev->vdev->name, CAM_SYNC_NAME,
+	strscpy(sync_dev->vdev->name, CAM_SYNC_NAME,
 				sizeof(sync_dev->vdev->name));
 	sync_dev->vdev->release  = video_device_release_empty;
 	sync_dev->vdev->fops     = &cam_sync_v4l2_fops;
@@ -2051,10 +2052,9 @@ static int cam_sync_probe(struct platform_device *pdev)
 	return rc;
 }
 
-static int cam_sync_remove(struct platform_device *pdev)
+static void cam_sync_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_sync_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_sync_dt_match[] = {
