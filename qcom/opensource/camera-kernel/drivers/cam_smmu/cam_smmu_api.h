@@ -16,7 +16,6 @@
 #include <linux/random.h>
 #include <linux/spinlock_types.h>
 #include <linux/mutex.h>
-#include <linux/msm_ion.h>
 
 #define CAM_SMMU_GET_IOVA_DELTA(val1, val2)                                \
 ({                                                                         \

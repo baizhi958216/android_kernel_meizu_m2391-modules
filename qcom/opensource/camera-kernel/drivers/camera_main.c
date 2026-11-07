@@ -327,5 +327,6 @@ static void camera_exit(void)
 module_init(camera_init);
 module_exit(camera_exit);
 
+MODULE_IMPORT_NS("DMA_BUF");
 MODULE_DESCRIPTION("Spectra camera driver");
 MODULE_LICENSE("GPL v2");
