@@ -95,6 +95,12 @@ LINUXINCLUDE    += -include $(srctree)/techpack/dataipa/config/dataipa_debug.h
 endif
 endif
 
+# The APQ MHI prime manager serves an external modem. Integrated modem boards
+# use the IPA/QMI transport to the on-chip MPSS instead.
+ifeq ($(CONFIG_IPA3_MHI_PRIME_MANAGER),n)
+LINUXINCLUDE += -DIPA_INTEGRATED_MODEM_ONLY
+endif
+
 ifneq (,$(filter $(CONFIG_IPA3) $(CONFIG_GSI),y m))
 LINUXINCLUDE += -I$(DATAIPADRVTOP)/gsi
 LINUXINCLUDE += -I$(DATAIPADRVTOP)/gsi/gsihal
