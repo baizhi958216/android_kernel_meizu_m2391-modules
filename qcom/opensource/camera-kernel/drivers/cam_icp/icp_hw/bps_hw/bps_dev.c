@@ -87,7 +87,7 @@ static bool cam_bps_cpas_cb(uint32_t client_handle, void *userdata,
 	return error_handled;
 }
 
-int cam_bps_register_cpas(struct cam_hw_soc_info *soc_info,
+static int cam_bps_register_cpas(struct cam_hw_soc_info *soc_info,
 			struct cam_bps_device_core_info *core_info,
 			uint32_t hw_idx)
 {
@@ -220,7 +220,7 @@ const static struct component_ops cam_bps_component_ops = {
 	.unbind = cam_bps_component_unbind,
 };
 
-int cam_bps_probe(struct platform_device *pdev)
+static int cam_bps_probe(struct platform_device *pdev)
 {
 	int rc = 0;
 
@@ -232,10 +232,9 @@ int cam_bps_probe(struct platform_device *pdev)
 	return rc;
 }
 
-static int cam_bps_remove(struct platform_device *pdev)
+static void cam_bps_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_bps_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_bps_dt_match[] = {

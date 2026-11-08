@@ -4,6 +4,8 @@
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include "cam_icp_v2_dev.h"
+#include "cam_icp_proc.h"
 #include <linux/module.h>
 #include <linux/mod_devicetable.h>
 #include <linux/of_device.h>
@@ -208,11 +210,9 @@ static int cam_icp_v2_driver_probe(struct platform_device *pdev)
 	return rc;
 }
 
-static int cam_icp_v2_driver_remove(struct platform_device *pdev)
+static void cam_icp_v2_driver_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_icp_v2_component_ops);
-
-	return 0;
 }
 
 struct platform_driver cam_icp_v2_driver = {

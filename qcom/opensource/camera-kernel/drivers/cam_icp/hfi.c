@@ -360,7 +360,7 @@ int hfi_cmd_ubwc_config(uint32_t *ubwc_cfg)
 	struct hfi_cmd_prop *dbg_prop;
 	uint32_t size = 0;
 
-	size = sizeof(struct hfi_cmd_prop) +
+	size = struct_size((struct hfi_cmd_prop *)NULL, prop_data, 1) +
 		sizeof(struct hfi_cmd_ubwc_cfg);
 
 	CAM_DBG(CAM_HFI,
@@ -392,7 +392,7 @@ int hfi_cmd_ubwc_config_ext(uint32_t *ubwc_ipe_cfg,
 	struct hfi_cmd_prop *dbg_prop;
 	uint32_t size = 0;
 
-	size = sizeof(struct hfi_cmd_prop) +
+	size = struct_size((struct hfi_cmd_prop *)NULL, prop_data, 1) +
 		sizeof(struct hfi_cmd_ubwc_cfg_ext);
 
 	CAM_DBG(CAM_HFI,
@@ -427,7 +427,7 @@ int hfi_enable_ipe_bps_pc(bool enable, uint32_t core_info)
 	struct hfi_cmd_prop *dbg_prop;
 	uint32_t size = 0;
 
-	size = sizeof(struct hfi_cmd_prop) +
+	size = struct_size((struct hfi_cmd_prop *)NULL, prop_data, 1) +
 		sizeof(struct hfi_ipe_bps_pc);
 
 	prop = kzalloc(size, GFP_KERNEL);
@@ -469,7 +469,7 @@ int hfi_set_debug_level(u64 icp_dbg_type, uint32_t lvl)
 	if (g_hfi)
 		g_hfi->dbg_lvl = lvl;
 
-	size = sizeof(struct hfi_cmd_prop) +
+	size = struct_size((struct hfi_cmd_prop *)NULL, prop_data, 1) +
 		sizeof(struct hfi_debug);
 
 	prop = kzalloc(size, GFP_KERNEL);
@@ -498,7 +498,7 @@ int hfi_set_fw_dump_level(uint32_t lvl)
 
 	CAM_DBG(CAM_HFI, "fw dump ENTER");
 
-	size = sizeof(struct hfi_cmd_prop) + sizeof(lvl);
+	size = struct_size((struct hfi_cmd_prop *)NULL, prop_data, 1) + sizeof(lvl);
 	prop = kzalloc(size, GFP_KERNEL);
 	if (!prop)
 		return -ENOMEM;
@@ -540,7 +540,7 @@ int hfi_send_freq_info(int32_t freq)
 	if (!(g_hfi->dbg_lvl & HFI_DEBUG_MSG_PERF))
 		return -EINVAL;
 
-	size = sizeof(struct hfi_cmd_prop) + sizeof(freq);
+	size = struct_size((struct hfi_cmd_prop *)NULL, prop_data, 1) + sizeof(freq);
 	prop = kzalloc(size, GFP_KERNEL);
 	if (!prop)
 		return -ENOMEM;
@@ -593,7 +593,7 @@ void hfi_send_system_cmd(uint32_t type, uint64_t data, uint32_t size)
 		struct hfi_cmd_prop prop;
 
 		if ((uint32_t)data == (uint32_t)HFI_PROP_SYS_DEBUG_CFG) {
-			prop.size = sizeof(struct hfi_cmd_prop);
+			prop.size = struct_size((struct hfi_cmd_prop *)NULL, prop_data, 1);
 			prop.pkt_type = type;
 			prop.num_prop = 1;
 			prop.prop_data[0] = HFI_PROP_SYS_DEBUG_CFG;

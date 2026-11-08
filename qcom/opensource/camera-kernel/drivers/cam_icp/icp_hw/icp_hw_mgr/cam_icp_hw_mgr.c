@@ -3870,7 +3870,7 @@ static int cam_icp_mgr_abort_handle_wq(
 	packet_size =
 		sizeof(struct hfi_cmd_ipebps_async) +
 		sizeof(struct hfi_cmd_abort) -
-		sizeof(((struct hfi_cmd_ipebps_async *)0)->payload.direct);
+		sizeof_field(struct hfi_cmd_ipebps_async, payload.indirect);
 	abort_cmd = kzalloc(packet_size, GFP_KERNEL);
 	CAM_DBG(CAM_ICP, "abort pkt size = %d", (int) packet_size);
 	if (!abort_cmd) {
@@ -3926,7 +3926,7 @@ static int cam_icp_mgr_abort_handle(
 	packet_size =
 		sizeof(struct hfi_cmd_ipebps_async) +
 		sizeof(struct hfi_cmd_abort) -
-		sizeof(((struct hfi_cmd_ipebps_async *)0)->payload.direct);
+		sizeof_field(struct hfi_cmd_ipebps_async, payload.indirect);
 	abort_cmd = kzalloc(packet_size, GFP_KERNEL);
 	CAM_DBG(CAM_ICP, "abort pkt size = %d", (int) packet_size);
 	if (!abort_cmd) {
@@ -3981,7 +3981,7 @@ static int cam_icp_mgr_destroy_handle(
 	packet_size =
 		sizeof(struct hfi_cmd_ipebps_async) +
 		sizeof(struct hfi_cmd_abort_destroy) -
-		sizeof(((struct hfi_cmd_ipebps_async *)0)->payload.direct);
+		sizeof_field(struct hfi_cmd_ipebps_async, payload.indirect);
 	destroy_cmd = kzalloc(packet_size, GFP_KERNEL);
 	if (!destroy_cmd) {
 		rc = -ENOMEM;
@@ -4149,8 +4149,8 @@ static unsigned long cam_icp_hw_mgr_mini_dump_cb(void *dst, unsigned long len)
 				&ctx->icp_dev_acquire_info->in_res,
 				sizeof(struct cam_icp_res_info));
 			memcpy(ctx_md->acquire.out_res,
-				ctx->icp_dev_acquire_info->out_res,
-				sizeof(ctx->icp_dev_acquire_info->out_res));
+				ctx->icp_dev_acquire_info->out_resources,
+				ctx_md->acquire.num_out_res * sizeof(ctx_md->acquire.out_res[0]));
 		} else {
 			memset(&ctx_md->acquire, 0,
 				sizeof(struct cam_icp_mini_dump_acquire_info));
@@ -5194,7 +5194,7 @@ static int cam_icp_process_stream_settings(
 		(sizeof(struct hfi_cmd_ipe_bps_map) +
 		((cmd_mem_regions->num_regions - 1) *
 		sizeof(struct mem_map_region_data))) -
-		sizeof(((struct hfi_cmd_ipebps_async *)0)->payload.direct);
+		sizeof_field(struct hfi_cmd_ipebps_async, payload.indirect);
 
 	async_direct = kzalloc(packet_size, GFP_KERNEL);
 	if (!async_direct) {
@@ -6397,8 +6397,10 @@ static int cam_icp_get_acquire_info(struct cam_icp_hw_mgr *hw_mgr,
 	if (!ctx_data->icp_dev_acquire_info)
 		return -ENOMEM;
 
-	if (copy_from_user(ctx_data->icp_dev_acquire_info,
-		(void __user *)args->acquire_info, acquire_size)) {
+	*ctx_data->icp_dev_acquire_info = icp_dev_acquire_info;
+	if (copy_from_user((u8 *)ctx_data->icp_dev_acquire_info + sizeof(icp_dev_acquire_info),
+		(u8 __user *)args->acquire_info + sizeof(icp_dev_acquire_info),
+		acquire_size - sizeof(icp_dev_acquire_info))) {
 		CAM_ERR(CAM_ICP, "Failed in acquire: size = %d", acquire_size);
 		kfree(ctx_data->icp_dev_acquire_info);
 		ctx_data->icp_dev_acquire_info = NULL;
@@ -6414,7 +6416,7 @@ static int cam_icp_get_acquire_info(struct cam_icp_hw_mgr *hw_mgr,
 		ctx_data->icp_dev_acquire_info->num_out_res,
 		ctx_data->icp_dev_acquire_info->scratch_mem_size);
 
-	p_icp_out = ctx_data->icp_dev_acquire_info->out_res;
+	p_icp_out = ctx_data->icp_dev_acquire_info->out_resources;
 	for (i = 0; i < icp_dev_acquire_info.num_out_res; i++)
 		CAM_DBG(CAM_ICP, "out[i] %x %x %x %x",
 			p_icp_out[i].format,
@@ -6657,20 +6659,20 @@ static int cam_icp_mgr_acquire_hw(void *hw_mgr_priv, void *acquire_hw_args)
 		CAM_TRACE(CAM_ICP,
 			"[%s]: Acquired, out_res[0] : format=%d, widht=%d, height=%d, fps=%d",
 			ctx_data->ctx_id_string,
-			ctx_data->icp_dev_acquire_info->out_res[0].format,
-			ctx_data->icp_dev_acquire_info->out_res[0].width,
-			ctx_data->icp_dev_acquire_info->out_res[0].height,
-			ctx_data->icp_dev_acquire_info->out_res[0].fps);
+			ctx_data->icp_dev_acquire_info->out_resources[0].format,
+			ctx_data->icp_dev_acquire_info->out_resources[0].width,
+			ctx_data->icp_dev_acquire_info->out_resources[0].height,
+			ctx_data->icp_dev_acquire_info->out_resources[0].fps);
 	}
 
 	if (ctx_data->icp_dev_acquire_info->num_out_res > 1) {
 		CAM_TRACE(CAM_ICP,
 			"[%s]: Acquired, out_res[1] : format=%d, widht=%d, height=%d, fps=%d",
 			ctx_data->ctx_id_string,
-			ctx_data->icp_dev_acquire_info->out_res[1].format,
-			ctx_data->icp_dev_acquire_info->out_res[1].width,
-			ctx_data->icp_dev_acquire_info->out_res[1].height,
-			ctx_data->icp_dev_acquire_info->out_res[1].fps);
+			ctx_data->icp_dev_acquire_info->out_resources[1].format,
+			ctx_data->icp_dev_acquire_info->out_resources[1].width,
+			ctx_data->icp_dev_acquire_info->out_resources[1].height,
+			ctx_data->icp_dev_acquire_info->out_resources[1].fps);
 	}
 
 	return 0;
@@ -6987,7 +6989,7 @@ cmd_work_failed:
 	return rc;
 }
 
-void cam_icp_mgr_destroy_wq(void)
+static void cam_icp_mgr_destroy_wq(void)
 {
 	cam_req_mgr_workq_destroy(&icp_hw_mgr.timer_work);
 	cam_req_mgr_workq_destroy(&icp_hw_mgr.msg_work);

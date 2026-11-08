@@ -210,7 +210,14 @@ struct cam_icp_acquire_dev_info {
 	__s32                   chain_info;
 	struct cam_icp_res_info in_res;
 	__u32                   num_out_res;
+#ifdef __KERNEL__
+	union {
+		struct cam_icp_res_info out_res[1];
+		__DECLARE_FLEX_ARRAY(struct cam_icp_res_info, out_resources);
+	};
+#else
 	struct cam_icp_res_info out_res[1];
+#endif
 } __attribute__((__packed__));
 
 #endif /* __UAPI_CAM_ICP_H__ */
