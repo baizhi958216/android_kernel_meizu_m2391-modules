@@ -3,6 +3,8 @@
  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
  */
 
+#include "ipa_clients_i.h"
+#include <linux/if_vlan.h>
 #include <linux/msm_ipa.h>
 #include "../ipa_common_i.h"
 #include "../ipa_v3/ipa_pm.h"
@@ -944,10 +946,10 @@ static int ipa_eth_client_reg_intf_internal(struct ipa_eth_intf_info *intf)
 	}
 	INIT_LIST_HEAD(&new_intf->link);
 #if IPA_ETH_API_VER >= 2
-	strlcpy(new_intf->netdev_name, intf->net_dev->name, sizeof(new_intf->netdev_name));
+	strscpy(new_intf->netdev_name, intf->net_dev->name, sizeof(new_intf->netdev_name));
 	new_intf->hdr_len = intf_hdr[0].hdr_len;
 #else
-	strlcpy(new_intf->netdev_name, intf->netdev_name,
+	strscpy(new_intf->netdev_name, intf->netdev_name,
 		sizeof(new_intf->netdev_name));
 	new_intf->hdr_len = intf->hdr[0].hdr_len;
 #endif
@@ -1014,7 +1016,7 @@ static int ipa_eth_client_reg_intf_internal(struct ipa_eth_intf_info *intf)
 #else
 			tx_prop[i].hdr_l2_type = intf->hdr[0].hdr_type;
 #endif
-			strlcpy(tx_prop[i].hdr_name, hdr->hdr[IPA_IP_v4].name,
+			strscpy(tx_prop[i].hdr_name, hdr->hdr[IPA_IP_v4].name,
 				sizeof(tx_prop[i].hdr_name));
 
 			tx_prop[i+1].ip = IPA_IP_v6;
@@ -1024,7 +1026,7 @@ static int ipa_eth_client_reg_intf_internal(struct ipa_eth_intf_info *intf)
 #else
 			tx_prop[i+1].hdr_l2_type = intf->hdr[1].hdr_type;
 #endif
-			strlcpy(tx_prop[i+1].hdr_name, hdr->hdr[IPA_IP_v6].name,
+			strscpy(tx_prop[i+1].hdr_name, hdr->hdr[IPA_IP_v6].name,
 				sizeof(tx_prop[i+1].hdr_name));
 		}
 	}
@@ -1079,7 +1081,7 @@ static int ipa_eth_client_reg_intf_internal(struct ipa_eth_intf_info *intf)
 
 #if IPA_ETH_API_VER >= 2
 	if (intf->is_conn_evt) {
-		strlcpy(msg.name, intf->net_dev->name, sizeof(msg.name));
+		strscpy(msg.name, intf->net_dev->name, sizeof(msg.name));
 		msg.ifindex = intf->net_dev->ifindex;
 		ipa_eth_client_conn_evt_internal(&msg);
 	}
@@ -1169,7 +1171,7 @@ fail:
 	mutex_unlock(&ipa_eth_ctx->lock);
 #if IPA_ETH_API_VER >= 2
 	if (intf->is_conn_evt) {
-		strlcpy(msg.name, intf->net_dev->name, sizeof(msg.name));
+		strscpy(msg.name, intf->net_dev->name, sizeof(msg.name));
 		msg.ifindex = intf->net_dev->ifindex;
 		ipa_eth_client_disconn_evt_internal(&msg);
 	}
@@ -1201,7 +1203,7 @@ static int ipa_eth_client_set_perf_profile_internal(struct ipa_eth_client *clien
 	return 0;
 }
 
-enum ipa_client_type ipa_eth_get_ipa_client_type_from_eth_type_internal(
+static enum ipa_client_type ipa_eth_get_ipa_client_type_from_eth_type_internal(
 	enum ipa_eth_client_type eth_client_type, enum ipa_eth_pipe_direction dir)
 {
 	int ipa_client_type = IPA_CLIENT_MAX;
@@ -1247,7 +1249,7 @@ enum ipa_client_type ipa_eth_get_ipa_client_type_from_eth_type_internal(
 	return ipa_client_type;
 }
 
-bool ipa_eth_client_exist_internal(enum ipa_eth_client_type eth_client_type, int inst_id)
+static bool ipa_eth_client_exist_internal(enum ipa_eth_client_type eth_client_type, int inst_id)
 {
 	if (ipa_eth_ctx)
 		return ipa_eth_ctx->client[eth_client_type][inst_id].existed;

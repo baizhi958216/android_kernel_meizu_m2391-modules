@@ -4,6 +4,7 @@
  * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include "ipa_clients_i.h"
 #include <linux/debugfs.h>
 #include <linux/export.h>
 #include <linux/delay.h>
@@ -120,6 +121,8 @@ enum ipa_mhi_dma_dir {
  * @state: Channel state
  */
 struct ipa_mhi_channel_ctx {
+	mhi_dma_cb dma_notify;
+	void *dma_priv;
 	bool valid;
 	u8 id;
 	u8 index;
@@ -137,6 +140,7 @@ struct ipa_mhi_channel_ctx {
 };
 
 struct ipa_mhi_client_ctx {
+	mhi_dma_cb dma_notify;
 	enum ipa_mhi_state state;
 	spinlock_t state_lock;
 	mhi_client_cb cb_notify;
@@ -531,8 +535,12 @@ static void ipa_mhi_notify_wakeup(void)
 static void ipa_mhi_wq_notify_wakeup(struct work_struct *work)
 {
 	IPA_MHI_FUNC_ENTRY();
-	ipa_mhi_client_ctx->cb_notify(ipa_mhi_client_ctx->cb_priv,
-		IPA_MHI_EVENT_DATA_AVAILABLE, 0);
+	if (ipa_mhi_client_ctx->dma_notify)
+		ipa_mhi_client_ctx->dma_notify(ipa_mhi_client_ctx->cb_priv,
+					      MHI_DMA_EVENT_DATA_AVAILABLE, 0);
+	else
+		ipa_mhi_client_ctx->cb_notify(ipa_mhi_client_ctx->cb_priv,
+					     IPA_MHI_EVENT_DATA_AVAILABLE, 0);
 	IPA_MHI_FUNC_EXIT();
 }
 
@@ -545,8 +553,12 @@ static void ipa_mhi_wq_notify_wakeup(struct work_struct *work)
 static void ipa_mhi_wq_notify_ready(struct work_struct *work)
 {
 	IPA_MHI_FUNC_ENTRY();
-	ipa_mhi_client_ctx->cb_notify(ipa_mhi_client_ctx->cb_priv,
-		IPA_MHI_EVENT_READY, 0);
+	if (ipa_mhi_client_ctx->dma_notify)
+		ipa_mhi_client_ctx->dma_notify(ipa_mhi_client_ctx->cb_priv,
+					      MHI_DMA_EVENT_READY, 0);
+	else
+		ipa_mhi_client_ctx->cb_notify(ipa_mhi_client_ctx->cb_priv,
+					     IPA_MHI_EVENT_READY, 0);
 	IPA_MHI_FUNC_EXIT();
 }
 
@@ -1297,7 +1309,16 @@ static enum ipa_client_type ipa3_mhi_get_client_by_chid(u32 chid)
  * Return codes: 0	  : success
  *		 negative : error
  */
-static int ipa_mhi_connect_pipe_internal(struct ipa_mhi_connect_params *in, u32 *clnt_hdl)
+static void ipa_mhi_dma_pipe_notify(void *priv, enum ipa_dp_evt_type event, unsigned long data)
+{
+	struct ipa_mhi_channel_ctx *ch = priv;
+
+	/* The DMA endpoint ABI passes the original numeric data-path event. */
+	ch->dma_notify(ch->dma_priv, (enum mhi_dma_event_type)event, data);
+}
+
+static int ipa_mhi_connect_pipe_common(struct ipa_mhi_connect_params *in, u32 *clnt_hdl,
+				       mhi_dma_cb dma_notify)
 {
 	int res;
 	unsigned long flags;
@@ -1306,7 +1327,7 @@ static int ipa_mhi_connect_pipe_internal(struct ipa_mhi_connect_params *in, u32 
 
 	IPA_MHI_FUNC_ENTRY();
 
-	if (!in || !clnt_hdl) {
+	if (!ipa_mhi_client_ctx || !in || !clnt_hdl) {
 		IPA_MHI_ERR("NULL args\n");
 		return -EINVAL;
 	}
@@ -1370,6 +1391,12 @@ static int ipa_mhi_connect_pipe_internal(struct ipa_mhi_connect_params *in, u32 
 	}
 
 	internal.channel_id = in->channel_id;
+	if (dma_notify) {
+		channel->dma_notify = dma_notify;
+		channel->dma_priv = in->sys.priv;
+		in->sys.priv = channel;
+		in->sys.notify = ipa_mhi_dma_pipe_notify;
+	}
 	internal.sys = &in->sys;
 	internal.start.gsi.state = channel->state;
 	internal.start.gsi.msi = &ipa_mhi_client_ctx->msi;
@@ -1429,6 +1456,11 @@ fail_start_channel:
 	mutex_unlock(&mhi_client_general_mutex);
 	IPA_ACTIVE_CLIENTS_DEC_EP(in->sys.client);
 	return -EPERM;
+}
+
+static int ipa_mhi_connect_pipe_internal(struct ipa_mhi_connect_params *in, u32 *clnt_hdl)
+{
+	return ipa_mhi_connect_pipe_common(in, clnt_hdl, NULL);
 }
 
 /**
@@ -2113,7 +2145,7 @@ fail:
  * This function is called by IPA MHI client driver on MHI reset to destroy all
  * IPA MHI channels.
  */
-int ipa_mhi_destroy_all_channels(void)
+static int ipa_mhi_destroy_all_channels(void)
 {
 	int res;
 
@@ -2294,7 +2326,7 @@ fail_pm_cons:
  * Return codes: 0	  : success
  *		 negative : error
  */
-static int ipa_mhi_init_internal(struct ipa_mhi_init_params *params)
+static int ipa_mhi_init_common(struct ipa_mhi_init_params *params, mhi_dma_cb dma_notify)
 {
 	int res;
 
@@ -2305,7 +2337,7 @@ static int ipa_mhi_init_internal(struct ipa_mhi_init_params *params)
 		return -EINVAL;
 	}
 
-	if (!params->notify) {
+	if (!params->notify && !dma_notify) {
 		IPA_MHI_ERR("null notify function\n");
 		return -EINVAL;
 	}
@@ -2334,6 +2366,7 @@ static int ipa_mhi_init_internal(struct ipa_mhi_init_params *params)
 	}
 
 	ipa_mhi_client_ctx->state = IPA_MHI_STATE_INITIALIZED;
+	ipa_mhi_client_ctx->dma_notify = dma_notify;
 	ipa_mhi_client_ctx->cb_notify = params->notify;
 	ipa_mhi_client_ctx->cb_priv = params->priv;
 	spin_lock_init(&ipa_mhi_client_ctx->state_lock);
@@ -2389,6 +2422,11 @@ fail_alloc_ctx:
 	return res;
 }
 
+static int ipa_mhi_init_internal(struct ipa_mhi_init_params *params)
+{
+	return ipa_mhi_init_common(params, NULL);
+}
+
 /**
  * ipa_mhi_handle_ipa_config_req() - hanle IPA CONFIG QMI message
  *
@@ -2438,7 +2476,7 @@ int ipa_mhi_is_using_dma(bool *flag)
  * Return codes: 0	  : success
  *		 negative : error
  */
-int ipa_mhi_update_mstate_internal(enum ipa_mhi_mstate mstate_info)
+static int ipa_mhi_update_mstate_internal(enum ipa_mhi_mstate mstate_info)
 {
 	IPA_MHI_FUNC_ENTRY();
 
@@ -2490,8 +2528,9 @@ int ipa_mhi_dma_init(struct mhi_dma_function_params function,
                 struct mhi_dma_init_params *params,
                 struct mhi_dma_init_out *out)
 {
+	struct ipa_mhi_init_params init = {};
 	int gsi_res;
-	if (!out) {
+	if (!params || !out) {
 		IPA_MHI_DBG("null out arg\n");
 		return -EINVAL;
 	}
@@ -2506,14 +2545,32 @@ int ipa_mhi_dma_init(struct mhi_dma_function_params function,
 	ipa_mhi_get_ch_bitmap(&out->ch_db_fwd_msk);
 	out->ev_db_fwd_msk = out->ch_db_fwd_msk;
 
-	return ipa_mhi_init_internal((struct ipa_mhi_init_params *)params);;
+	init.msi.addr_low = params->msi.addr_low;
+	init.msi.addr_hi = params->msi.addr_hi;
+	init.msi.data = params->msi.data;
+	init.msi.mask = params->msi.mask;
+	init.mmio_addr = params->mmio_addr;
+	init.first_ch_idx = params->first_ch_idx;
+	init.first_er_idx = params->first_er_idx;
+	init.assert_bit40 = params->assert_bit40;
+	init.priv = params->priv;
+	init.test_mode = params->test_mode;
+	return ipa_mhi_init_common(&init, params->notify);
 }
 EXPORT_SYMBOL(ipa_mhi_dma_init);
 
 int ipa_mhi_dma_start(struct mhi_dma_function_params function,
 		struct mhi_dma_start_params *params)
 {
-	return ipa_mhi_start_internal((struct ipa_mhi_start_params *)params);
+	struct ipa_mhi_start_params start;
+
+	if (!params)
+		return -EINVAL;
+	start.host_ctrl_addr = params->host_ctrl_addr;
+	start.host_data_addr = params->host_data_addr;
+	start.channel_context_array_addr = params->channel_context_array_addr;
+	start.event_context_array_addr = params->event_context_array_addr;
+	return ipa_mhi_start_internal(&start);
 }
 EXPORT_SYMBOL(ipa_mhi_dma_start);
 
@@ -2522,19 +2579,18 @@ int ipa_mhi_dma_connect_endp(struct mhi_dma_function_params function,
 {
 	struct ipa_mhi_connect_params connect_params = {0};
 
-	/* struct mhi_dma_function_params is not the same as struct ipa_mhi_connect_params.
-	  Casting needs to be done explictly.*/
+	if (!in)
+		return -EINVAL;
 	connect_params.channel_id = in->channel_id;
 	connect_params.sys.desc_fifo_sz = in->desc_fifo_sz;
 	connect_params.sys.priv = in->priv;
-	connect_params.sys.notify = (ipa_notify_cb)in->notify;
 	connect_params.sys.int_modt = in->int_modt;
 	connect_params.sys.int_modc = in->int_modc;
 	connect_params.sys.buff_size = in->buff_size;
 
 	connect_params.sys.skip_ep_cfg = true;
 
-	return ipa_mhi_connect_pipe_internal(&connect_params, clnt_hdl);
+	return ipa_mhi_connect_pipe_common(&connect_params, clnt_hdl, in->notify);
 }
 EXPORT_SYMBOL(ipa_mhi_dma_connect_endp);
 

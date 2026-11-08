@@ -4,6 +4,7 @@
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include "ipa_clients_i.h"
 #include <linux/debugfs.h>
 #include <linux/export.h>
 #include <linux/fs.h>
@@ -557,7 +558,7 @@ static int ipa_bridge_init_internal(struct ipa_bridge_init_params *params, u32 *
 		goto fail_alloc_mem;
 	}
 
-	strlcpy(new_intf->netdev_name, params->info.netdev_name,
+	strscpy(new_intf->netdev_name, params->info.netdev_name,
 		sizeof(new_intf->netdev_name));
 	new_intf->wakeup_request = params->wakeup_request;
 	new_intf->priv = params->info.priv;

@@ -3,6 +3,7 @@
  * Copyright (c) 2015-2020, The Linux Foundation. All rights reserved.
  */
 
+#include "ipa_clients_i.h"
 #include <linux/mutex.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
@@ -1008,6 +1009,7 @@ static bool ipa3_usb_check_chan_params(struct ipa_usb_xdci_chan_params *params)
 			IPA_USB_ERR("DPL supports only DL channel\n");
 			return false;
 		}
+		fallthrough;
 	case IPA_USB_RNDIS:
 	case IPA_USB_ECM:
 		if (ipa3_usb_ctx->teth_prot_ctx[params->teth_prot].state ==

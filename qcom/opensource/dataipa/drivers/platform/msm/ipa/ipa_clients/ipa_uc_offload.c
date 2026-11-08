@@ -3,6 +3,7 @@
  * Copyright (c) 2015-2021, The Linux Foundation. All rights reserved.
  */
 
+#include "ipa_clients_i.h"
 #include <linux/ipa_uc_offload.h>
 #include <linux/msm_ipa.h>
 #include <linux/if_vlan.h>
@@ -404,7 +405,7 @@ static void ipa_uc_ntn_free_conn_smmu_info(struct ipa_ntn_setup_info *params)
 	ipa_smmu_free_sgt(&params->ring_base_sgt);
 }
 
-int ipa_uc_ntn_conn_pipes(struct ipa_ntn_conn_in_params *inp,
+static int ipa_uc_ntn_conn_pipes(struct ipa_ntn_conn_in_params *inp,
 			struct ipa_ntn_conn_out_params *outp,
 			struct ipa_uc_offload_ctx *ntn_ctx)
 {
@@ -677,7 +678,7 @@ static int ipa_uc_offload_cleanup_internal(u32 clnt_hdl)
  * Returns:	0 on success, negative on failure
  *
  */
-int ipa_uc_offload_reg_rdyCB_internal(struct ipa_uc_ready_params *inp)
+static int ipa_uc_offload_reg_rdyCB_internal(struct ipa_uc_ready_params *inp)
 {
 	int ret = 0;
 
@@ -698,13 +699,13 @@ int ipa_uc_offload_reg_rdyCB_internal(struct ipa_uc_ready_params *inp)
 	return ret;
 }
 
-void ipa_uc_offload_dereg_rdyCB_internal(enum ipa_uc_offload_proto proto)
+static void ipa_uc_offload_dereg_rdyCB_internal(enum ipa_uc_offload_proto proto)
 {
 	if (proto == IPA_UC_NTN || proto == IPA_UC_NTN_V2X)
 		ipa3_ntn_uc_dereg_rdyCB();
 }
 
-int ipa_set_perf_profile_internal(struct ipa_perf_profile *profile)
+static int ipa_set_perf_profile_internal(struct ipa_perf_profile *profile)
 {
 	if (!profile) {
 		IPA_UC_OFFLOAD_ERR("Invalid input\n");

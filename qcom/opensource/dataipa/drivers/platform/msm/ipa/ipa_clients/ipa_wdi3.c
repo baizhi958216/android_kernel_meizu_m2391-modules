@@ -4,6 +4,7 @@
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include "ipa_clients_i.h"
 #include <linux/ipa_wdi3.h>
 #include <linux/msm_ipa.h>
 #include <linux/string.h>
@@ -334,7 +335,7 @@ static int ipa_wdi_reg_intf_per_inst_internal(
 	}
 
 	INIT_LIST_HEAD(&new_intf->link);
-	strlcpy(new_intf->netdev_name, in->netdev_name,
+	strscpy(new_intf->netdev_name, in->netdev_name,
 		sizeof(new_intf->netdev_name));
 	new_intf->hdr_len = in->hdr_info[0].hdr_len;
 
@@ -376,7 +377,7 @@ static int ipa_wdi_reg_intf_per_inst_internal(
 		tx_prop[0].dst_pipe = IPA_CLIENT_WLAN1_CONS;
 	tx_prop[0].alt_dst_pipe = in->alt_dst_pipe;
 	tx_prop[0].hdr_l2_type = in->hdr_info[0].hdr_type;
-	strlcpy(tx_prop[0].hdr_name, hdr->hdr[IPA_IP_v4].name,
+	strscpy(tx_prop[0].hdr_name, hdr->hdr[IPA_IP_v4].name,
 		sizeof(tx_prop[0].hdr_name));
 
 	tx_prop[1].ip = IPA_IP_v6;
@@ -392,7 +393,7 @@ static int ipa_wdi_reg_intf_per_inst_internal(
 		tx_prop[1].dst_pipe = IPA_CLIENT_WLAN1_CONS;
 	tx_prop[1].alt_dst_pipe = in->alt_dst_pipe;
 	tx_prop[1].hdr_l2_type = in->hdr_info[1].hdr_type;
-	strlcpy(tx_prop[1].hdr_name, hdr->hdr[IPA_IP_v6].name,
+	strscpy(tx_prop[1].hdr_name, hdr->hdr[IPA_IP_v6].name,
 		sizeof(tx_prop[1].hdr_name));
 
 	/* populate rx prop */

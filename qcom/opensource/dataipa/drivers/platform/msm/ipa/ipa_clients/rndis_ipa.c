@@ -313,8 +313,7 @@ static int rndis_ipa_ep_registers_cfg
 	bool deaggr_enable,
 	bool is_vlan_mode);
 static int rndis_ipa_set_device_ethernet_addr
-	(u8 *dev_ethaddr,
-	u8 device_ethaddr[]);
+	(struct net_device *net, const u8 *device_ethaddr);
 static enum rndis_ipa_state rndis_ipa_next_state
 	(enum rndis_ipa_state current_state,
 	enum rndis_ipa_operation operation);
@@ -641,7 +640,7 @@ int rndis_ipa_init(struct ipa_usb_init_params *params)
 	rndis_ipa_debugfs_init(rndis_ipa_ctx);
 
 	result = rndis_ipa_set_device_ethernet_addr
-		(net->dev_addr, rndis_ipa_ctx->device_ethaddr);
+		(net, rndis_ipa_ctx->device_ethaddr);
 	if (result) {
 		RNDIS_IPA_ERROR("set device MAC failed\n");
 		goto fail_set_device_ethernet;
@@ -708,7 +707,7 @@ int rndis_ipa_init(struct ipa_usb_init_params *params)
 		rndis_ipa_ctx->netif_rx_function = netif_receive_skb;
 		RNDIS_IPA_DEBUG("LAN RX NAPI enabled = True");
 	} else {
-		rndis_ipa_ctx->netif_rx_function = netif_rx_ni;
+		rndis_ipa_ctx->netif_rx_function = netif_rx;
 		RNDIS_IPA_DEBUG("LAN RX NAPI enabled = False");
 	}
 
@@ -880,7 +879,7 @@ int rndis_ipa_pipe_connect_notify(
 	memset(&msg_meta, 0, sizeof(struct ipa_msg_meta));
 	msg_meta.msg_type = ECM_CONNECT;
 	msg_meta.msg_len = sizeof(struct ipa_ecm_msg);
-	strlcpy(rndis_msg->name, rndis_ipa_ctx->net->name,
+	strscpy(rndis_msg->name, rndis_ipa_ctx->net->name,
 		IPA_RESOURCE_NAME_MAX);
 	rndis_msg->ifindex = rndis_ipa_ctx->net->ifindex;
 
@@ -1400,7 +1399,7 @@ int rndis_ipa_pipe_disconnect_notify(void *private)
 	memset(&msg_meta, 0, sizeof(struct ipa_msg_meta));
 	msg_meta.msg_type = ECM_DISCONNECT;
 	msg_meta.msg_len = sizeof(struct ipa_ecm_msg);
-	strlcpy(rndis_msg->name, rndis_ipa_ctx->net->name,
+	strscpy(rndis_msg->name, rndis_ipa_ctx->net->name,
 		IPA_RESOURCE_NAME_MAX);
 	rndis_msg->ifindex = rndis_ipa_ctx->net->ifindex;
 
@@ -1657,7 +1656,7 @@ static void rndis_ipa_prepare_header_insertion(
 
 	add_hdr->hdr_len = sizeof(rndis_template_hdr);
 	add_hdr->is_partial = false;
-	strlcpy(add_hdr->name, hdr_name, IPA_RESOURCE_NAME_MAX);
+	strscpy(add_hdr->name, hdr_name, IPA_RESOURCE_NAME_MAX);
 
 	memcpy(add_hdr->hdr, &rndis_template_hdr, sizeof(rndis_template_hdr));
 	add_hdr->is_eth2_ofst_valid = true;
@@ -1707,7 +1706,7 @@ static int rndis_ipa_hdrs_hpc_cfg(struct rndis_ipa_dev *rndis_ipa_ctx)
 		goto fail_mem;
 	}
 	rndis_hdr = &hdrs->hdr[0];
-	strlcpy(rndis_hdr->name, RNDIS_HDR_NAME, sizeof(rndis_hdr->name));
+	strscpy(rndis_hdr->name, RNDIS_HDR_NAME, sizeof(rndis_hdr->name));
 	memcpy(rndis_hdr->hdr, &rndis_template_hdr, sizeof(rndis_template_hdr));
 	rndis_hdr->hdr_len = sizeof(rndis_template_hdr);
 	rndis_hdr->hdr_hdl = -1;
@@ -1730,7 +1729,7 @@ static int rndis_ipa_hdrs_hpc_cfg(struct rndis_ipa_dev *rndis_ipa_ctx)
 
 	rndis_ipa_ctx->rndis_hdr_hdl = rndis_hdr->hdr_hdl;
 	lookup.ep = IPA_TO_USB_CLIENT;
-	strlcpy(lookup.name, RNDIS_HDR_NAME, sizeof(lookup.name));
+	strscpy(lookup.name, RNDIS_HDR_NAME, sizeof(lookup.name));
 	if (ipa_set_pkt_init_ex_hdr_ofst(&lookup, true))
 		goto fail_add_hdr;
 
@@ -1899,14 +1898,14 @@ static int rndis_ipa_register_properties(char *netdev_name, bool is_vlan_mode)
 	ipv4_property = &tx_properties.prop[0];
 	ipv4_property->ip = IPA_IP_v4;
 	ipv4_property->dst_pipe = IPA_TO_USB_CLIENT;
-	strlcpy
+	strscpy
 		(ipv4_property->hdr_name, IPV4_HDR_NAME,
 		IPA_RESOURCE_NAME_MAX);
 	ipv4_property->hdr_l2_type = hdr_l2_type;
 	ipv6_property = &tx_properties.prop[1];
 	ipv6_property->ip = IPA_IP_v6;
 	ipv6_property->dst_pipe = IPA_TO_USB_CLIENT;
-	strlcpy
+	strscpy
 		(ipv6_property->hdr_name, IPV6_HDR_NAME,
 		IPA_RESOURCE_NAME_MAX);
 	ipv6_property->hdr_l2_type = hdr_l2_type;
@@ -2216,12 +2215,11 @@ static int rndis_ipa_ep_registers_cfg(
  * Returns 0 for success, negative otherwise
  */
 static int rndis_ipa_set_device_ethernet_addr(
-	u8 *dev_ethaddr,
-	u8 device_ethaddr[])
+	struct net_device *net, const u8 *device_ethaddr)
 {
 	if (!is_valid_ether_addr(device_ethaddr))
 		return -EINVAL;
-	memcpy(dev_ethaddr, device_ethaddr, ETH_ALEN);
+	eth_hw_addr_set(net, device_ethaddr);
 
 	return 0;
 }

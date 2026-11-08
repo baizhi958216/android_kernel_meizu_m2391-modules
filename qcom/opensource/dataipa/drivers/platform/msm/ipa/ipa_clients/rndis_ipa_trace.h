@@ -71,13 +71,5 @@ TRACE_EVENT(
 
 /* This part must be outside protection */
 #undef TRACE_INCLUDE_PATH
-#ifdef CONFIG_IPA_VENDOR_DLKM
-#define TRACE_INCLUDE_PATH ../../../m2391-modules/qcom/opensource/dataipa/drivers/platform/msm/ipa/ipa_clients
-#elif defined(CONFIG_KALAMA_IPA_LE)
-#define TRACE_INCLUDE_PATH ../ipa/ipa_clients
-#elif defined(CONFIG_SCUBA_IPA_LE)
-#define TRACE_INCLUDE_PATH ../ipa/ipa_clients
-#else
-#define TRACE_INCLUDE_PATH ../../techpack/dataipa/drivers/platform/msm/ipa/ipa_clients
-#endif
+#define TRACE_INCLUDE_PATH .
 #include <trace/define_trace.h>

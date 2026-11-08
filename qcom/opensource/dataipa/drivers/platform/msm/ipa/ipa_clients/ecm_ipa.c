@@ -543,7 +543,7 @@ int ecm_ipa_connect(u32 usb_to_ipa_hdl, u32 ipa_to_usb_hdl, void *priv)
 	memset(&msg_meta, 0, sizeof(struct ipa_msg_meta));
 	msg_meta.msg_type = ECM_CONNECT;
 	msg_meta.msg_len = sizeof(struct ipa_ecm_msg);
-	strlcpy(ecm_msg->name, ecm_ipa_ctx->net->name,
+	strscpy(ecm_msg->name, ecm_ipa_ctx->net->name,
 		IPA_RESOURCE_NAME_MAX);
 	ecm_msg->ifindex = ecm_ipa_ctx->net->ifindex;
 
@@ -846,7 +846,7 @@ int ecm_ipa_disconnect(void *priv)
 	memset(&msg_meta, 0, sizeof(struct ipa_msg_meta));
 	msg_meta.msg_type = ECM_DISCONNECT;
 	msg_meta.msg_len = sizeof(struct ipa_ecm_msg);
-	strlcpy(ecm_msg->name, ecm_ipa_ctx->net->name,
+	strscpy(ecm_msg->name, ecm_ipa_ctx->net->name,
 		IPA_RESOURCE_NAME_MAX);
 	ecm_msg->ifindex = ecm_ipa_ctx->net->ifindex;
 
@@ -953,7 +953,7 @@ static void ecm_ipa_prepare_header_insertion(
 	ECM_IPA_LOG_ENTRY();
 
 	add_hdr->is_partial = 0;
-	strlcpy(add_hdr->name, hdr_name, IPA_RESOURCE_NAME_MAX);
+	strscpy(add_hdr->name, hdr_name, IPA_RESOURCE_NAME_MAX);
 	add_hdr->is_eth2_ofst_valid = true;
 	add_hdr->eth2_ofst = 0;
 
@@ -992,7 +992,7 @@ static int ecm_ipa_hdrs_hpc_cfg(struct ecm_ipa_dev *ecm_ipa_ctx)
 		goto fail_mem;
 	}
 	empty_hdr = &hdrs->hdr[0];
-	strlcpy(empty_hdr->name, EMPTY_HDR_NAME, sizeof(empty_hdr->name));
+	strscpy(empty_hdr->name, EMPTY_HDR_NAME, sizeof(empty_hdr->name));
 	empty_hdr->hdr_len = 0;
 	empty_hdr->hdr_hdl = -1;
 	empty_hdr->is_partial = false;
@@ -1014,7 +1014,7 @@ static int ecm_ipa_hdrs_hpc_cfg(struct ecm_ipa_dev *ecm_ipa_ctx)
 
 	ecm_ipa_ctx->empty_hdr_hdl = empty_hdr->hdr_hdl;
 	lookup.ep = IPA_CLIENT_USB_CONS;
-	strlcpy(lookup.name, EMPTY_HDR_NAME, sizeof(lookup.name));
+	strscpy(lookup.name, EMPTY_HDR_NAME, sizeof(lookup.name));
 	if (ipa_set_pkt_init_ex_hdr_ofst(&lookup, true))
 		goto fail_add_hdr;
 
