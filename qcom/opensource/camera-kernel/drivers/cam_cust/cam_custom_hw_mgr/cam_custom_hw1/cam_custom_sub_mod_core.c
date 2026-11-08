@@ -231,7 +231,7 @@ int cam_custom_hw_sub_mod_write(void *hw_priv,
 	return -EPERM;
 }
 
-int cam_custom_hw_submit_req(void *hw_priv, void *hw_submit_args,
+static int cam_custom_hw_submit_req(void *hw_priv, void *hw_submit_args,
 	uint32_t arg_size)
 {
 	struct cam_hw_info			         *custom_dev = hw_priv;

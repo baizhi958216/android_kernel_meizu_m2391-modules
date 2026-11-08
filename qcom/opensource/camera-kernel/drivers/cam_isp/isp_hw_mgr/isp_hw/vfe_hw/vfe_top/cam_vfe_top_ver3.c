@@ -289,7 +289,7 @@ static int cam_vfe_top_ver3_get_data(
 	return -EINVAL;
 }
 
-int cam_vfe_top_ver3_get_hw_caps(void *device_priv,
+static int cam_vfe_top_ver3_get_hw_caps(void *device_priv,
 	void *args, uint32_t arg_size)
 {
 	struct cam_vfe_hw_get_hw_cap *vfe_cap_info = NULL;
@@ -325,7 +325,7 @@ int cam_vfe_top_ver3_get_hw_caps(void *device_priv,
 	return 0;
 }
 
-int cam_vfe_top_ver3_init_hw(void *device_priv,
+static int cam_vfe_top_ver3_init_hw(void *device_priv,
 	void *init_hw_args, uint32_t arg_size)
 {
 	struct cam_vfe_top_ver3_priv   *top_priv = device_priv;
@@ -358,7 +358,7 @@ int cam_vfe_top_ver3_init_hw(void *device_priv,
 	return 0;
 }
 
-int cam_vfe_top_ver3_reset(void *device_priv,
+static int cam_vfe_top_ver3_reset(void *device_priv,
 	void *reset_core_args, uint32_t arg_size)
 {
 	struct cam_vfe_top_ver3_priv   *top_priv = device_priv;
@@ -418,7 +418,7 @@ int cam_vfe_top_ver3_reset(void *device_priv,
 	return 0;
 }
 
-int cam_vfe_top_ver3_reserve(void *device_priv,
+static int cam_vfe_top_ver3_reserve(void *device_priv,
 	void *reserve_args, uint32_t arg_size)
 {
 	struct cam_vfe_top_ver3_priv            *top_priv;
@@ -492,7 +492,7 @@ int cam_vfe_top_ver3_reserve(void *device_priv,
 
 }
 
-int cam_vfe_top_ver3_release(void *device_priv,
+static int cam_vfe_top_ver3_release(void *device_priv,
 	void *release_args, uint32_t arg_size)
 {
 	struct cam_vfe_top_ver3_priv            *top_priv;
@@ -518,7 +518,7 @@ int cam_vfe_top_ver3_release(void *device_priv,
 	return 0;
 }
 
-int cam_vfe_top_ver3_start(void *device_priv,
+static int cam_vfe_top_ver3_start(void *device_priv,
 	void *start_args, uint32_t arg_size)
 {
 	struct cam_vfe_top_ver3_priv            *top_priv;
@@ -576,7 +576,7 @@ int cam_vfe_top_ver3_start(void *device_priv,
 	return rc;
 }
 
-int cam_vfe_top_ver3_stop(void *device_priv,
+static int cam_vfe_top_ver3_stop(void *device_priv,
 	void *stop_args, uint32_t arg_size)
 {
 	struct cam_vfe_top_ver3_priv            *top_priv;
@@ -626,19 +626,19 @@ int cam_vfe_top_ver3_stop(void *device_priv,
 	return rc;
 }
 
-int cam_vfe_top_ver3_read(void *device_priv,
+static int cam_vfe_top_ver3_read(void *device_priv,
 	void *read_args, uint32_t arg_size)
 {
 	return -EPERM;
 }
 
-int cam_vfe_top_ver3_write(void *device_priv,
+static int cam_vfe_top_ver3_write(void *device_priv,
 	void *write_args, uint32_t arg_size)
 {
 	return -EPERM;
 }
 
-int cam_vfe_top_ver3_process_cmd(void *device_priv, uint32_t cmd_type,
+static int cam_vfe_top_ver3_process_cmd(void *device_priv, uint32_t cmd_type,
 	void *cmd_args, uint32_t arg_size)
 {
 	int rc = 0;

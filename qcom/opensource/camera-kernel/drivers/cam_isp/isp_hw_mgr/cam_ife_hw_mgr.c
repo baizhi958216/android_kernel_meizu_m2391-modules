@@ -4846,7 +4846,7 @@ err:
 	return rc;
 }
 
-void cam_ife_cam_cdm_callback(uint32_t handle, void *userdata,
+static void cam_ife_cam_cdm_callback(uint32_t handle, void *userdata,
 	enum cam_cdm_cb_status status, void *cookie)
 {
 	struct cam_isp_prepare_hw_update_data   *hw_update_data = NULL;
@@ -5470,7 +5470,7 @@ err:
 	return rc;
 }
 
-void cam_ife_mgr_acquire_get_unified_dev_str(struct cam_isp_in_port_info *in,
+static void cam_ife_mgr_acquire_get_unified_dev_str(struct cam_isp_in_port_info *in,
 	struct cam_isp_in_port_generic_info *gen_port_info)
 {
 	int i;
@@ -12139,7 +12139,7 @@ outportlog:
 	cam_packet_util_put_packet_addr(pf_req_info->packet_handle);
 }
 
-int cam_isp_config_csid_rup_aup(
+static int cam_isp_config_csid_rup_aup(
 	struct cam_ife_hw_mgr_ctx *ctx)
 {
 	int rc = 0, i, j, hw_idx;

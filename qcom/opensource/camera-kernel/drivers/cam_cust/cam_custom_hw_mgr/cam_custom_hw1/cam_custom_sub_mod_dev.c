@@ -136,7 +136,7 @@ const static struct component_ops cam_custom_hw_sub_mod_component_ops = {
 	.unbind = cam_custom_hw_sub_mod_component_unbind,
 };
 
-int cam_custom_hw_sub_mod_probe(struct platform_device *pdev)
+static int cam_custom_hw_sub_mod_probe(struct platform_device *pdev)
 {
 	int rc = 0;
 

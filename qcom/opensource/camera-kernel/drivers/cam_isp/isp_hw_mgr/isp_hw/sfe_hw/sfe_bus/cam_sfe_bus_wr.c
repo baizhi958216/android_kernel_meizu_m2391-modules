@@ -352,7 +352,7 @@ static int cam_sfe_bus_get_comp_sfe_out_res_id_list(
 	return 0;
 }
 
-bool cam_sfe_is_mipi_pcking_needed(
+static bool cam_sfe_is_mipi_pcking_needed(
 	struct cam_sfe_bus_wr_priv *bus_priv,
 	int wm_index)
 {
@@ -861,13 +861,13 @@ static int cam_sfe_bus_acquire_wm(
 
 	switch (rsrc_data->en_cfg) {
 	case 0x1:
-		strlcpy(wm_mode, "line-based", sizeof(wm_mode));
+		strscpy(wm_mode, "line-based", sizeof(wm_mode));
 		break;
 	case ((0x1 << 16) | 0x1):
-		strlcpy(wm_mode, "frame-based", sizeof(wm_mode));
+		strscpy(wm_mode, "frame-based", sizeof(wm_mode));
 		break;
 	case ((0x2 << 16) | 0x1):
-		strlcpy(wm_mode, "index-based", sizeof(wm_mode));
+		strscpy(wm_mode, "index-based", sizeof(wm_mode));
 		break;
 	}
 

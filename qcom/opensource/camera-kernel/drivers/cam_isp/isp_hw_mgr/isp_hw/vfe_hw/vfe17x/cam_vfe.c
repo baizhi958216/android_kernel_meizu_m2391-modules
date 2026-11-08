@@ -4,6 +4,7 @@
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include "cam_vfe.h"
 #include <linux/module.h>
 #include "cam_vfe170.h"
 #include "cam_vfe170_150.h"
