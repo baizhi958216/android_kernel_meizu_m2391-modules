@@ -105,7 +105,7 @@ int ipa3_register_intf_ext(const char *name, const struct ipa_tx_intf *tx,
 	if (intf == NULL)
 		return -ENOMEM;
 
-	strlcpy(intf->name, name, IPA_RESOURCE_NAME_MAX);
+	strscpy(intf->name, name, IPA_RESOURCE_NAME_MAX);
 
 	if (tx) {
 		intf->num_tx_props = tx->num_props;

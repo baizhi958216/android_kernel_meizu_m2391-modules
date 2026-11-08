@@ -540,7 +540,7 @@ static struct ipahal_imm_cmd_pyld *ipa_imm_cmd_construct_ip_packet_init_ex_v5_5(
 	return pyld;
 }
 
-int ipa_imm_cmd_modify_ip_packet_init_ex(
+static int ipa_imm_cmd_modify_ip_packet_init_ex(
 	enum ipahal_imm_cmd_name cmd,
 	const void *cmd_data,
 	const void *params,
@@ -1084,7 +1084,6 @@ static int ipahal_imm_cmd_init(enum ipa_hw_type ipa_hw_type)
 {
 	int i;
 	int j;
-	struct ipahal_imm_cmd_obj zero_obj;
 
 	IPAHAL_DBG_LOW("Entry - HW_TYPE=%d\n", ipa_hw_type);
 
@@ -1093,14 +1092,12 @@ static int ipahal_imm_cmd_init(enum ipa_hw_type ipa_hw_type)
 		return -EINVAL;
 	}
 
-	memset(&zero_obj, 0, sizeof(zero_obj));
 	for (i = IPA_HW_v3_0 ; i < ipa_hw_type ; i++) {
 		for (j = 0; j < IPA_IMM_CMD_MAX ; j++) {
-			if (!memcmp(&ipahal_imm_cmd_objs[i+1][j], &zero_obj,
-				sizeof(struct ipahal_imm_cmd_obj))) {
-				memcpy(&ipahal_imm_cmd_objs[i+1][j],
-					&ipahal_imm_cmd_objs[i][j],
-					sizeof(struct ipahal_imm_cmd_obj));
+			struct ipahal_imm_cmd_obj *cmd = &ipahal_imm_cmd_objs[i + 1][j];
+
+			if (!cmd->construct && !cmd->modify && !cmd->opcode) {
+				*cmd = ipahal_imm_cmd_objs[i][j];
 			} else {
 				/*
 				 * explicitly overridden immediate command.
@@ -1314,7 +1311,7 @@ static enum ipahal_pkt_status_exception pkt_status_parse_exception(
 		exception_type = IPAHAL_PKT_STATUS_EXCEPTION_CSUM;
 		break;
 	default:
-		IPAHAL_ERR("unsupported Status Exception type 0x%x\n",
+		IPAHAL_ERR("unsupported Status Exception type 0x%llx\n",
 			exception);
 		WARN_ON(1);
 	}
@@ -1847,7 +1844,6 @@ static void ipa_pkt_status_parse_thin_v5_5(const void *unparsed_status,
 static int ipahal_pkt_status_init(enum ipa_hw_type ipa_hw_type)
 {
 	int i;
-	struct ipahal_pkt_status_obj zero_obj;
 
 	IPAHAL_DBG_LOW("Entry - HW_TYPE=%d\n", ipa_hw_type);
 
@@ -1869,13 +1865,12 @@ static int ipahal_pkt_status_init(enum ipa_hw_type ipa_hw_type)
 	BUILD_BUG_ON(sizeof(union ipa_pkt_status_hw) !=
 		IPA3_0_PKT_STATUS_SIZE);
 
-	memset(&zero_obj, 0, sizeof(zero_obj));
 	for (i = IPA_HW_v3_0 ; i < ipa_hw_type ; i++) {
-		if (!memcmp(&ipahal_pkt_status_objs[i+1], &zero_obj,
-			sizeof(struct ipahal_pkt_status_obj))) {
-			memcpy(&ipahal_pkt_status_objs[i+1],
-				&ipahal_pkt_status_objs[i],
-				sizeof(struct ipahal_pkt_status_obj));
+		struct ipahal_pkt_status_obj *status = &ipahal_pkt_status_objs[i + 1];
+
+		if (!status->size && !status->parse && !status->parse_thin &&
+		    !status->__parse_gen_pkt && !status->__parse_frag_pkt) {
+			*status = ipahal_pkt_status_objs[i];
 		} else {
 			/*
 			 * explicitly overridden Packet Status info
@@ -2657,7 +2652,7 @@ void ipahal_free_dma_mem(struct ipa_mem_buffer *mem)
  *
  * ***************************************************************
  */
-void ipa_qmap_hdr_parse_v4_5(
+static void ipa_qmap_hdr_parse_v4_5(
 	union qmap_hdr_u*     qmap_hdr,
 	struct qmap_hdr_data* qmap_data_rslt )
 {
@@ -2672,7 +2667,7 @@ void ipa_qmap_hdr_parse_v4_5(
 	qmap_data_rslt->zero_checksum = qmap_hdr->qmap5_0.zero_checksum;
 }
 
-void ipa_qmap_hdr_parse_v5_0(
+static void ipa_qmap_hdr_parse_v5_0(
 	union qmap_hdr_u*     qmap_hdr,
 	struct qmap_hdr_data* qmap_data_rslt )
 {
@@ -2690,7 +2685,7 @@ void ipa_qmap_hdr_parse_v5_0(
 	qmap_data_rslt->segment_size = qmap_hdr->qmap5_0.segment_size;
 }
 
-void ipa_qmap_hdr_parse_v5_5(
+static void ipa_qmap_hdr_parse_v5_5(
 	union qmap_hdr_u*     qmap_hdr,
 	struct qmap_hdr_data* qmap_data_rslt )
 {
@@ -2746,7 +2741,6 @@ static struct ipahal_qmap_parse_s ipahal_qmap_parse_tbl[IPA_HW_MAX] = {
 static int ipahal_qmap_init(
 	enum ipa_hw_type ipa_hw_type)
 {
-	struct ipahal_qmap_parse_s zero_obj;
 	int i;
 
 	IPAHAL_DBG_LOW("Entry - HW_TYPE=%d\n", ipa_hw_type);
@@ -2756,26 +2750,10 @@ static int ipahal_qmap_init(
 		return -EINVAL;
 	}
 
-	memset(&zero_obj, 0, sizeof(zero_obj));
 
-	for (i = IPA_HW_v4_5; i < ipa_hw_type; i++) {
-
-		if (memcmp(&ipahal_qmap_parse_tbl[i+1],
-				   &zero_obj,
-				   sizeof(struct ipahal_qmap_parse_s)) == 0 ) {
-			memcpy(
-				&ipahal_qmap_parse_tbl[i+1],
-				&ipahal_qmap_parse_tbl[i],
-				sizeof(struct ipahal_qmap_parse_s));
-		} else {
-			if (ipahal_qmap_parse_tbl[i+1].parse == 0) {
-				IPAHAL_ERR(
-					"QMAP parse table missing parse function ipa_ver=%d\n",
-					i+1);
-				WARN_ON(1);
-			}
-		}
-	}
+	for (i = IPA_HW_v4_5; i < ipa_hw_type; i++)
+		if (!ipahal_qmap_parse_tbl[i + 1].parse)
+			ipahal_qmap_parse_tbl[i + 1] = ipahal_qmap_parse_tbl[i];
 
 	return 0;
 }

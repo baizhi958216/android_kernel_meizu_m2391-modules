@@ -112,12 +112,12 @@ static ssize_t rmnet_ll_ipa3_read_stats(struct file *file, char __user *ubuf,
 		"outstanding_pkts=%u\n"
 		"tx_pkt_sent=%u\n"
 		"rx_pkt_rcvd=%u\n"
-		"tx_byte_sent=%lu\n"
-		"rx_byte_rcvd=%lu\n"
+		"tx_byte_sent=%llu\n"
+		"rx_byte_rcvd=%llu\n"
 		"tx_pkt_dropped=%u\n"
 		"rx_pkt_dropped=%u\n"
-		"tx_byte_dropped=%lu\n"
-		"rx_byte_dropped=%lu\n",
+		"tx_byte_dropped=%llu\n"
+		"rx_byte_dropped=%llu\n",
 		skb_queue_len(&rmnet_ll_ipa3_ctx->tx_queue),
 		atomic_read(
 		&rmnet_ll_ipa3_ctx->stats.outstanding_pkts),
@@ -302,7 +302,7 @@ int ipa3_register_rmnet_ll_cb(
 	mutex_lock(&rmnet_ll_ipa3_ctx->lock);
 	if (rmnet_ll_ipa3_ctx->state != IPA_RMNET_LL_NOT_REG &&
 		rmnet_ll_ipa3_ctx->state != IPA_RMNET_LL_PIPE_READY) {
-		IPADBG("rmnet_ll registered already\n", __func__);
+		IPADBG("rmnet_ll registered already\n");
 		mutex_unlock(&rmnet_ll_ipa3_ctx->lock);
 		return -EEXIST;
 	}
@@ -345,7 +345,7 @@ int ipa3_unregister_rmnet_ll_cb(void)
 	mutex_lock(&rmnet_ll_ipa3_ctx->lock);
 	if (rmnet_ll_ipa3_ctx->state != IPA_RMNET_LL_REGD &&
 		rmnet_ll_ipa3_ctx->state != IPA_RMNET_LL_START) {
-		IPADBG("rmnet_ll unregistered already\n", __func__);
+		IPADBG("rmnet_ll unregistered already\n");
 		mutex_unlock(&rmnet_ll_ipa3_ctx->lock);
 		return 0;
 	}

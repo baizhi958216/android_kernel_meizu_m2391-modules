@@ -492,7 +492,7 @@ static int ipa3_aux_napi_poll_tx_complete(struct napi_struct *napi_tx,
 		ret = ipa3_tx_switch_to_intr_mode(sys);
 
 		/* if we got an EOT while we marked NAPI as complete */
-		if (ret == -GSI_STATUS_PENDING_IRQ && napi_reschedule(napi_tx)) {
+		if (ret == -GSI_STATUS_PENDING_IRQ && napi_schedule(napi_tx)) {
 			/* rescheduale will perform poll again, don't dec vote twice*/
 			napi_rescheduled = true;
 		}
@@ -544,7 +544,7 @@ poll_tx:
 		/*if we got an EOT while we marked NAPI as complete*/
 		if (atomic_read(&sys->xmit_eot_cnt) > 0 &&
 		    !atomic_cmpxchg(&sys->in_napi_context, 0, 1)
-		    && napi_reschedule(napi_tx)) {
+		    && napi_schedule(napi_tx)) {
 			goto poll_tx;
 		}
 	}
@@ -1130,7 +1130,7 @@ static int ipa3_handle_rx_core(struct ipa3_sys_context *sys, bool process_all,
  * In RSC/RSB enabled cases using common event ring, so both the pipe
  * polling state should be in sync.
  */
-void __ipa3_update_curr_poll_state(enum ipa_client_type client, int state)
+static void __ipa3_update_curr_poll_state(enum ipa_client_type client, int state)
 {
 	int ep_idx = IPA_EP_NOT_ALLOCATED;
 
@@ -1169,8 +1169,8 @@ static int ipa3_tx_switch_to_intr_mode(struct ipa3_sys_context *sys) {
 			atomic_set(&sys->curr_polling_state, 1);
 			__ipa3_update_curr_poll_state(sys->ep->client, 1);
 		} else {
-			IPAERR("Failed to switch to intr mode %d ch_id %d\n",
-				sys->curr_polling_state, sys->ep->gsi_chan_hdl);
+			IPAERR("Failed to switch to intr mode %d ch_id %lu\n",
+				atomic_read(&sys->curr_polling_state), sys->ep->gsi_chan_hdl);
 		}
 	}
 	return ret;
@@ -1196,8 +1196,8 @@ static int ipa3_rx_switch_to_intr_mode(struct ipa3_sys_context *sys)
 			atomic_set(&sys->curr_polling_state, 1);
 			__ipa3_update_curr_poll_state(sys->ep->client, 1);
 		} else {
-			IPAERR("Failed to switch to intr mode %d ch_id %d\n",
-			 sys->curr_polling_state, sys->ep->gsi_chan_hdl);
+			IPAERR("Failed to switch to intr mode %d ch_id %lu\n",
+			 atomic_read(&sys->curr_polling_state), sys->ep->gsi_chan_hdl);
 		}
 	}
 
@@ -1273,7 +1273,7 @@ static void ipa3_switch_to_intr_rx_work_func(struct work_struct *work)
 		ipa3_handle_rx(sys);
 }
 
-enum hrtimer_restart ipa3_ring_doorbell_timer_fn(struct hrtimer *param)
+static enum hrtimer_restart ipa3_ring_doorbell_timer_fn(struct hrtimer *param)
 {
 	struct ipa3_sys_context *sys = container_of(param,
 		struct ipa3_sys_context, db_timer);
@@ -1476,7 +1476,7 @@ int ipa3_setup_sys_pipe(struct ipa_sys_connect_params *sys_in, u32 *clnt_hdl)
 
 	if (sys_in == NULL || clnt_hdl == NULL) {
 		IPAERR(
-			"NULL args: sys_in(%p) and/or clnt_hdl(%u)\n",
+			"NULL args: sys_in(%pK) and/or clnt_hdl(%pK)\n",
 			sys_in, clnt_hdl);
 		goto fail_gen;
 	}
@@ -1570,9 +1570,8 @@ int ipa3_setup_sys_pipe(struct ipa_sys_connect_params *sys_in, u32 *clnt_hdl)
 		INIT_LIST_HEAD(&ep->sys->avail_tx_wrapper_list);
 		ep->sys->avail_tx_wrapper = 0;
 		spin_lock_init(&ep->sys->spinlock);
-		hrtimer_init(&ep->sys->db_timer, CLOCK_MONOTONIC,
-			HRTIMER_MODE_REL);
-		ep->sys->db_timer.function = ipa3_ring_doorbell_timer_fn;
+		hrtimer_setup(&ep->sys->db_timer, ipa3_ring_doorbell_timer_fn,
+			      CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 
 		/* create IPA PM resources for handling polling mode */
 		if (sys_in->client == IPA_CLIENT_APPS_WAN_CONS &&
@@ -1646,14 +1645,14 @@ int ipa3_setup_sys_pipe(struct ipa_sys_connect_params *sys_in, u32 *clnt_hdl)
 	if (IPA_CLIENT_IS_PROD(sys_in->client) &&
 		ipa3_ctx->tx_napi_enable) {
 		if (sys_in->client == IPA_CLIENT_APPS_LAN_PROD) {
-			netif_tx_napi_add(&ipa3_ctx->generic_ndev,
+			netif_napi_add_tx_weight(ipa3_ctx->generic_ndev,
 			&ep->sys->napi_tx, tx_completion_func,
 			NAPI_TX_WEIGHT);
 			ep->sys->napi_tx_enable = ipa3_ctx->tx_napi_enable;
 			ep->sys->tx_poll = ipa3_ctx->tx_poll;
 		} else if(sys_in->client == IPA_CLIENT_APPS_WAN_PROD ||
 			sys_in->client == IPA_CLIENT_APPS_WAN_LOW_LAT_DATA_PROD) {
-			netif_tx_napi_add((struct net_device *)sys_in->priv,
+			netif_napi_add_tx_weight((struct net_device *)sys_in->priv,
 			&ep->sys->napi_tx, tx_completion_func,
 			NAPI_TX_WEIGHT);
 			ep->sys->napi_tx_enable = ipa3_ctx->tx_napi_enable;
@@ -1671,7 +1670,7 @@ int ipa3_setup_sys_pipe(struct ipa_sys_connect_params *sys_in, u32 *clnt_hdl)
 	}
 
 	if (sys_in->client == IPA_CLIENT_APPS_WAN_LOW_LAT_DATA_CONS) {
-		netif_napi_add((struct net_device *)sys_in->priv,
+		netif_napi_add_weight((struct net_device *)sys_in->priv,
 			&ep->sys->napi_rx, ipa3_rmnet_ll_rx_poll, NAPI_WEIGHT);
 		napi_enable(&ep->sys->napi_rx);
 	}
@@ -6712,7 +6711,7 @@ alloc:
 			gfp = GFP_KERNEL;
 			goto alloc;
 		}
-		IPAERR("fail to dma alloc %u bytes\n", size);
+		IPAERR("fail to dma alloc %zu bytes\n", size);
 		ipa_assert();
 	}
 
@@ -7141,7 +7140,7 @@ start_poll:
 		napi_complete(ep->sys->napi_obj);
 		ret = ipa3_rx_switch_to_intr_mode(ep->sys);
 		if (ret == -GSI_STATUS_PENDING_IRQ &&
-				napi_reschedule(ep->sys->napi_obj))
+				napi_schedule(ep->sys->napi_obj))
 			goto start_poll;
 
 		IPA_ACTIVE_CLIENTS_DEC_EP_NO_BLOCK(ep->client);
@@ -7245,7 +7244,7 @@ start_poll:
 		napi_complete(ep->sys->napi_obj);
 		ret = ipa3_rx_switch_to_intr_mode(ep->sys);
 		if (ret == -GSI_STATUS_PENDING_IRQ &&
-				napi_reschedule(ep->sys->napi_obj))
+				napi_schedule(ep->sys->napi_obj))
 			goto start_poll;
 		IPA_ACTIVE_CLIENTS_DEC_EP_NO_BLOCK(ep->client);
 	} else {
@@ -7474,7 +7473,7 @@ start_poll:
 		napi_complete(napi_rx);
 		ret = ipa3_rx_switch_to_intr_mode(sys);
 		if (ret == -GSI_STATUS_PENDING_IRQ &&
-				napi_reschedule(napi_rx))
+				napi_schedule(napi_rx))
 			goto start_poll;
 		IPA_ACTIVE_CLIENTS_DEC_EP_NO_BLOCK(sys->ep->client);
 	} else {

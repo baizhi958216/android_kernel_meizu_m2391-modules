@@ -4,6 +4,7 @@
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include "ipahal.h"
 #include <linux/init.h>
 #include <linux/ipa.h>
 #include <linux/kernel.h>

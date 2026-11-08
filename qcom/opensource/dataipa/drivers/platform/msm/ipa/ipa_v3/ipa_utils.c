@@ -6931,8 +6931,10 @@ const char *ipa_get_version_string(enum ipa_hw_type ver)
 		break;
 	case IPA_HW_v5_1:
 		str = "5.1";
+		break;
 	case IPA_HW_v5_5:
 		str = "5.5";
+		break;
 	default:
 		str = "Invalid version";
 		break;
@@ -6952,7 +6954,7 @@ EXPORT_SYMBOL(ipa_get_version_string);
  *
  * Return codes: 0 on success, negative on failure.
  */
-int ipa3_get_clients_from_rm_resource(
+static int ipa3_get_clients_from_rm_resource(
 	enum ipa_rm_resource_name resource,
 	struct ipa3_client_names *clients)
 {
@@ -7402,7 +7404,7 @@ u8 ipa3_get_hw_type_index(void)
  *
  * Returns:	None
  */
-void _ipa_sram_settings_read_v3_0(void)
+static void _ipa_sram_settings_read_v3_0(void)
 {
 	struct ipahal_reg_shared_mem_size smem_sz;
 
@@ -8480,7 +8482,7 @@ int ipa3_cfg_ep_status(u32 clnt_hdl,
  *
  * Return value: none
  */
-void ipa3_cfg_ep_cfg_pipe_replicate(u32 clnt_hdl)
+static void ipa3_cfg_ep_cfg_pipe_replicate(u32 clnt_hdl)
 {
 	/* Enable ADPL v6 Feature for certain IPA clients */
 	if (ipa3_ctx->ipa_hw_type >= IPA_HW_v5_5) {
@@ -8863,10 +8865,10 @@ int ipa3_cfg_ep_ctrl(u32 clnt_hdl, const struct ipa_ep_cfg_ctrl *ep_ctrl)
 		result = gsi_flow_control_ee(ep->gsi_chan_hdl, clnt_hdl, 0,
 				ep_ctrl->ipa_ep_delay, primary_secondry, &code);
 		if (result == GSI_STATUS_SUCCESS) {
-			IPADBG("flow control sussess gsi ch %d with code %d\n",
+			IPADBG("flow control sussess gsi ch %lu with code %d\n",
 					ep->gsi_chan_hdl, code);
 		} else {
-			IPADBG("failed to flow control gsi ch %d code %d\n",
+			IPADBG("failed to flow control gsi ch %lu code %d\n",
 					ep->gsi_chan_hdl, code);
 		}
 		return 0;
@@ -8881,7 +8883,7 @@ int ipa3_cfg_ep_ctrl(u32 clnt_hdl, const struct ipa_ep_cfg_ctrl *ep_ctrl)
 	return 0;
 }
 
-const char *ipa3_get_mode_type_str(enum ipa_mode_type mode)
+static const char *ipa3_get_mode_type_str(enum ipa_mode_type mode)
 {
 	switch (mode) {
 	case (IPA_BASIC):
@@ -8974,7 +8976,7 @@ int ipa3_cfg_ep_mode(u32 clnt_hdl, const struct ipa_ep_cfg_mode *ep_mode)
 	return 0;
 }
 
-const char *ipa3_get_aggr_enable_str(enum ipa_aggr_en_type aggr_en)
+static const char *ipa3_get_aggr_enable_str(enum ipa_aggr_en_type aggr_en)
 {
 	switch (aggr_en) {
 	case (IPA_BYPASS_AGGR):
@@ -8988,7 +8990,7 @@ const char *ipa3_get_aggr_enable_str(enum ipa_aggr_en_type aggr_en)
 	return "undefined";
 }
 
-const char *ipa3_get_aggr_type_str(enum ipa_aggr_type aggr_type)
+static const char *ipa3_get_aggr_type_str(enum ipa_aggr_type aggr_type)
 {
 	switch (aggr_type) {
 	case (IPA_MBIM_16):
@@ -9525,7 +9527,7 @@ int ipa3_cfg_ep_deaggr(u32 clnt_hdl,
  *
  * Note:	Should not be called from atomic context
  */
-int ipa3_cfg_ep_metadata(u32 clnt_hdl, const struct ipa_ep_cfg_metadata *ep_md)
+static int ipa3_cfg_ep_metadata(u32 clnt_hdl, const struct ipa_ep_cfg_metadata *ep_md)
 {
 	u32 qmap_id = 0;
 	struct ipa_ep_cfg_metadata ep_md_reg_wrt;
@@ -11996,7 +11998,7 @@ static int __ipa3_stop_gsi_channel(u32 clnt_hdl)
 		res = ipa3_uc_client_del_holb_monitor(ep->gsi_chan_hdl,
 							IPA_EE_AP);
 		if (res)
-			IPAERR("Delete HOLB monitor failed for ch %d\n",
+			IPAERR("Delete HOLB monitor failed for ch %lu\n",
 					ep->gsi_chan_hdl);
 		/* Set HOLB back if it was set previously.
 		 * There is a possibility that uC will reset as part of HOLB
@@ -13485,7 +13487,7 @@ int ipa3_get_prot_id(enum ipa_client_type client)
 	return prot_id;
 }
 
-void __ipa_ntn3_prod_stats_get(struct ipa_ntn3_stats_rx *stats, enum ipa_client_type client)
+static void __ipa_ntn3_prod_stats_get(struct ipa_ntn3_stats_rx *stats, enum ipa_client_type client)
 {
 	int ch_id, ipa_ep_idx;
 
@@ -13510,7 +13512,7 @@ void __ipa_ntn3_prod_stats_get(struct ipa_ntn3_stats_rx *stats, enum ipa_client_
 
 }
 
-void __ipa_ntn3_cons_stats_get(struct ipa_ntn3_stats_tx *stats, enum ipa_client_type client)
+static void __ipa_ntn3_cons_stats_get(struct ipa_ntn3_stats_tx *stats, enum ipa_client_type client)
 {
 	int ch_id, ipa_ep_idx;
 
@@ -13573,6 +13575,7 @@ void ipa3_eth_get_status(u32 client, int scratch_id,
 	case IPA_CLIENT_RTK_ETHERNET_PROD:
 		stats->err = gsi_get_drop_stats(ipa_ep_idx, RTK_GSI_SCRATCH_ID,
 			ch_id);
+		fallthrough;
 	case IPA_CLIENT_RTK_ETHERNET_CONS:
 		stats->wp = gsi_get_refetch_reg(ch_id, false);
 		stats->rp = gsi_get_refetch_reg(ch_id, true);

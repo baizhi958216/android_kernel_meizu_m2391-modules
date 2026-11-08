@@ -138,7 +138,7 @@ TRACE_EVENT(
 	),
 
 	TP_fast_assign(
-		__assign_str(name, skb->dev->name);
+		__assign_str(name);
 		__entry->skbaddr = skb;
 		__entry->protocol = ntohs(skb->protocol);
 		__entry->len = skb->len;
@@ -271,7 +271,7 @@ TRACE_EVENT(
 	),
 
 	TP_fast_assign(
-		__assign_str(name, skb->dev->name);
+		__assign_str(name);
 		__entry->skbaddr = skb;
 		__entry->protocol = ntohs(skb->protocol);
 		__entry->len = skb->len;
@@ -393,13 +393,5 @@ TRACE_EVENT(
 
 /* This part must be outside protection */
 #undef TRACE_INCLUDE_PATH
-#ifdef CONFIG_IPA_VENDOR_DLKM
-#define TRACE_INCLUDE_PATH ../../../m2391-modules/qcom/opensource/dataipa/drivers/platform/msm/ipa/ipa_v3
-#elif defined(CONFIG_KALAMA_IPA_LE)
-#define TRACE_INCLUDE_PATH ../ipa/ipa_v3
-#elif defined(CONFIG_SCUBA_IPA_LE)
-#define TRACE_INCLUDE_PATH ../ipa/ipa_v3
-#else
-#define TRACE_INCLUDE_PATH ../../techpack/dataipa/drivers/platform/msm/ipa/ipa_v3
-#endif
+#define TRACE_INCLUDE_PATH .
 #include <trace/define_trace.h>

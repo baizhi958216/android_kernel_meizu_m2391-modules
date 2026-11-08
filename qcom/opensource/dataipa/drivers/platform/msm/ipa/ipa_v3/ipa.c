@@ -30,13 +30,13 @@
 #include <linux/jhash.h>
 #include <linux/pci.h>
 #include <linux/soc/qcom/smem.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <asm/cacheflush.h>
 #include <linux/soc/qcom/smem_state.h>
 #include <linux/of_irq.h>
 #include <linux/ctype.h>
 #include <linux/of_address.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/soc/qcom/mdt_loader.h>
 #include <linux/version.h>
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 14, 0))
@@ -852,7 +852,7 @@ static int ipa3_active_clients_log_insert(const char *string)
 
 	memset(ipa3_ctx->ipa3_active_clients_logging.log_buffer[head], '_',
 			IPA3_ACTIVE_CLIENTS_LOG_LINE_LEN);
-	strlcpy(ipa3_ctx->ipa3_active_clients_logging.log_buffer[head], string,
+	strscpy(ipa3_ctx->ipa3_active_clients_logging.log_buffer[head], string,
 			(size_t)IPA3_ACTIVE_CLIENTS_LOG_LINE_LEN);
 	head = (head + 1) % IPA3_ACTIVE_CLIENTS_LOG_BUFFER_SIZE_LINES;
 	if (tail == head)
@@ -969,7 +969,7 @@ struct iommu_domain *ipa3_get_eth1_smmu_domain(void)
 }
 
 
-struct iommu_domain *ipa3_get_11ad_smmu_domain(void)
+static struct iommu_domain *ipa3_get_11ad_smmu_domain(void)
 {
 	return ipa3_get_smmu_domain_by_type(IPA_SMMU_CB_11AD);
 }
@@ -2614,7 +2614,7 @@ static int ipa3_send_pkt_threshold(unsigned long usr_param)
 
 	if (((struct ipa_ioc_set_pkt_threshold *)buff1)->ioctl_data_size !=
 		sizeof(struct ipa_set_pkt_threshold)) {
-		IPAERR("IPA_IOC_SET_PKT_THRESHOLD size not match(%d,%d)!\n",
+		IPAERR("IPA_IOC_SET_PKT_THRESHOLD size not match(%d,%lu)!\n",
 		((struct ipa_ioc_set_pkt_threshold *)buff1)->ioctl_data_size,
 		sizeof(struct ipa_set_pkt_threshold));
 		kfree(buff1);
@@ -2675,7 +2675,7 @@ static int ipa3_send_sw_flt_list(unsigned long usr_param)
 
 	if (sw_flt_list.ioctl_data_size !=
 		sizeof(struct ipa_sw_flt_list_type)) {
-		IPAERR("IPA_IOC_SET_SW_FLT size not match(%d,%d)!\n",
+		IPAERR("IPA_IOC_SET_SW_FLT size not match(%d,%lu)!\n",
 		sw_flt_list.ioctl_data_size,
 		sizeof(struct ipa_sw_flt_list_type));
 		return -EFAULT;
@@ -2739,7 +2739,7 @@ static int ipa3_send_ippt_sw_flt_list(unsigned long usr_param)
 	/* Expect ipa_ippt_sw_flt_list_type struct*/
 	if (sw_flt_list.ioctl_data_size !=
 		sizeof(struct ipa_ippt_sw_flt_list_type)) {
-		IPAERR("IPA_IOC_SET_IPPT_SW_FLT size not match(%d,%d)!\n",
+		IPAERR("IPA_IOC_SET_IPPT_SW_FLT size not match(%d,%lu)!\n",
 		sw_flt_list.ioctl_data_size,
 		sizeof(struct ipa_ippt_sw_flt_list_type));
 		return -EFAULT;
@@ -4468,7 +4468,7 @@ send:
  * -ENOMEM: failed to allocate memory
  * -EPERM: failed to add the tables
  */
-int ipa3_setup_dflt_rt_tables(void)
+static int ipa3_setup_dflt_rt_tables(void)
 {
 	struct ipa_ioc_add_rt_rule *rt_rule;
 	struct ipa_rt_rule_add *rt_rule_entry;
@@ -4483,7 +4483,7 @@ int ipa3_setup_dflt_rt_tables(void)
 	rt_rule->num_rules = 1;
 	rt_rule->commit = 1;
 	rt_rule->ip = IPA_IP_v4;
-	strlcpy(rt_rule->rt_tbl_name, IPA_DFLT_RT_TBL_NAME,
+	strscpy(rt_rule->rt_tbl_name, IPA_DFLT_RT_TBL_NAME,
 		IPA_RESOURCE_NAME_MAX);
 
 	rt_rule_entry = &rt_rule->rules[0];
@@ -4542,7 +4542,7 @@ static int ipa3_setup_exception_path(void)
 		hdr->commit = 1;
 		hdr_entry = &hdr->hdr[0];
 
-		strlcpy(hdr_entry->name, IPA_LAN_RX_HDR_NAME, IPA_RESOURCE_NAME_MAX);
+		strscpy(hdr_entry->name, IPA_LAN_RX_HDR_NAME, IPA_RESOURCE_NAME_MAX);
 		hdr_entry->hdr_len = IPA_LAN_RX_HEADER_LENGTH;
 
 		if (ipa3_add_hdr(hdr)) {
@@ -6451,7 +6451,7 @@ static long compat_ipa3_nat_ipv6ct_alloc_table(unsigned long arg,
 	return retval;
 }
 
-long compat_ipa3_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+static long compat_ipa3_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	long retval = 0;
 	struct ipa3_ioc_nat_alloc_mem32 nat_mem32;
@@ -6869,7 +6869,7 @@ static void ipa3_active_clients_log_mod(
 	int_ctx = true;
 	hfound = NULL;
 	memset(str_to_hash, 0, IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN);
-	strlcpy(str_to_hash, id->id_string, IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN);
+	strscpy(str_to_hash, id->id_string, IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN);
 	hkey = jhash(str_to_hash, IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN,
 			0);
 	hash_for_each_possible(ipa3_ctx->ipa3_active_clients_logging.htable,
@@ -6891,7 +6891,7 @@ static void ipa3_active_clients_log_mod(
 			return;
 		}
 		hentry->type = id->type;
-		strlcpy(hentry->id_string, id->id_string,
+		strscpy(hentry->id_string, id->id_string,
 				IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN);
 		INIT_HLIST_NODE(&hentry->list);
 		hentry->count = inc ? 1 : -1;
@@ -6996,7 +6996,7 @@ static void ipa3_handle_gsi_differ_irq(void)
  * ipa3_active_clks_status() - update the current msm bus clock vote
  * status
  */
-int ipa3_active_clks_status(void)
+static int ipa3_active_clks_status(void)
 {
 	return atomic_read(&ipa3_ctx->ipa_clk_vote);
 }
@@ -8301,7 +8301,7 @@ static int ipa3_post_init(const struct ipa3_plat_drv_res *resource_p,
 	/*Adding ipa3_ctx pointer to minidump list*/
 	mini_dump = (struct ipa_minidump_data *)kzalloc(sizeof(struct ipa_minidump_data), GFP_KERNEL);
 	if (mini_dump != NULL) {
-		strlcpy(mini_dump->data.owner, "ipa3_ctx", sizeof(mini_dump->data.owner));
+		strscpy(mini_dump->data.owner, "ipa3_ctx", sizeof(mini_dump->data.owner));
 		mini_dump->data.vaddr = (unsigned long)(ipa3_ctx);
 		mini_dump->data.size = sizeof(struct ipa3_context);
 		list_add(&mini_dump->entry, &ipa3_ctx->minidump_list_head);
@@ -8411,15 +8411,16 @@ static int ipa_firmware_load(const char *sub_sys)
 	struct device_node *node;
 	struct resource res;
 	phys_addr_t phys;
-	ssize_t size;
+	size_t size;
 	void *virt;
-	int ret, index, pas_id;
+	int ret, index;
+	u32 pas_id;
 	struct device *dev = &ipa3_ctx->master_pdev->dev;
 
 	index = of_property_match_string(dev->of_node, "firmware-names",
 					 sub_sys);
 	if (index < 0) {
-		pr_err("#####Not able to match firmware names prorperty\n");
+		dev_err(dev, "missing firmware name %s\n", sub_sys);
 		return -EINVAL;
 	}
 
@@ -8430,6 +8431,7 @@ static int ipa_firmware_load(const char *sub_sys)
 	}
 
 	ret = of_address_to_resource(node, 0, &res);
+	of_node_put(node);
 	if (ret) {
 		dev_err(dev, "error %d getting \"memory-region\" resource\n",
 			ret);
@@ -8439,7 +8441,7 @@ static int ipa_firmware_load(const char *sub_sys)
 	scnprintf(fw_name, ARRAY_SIZE(fw_name), "%s.mdt", sub_sys);
 	ret = of_property_read_u32_index(dev->of_node, "pas-ids", index,
 					  &pas_id);
-	if(ret) {
+	if (ret) {
 		dev_err(dev, "error %d getting \"pass-ids\" property\n",
 			ret);
 		return ret;
@@ -8452,7 +8454,7 @@ static int ipa_firmware_load(const char *sub_sys)
 	}
 
 	phys = res.start;
-	size = (size_t)resource_size(&res);
+	size = resource_size(&res);
 	virt = memremap(phys, size, MEMREMAP_WC);
 	if (!virt) {
 		dev_err(dev, "unable to remap firmware memory\n");
@@ -8484,7 +8486,7 @@ static int ipa3_mdt_load_ipa_fws(const char *sub_sys)
 	ret = ipa_firmware_load(sub_sys);
 	if (ret < 0) {
 		IPAERR("Unable to MDT load FW for sub_sys=%s\n", sub_sys);
-		return -EINVAL;
+		return ret;
 	}
 
 	IPADBG("MDT FW loading process is complete sub_sys=%s\n", sub_sys);
@@ -9081,24 +9083,28 @@ static int ipa3_lan_poll(struct napi_struct *napi, int budget)
 	return rcvd_pkts;
 }
 
-static inline void ipa3_enable_napi_netdev(void)
+static int ipa3_enable_napi_netdev(void)
 {
-	if (ipa3_ctx->lan_rx_napi_enable || ipa3_ctx->tx_napi_enable) {
-		init_dummy_netdev(&ipa3_ctx->generic_ndev);
-		if(ipa3_ctx->lan_rx_napi_enable) {
-			netif_napi_add(
-				&ipa3_ctx->generic_ndev,
-				&ipa3_ctx->napi_lan_rx,
-				ipa3_lan_poll,
-				NAPI_WEIGHT);
-		}
-	}
+	if (!ipa3_ctx->lan_rx_napi_enable && !ipa3_ctx->tx_napi_enable)
+		return 0;
+
+	ipa3_ctx->generic_ndev = alloc_netdev_dummy(0);
+	if (!ipa3_ctx->generic_ndev)
+		return -ENOMEM;
+	if (ipa3_ctx->lan_rx_napi_enable)
+		netif_napi_add_weight(ipa3_ctx->generic_ndev, &ipa3_ctx->napi_lan_rx,
+				      ipa3_lan_poll, NAPI_WEIGHT);
+	return 0;
 }
 
-static inline void ipa3_disable_napi_netdev(void)
+static void ipa3_disable_napi_netdev(void)
 {
+	if (!ipa3_ctx->generic_ndev)
+		return;
 	if (ipa3_ctx->lan_rx_napi_enable)
 		netif_napi_del(&ipa3_ctx->napi_lan_rx);
+	free_netdev(ipa3_ctx->generic_ndev);
+	ipa3_ctx->generic_ndev = NULL;
 }
 
 static u32 get_tx_wrapper_cache_size(u32 cache_size)
@@ -9516,7 +9522,7 @@ static int ipa3_pre_init(const struct ipa3_plat_drv_res *resource_p,
 	}
 
 	IPADBG(
-	    "base(0x%x)+offset(0x%x)=(0x%x) mapped to (%0x%x) with len (0x%x)\n",
+	    "base(0x%x)+offset(0x%x)=(0x%x) mapped to (%pK) with len (0x%x)\n",
 	    resource_p->ipa_mem_base,
 	    ipa3_ctx->ctrl->ipa_reg_base_ofst,
 	    resource_p->ipa_mem_base + ipa3_ctx->ctrl->ipa_reg_base_ofst,
@@ -9721,7 +9727,7 @@ static int ipa3_pre_init(const struct ipa3_plat_drv_res *resource_p,
 	spin_lock_init(&ipa3_ctx->wc_memb.ipa_tx_mul_spinlock);
 	INIT_LIST_HEAD(&ipa3_ctx->wc_memb.wlan_comm_desc_list);
 
-	ipa3_ctx->cdev.class = class_create(THIS_MODULE, DRV_NAME);
+	ipa3_ctx->cdev.class = class_create(DRV_NAME);
 
 	result = alloc_chrdev_region(&ipa3_ctx->cdev.dev_num, 0, 1, DRV_NAME);
 	if (result) {
@@ -9822,7 +9828,9 @@ static int ipa3_pre_init(const struct ipa3_plat_drv_res *resource_p,
 		ipa3_proxy_clk_unvote();
 
 	/* Create the dummy netdev for LAN RX NAPI*/
-	ipa3_enable_napi_netdev();
+	result = ipa3_enable_napi_netdev();
+	if (result)
+		goto fail_wwan_init;
 
 	result = ipa3_wwan_init();
 	if (result) {
@@ -10966,15 +10974,11 @@ static int ipa_smmu_perph_cb_probe(struct device *dev,
 	enum ipa_smmu_cb_type cb_type)
 {
 	struct ipa_smmu_cb_ctx *cb = ipa3_get_smmu_ctx(cb_type);
-	int fast = 0;
 	int bypass = 0;
 	u32 add_map_size;
 	const u32 *add_map;
 	int i;
 	u32 iova_ap_mapping[2];
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0))
-	int mapping_config;
-#endif
 
 	IPADBG("CB %d PROBE dev=%pK\n", cb_type, dev);
 
@@ -11021,23 +11025,10 @@ static int ipa_smmu_perph_cb_probe(struct device *dev,
 	 * checks to see if they've been set in dtsi.  If so, the logic
 	 * further below acts accordingly...
 	 */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0))
-
-	mapping_config = qcom_iommu_get_mappings_configuration(cb->iommu_domain);
-
-	if (mapping_config < 0) {
-		IPAERR("No Mapping configuration found for CB %d\n", cb_type);
-	} else {
-		bypass = (mapping_config & QCOM_IOMMU_MAPPING_CONF_S1_BYPASS) ? 1 : 0;
-		fast = (mapping_config & QCOM_IOMMU_MAPPING_CONF_FAST) ? 1 : 0;
-	}
-#else
-	iommu_domain_get_attr(cb->iommu_domain, DOMAIN_ATTR_S1_BYPASS, &bypass);
-	iommu_domain_get_attr(cb->iommu_domain, DOMAIN_ATTR_FAST, &fast);
-#endif
+	bypass = cb->iommu_domain->type == IOMMU_DOMAIN_IDENTITY;
 	IPADBG(
-	  "CB %d PROBE dev=%pK DOMAIN ATTRS bypass=%d fast=%d\n",
-	  cb_type, dev, bypass, fast);
+	  "CB %d PROBE dev=%pK DOMAIN ATTRS bypass=%d\n",
+	  cb_type, dev, bypass);
 
 	ipa3_ctx->s1_bypass_arr[cb_type] = (bypass != 0);
 
@@ -11084,11 +11075,7 @@ static int ipa_smmu_uc_cb_probe(struct device *dev)
 {
 	struct ipa_smmu_cb_ctx *cb = ipa3_get_smmu_ctx(IPA_SMMU_CB_UC);
 	int bypass = 0;
-	int fast = 0;
 	u32 iova_ap_mapping[2];
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0))
-	int mapping_config;
-#endif
 
 	IPADBG("UC CB PROBE dev=%pK\n", dev);
 
@@ -11150,22 +11137,9 @@ static int ipa_smmu_uc_cb_probe(struct device *dev)
 	 * checks to see if they've been set in dtsi.  If so, the logic
 	 * further below acts accordingly...
 	 */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0))
-
-        mapping_config = qcom_iommu_get_mappings_configuration(cb->iommu_domain);
-
-        if (mapping_config < 0) {
-                IPAERR("No Mapping configuration found for UC CB\n");
-        } else {
-                bypass = (mapping_config & QCOM_IOMMU_MAPPING_CONF_S1_BYPASS) ? 1 : 0;
-                fast = (mapping_config & QCOM_IOMMU_MAPPING_CONF_FAST) ? 1 : 0;
-        }
-#else
-        iommu_domain_get_attr(cb->iommu_domain, DOMAIN_ATTR_S1_BYPASS, &bypass);
-        iommu_domain_get_attr(cb->iommu_domain, DOMAIN_ATTR_FAST, &fast);
-#endif
-	IPADBG("UC CB PROBE dev=%pK DOMAIN ATTRS bypass=%d fast=%d\n",
-		   dev, bypass, fast);
+	bypass = cb->iommu_domain->type == IOMMU_DOMAIN_IDENTITY;
+	IPADBG("UC CB PROBE dev=%pK DOMAIN ATTRS bypass=%d\n",
+		   dev, bypass);
 
 	ipa3_ctx->s1_bypass_arr[IPA_SMMU_CB_UC] = (bypass != 0);
 
@@ -11202,7 +11176,6 @@ static void ipa3_ap_iommu_unmap(struct ipa_smmu_cb_ctx *cb, const u32 *add_map, 
 static int ipa_smmu_ap_cb_probe(struct device *dev)
 {
 	struct ipa_smmu_cb_ctx *cb = ipa3_get_smmu_ctx(IPA_SMMU_CB_AP);
-	int fast = 0;
 	int bypass = 0;
 	u32 add_map_size;
 	const u32 *add_map;
@@ -11217,9 +11190,6 @@ static int ipa_smmu_ap_cb_probe(struct device *dev)
 	phys_addr_t iova;
 	phys_addr_t pa;
 	u32 iova_ap_mapping[2];
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0))
-	int mapping_config;
-#endif
 	u32 geometry_ap_mapping[2];
 
 	IPADBG("AP CB PROBE dev=%pK\n", dev);
@@ -11295,22 +11265,9 @@ static int ipa_smmu_ap_cb_probe(struct device *dev)
 	 * checks to see if they've been set in dtsi.  If so, the logic
 	 * further below acts accordingly...
 	 */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0))
-
-        mapping_config = qcom_iommu_get_mappings_configuration(cb->iommu_domain);
-
-        if (mapping_config < 0) {
-                IPAERR("No Mapping configuration found for AP CB\n");
-        } else {
-                bypass = (mapping_config & QCOM_IOMMU_MAPPING_CONF_S1_BYPASS) ? 1 : 0;
-                fast = (mapping_config & QCOM_IOMMU_MAPPING_CONF_FAST) ? 1 : 0;
-        }
-#else
-        iommu_domain_get_attr(cb->iommu_domain, DOMAIN_ATTR_S1_BYPASS, &bypass);
-        iommu_domain_get_attr(cb->iommu_domain, DOMAIN_ATTR_FAST, &fast);
-#endif
-	IPADBG("AP CB PROBE dev=%pK DOMAIN ATTRS bypass=%d fast=%d\n",
-		   dev, bypass, fast);
+	bypass = cb->iommu_domain->type == IOMMU_DOMAIN_IDENTITY;
+	IPADBG("AP CB PROBE dev=%pK DOMAIN ATTRS bypass=%d\n",
+		   dev, bypass);
 
 	ipa3_ctx->s1_bypass_arr[IPA_SMMU_CB_AP] = (bypass != 0);
 
@@ -11419,9 +11376,6 @@ static int ipa_smmu_11ad_cb_probe(struct device *dev)
 	int bypass = 0;
 	struct ipa_smmu_cb_ctx *cb = ipa3_get_smmu_ctx(IPA_SMMU_CB_11AD);
 	u32 iova_ap_mapping[2];
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0))
-	int mapping_config;
-#endif
 
 	IPADBG("11AD CB probe: dev=%pK\n", dev);
 
@@ -11451,18 +11405,7 @@ static int ipa_smmu_11ad_cb_probe(struct device *dev)
 
 	IPADBG("11AD CB PROBE dev=%pK va_start=0x%x va_size=0x%x\n",
 		   dev, cb->va_start, cb->va_size);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0))
-
-        mapping_config = qcom_iommu_get_mappings_configuration(cb->iommu_domain);
-
-        if (mapping_config < 0) {
-                IPAERR("No Mapping configuration found for 11AD CB\n");
-        } else {
-                bypass = (mapping_config & QCOM_IOMMU_MAPPING_CONF_S1_BYPASS) ? 1 : 0;
-        }
-#else
-        iommu_domain_get_attr(cb->iommu_domain, DOMAIN_ATTR_S1_BYPASS, &bypass);
-#endif
+	bypass = cb->iommu_domain->type == IOMMU_DOMAIN_IDENTITY;
 	IPADBG("11AD CB PROBE dev=%pK DOMAIN ATTRS bypass=%d\n",
 		   dev, bypass);
 
@@ -12107,7 +12050,7 @@ int ipa3_iommu_map(struct iommu_domain *domain,
 	if (cb->is_cache_coherent)
 		prot |= IOMMU_CACHE;
 
-	return iommu_map_atomic(domain, iova, paddr, size, prot);
+	return iommu_map(domain, iova, paddr, size, prot, GFP_ATOMIC);
 }
 EXPORT_SYMBOL(ipa3_iommu_map);
 

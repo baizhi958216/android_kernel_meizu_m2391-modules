@@ -247,7 +247,7 @@ static int ipa3_setup_a7_qmap_hdr(void)
 	hdr_entry = &hdr->hdr[0];
 	hdr_entry->status = IPA_HDR_TO_DDR_PATTERN;
 
-	strlcpy(hdr_entry->name, IPA_A7_QMAP_HDR_NAME,
+	strscpy(hdr_entry->name, IPA_A7_QMAP_HDR_NAME,
 				IPA_RESOURCE_NAME_MAX);
 	if (ipa3_ctx_get_type(IPA_HW_TYPE) >= IPA_HW_v4_5 &&
 		rmnet_ipa3_ctx->dl_csum_offload_enabled) {
@@ -384,7 +384,7 @@ static int ipa3_add_qmap_hdr(uint32_t mux_id, uint32_t *hdr_hdl)
 	snprintf(hdr_name, IPA_RESOURCE_NAME_MAX, "%s%d",
 		 A2_MUX_HDR_NAME_V4_PREF,
 		 mux_id);
-	 strlcpy(hdr_entry->name, hdr_name,
+	 strscpy(hdr_entry->name, hdr_name,
 				IPA_RESOURCE_NAME_MAX);
 
 	if (rmnet_ipa3_ctx->dl_csum_offload_enabled) {
@@ -470,7 +470,7 @@ static int ipa3_setup_dflt_wan_rt_tables(void)
 	rt_rule->commit = 1;
 	rt_rule->rule_add_ext_size = sizeof(struct ipa_rt_rule_add_ext_v2);
 	rt_rule->ip = IPA_IP_v4;
-	strlcpy(rt_rule->rt_tbl_name, IPA_DFLT_WAN_RT_TBL_NAME,
+	strscpy(rt_rule->rt_tbl_name, IPA_DFLT_WAN_RT_TBL_NAME,
 			IPA_RESOURCE_NAME_MAX);
 
 	rt_rule_entry = (struct ipa_rt_rule_add_ext_v2 *)rt_rule->rules;
@@ -572,7 +572,7 @@ static int ipa3_setup_low_lat_rt_rules(void)
 	rt_rule->commit = 1;
 	rt_rule->rule_add_ext_size = sizeof(struct ipa_rt_rule_add_ext_v2);
 	rt_rule->ip = IPA_IP_v4;
-	strlcpy(rt_rule->rt_tbl_name, IPA_DFLT_WAN_RT_TBL_NAME,
+	strscpy(rt_rule->rt_tbl_name, IPA_DFLT_WAN_RT_TBL_NAME,
 			IPA_RESOURCE_NAME_MAX);
 
 	rt_rule_entry = (struct ipa_rt_rule_add_ext_v2 *)rt_rule->rules;
@@ -1649,7 +1649,7 @@ static void apps_ipa_packet_receive_notify(void *priv,
 			if (dev->stats.rx_packets % IPA_WWAN_RX_SOFTIRQ_THRESH
 					== 0) {
 				trace_rmnet_ipa_netifni3(dev->stats.rx_packets);
-				result = netif_rx_ni(skb);
+				result = netif_rx(skb);
 			} else {
 				trace_rmnet_ipa_netifrx3(dev->stats.rx_packets);
 				result = netif_rx(skb);
@@ -2948,7 +2948,7 @@ static int ipa3_wwan_ioctl(struct net_device *dev, struct ifreq *ifr, void __use
 			sizeof(ext_ioctl_data.u.if_name) ?
 				sizeof(ext_ioctl_data.u.if_name) :
 				sizeof(wan_msg->upstream_ifname);
-			strlcpy(wan_msg->upstream_ifname,
+			strscpy(wan_msg->upstream_ifname,
 				ext_ioctl_data.u.if_name, len);
 			wan_msg->upstream_ifname[len-1] = '\0';
 			memset(&msg_meta, 0, sizeof(struct ipa_msg_meta));
@@ -3226,7 +3226,7 @@ static int rmnet_ipa_send_set_mtu_notification(char *if_name,
 	if (!mtu_info)
 		return -ENOMEM;
 
-	strlcpy(mtu_info->if_name, if_name, IPA_RESOURCE_NAME_MAX);
+	strscpy(mtu_info->if_name, if_name, IPA_RESOURCE_NAME_MAX);
 	mtu_info->mtu_v4 = mtu_v4;
 	mtu_info->mtu_v6 = mtu_v6;
 	mtu_info->ip_type = ip;
@@ -3644,7 +3644,7 @@ static int ipa3_wwan_probe(struct platform_device *pdev)
 	}
 
 	if (ipa3_rmnet_res.ipa_napi_enable)
-		netif_napi_add(dev, &(rmnet_ipa3_ctx->wwan_priv->napi),
+		netif_napi_add_weight(dev, &(rmnet_ipa3_ctx->wwan_priv->napi),
 		       ipa3_rmnet_poll, NAPI_WEIGHT);
 	ret = register_netdev(dev);
 	if (ret) {
@@ -3713,7 +3713,7 @@ wan_ioctl_init_err:
 	return ret;
 }
 
-static int ipa3_wwan_remove(struct platform_device *pdev)
+static void ipa3_wwan_remove(struct platform_device *pdev)
 {
 	int ret, j;
 
@@ -3786,7 +3786,6 @@ static int ipa3_wwan_remove(struct platform_device *pdev)
 	rmnet_ipa3_ctx->dl_csum_offload_enabled = false;
 	atomic_set(&rmnet_ipa3_ctx->is_initialized, 0);
 	IPAWANINFO("rmnet_ipa completed deinitialization\n");
-	return 0;
 }
 
 /**
@@ -6362,7 +6361,7 @@ static ssize_t rmnet_ipa_set_mtu(struct file *file,
 	token = strsep(&sptr, " ");
 	if (!token)
 		return -EINVAL;
-	strlcpy(if_name, token, IFNAMSIZ);
+	strscpy(if_name, token, IFNAMSIZ);
 
 	token = strsep(&sptr, " ");
 	if (!token)

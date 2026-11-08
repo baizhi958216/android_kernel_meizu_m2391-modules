@@ -4,6 +4,7 @@
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/debugfs.h>
 #include <linux/kernel.h>
 #include <linux/delay.h>
@@ -1712,7 +1713,7 @@ int ipa_get_flt_rt_stats(struct ipa_ioc_flt_rt_query *query)
 	}
 
 	if (query->stats_size > sizeof(struct ipa_flt_rt_stats)) {
-		IPAERR("stats_size %d > ipa_flt_rt_stats %d\n",
+		IPAERR("stats_size %d > ipa_flt_rt_stats %lu\n",
 			query->stats_size, sizeof(struct ipa_flt_rt_stats));
 		return -EINVAL;
 	}

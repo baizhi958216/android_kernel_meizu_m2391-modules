@@ -1715,7 +1715,7 @@ int ipa3_enable_wigig_pipe_i(enum ipa_client_type client)
 						HOLB_MONITOR_MASK, holb_max_cnt,
 						IPA_EE_AP);
 		if (res)
-			IPAERR("Add HOLB monitor failed for gsi ch %d\n",
+			IPAERR("Add HOLB monitor failed for gsi ch %lu\n",
 					ep->gsi_chan_hdl);
 	}
 
@@ -1906,7 +1906,7 @@ int ipa_wigig_send_wlan_msg(enum ipa_wlan_event msg_type,
 	wlan_msg = kzalloc(sizeof(*wlan_msg), GFP_KERNEL);
 	if (wlan_msg == NULL)
 		return -ENOMEM;
-	strlcpy(wlan_msg->name, netdev_name, IPA_RESOURCE_NAME_MAX);
+	strscpy(wlan_msg->name, netdev_name, IPA_RESOURCE_NAME_MAX);
 	memcpy(wlan_msg->mac_addr, mac, IPA_MAC_ADDR_SIZE);
 	msg_meta.msg_len = sizeof(struct ipa_wlan_msg);
 	msg_meta.msg_type = msg_type;
@@ -1934,7 +1934,7 @@ int ipa_wigig_send_msg(int msg_type,
 	wigig_msg = kzalloc(sizeof(struct ipa_wigig_msg), GFP_KERNEL);
 	if (wigig_msg == NULL)
 		return -ENOMEM;
-	strlcpy(wigig_msg->name, netdev_name, IPA_RESOURCE_NAME_MAX);
+	strscpy(wigig_msg->name, netdev_name, IPA_RESOURCE_NAME_MAX);
 	memcpy(wigig_msg->client_mac_addr, mac, IPA_MAC_ADDR_SIZE);
 	if (msg_type == WIGIG_CLIENT_CONNECT)
 		wigig_msg->u.ipa_client = client;

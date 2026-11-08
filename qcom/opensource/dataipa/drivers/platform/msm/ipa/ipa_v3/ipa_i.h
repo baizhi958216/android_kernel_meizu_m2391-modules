@@ -43,7 +43,9 @@
 #include <linux/ipa_fmwk.h>
 #include <linux/mhi_dma.h>
 #include "ipa_uc_holb_monitor.h"
+#if IS_ENABLED(CONFIG_QCOM_VA_MINIDUMP)
 #include <soc/qcom/minidump.h>
+#endif
 
 #define IPA_DEV_NAME_MAX_LEN 15
 #define DRV_NAME "ipa"
@@ -2524,7 +2526,7 @@ struct ipa3_context {
 	bool lan_rx_napi_enable;
 	bool tx_napi_enable;
 	bool tx_poll;
-	struct net_device generic_ndev;
+	struct net_device *generic_ndev;
 	struct napi_struct napi_lan_rx;
 	u32 icc_num_cases;
 	u32 icc_num_paths;
@@ -3973,5 +3975,13 @@ int ipa3_update_apps_per_stats(enum ipa_per_stats_type_e stats_type, uint32_t da
 /* Periodic stats update */
 int ipa3_update_client_holb_per_stats(enum ipa_per_stats_type_e stats_type, uint32_t data);
 int ipa3_update_dma_per_stats(enum ipa_per_stats_type_e stats_type, uint32_t data);
+
+enum ipa_transport_type ipa3_get_transport_type(void);
+
+void ipa3_tx_cmd_comp(void *user1, int user2);
+
+int ipa3_uc_mhi_init_engine(struct ipa_mhi_msi_info *msi, u32 mmio_addr,
+	u32 host_ctrl_addr, u32 host_data_addr, u32 first_ch_idx,
+	u32 first_evt_idx);
 
 #endif /* _IPA3_I_H_ */

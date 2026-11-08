@@ -223,7 +223,7 @@ static void delete_first_node(void)
 	}
 }
 
-int ipa3_send_adpl_msg(unsigned long skb_data)
+static int ipa3_send_adpl_msg(unsigned long skb_data)
 {
 	struct ipa3_push_msg_odl *msg;
 	struct sk_buff *skb = (struct sk_buff *)skb_data;
@@ -277,7 +277,7 @@ static void odl_ipa_packet_receive_notify(void *priv,
 		IPAERR("Invalid evt %d received in wan_ipa_receive\n", evt);
 }
 
-int ipa_setup_odl_pipe(void)
+static int ipa_setup_odl_pipe(void)
 {
 	struct ipa_sys_connect_params *ipa_odl_ep_cfg;
 	int ret;
@@ -691,7 +691,7 @@ int ipa_odl_init(void)
 	mutex_init(&ipa3_odl_ctx->adpl_msg_lock);
 	mutex_init(&ipa3_odl_ctx->pipe_lock);
 
-	odl_cdev[loop].class = class_create(THIS_MODULE, "ipa_adpl");
+	odl_cdev[loop].class = class_create("ipa_adpl");
 
 	if (IS_ERR(odl_cdev[loop].class)) {
 		IPAERR("Error: odl_cdev->class NULL\n");
@@ -727,7 +727,7 @@ int ipa_odl_init(void)
 
 	loop++;
 
-	odl_cdev[loop].class = class_create(THIS_MODULE, "ipa_odl_ctl");
+	odl_cdev[loop].class = class_create("ipa_odl_ctl");
 
 	if (IS_ERR(odl_cdev[loop].class)) {
 		IPAERR("Error: odl_cdev->class NULL\n");

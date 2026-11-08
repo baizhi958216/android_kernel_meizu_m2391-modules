@@ -1551,7 +1551,7 @@ static ssize_t ipa3_read_stats(struct file *file, char __user *ubuf,
 		"flow_enable=%u\n"
 		"flow_disable=%u\n"
 		"rx_page_drop_cnt=%u\n"
-		"lower_order=%u\n"
+		"lower_order=%llu\n"
 		"rmnet_notifier_enabled=%u\n"
 		"num_buff_above_thresh_for_def_pipe_notified=%u\n"
 		"num_buff_below_thresh_for_def_pipe_notified=%u\n"
@@ -3647,7 +3647,7 @@ static ssize_t ipa3_write_tsp(struct file *file, const char __user *buf,
 	if (!token)
 		return -EINVAL;
 
-	strlcpy(option, token, IPA_TSP_OPTION_LEN);
+	strscpy(option, token, IPA_TSP_OPTION_LEN);
 	if (strnstr(option, "ingress", IPA_TSP_OPTION_LEN)) {
 		ret = ipa3_tsp_ingress_config_commit(sptr);
 		if (ret) {
@@ -4318,6 +4318,7 @@ static ssize_t ipa3_eth_read_err_status(struct file *file,
 		tx_ep = IPA_CLIENT_AQC_ETHERNET_CONS;
 		rx_ep = IPA_CLIENT_AQC_ETHERNET_PROD;
 		scratch_num = 7;
+		break;
 	case IPA_ETH_CLIENT_RTK8111K:
 	case IPA_ETH_CLIENT_RTK8125B:
 		tx_ep = IPA_CLIENT_RTK_ETHERNET_CONS;
@@ -4328,6 +4329,7 @@ static ssize_t ipa3_eth_read_err_status(struct file *file,
 		tx_ep = IPA_CLIENT_ETHERNET_CONS;
 		rx_ep = IPA_CLIENT_ETHERNET_PROD;
 		scratch_num = 6;
+		break;
 #if IPA_ETH_API_VER >= 2
 	case IPA_ETH_CLIENT_NTN3:
 

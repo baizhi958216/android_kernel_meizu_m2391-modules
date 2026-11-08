@@ -670,7 +670,7 @@ int ipa_pm_init(struct ipa_pm_init_params *params)
 
 	/* Populate exception list*/
 	for (i = 0; i < params->exception_size; i++) {
-		strlcpy(clk_scaling->exception_list[i].clients,
+		strscpy(clk_scaling->exception_list[i].clients,
 			params->exceptions[i].usecase, IPA_PM_MAX_EX_CL);
 		IPA_PM_DBG("Usecase: %s\n", params->exceptions[i].usecase);
 
@@ -699,7 +699,7 @@ int ipa_pm_init(struct ipa_pm_init_params *params)
 	/*Adding ipa3_ctx pointer to minidump list*/
 	mini_dump = (struct ipa_minidump_data *)kzalloc(sizeof(struct ipa_minidump_data), GFP_KERNEL);
 	if (mini_dump != NULL) {
-		strlcpy(mini_dump->data.owner, "ipa_pm_ctx", sizeof(mini_dump->data.owner));
+		strscpy(mini_dump->data.owner, "ipa_pm_ctx", sizeof(mini_dump->data.owner));
 		mini_dump->data.vaddr = (unsigned long)(ipa_pm_ctx);
 		mini_dump->data.size = sizeof(*ipa_pm_ctx);
 		list_add(&mini_dump->entry, &ipa3_ctx->minidump_list_head);
@@ -783,7 +783,7 @@ int ipa_pm_register(struct ipa_pm_register_params *params, u32 *hdl)
 	INIT_WORK(&client->activate_work, activate_work_func);
 
 	/* populate fields */
-	strlcpy(client->name, params->name, IPA_PM_MAX_EX_CL);
+	strscpy(client->name, params->name, IPA_PM_MAX_EX_CL);
 	client->callback = params->callback;
 	client->callback_params = params->user_data;
 	client->group = params->group;
@@ -954,6 +954,7 @@ static int ipa_pm_activate_helper(struct ipa_pm_client *client, bool sync)
 	case IPA_PM_ACTIVATED_PENDING_RESCHEDULE:
 	case IPA_PM_ACTIVATED_PENDING_DEACTIVATION:
 		client->state = IPA_PM_ACTIVATED_TIMER_SET;
+		fallthrough;
 	case IPA_PM_ACTIVATED:
 	case IPA_PM_ACTIVATED_TIMER_SET:
 		spin_unlock_irqrestore(&client->state_lock, flags);
@@ -1080,6 +1081,7 @@ int ipa_pm_deferred_deactivate(u32 hdl)
 	switch (client->state) {
 	case IPA_PM_ACTIVATE_IN_PROGRESS:
 		client->state = IPA_PM_DEACTIVATE_IN_PROGRESS;
+		fallthrough;
 	case IPA_PM_DEACTIVATED:
 		IPA_PM_DBG_STATE(hdl, client->name, client->state);
 		spin_unlock_irqrestore(&client->state_lock, flags);
@@ -1097,6 +1099,7 @@ int ipa_pm_deferred_deactivate(u32 hdl)
 	case IPA_PM_ACTIVATED_TIMER_SET:
 	case IPA_PM_ACTIVATED_PENDING_DEACTIVATION:
 		client->state = IPA_PM_ACTIVATED_PENDING_RESCHEDULE;
+		fallthrough;
 	case IPA_PM_DEACTIVATE_IN_PROGRESS:
 	case IPA_PM_ACTIVATED_PENDING_RESCHEDULE:
 		break;

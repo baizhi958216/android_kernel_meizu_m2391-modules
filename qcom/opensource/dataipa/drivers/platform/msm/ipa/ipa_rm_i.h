@@ -147,4 +147,8 @@ int ipa_rm_delete_dependency_from_ioctl(enum ipa_rm_resource_name resource_name,
 
 void ipa_rm_exit(void);
 
+int ipa_rm_add_dependency_sync_from_ioctl(
+	enum ipa_rm_resource_name resource_name,
+	enum ipa_rm_resource_name depends_on_name);
+
 #endif /* _IPA_RM_I_H_ */
