@@ -705,7 +705,7 @@ static int sr100_probe(struct spi_device *spi)
 		return -ENOMEM;
 	d->spi = spi;
 	sr100_dbg("probe chip_select=%d bus_num=%d\n",
-		    spi->chip_select, spi->master->bus_num);
+		    spi_get_chipselect(spi, 0), spi->controller->bus_num);
 	kref_init(&d->ref);
 	atomic_set(&d->transport_generation, 0);
 	init_rwsem(&d->operation_sem);
@@ -787,7 +787,7 @@ fail:
 	return rc;
 }
 
-static int sr100_remove(struct spi_device *spi)
+static void sr100_remove(struct spi_device *spi)
 {
 	struct sr100_dev *d = spi_get_drvdata(spi);
 
@@ -802,7 +802,6 @@ static int sr100_remove(struct spi_device *spi)
 	spi_set_drvdata(spi, NULL);
 	up_write(&d->operation_sem);
 	kref_put(&d->ref, sr100_free);
-	return 0;
 }
 
 static const struct of_device_id sr100_dt_match[] = {
