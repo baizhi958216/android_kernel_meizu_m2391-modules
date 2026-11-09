@@ -66,7 +66,7 @@ struct st54spi_gpio_device {
  *
  *  @return 0 on success, error code for failures.
  */
-long st54spi_gpio_dev_ioctl(struct file *pfile, unsigned int cmd,
+static long st54spi_gpio_dev_ioctl(struct file *pfile, unsigned int cmd,
 		unsigned long arg)
 {
 	struct st54spi_gpio_device *chip = pfile->private_data;
@@ -147,7 +147,7 @@ static int st54spi_gpio_dev_release(struct inode *inode, struct file *pfile)
 
 static const struct file_operations st54spi_gpio_dev_fops = {
 	.owner = THIS_MODULE,
-	.llseek = no_llseek,
+
 	.open = st54spi_gpio_dev_open,
 	.release = st54spi_gpio_dev_release,
 	.unlocked_ioctl = st54spi_gpio_dev_ioctl,
@@ -197,7 +197,7 @@ static int st54spi_gpio_probe(struct platform_device *pdev)
 		"st54spi_gpio");
 	if (rc)
 		goto free_chip;
-	chip->class = class_create(THIS_MODULE, "st54spi_gpio");
+	chip->class = class_create("st54spi_gpio");
 	if (IS_ERR(chip->class)) {
 		rc = PTR_ERR(chip->class);
 		goto unregister_region;
@@ -233,7 +233,7 @@ free_chip:
 	return rc;
 }
 
-static int st54spi_gpio_remove(struct platform_device *pdev)
+static void st54spi_gpio_remove(struct platform_device *pdev)
 {
 	struct st54spi_gpio_device *chip = platform_get_drvdata(pdev);
 
@@ -243,7 +243,6 @@ static int st54spi_gpio_remove(struct platform_device *pdev)
 	class_destroy(chip->class);
 	platform_set_drvdata(pdev, NULL);
 	put_device(&chip->device);
-	return 0;
 }
 
 static const struct of_device_id st54spi_gpio_of_match[] = {
