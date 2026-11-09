@@ -52,6 +52,7 @@ struct mz_haptic_runtime {
 	bool motor_link_registered;
 	bool class_link_registered;
 	struct class *timed_output_class;
+	struct kobject *timed_output_kobj;
 };
 
 #endif

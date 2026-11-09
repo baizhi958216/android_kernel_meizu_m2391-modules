@@ -28,7 +28,6 @@
 #include <linux/vmalloc.h>
 #include <linux/mman.h>
 #endif
-#include "base.h"
 #include "../system/meizu_sys.h"
 #include "../boot-mode/boot_mode.h"
 
@@ -3598,7 +3597,7 @@ static long tiktap_compat_ioctl(struct file *file, unsigned int cmd, unsigned lo
 
 static int tiktap_file_open(struct inode *inode, struct file *file)
 {
-	struct aw_haptic *aw = PDE_DATA(inode);
+	struct aw_haptic *aw = pde_data(inode);
 
 	if (!try_module_get(THIS_MODULE))
 		return -ENODEV;
@@ -3714,8 +3713,8 @@ static int tiktap_init(struct aw_haptic *aw_haptic)
 		return -ENOMEM;
 	SetPageReserved(virt_to_page(aw_haptic->start_buf));
 	for (i = 0; i < AW_TIKTAP_MMAP_BUF_SUM; i++) {
-		aw_haptic->start_buf[i].kernel_next =
-			&aw_haptic->start_buf[(i + 1) % AW_TIKTAP_MMAP_BUF_SUM];
+		/* Tiktap walks slots by index. The mapped ABI reserves this field. */
+		aw_haptic->start_buf[i].kernel_next = NULL;
 		aw_haptic->start_buf[i].bit = i;
 	}
 	aw_haptic->tiktap_stop_flag = true;
@@ -3732,8 +3731,7 @@ static int tiktap_init(struct aw_haptic *aw_haptic)
 
 static void mz_haptic_prepare(struct aw_haptic *aw_haptic)
 {
-	hrtimer_init(&aw_haptic->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-	aw_haptic->timer.function = vibrator_timer_func;
+	hrtimer_setup(&aw_haptic->timer, vibrator_timer_func, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	INIT_WORK(&aw_haptic->vibrator_work, vibrator_work_routine);
 	INIT_WORK(&aw_haptic->rtp_work, rtp_work_routine);
 	mutex_init(&aw_haptic->lock);
@@ -3756,9 +3754,7 @@ static void mz_haptic_prepare(struct aw_haptic *aw_haptic)
 	aw_haptic->haptic_audio.delay_val = 1;
 	aw_haptic->haptic_audio.timer_val = 21318;
 	INIT_LIST_HEAD(&(aw_haptic->haptic_audio.ctr_list));
-	hrtimer_init(&aw_haptic->haptic_audio.timer, CLOCK_MONOTONIC,
-		     HRTIMER_MODE_REL);
-	aw_haptic->haptic_audio.timer.function = audio_timer_func;
+	hrtimer_setup(&aw_haptic->haptic_audio.timer, audio_timer_func, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	INIT_WORK(&aw_haptic->haptic_audio.work, audio_work_routine);
 	mutex_init(&aw_haptic->haptic_audio.lock);
 	INIT_LIST_HEAD(&(aw_haptic->haptic_audio.list));
@@ -3867,7 +3863,7 @@ static void haptic_init(struct aw_haptic *aw_haptic)
 	mutex_unlock(&aw_haptic->lock);
 }
 
-static int aw_remove(struct i2c_client *i2c)
+static void aw_remove(struct i2c_client *i2c)
 {
 	struct aw_haptic *aw = i2c_get_clientdata(i2c);
 
@@ -3898,9 +3894,11 @@ static int aw_remove(struct i2c_client *i2c)
 	aw->aw_config_proc = NULL;
 	WRITE_ONCE(aw->tiktap_stop_flag, true);
 #endif
-	if (aw->meizu.class_link_registered)
-		sysfs_remove_link(&aw->meizu.timed_output_class->p->subsys.kobj,
-				  "vibrator");
+	if (aw->meizu.timed_output_kobj) {
+		if (aw->meizu.class_link_registered)
+			sysfs_remove_link(aw->meizu.timed_output_kobj, "vibrator");
+		kobject_put(aw->meizu.timed_output_kobj);
+	}
 	if (aw->meizu.timed_output_class)
 		class_destroy(aw->meizu.timed_output_class);
 	if (aw->meizu.motor_link_registered)
@@ -3939,10 +3937,9 @@ static int aw_remove(struct i2c_client *i2c)
 	i2c_set_clientdata(i2c, NULL);
 	/* Open misc/proc files and mapped rings keep the private state alive. */
 	kref_put(&aw->meizu.refcount, mz_haptic_release);
-	return 0;
 }
 
-static int aw_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+static int aw_i2c_probe(struct i2c_client *i2c)
 {
 	struct device_node *np = i2c->dev.of_node;
 	struct aw_haptic *aw;
@@ -3979,7 +3976,7 @@ static int aw_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
 	}
 	if (gpio_is_valid(aw->irq_gpio)) {
 		ret = devm_gpio_request_one(&i2c->dev, aw->irq_gpio,
-					   GPIOF_DIR_IN, "aw_int");
+					   GPIOF_IN, "aw_int");
 		if (ret)
 			goto fail;
 	}
@@ -4022,13 +4019,18 @@ static int aw_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
 	if (ret)
 		goto fail;
 	aw->meizu.motor_link_registered = true;
-	aw->meizu.timed_output_class = class_create(THIS_MODULE, "timed_output");
+	aw->meizu.timed_output_class = class_create("timed_output");
 	if (IS_ERR(aw->meizu.timed_output_class)) {
 		ret = PTR_ERR(aw->meizu.timed_output_class);
 		aw->meizu.timed_output_class = NULL;
 		goto fail;
 	}
-	ret = sysfs_create_link(&aw->meizu.timed_output_class->p->subsys.kobj,
+	aw->meizu.timed_output_kobj = class_get_kobject(aw->meizu.timed_output_class);
+	if (!aw->meizu.timed_output_kobj) {
+		ret = -ENODEV;
+		goto fail;
+	}
+	ret = sysfs_create_link(aw->meizu.timed_output_kobj,
 				&i2c->dev.kobj, "vibrator");
 	if (ret)
 		goto fail;

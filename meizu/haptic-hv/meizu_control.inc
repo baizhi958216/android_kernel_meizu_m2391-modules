@@ -14,7 +14,7 @@ static int mz_haptic_trigger_init(struct aw_haptic *aw,
 		return -EPROBE_DEFER;
 	if (!gpio_is_valid(aw->meizu.trig2_gpio))
 		return 0;
-	ret = devm_gpio_request(aw->dev, aw->meizu.trig2_gpio, "motor_trig2");
+	ret = devm_gpio_request_one(aw->dev, aw->meizu.trig2_gpio, GPIOF_OUT_INIT_LOW, "motor_trig2");
 	if (ret) {
 		aw->meizu.trig2_gpio = ret;
 		return ret;

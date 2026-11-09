@@ -132,5 +132,5 @@ static const struct file_operations mz_haptic_file_ops = {
 	.read = mz_haptic_file_read,
 	.write = mz_haptic_file_write,
 	.unlocked_ioctl = mz_haptic_file_ioctl,
-	.llseek = no_llseek,
+
 };
