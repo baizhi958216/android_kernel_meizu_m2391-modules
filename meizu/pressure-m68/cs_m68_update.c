@@ -5,7 +5,7 @@
 
 #include <linux/delay.h>
 #include <linux/slab.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 
 #include "cs_m68.h"
 

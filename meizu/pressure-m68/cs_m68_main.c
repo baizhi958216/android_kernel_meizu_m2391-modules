@@ -64,8 +64,7 @@ static void cs_m68_shutdown(struct cs_m68 *cs)
 	cs_m68_release_power(cs);
 }
 
-static int cs_m68_probe(struct i2c_client *client,
-		const struct i2c_device_id *id)
+static int cs_m68_probe(struct i2c_client *client)
 {
 	struct cs_m68 *cs;
 	struct input_dev *input;
@@ -172,7 +171,7 @@ unlock:
 	return ret;
 }
 
-static int cs_m68_remove(struct i2c_client *client)
+static void cs_m68_remove(struct i2c_client *client)
 {
 	struct cs_m68 *cs = i2c_get_clientdata(client);
 
@@ -182,7 +181,6 @@ static int cs_m68_remove(struct i2c_client *client)
 	cs_m68_present = false;
 	cs_m68_put(cs);
 	mutex_unlock(&cs_m68_device_lock);
-	return 0;
 }
 
 static int cs_m68_suspend(struct device *dev)

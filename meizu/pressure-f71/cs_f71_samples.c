@@ -3,7 +3,7 @@
 #include <linux/errno.h>
 #include <linux/lockdep.h>
 #include <linux/delay.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 
 #include "cs_f71.h"
 

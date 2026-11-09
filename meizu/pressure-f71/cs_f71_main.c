@@ -32,8 +32,7 @@ static void cs_f71_stop(struct cs_f71 *cs)
 	cs->stopped = true;
 }
 
-static int cs_f71_probe(struct i2c_client *client,
-		const struct i2c_device_id *id)
+static int cs_f71_probe(struct i2c_client *client)
 {
 	struct cs_f71 *cs;
 	int ret;
@@ -100,7 +99,7 @@ unlock:
 	return ret;
 }
 
-static int cs_f71_remove(struct i2c_client *client)
+static void cs_f71_remove(struct i2c_client *client)
 {
 	struct cs_f71 *cs;
 
@@ -113,7 +112,6 @@ static int cs_f71_remove(struct i2c_client *client)
 		cs_f71_put(cs);
 	}
 	mutex_unlock(&cs_f71_bind_lock);
-	return 0;
 }
 
 static void cs_f71_shutdown(struct i2c_client *client)

@@ -98,7 +98,7 @@ static const struct file_operations cs_f71_fops = {
 	.release = cs_f71_misc_release,
 	.read = cs_f71_misc_read,
 	.write = cs_f71_misc_write,
-	.llseek = no_llseek,
+
 };
 
 int cs_f71_misc_init(struct cs_f71 *cs)

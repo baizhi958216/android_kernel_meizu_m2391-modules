@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
+#include <drm/drm_panel.h>
 #include <linux/delay.h>
 #include <linux/of.h>
 #include <linux/soc/qcom/panel_event_notifier.h>

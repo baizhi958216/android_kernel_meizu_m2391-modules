@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
+#include <drm/drm_panel.h>
 #include <linux/delay.h>
 #include <linux/gpio.h>
 #include <linux/of.h>

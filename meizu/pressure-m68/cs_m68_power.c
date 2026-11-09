@@ -16,13 +16,13 @@ int cs_m68_prepare_power(struct cs_m68 *cs)
 	cs->irq_gpio = of_get_named_gpio(dev->of_node, "irq-gpio", 0);
 	if (cs->irq_gpio < 0)
 		return cs->irq_gpio;
-	ret = devm_gpio_request(dev, cs->irq_gpio, "cs-press-eint");
+	ret = devm_gpio_request_one(dev, cs->irq_gpio, GPIOF_IN, "cs-press-eint");
 	if (ret)
 		return ret;
 	cs->enable_gpio = of_get_named_gpio(dev->of_node, "enable1v8_gpio", 0);
 	if (cs->enable_gpio < 0)
 		return cs->enable_gpio;
-	ret = devm_gpio_request(dev, cs->enable_gpio, "enable1v8_gpio");
+	ret = devm_gpio_request_one(dev, cs->enable_gpio, GPIOF_OUT_INIT_HIGH, "enable1v8_gpio");
 	if (ret)
 		return ret;
 	cs->enable_gpio_owned = true;

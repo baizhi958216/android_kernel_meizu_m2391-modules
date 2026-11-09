@@ -2,7 +2,7 @@
 
 #include <linux/seq_file.h>
 #include <linux/errno.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 
 #include "cs_f71.h"
 
@@ -155,7 +155,7 @@ static int cs_f71_proc_show(struct seq_file *seq, void *unused)
 
 static int cs_f71_proc_open(struct inode *inode, struct file *file)
 {
-	struct cs_f71_proc *entry = PDE_DATA(inode);
+	struct cs_f71_proc *entry = pde_data(inode);
 	struct cs_f71 *cs = entry->cs;
 	int ret;
 

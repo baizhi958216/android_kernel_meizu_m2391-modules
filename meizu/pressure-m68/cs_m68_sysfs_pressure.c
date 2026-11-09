@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 #include <linux/sysfs.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 
 #include "cs_m68.h"
 
