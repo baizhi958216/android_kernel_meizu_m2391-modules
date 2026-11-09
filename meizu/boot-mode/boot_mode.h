@@ -3,5 +3,5 @@
 #define _MEIZU_BOOT_MODE_RECOVERED_H
 #include <linux/types.h>
 
-const unsigned int get_boot_mode(void);
+unsigned int get_boot_mode(void);
 #endif

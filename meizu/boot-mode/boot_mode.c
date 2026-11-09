@@ -9,9 +9,6 @@
 
 
 
-
-
-
 #include <linux/err.h>
 #include <linux/io.h>
 #include <linux/module.h>
@@ -23,7 +20,7 @@
 
 static u32 boot_mode;
 
-const unsigned int get_boot_mode(void)
+unsigned int get_boot_mode(void)
 {
 	return boot_mode;
 }
