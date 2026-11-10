@@ -9,6 +9,7 @@
 #include <linux/ktime.h>
 #include <linux/module.h>
 #include <linux/of_gpio.h>
+#include <linux/regulator/consumer.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h>
 #include "dtof.h"
@@ -308,7 +309,12 @@ static int dtof_i2c_probe(struct i2c_client *client)
 	}
 	chip->ipclog = ipc_log_context_create(10, "dtof_only", 0);
 	dtof_log(chip, "dtof_i2c_probe enter ! driver ver: %s\n", DTOF_VERSION);
-	/* Original AI11BA build explicitly disables regulator/poweroff control. */
+	/* B2 and later share the 3 V ToF rail with the alternate ST part. */
+	if (of_property_present(client->dev.of_node, "tof_rgltr-supply")) {
+		rc = devm_regulator_get_enable(&client->dev, "tof_rgltr");
+		if (rc)
+			goto destroy_log;
+	}
 	rc = gpio_request(chip->reset_gpio, "reset-gpio");
 	if (rc)
 		goto destroy_log;
@@ -393,7 +399,9 @@ static void dtof_i2c_remove(struct i2c_client *client)
 }
 
 static const struct of_device_id dtof_of_match[] = {
-	{ .compatible = "dtof,ai11ba_i2c" }, { },
+	{ .compatible = "adaps,ai11ba_i2c" },
+	{ .compatible = "dtof,ai11ba_i2c" },
+	{},
 };
 MODULE_DEVICE_TABLE(of, dtof_of_match);
 static const struct i2c_device_id dtof_id[] = { { "dtof", 0 }, { } };

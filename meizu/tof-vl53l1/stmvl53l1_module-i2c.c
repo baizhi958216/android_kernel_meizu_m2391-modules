@@ -431,8 +431,7 @@ static void stmvl53l1_release_gpios(struct i2c_data *i2c_data)
 	put_intr(i2c_data);
 }
 
-/* M2391 probes the Adaps alternative first; preserve the original state
- * dependency without expanding either chip's OF compatible table. */
+/* Both BOM options share reset and interrupt lines. */
 extern int s_module_load_state;
 
 static int stmvl53l1_probe(struct i2c_client *client)
@@ -441,8 +440,12 @@ static int stmvl53l1_probe(struct i2c_client *client)
 	struct stmvl53l1_data *vl53l1_data = NULL;
 	struct i2c_data *i2c_data = NULL;
 
-	if (!READ_ONCE(s_module_load_state))
+	switch (READ_ONCE(s_module_load_state)) {
+	case 0:
 		return -EPROBE_DEFER;
+	case 1:
+		return -ENODEV;
+	}
 
 	vl53l1_dbgmsg("Enter %s : 0x%02x\n", client->name, client->addr);
 
