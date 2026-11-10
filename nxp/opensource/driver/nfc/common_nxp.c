@@ -103,7 +103,7 @@ err:
  *             NFC_STATE_FW_DWL if session closed
  *             NFC_STATE_UNKNOWN in error cases.
  */
-enum nfc_state_flags get_nfcc_session_state_dl(struct nfc_dev *nfc_dev)
+static enum nfc_state_flags get_nfcc_session_state_dl(struct nfc_dev *nfc_dev)
 {
 	int ret = 0;
 	uint8_t *cmd = nfc_dev->write_kbuf;
@@ -253,7 +253,7 @@ static bool validate_download_gpio(struct nfc_dev *nfc_dev, enum chip_types chip
 	struct platform_gpio *nfc_gpio;
 
 	if (nfc_dev == NULL) {
-		pr_err("%s nfc devices structure is null\n");
+		pr_err("%s nfc devices structure is null\n", __func__);
 		return status;
 	}
 	nfc_gpio = &nfc_dev->configs.gpio;
@@ -312,6 +312,7 @@ int nfcc_hw_check(struct nfc_dev *nfc_dev)
 	switch (nfc_state) {
 	case NFC_STATE_FW_TEARED:
 		pr_warn("%s: - NFCC FW Teared State\n", __func__);
+		fallthrough;
 	case NFC_STATE_FW_DWL:
 	case NFC_STATE_NCI:
 		break;

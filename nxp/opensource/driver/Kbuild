@@ -1,5 +1,6 @@
 #Makefile for qti nfc drivers
 
+NFC_ROOT ?= $(src)
 include $(NFC_ROOT)/config/gki_nfc.conf
 
 LINUXINCLUDE    += -I$(NFC_ROOT)/include/uapi/linux/nfc

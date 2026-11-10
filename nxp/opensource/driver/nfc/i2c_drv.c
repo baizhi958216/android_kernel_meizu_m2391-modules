@@ -190,7 +190,7 @@ int i2c_read(struct nfc_dev *nfc_dev, char *buf, size_t count, int timeout)
 	memset(buf, 0x00, count);
 	/* Read data */
 	ret = i2c_master_recv(nfc_dev->i2c_dev.client, buf, count);
-	NFCLOG_IPC(nfc_dev, false, "%s of %d bytes, ret %d", __func__, count,
+	NFCLOG_IPC(nfc_dev, false, "%s of %zu bytes, ret %d", __func__, count,
 								ret);
 	if (ret <= 0) {
 		pr_err("%s: returned %d\n", __func__, ret);
@@ -238,7 +238,7 @@ int i2c_write(struct nfc_dev *nfc_dev, const char *buf, size_t count,
 		count = MAX_DL_BUFFER_SIZE;
 
 	pr_debug("%s: writing %zu bytes.\n", __func__, count);
-	NFCLOG_IPC(nfc_dev, false, "%s sending %d B", __func__, count);
+	NFCLOG_IPC(nfc_dev, false, "%s sending %zu B", __func__, count);
 
 	for (i = 0; i < disp_len; i++)
 	    NFCLOG_IPC(nfc_dev, false, " %02x", buf[i]);
@@ -333,7 +333,7 @@ static ssize_t nfc_i2c_dev_write_active(struct file *filp, const char __user *bu
 	return ret;
 }
 
-ssize_t nfc_i2c_dev_read(struct file *file, char __user *buf, size_t count,
+static ssize_t nfc_i2c_dev_read(struct file *file, char __user *buf, size_t count,
 		loff_t *offset)
 {
 	struct nfc_dev *chip = file->private_data;
@@ -348,7 +348,7 @@ ssize_t nfc_i2c_dev_read(struct file *file, char __user *buf, size_t count,
 	return rc;
 }
 
-ssize_t nfc_i2c_dev_write(struct file *file, const char __user *buf, size_t count,
+static ssize_t nfc_i2c_dev_write(struct file *file, const char __user *buf, size_t count,
 		loff_t *offset)
 {
 	struct nfc_dev *chip = file->private_data;
@@ -365,7 +365,7 @@ ssize_t nfc_i2c_dev_write(struct file *file, const char __user *buf, size_t coun
 
 static const struct file_operations nfc_i2c_dev_fops = {
 	.owner = THIS_MODULE,
-	.llseek = no_llseek,
+
 	.read = nfc_i2c_dev_read,
 	.write = nfc_i2c_dev_write,
 	.open = nfc_dev_open,
@@ -377,7 +377,7 @@ static const struct file_operations nfc_i2c_dev_fops = {
 #endif
 };
 
-int nfc_i2c_dev_probe(struct i2c_client *client, const struct i2c_device_id *id)
+int nfc_i2c_dev_probe(struct i2c_client *client)
 {
 	int ret = 0;
 	struct nfc_dev *nfc_dev = NULL;
@@ -531,12 +531,12 @@ err:
 	return ret;
 }
 
-int nfc_i2c_dev_remove(struct i2c_client *client)
+void nfc_i2c_dev_remove(struct i2c_client *client)
 {
 	struct nfc_dev *chip = i2c_get_clientdata(client);
 
 	if (!chip)
-		return -ENODEV;
+		return;
 	/* Publish before waiting: a reader/cold-reset ioctl can be asleep while
 	 * holding a read lease, and must be woken before the exclusive drain.
 	 */
@@ -571,7 +571,6 @@ int nfc_i2c_dev_remove(struct i2c_client *client)
 	kfree(chip->write_kbuf);
 	i2c_set_clientdata(client, NULL);
 	put_device(&chip->lifetime_device);
-	return 0;
 }
 
 int nfc_i2c_dev_suspend(struct device *device)

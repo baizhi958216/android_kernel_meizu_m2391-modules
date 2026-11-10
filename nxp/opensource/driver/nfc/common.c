@@ -123,7 +123,7 @@ void set_valid_gpio(int gpio, int value)
 	}
 }
 
-int get_valid_gpio(int gpio)
+static int get_valid_gpio(int gpio)
 {
 	int value = -EINVAL;
 
@@ -268,7 +268,7 @@ int nfc_misc_register(struct nfc_dev *nfc_dev,
 	rc = alloc_chrdev_region(&nfc_dev->devno, 0, count, name);
 	if (rc)
 		goto free_buffers;
-	nfc_dev->nfc_class = class_create(THIS_MODULE, classname);
+	nfc_dev->nfc_class = class_create(classname);
 	if (IS_ERR(nfc_dev->nfc_class)) {
 		rc = PTR_ERR(nfc_dev->nfc_class);
 		goto unregister_region;
