@@ -3466,8 +3466,11 @@ QDF_STATUS p2p_process_rx_mgmt(
 		  rx_mgmt->rx_rssi, rx_mgmt->buf);
 
 	if (rx_mgmt->frm_type == MGMT_ACTION_VENDOR_SPECIFIC) {
-		p2p_get_frame_info(rx_mgmt->buf, rx_mgmt->frame_len,
-				&frame_info);
+		if (QDF_IS_STATUS_ERROR(p2p_get_frame_info(rx_mgmt->buf,
+							rx_mgmt->frame_len, &frame_info))) {
+			qdf_mem_free(rx_mgmt);
+			return QDF_STATUS_E_INVAL;
+		}
 
 		/* update P2P connection status with rx frame info */
 		mac_from = &(rx_mgmt->buf[SRC_MAC_ADDR_OFFSET]);

@@ -104,6 +104,9 @@ static QDF_STATUS tdls_process_rx_mgmt(
 		return QDF_STATUS_E_INVAL;
 	}
 
+	if (rx_mgmt->frame_len < TDLS_PUBLIC_ACTION_FRAME_OFFSET + 2)
+		return QDF_STATUS_E_INVAL;
+
 	tdls_debug("soc:%pK, frame_len:%d, rx_freq:%d, vdev_id:%d, frm_type:%d, rx_rssi:%d, buf:%pK",
 		   tdls_soc_obj->soc, rx_mgmt->frame_len,
 		   rx_mgmt->rx_freq, rx_mgmt->vdev_id, rx_mgmt->frm_type,

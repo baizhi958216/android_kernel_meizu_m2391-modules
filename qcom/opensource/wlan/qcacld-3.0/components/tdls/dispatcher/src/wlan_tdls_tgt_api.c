@@ -248,7 +248,6 @@ QDF_STATUS tgt_tdls_mgmt_frame_process_rx_cb(
 	struct scheduler_msg msg = {0};
 	struct wlan_objmgr_vdev *vdev;
 	uint32_t vdev_id;
-	uint8_t *pdata;
 	QDF_STATUS status;
 
 	tdls_soc_obj = wlan_objmgr_psoc_get_comp_private_obj(psoc,
@@ -275,6 +274,10 @@ QDF_STATUS tgt_tdls_mgmt_frame_process_rx_cb(
 		vdev_id = wlan_vdev_get_id(vdev);
 	}
 
+	if (mgmt_rx_params->buf_len > qdf_nbuf_len(buf)) {
+		return QDF_STATUS_E_INVAL;
+	}
+
 	rx_mgmt_event = qdf_mem_malloc_atomic(sizeof(*rx_mgmt_event));
 	if (!rx_mgmt_event)
 		return QDF_STATUS_E_NOMEM;
@@ -287,7 +290,11 @@ QDF_STATUS tgt_tdls_mgmt_frame_process_rx_cb(
 		return QDF_STATUS_E_NOMEM;
 	}
 
-	pdata = (uint8_t *)qdf_nbuf_data(buf);
+	if (qdf_nbuf_copy_bits(buf, 0, mgmt_rx_params->buf_len, rx_mgmt->buf)) {
+		qdf_mem_free(rx_mgmt);
+		qdf_mem_free(rx_mgmt_event);
+		return QDF_STATUS_E_INVAL;
+	}
 	rx_mgmt->frame_len = mgmt_rx_params->buf_len;
 	rx_mgmt->rx_freq = mgmt_rx_params->chan_freq;
 	rx_mgmt->vdev_id = vdev_id;
@@ -296,7 +303,6 @@ QDF_STATUS tgt_tdls_mgmt_frame_process_rx_cb(
 
 	rx_mgmt_event->rx_mgmt = rx_mgmt;
 	rx_mgmt_event->tdls_soc_obj = tdls_soc_obj;
-	qdf_mem_copy(rx_mgmt->buf, pdata, mgmt_rx_params->buf_len);
 	msg.type = TDLS_EVENT_RX_MGMT;
 	msg.bodyptr = rx_mgmt_event;
 	msg.callback = tdls_process_rx_frame;
@@ -308,8 +314,6 @@ QDF_STATUS tgt_tdls_mgmt_frame_process_rx_cb(
 		qdf_mem_free(rx_mgmt);
 		qdf_mem_free(rx_mgmt_event);
 	}
-
-	qdf_nbuf_free(buf);
 
 	return status;
 }
@@ -338,18 +342,20 @@ QDF_STATUS tgt_tdls_mgmt_frame_rx_cb(
 		goto release_nbuf;
 	}
 
-	status = wlan_objmgr_peer_try_get_ref(peer, WLAN_TDLS_SB_ID);
-	if (QDF_STATUS_SUCCESS != status)
-		goto release_nbuf;
+	if (peer) {
+		status = wlan_objmgr_peer_try_get_ref(peer, WLAN_TDLS_SB_ID);
+		if (status != QDF_STATUS_SUCCESS)
+			goto release_nbuf;
+	}
 
 	status = tgt_tdls_mgmt_frame_process_rx_cb(psoc, peer, buf,
-						   mgmt_rx_params, frm_type);
+						  mgmt_rx_params, frm_type);
 
-	wlan_objmgr_peer_release_ref(peer, WLAN_TDLS_SB_ID);
+	if (peer)
+		wlan_objmgr_peer_release_ref(peer, WLAN_TDLS_SB_ID);
 
-	if (QDF_STATUS_SUCCESS != status)
 release_nbuf:
-		qdf_nbuf_free(buf);
+	qdf_nbuf_free(buf);
 	return status;
 }
 
