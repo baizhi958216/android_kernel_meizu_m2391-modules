@@ -6,6 +6,10 @@
  * Copyright (C) 2010 Trusted Logic S.A.
  */
 
+#ifdef __KERNEL__
+bool nfc_hw_secure_check(void);
+#endif
+
 #define ST21NFC_MAGIC 0xEA
 
 /* M2391 retains the scalar secure-transition ioctl. */

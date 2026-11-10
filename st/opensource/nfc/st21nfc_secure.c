@@ -4,6 +4,7 @@
 
 #define DEBUG
 #include <linux/types.h>
+#include "st21nfc.h"
 #include <linux/printk.h>
 #include "smcinvoke.h"
 #include "smcinvoke_object.h"

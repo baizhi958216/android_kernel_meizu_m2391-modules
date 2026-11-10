@@ -159,7 +159,6 @@ struct st21nfc_device {
 	bool clock_prepared;
 };
 
-bool nfc_hw_secure_check(void);
 
 static int nfc_dynamic_protection_ioctl(struct st21nfc_device *chip,
 		unsigned long transition)
@@ -408,7 +407,7 @@ static void st21nfc_power_stats_idle_signal(struct st21nfc_device *st21nfc_dev)
 	}
 }
 
-void st21nfc_pstate_wq(struct work_struct *work)
+static void st21nfc_pstate_wq(struct work_struct *work)
 {
 	struct st21nfc_device *st21nfc_dev =
 		container_of(work, struct st21nfc_device, st_p_work);
@@ -932,7 +931,7 @@ static unsigned int st21nfc_poll(struct file *file, poll_table *wait)
 
 static const struct file_operations st21nfc_dev_fops = {
 	.owner = THIS_MODULE,
-	.llseek = no_llseek,
+
 	.read = st21nfc_dev_read,
 	.write = st21nfc_dev_write,
 	.open = st21nfc_dev_open,
@@ -1131,8 +1130,7 @@ static void st21nfc_shutdown(struct st21nfc_device *chip)
 	device_init_wakeup(&chip->client->dev, false);
 }
 
-static int st21nfc_probe(struct i2c_client *client,
-			 const struct i2c_device_id *id)
+static int st21nfc_probe(struct i2c_client *client)
 {
 	int ret;
 	struct st21nfc_device *st21nfc_dev;
@@ -1321,7 +1319,7 @@ err_all:
 	return ret;
 }
 
-static int st21nfc_remove(struct i2c_client *client)
+static void st21nfc_remove(struct i2c_client *client)
 {
 	struct st21nfc_device *chip = i2c_get_clientdata(client);
 
@@ -1329,7 +1327,6 @@ static int st21nfc_remove(struct i2c_client *client)
 	acpi_dev_remove_driver_gpios(ACPI_COMPANION(&client->dev));
 	i2c_set_clientdata(client, NULL);
 	kref_put(&chip->ref, st21nfc_memory_release);
-	return 0;
 }
 
 static int st21nfc_suspend(struct device *device)
@@ -1360,7 +1357,7 @@ static int st21nfc_resume(struct device *device)
 			st21nfc_dev->irq_wake_up = false;
 	}
 
-	if (!IS_ERR(st21nfc_dev->gpiod_pidle)) {
+	if (!IS_ERR_OR_NULL(st21nfc_dev->gpiod_pidle)) {
 		pidle = gpiod_get_value(st21nfc_dev->gpiod_pidle);
 		if ((st21nfc_dev->p_idle_last != pidle) ||
 		    (st21nfc_dev->pw_current == ST21NFC_IDLE && pidle != 0) ||
