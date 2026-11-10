@@ -523,7 +523,7 @@ static int ads1015_read_raw(struct iio_dev *indio_dev,
 		#else
 		int shift = chan->scan_type.shift;
 
-		ret = iio_device_claim_direct_mode(indio_dev);
+		ret = iio_device_claim_direct(indio_dev) ? 0 : -EBUSY;
 		if (ret) {
 			dev_err(data->dev, "%s(%d) error: %d\n",__FUNCTION__, __LINE__, ret);
 			break;
@@ -560,7 +560,7 @@ static int ads1015_read_raw(struct iio_dev *indio_dev,
 
 		ret = IIO_VAL_INT;
 release_direct:
-		iio_device_release_direct_mode(indio_dev);
+		iio_device_release_direct(indio_dev);
 		#endif
 		break;
 	}
@@ -817,7 +817,7 @@ static int ads1015_disable_event_config(struct ads1015_data *data,
 
 static int ads1015_write_event_config(struct iio_dev *indio_dev,
 	const struct iio_chan_spec *chan, enum iio_event_type type,
-	enum iio_event_direction dir, int state)
+	enum iio_event_direction dir, bool state)
 {
 	struct ads1015_data *data = iio_priv(indio_dev);
 	int ret;
@@ -828,7 +828,7 @@ static int ads1015_write_event_config(struct iio_dev *indio_dev,
 	dev_err(data->dev, "%s(%d) ...\n",__FUNCTION__, __LINE__);
 
 	/* Prevent from enabling both buffer and event at a time */
-	ret = iio_device_claim_direct_mode(indio_dev);
+	ret = iio_device_claim_direct(indio_dev) ? 0 : -EBUSY;
 	if (ret) {
 		mutex_unlock(&data->lock);
 		dev_err(data->dev, "%s(%d) error: %d\n",__FUNCTION__, __LINE__, ret);
@@ -840,7 +840,7 @@ static int ads1015_write_event_config(struct iio_dev *indio_dev,
 	else
 		ret = ads1015_disable_event_config(data, chan, comp_mode);
 
-	iio_device_release_direct_mode(indio_dev);
+	iio_device_release_direct(indio_dev);
 	mutex_unlock(&data->lock);
 
 	return ret;
@@ -1096,8 +1096,7 @@ static int ads1015_set_conv_mode(struct ads1015_data *data, int mode)
 				  mode << ADS1015_CFG_MOD_SHIFT);
 }
 
-static int ads1015_probe(struct i2c_client *client,
-			 const struct i2c_device_id *id)
+static int ads1015_probe(struct i2c_client *client)
 {
 	struct iio_dev *indio_dev;
 	struct ads1015_data *data;
@@ -1125,8 +1124,13 @@ static int ads1015_probe(struct i2c_client *client,
 	indio_dev->modes = INDIO_DIRECT_MODE;
 
 	chip = (enum chip_ids)device_get_match_data(&client->dev);
-	if (chip == ADSXXXX)
+	if (chip == ADSXXXX) {
+		const struct i2c_device_id *id = i2c_client_get_device_id(client);
+
+		if (!id)
+			return -ENODEV;
 		chip = id->driver_data;
+	}
 	switch (chip) {
 	case ADS1015:
 	case ADS1015_1:
@@ -1186,7 +1190,7 @@ static int ads1015_probe(struct i2c_client *client,
 					      ads1015_trigger_handler,
 					      &ads1015_buffer_setup_ops);
 	if (ret < 0) {
-		dev_err(&client->dev, "%s(%d) iio triggered buffer setup failed, error: \n",__FUNCTION__, __LINE__, ret);
+		dev_err(&client->dev, "%s(%d) iio triggered buffer setup failed, error: %d\n",__FUNCTION__, __LINE__, ret);
 		return ret;
 	}
 	//ads1015_init_managed_trigger(&client->dev, indio_dev, data);
@@ -1287,7 +1291,7 @@ static int ads1015_probe(struct i2c_client *client,
 	return 0;
 }
 
-static int ads1015_remove(struct i2c_client *client)
+static void ads1015_remove(struct i2c_client *client)
 {
 	int ret = 0;
 
@@ -1300,7 +1304,8 @@ static int ads1015_remove(struct i2c_client *client)
 	//pm_runtime_disable(&client->dev);
 	//pm_runtime_set_suspended(&client->dev);
 
-	return ret;
+	if (ret)
+		dev_warn(&client->dev, "failed to leave single-shot mode: %d\n", ret);
 }
 
 static int ads1015_system_suspend(struct device *dev)
