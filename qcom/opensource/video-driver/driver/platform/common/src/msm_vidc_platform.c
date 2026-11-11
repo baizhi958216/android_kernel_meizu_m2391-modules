@@ -100,7 +100,7 @@ static struct v4l2_ioctl_ops msm_v4l2_ioctl_ops_enc = {
 	.vidioc_dqbuf                   = msm_v4l2_dqbuf,
 	.vidioc_streamon                = msm_v4l2_streamon,
 	.vidioc_streamoff               = msm_v4l2_streamoff,
-	.vidioc_queryctrl               = msm_v4l2_queryctrl,
+
 	.vidioc_querymenu               = msm_v4l2_querymenu,
 	.vidioc_subscribe_event         = msm_v4l2_subscribe_event,
 	.vidioc_unsubscribe_event       = msm_v4l2_unsubscribe_event,
@@ -142,7 +142,7 @@ static struct v4l2_ioctl_ops msm_v4l2_ioctl_ops_dec = {
 	.vidioc_dqbuf                   = msm_v4l2_dqbuf,
 	.vidioc_streamon                = msm_v4l2_streamon,
 	.vidioc_streamoff               = msm_v4l2_streamoff,
-	.vidioc_queryctrl               = msm_v4l2_queryctrl,
+
 	.vidioc_querymenu               = msm_v4l2_querymenu,
 	.vidioc_subscribe_event         = msm_v4l2_subscribe_event,
 	.vidioc_unsubscribe_event       = msm_v4l2_unsubscribe_event,
@@ -543,5 +543,5 @@ void msm_vidc_sort_table(struct msm_vidc_core *core)
 		sizeof(*core->dt->allowed_clks_tbl), cmp, NULL);
 	d_vpr_h("Updated allowed clock rates\n");
 	for (i = 0; i < core->dt->allowed_clks_tbl_size; i++)
-		d_vpr_h("    %d\n", core->dt->allowed_clks_tbl[i]);
+		d_vpr_h("    %u\n", core->dt->allowed_clks_tbl[i].clock_rate);
 }

@@ -193,9 +193,9 @@ static const char * const * msm_vidc_get_qmenu_type(
 		return mpeg_video_avc_coding_layer;
 	case V4L2_CID_MPEG_VIDEO_HEVC_PROFILE:
 		return mpeg_video_hevc_profile;
-	case V4L2_CID_MPEG_VIDEO_AV1_PROFILE:
+	case V4L2_CID_MPEG_VIDC_AV1_PROFILE:
 		return av1_profile;
-	case V4L2_CID_MPEG_VIDEO_AV1_LEVEL:
+	case V4L2_CID_MPEG_VIDC_AV1_LEVEL:
 		return av1_level;
 	case V4L2_CID_MPEG_VIDEO_AV1_TIER:
 		return av1_tier;
@@ -331,7 +331,7 @@ static int msm_vidc_packetize_control(struct msm_vidc_inst *inst,
 	void *hfi_val, u32 payload_size, const char *func)
 {
 	int rc = 0;
-	u64 payload = 0;
+	u32 payload = 0;
 
 	if (payload_size > sizeof(u32)) {
 		i_vpr_e(inst, "%s: payload size is more than u32 for cap[%d] %s\n",
@@ -778,7 +778,7 @@ error:
 	return rc;
 }
 
-void msm_vidc_add_volatile_flag(struct v4l2_ctrl *ctrl)
+static void msm_vidc_add_volatile_flag(struct v4l2_ctrl *ctrl)
 {
 	if (ctrl->id == V4L2_CID_MIN_BUFFERS_FOR_OUTPUT ||
 		ctrl->id == V4L2_CID_MIN_BUFFERS_FOR_CAPTURE ||
@@ -4591,7 +4591,7 @@ int msm_vidc_set_ir_period(void *instance,
 		ir_type = HFI_PROP_IR_CYCLIC_PERIOD;
 	} else {
 		i_vpr_e(inst, "%s: invalid ir_type %d\n",
-			__func__, inst->capabilities->cap[IR_TYPE]);
+			__func__, inst->capabilities->cap[IR_TYPE].value);
 		return -EINVAL;
 	}
 
@@ -4707,26 +4707,6 @@ int msm_vidc_set_u32_enum(void *instance,
 	return rc;
 }
 
-int msm_vidc_set_s32(void *instance,
-	enum msm_vidc_inst_capability_type cap_id)
-{
-	int rc = 0;
-	struct msm_vidc_inst *inst = (struct msm_vidc_inst *)instance;
-	s32 hfi_value = 0;
-
-	if (!inst || !inst->capabilities) {
-		d_vpr_e("%s: invalid params\n", __func__);
-		return -EINVAL;
-	}
-	hfi_value = inst->capabilities->cap[cap_id].value;
-
-	rc = msm_vidc_packetize_control(inst, cap_id, HFI_PAYLOAD_S32,
-		&hfi_value, sizeof(s32), __func__);
-	if (rc)
-		return rc;
-
-	return rc;
-}
 
 int msm_vidc_v4l2_menu_to_hfi(struct msm_vidc_inst *inst,
 	enum msm_vidc_inst_capability_type cap_id, u32 *value)
@@ -4800,11 +4780,11 @@ int msm_vidc_v4l2_to_hfi_enum(struct msm_vidc_inst *inst,
 	case V4L2_CID_MPEG_VIDEO_HEVC_PROFILE:
 	case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
 	case V4L2_CID_MPEG_VIDEO_VP9_PROFILE:
-	case V4L2_CID_MPEG_VIDEO_AV1_PROFILE:
+	case V4L2_CID_MPEG_VIDC_AV1_PROFILE:
 	case V4L2_CID_MPEG_VIDEO_HEVC_LEVEL:
 	case V4L2_CID_MPEG_VIDEO_H264_LEVEL:
 	case V4L2_CID_MPEG_VIDEO_VP9_LEVEL:
-	case V4L2_CID_MPEG_VIDEO_AV1_LEVEL:
+	case V4L2_CID_MPEG_VIDC_AV1_LEVEL:
 	case V4L2_CID_MPEG_VIDEO_HEVC_TIER:
 	case V4L2_CID_MPEG_VIDEO_AV1_TIER:
 	case V4L2_CID_MPEG_VIDC_VIDEO_BLUR_TYPES:

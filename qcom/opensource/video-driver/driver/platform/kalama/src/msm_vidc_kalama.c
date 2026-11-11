@@ -1010,7 +1010,7 @@ static struct msm_platform_inst_capability instance_cap_data_kalama[] = {
 		V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN,
 		BIT(V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN),
 		V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN,
-		V4L2_CID_MPEG_VIDEO_AV1_PROFILE,
+		V4L2_CID_MPEG_VIDC_AV1_PROFILE,
 		HFI_PROP_PROFILE,
 		CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU},
 
@@ -1152,7 +1152,7 @@ static struct msm_platform_inst_capability instance_cap_data_kalama[] = {
 		BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_6_0) |
 		BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_6_1),
 		V4L2_MPEG_VIDEO_AV1_LEVEL_6_1,
-		V4L2_CID_MPEG_VIDEO_AV1_LEVEL,
+		V4L2_CID_MPEG_VIDC_AV1_LEVEL,
 		HFI_PROP_LEVEL,
 		CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU},
 
@@ -2439,7 +2439,7 @@ static const struct msm_vidc_platform_data kalama_data = {
 	.ubwc_config = ubwc_config_kalama,
 };
 
-int msm_vidc_kalama_check_ddr_type(void)
+static int msm_vidc_kalama_check_ddr_type(void)
 {
 	u32 ddr_type;
 
