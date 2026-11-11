@@ -16,7 +16,7 @@
 #include <linux/kernel.h>
 #include <linux/input/mt.h>
 #include <linux/input/touchscreen.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 
 //GPIO inlcudes below
 #include <linux/hrtimer.h>
@@ -473,17 +473,6 @@ static inline int js_r_draging(struct aks_analog_key_data *adata, int x, int y) 
 	}
 }
 
-
-int count_bit_one(unsigned long n)
-{
-    int count = 0;
-    while (n)
-    {
-        n = n & (n - 1);
-        count++;
-    }
-    return count;
-}
 
 static inline int calc_sniper_move_speed(int original, unsigned int x) {
 
@@ -1375,8 +1364,6 @@ static int aks_gamepad_gpio_keys_setup_key(struct device *dev,
 		dev_err(dev, "button->gpio = %d\n", button->gpio);
 		flags = GPIOF_IN;
 
-		if (button->active_low)
-			flags |= GPIOF_ACTIVE_LOW;
 
 		error = devm_gpio_request_one(dev, button->gpio, flags, desc);
 		if (error < 0) {
@@ -1388,6 +1375,8 @@ static int aks_gamepad_gpio_keys_setup_key(struct device *dev,
 		bdata->gpiod = gpio_to_desc(button->gpio);
 		if (!bdata->gpiod)
 			return -EINVAL;
+		if (gpiod_is_active_low(bdata->gpiod) != button->active_low)
+			gpiod_toggle_active_low(bdata->gpiod);
 	}
 
 	if (bdata->gpiod) {
@@ -1423,9 +1412,8 @@ static int aks_gamepad_gpio_keys_setup_key(struct device *dev,
 
 		INIT_DELAYED_WORK(&bdata->work, aks_gamepad_gpio_keys_gpio_work_func);
 
-		hrtimer_init(&bdata->debounce_timer,
-			     CLOCK_REALTIME, HRTIMER_MODE_REL);
-		bdata->debounce_timer.function = aks_gamepad_gpio_keys_debounce_timer;
+		hrtimer_setup(&bdata->debounce_timer, aks_gamepad_gpio_keys_debounce_timer,
+			      CLOCK_REALTIME, HRTIMER_MODE_REL);
 
 		isr = aks_gamepad_gpio_keys_gpio_isr;
 		irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
@@ -1461,9 +1449,8 @@ static int aks_gamepad_gpio_keys_setup_key(struct device *dev,
 		}
 
 		bdata->release_delay = button->debounce_interval;
-		hrtimer_init(&bdata->release_timer,
-			     CLOCK_REALTIME, HRTIMER_MODE_REL_HARD);
-		bdata->release_timer.function = aks_gamepad_gpio_keys_irq_timer;
+		hrtimer_setup(&bdata->release_timer, aks_gamepad_gpio_keys_irq_timer,
+			      CLOCK_REALTIME, HRTIMER_MODE_REL_HARD);
 
 		isr = aks_gamepad_gpio_keys_irq_isr;
 		irqflags = 0;
@@ -2261,7 +2248,7 @@ struct device *aks_cdev_device;
 char* aks_cdev_name = "aks_input";
 dev_t aks_cdev_no;
 
-int aks_input_cdev_open(struct inode *inode, struct file *file)
+static int aks_input_cdev_open(struct inode *inode, struct file *file)
 {
 	struct aks_input_device *dev;
 	int ret = 0;
@@ -2278,7 +2265,7 @@ int aks_input_cdev_open(struct inode *inode, struct file *file)
 	return ret;
 }
 
-int aks_input_cdev_release(struct inode *inode, struct file *file)
+static int aks_input_cdev_release(struct inode *inode, struct file *file)
 {
 	struct aks_input_device *dev = file->private_data;
 
@@ -2414,8 +2401,8 @@ static void dump_mapping_data(struct aks_multitouch_data *mt_data)
 	dev_err(g_aks_dev->dev, "    rs_type = %d ", mt_data->mapping_props.rs_type);
 	dev_err(g_aks_dev->dev, "    ls_size = %d ", mt_data->mapping_props.ls_size);
 	dev_err(g_aks_dev->dev, "    rs_size = %d ", mt_data->mapping_props.rs_size);
-	dev_err(g_aks_dev->dev, " l_bind_key = %d ", mt_data->mapping_props.l_bind_key[0]);
-	dev_err(g_aks_dev->dev, " r_bind_key = %d ", mt_data->mapping_props.r_bind_key[0]);
+	dev_err(g_aks_dev->dev, " l_bind_key = %lu ", mt_data->mapping_props.l_bind_key[0]);
+	dev_err(g_aks_dev->dev, " r_bind_key = %lu ", mt_data->mapping_props.r_bind_key[0]);
 	dev_err(g_aks_dev->dev, "   ls x=%d, y=%d", mt_data->mapping_props.ls.x, mt_data->mapping_props.ls.y);
 	dev_err(g_aks_dev->dev, "   rs x=%d, y=%d", mt_data->mapping_props.rs.x, mt_data->mapping_props.rs.y);
 }
@@ -2981,7 +2968,7 @@ static const struct file_operations aks_input_cdev_fops =
   .write = aks_input_cdev_write,
 };
 
-static char *aks_input_class_devnode(struct device *dev, umode_t *mode)
+static char *aks_input_class_devnode(const struct device *dev, umode_t *mode)
 {
 
     if (mode != NULL) {
@@ -3025,7 +3012,7 @@ static int aks_gamepad_cdev_init_ioctl(void)
 		return ret;
 	aks_cdev_major = MAJOR(aks_cdev_no);
 	aks_region_live = true;
-	aks_cdev_cls = class_create(THIS_MODULE, aks_cdev_name);
+	aks_cdev_cls = class_create(aks_cdev_name);
 	if (IS_ERR(aks_cdev_cls)) {
 		ret = PTR_ERR(aks_cdev_cls);
 		aks_cdev_cls = NULL;
@@ -3107,7 +3094,7 @@ stop_producers:
 	return ret;
 }
 
-static int aks_gamepad_remove(struct platform_device *pdev)
+static void aks_gamepad_remove(struct platform_device *pdev)
 {
 	struct aks_input_device *aks = platform_get_drvdata(pdev);
 
@@ -3120,7 +3107,6 @@ static int aks_gamepad_remove(struct platform_device *pdev)
 	up_write(&aks->operation_sem);
 	aks_gamepad_stop_producers(aks);
 	/* devres releases producers before the first-registered owner action. */
-	return 0;
 }
 
 //#if defined(CONFIG_PM) && !defined(CONFIG_HAS_EARLYSUSPEND)
