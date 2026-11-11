@@ -4,10 +4,12 @@
  * Copyright (c) 2022. Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/dma-buf.h>
+#include <linux/qcom_dma_heap.h>
 #include <linux/dma-heap.h>
 #include <linux/dma-mapping.h>
-#include <linux/qcom-dma-mapping.h>
+#include <linux/qcom-iommu-util.h>
 #include <linux/mem-buf.h>
 #include <soc/qcom/secure_buffer.h>
 #include <../drivers/dma-buf/heaps/qcom_sg_ops.h>
@@ -25,7 +27,7 @@ struct msm_vidc_buf_region_name {
 	char *name;
 };
 
-struct context_bank_info *get_context_bank(struct msm_vidc_core *core,
+static struct context_bank_info *get_context_bank(struct msm_vidc_core *core,
 		enum msm_vidc_buffer_region region)
 {
 	const char *name;
@@ -133,7 +135,7 @@ void msm_vidc_memory_put_dmabuf(struct msm_vidc_inst *inst, struct dma_buf *dmab
 		}
 	}
 	if (!found) {
-		i_vpr_e(inst, "%s: invalid dmabuf %#x\n", __func__, dmabuf);
+		i_vpr_e(inst, "%s: invalid dmabuf %pK\n", __func__, dmabuf);
 		return;
 	}
 
@@ -233,7 +235,7 @@ int msm_vidc_memory_map(struct msm_vidc_core *core, struct msm_vidc_map *map)
 		 * Get the scatterlist for the given attachment
 		 * Mapping of sg is taken care by map attachment
 		 */
-		attach->dma_map_attrs |= DMA_ATTR_DELAYED_UNMAP;
+		attach->dma_map_attrs |= QCOM_DMA_ATTR_DELAYED_UNMAP;
 	}
 
 	/*
@@ -245,9 +247,9 @@ int msm_vidc_memory_map(struct msm_vidc_core *core, struct msm_vidc_map *map)
 	attach->dma_map_attrs |= DMA_ATTR_SKIP_CPU_SYNC;
 	if (core->dt->sys_cache_present)
 		attach->dma_map_attrs |=
-			DMA_ATTR_IOMMU_USE_UPSTREAM_HINT;
+			DMA_ATTR_SYS_CACHE_ONLY;
 
-	table = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+	table = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
 	if (IS_ERR_OR_NULL(table)) {
 		rc = PTR_ERR(table) ? PTR_ERR(table) : -ENOMEM;
 		d_vpr_e("Failed to map table\n");
@@ -266,13 +268,13 @@ int msm_vidc_memory_map(struct msm_vidc_core *core, struct msm_vidc_map *map)
 
 exit:
 	d_vpr_l(
-		"%s: type %11s, device_addr %#x, refcount %d, region %d\n",
+		"%s: type %11s, device_addr %#llx, refcount %d, region %d\n",
 		__func__, buf_name(map->type), map->device_addr, map->refcount, map->region);
 
 	return 0;
 
 error_sg:
-	dma_buf_unmap_attachment(attach, table, DMA_BIDIRECTIONAL);
+	dma_buf_unmap_attachment_unlocked(attach, table, DMA_BIDIRECTIONAL);
 error_table:
 	dma_buf_detach(map->dmabuf, attach);
 error_attach:
@@ -298,13 +300,13 @@ int msm_vidc_memory_unmap(struct msm_vidc_core *core,
 	}
 
 	d_vpr_l(
-		"%s: type %11s, device_addr %#x, refcount %d, region %d\n",
+		"%s: type %11s, device_addr %#llx, refcount %d, region %d\n",
 		__func__, buf_name(map->type), map->device_addr, map->refcount, map->region);
 
 	if (map->refcount)
 		goto exit;
 
-	dma_buf_unmap_attachment(map->attach, map->table, DMA_BIDIRECTIONAL);
+	dma_buf_unmap_attachment_unlocked(map->attach, map->table, DMA_BIDIRECTIONAL);
 	dma_buf_detach(map->dmabuf, map->attach);
 
 	map->device_addr = 0x0;
@@ -342,7 +344,7 @@ int msm_vidc_iommu_unmap(struct msm_vidc_core *core,
 	}
 
 	iommu_unmap(cb->domain, map->device_addr, map->size);
-	d_vpr_l("%s: type %11s, device_addr %#x, region %d\n",
+	d_vpr_l("%s: type %11s, device_addr %#llx, region %d\n",
 		__func__, buf_name(map->type), map->device_addr, map->region);
 
 	map->device_addr = 0x0;
@@ -382,17 +384,17 @@ int msm_vidc_iommu_map(struct msm_vidc_core *core, struct msm_vidc_map *map)
 	}
 
 	rc = iommu_map(cb->domain, map->device_addr, phys_addr,
-		map->size, IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
+		map->size, IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE, GFP_KERNEL);
 	if (rc) {
 		d_vpr_e(
-			"iommu_map failed for device_addr 0x%x, size %d, rc:%d\n",
+			"iommu_map failed for device_addr 0x%llx, size %d, rc:%d\n",
 			map->device_addr, map->size, rc);
 		return rc;
 	}
 
 	map->refcount++;
 
-	d_vpr_l("%s: device_addr %#x, region %d\n",
+	d_vpr_l("%s: device_addr %#llx, region %d\n",
 		__func__, map->device_addr, map->region);
 
 exit:
@@ -467,6 +469,7 @@ int msm_vidc_memory_alloc(struct msm_vidc_core *core, struct msm_vidc_alloc *mem
 		goto error;
 	}
 	mem->dmabuf = dma_heap_buffer_alloc(heap, size, 0, 0);
+	dma_heap_put(heap);
 	if (IS_ERR_OR_NULL(mem->dmabuf)) {
 		d_vpr_e("%s: dma heap %s alloc failed\n", __func__, heap_name);
 		mem->dmabuf = NULL;
@@ -492,24 +495,19 @@ int msm_vidc_memory_alloc(struct msm_vidc_core *core, struct msm_vidc_alloc *mem
 	}
 
 	if (mem->map_kernel) {
-		dma_buf_begin_cpu_access(mem->dmabuf, DMA_BIDIRECTIONAL);
-
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,15,0))
-		mem->kvaddr = dma_buf_vmap(mem->dmabuf);
-		if (!mem->kvaddr) {
-			d_vpr_e("%s: kernel map failed\n", __func__);
-			rc = -EIO;
+		rc = dma_buf_begin_cpu_access(mem->dmabuf, DMA_BIDIRECTIONAL);
+		if (rc)
 			goto error;
+		rc = dma_buf_vmap_unlocked(mem->dmabuf, &mem->dmabuf_map);
+		if (!rc && mem->dmabuf_map.is_iomem) {
+			dma_buf_vunmap_unlocked(mem->dmabuf, &mem->dmabuf_map);
+			rc = -ENXIO;
 		}
-#else
-		rc = dma_buf_vmap(mem->dmabuf, &mem->dmabuf_map);
 		if (rc) {
-			d_vpr_e("%s: kernel map failed\n", __func__);
-			rc = -EIO;
+			dma_buf_end_cpu_access(mem->dmabuf, DMA_BIDIRECTIONAL);
 			goto error;
 		}
 		mem->kvaddr = mem->dmabuf_map.vaddr;
-#endif
 	}
 
 	d_vpr_h(
@@ -544,11 +542,7 @@ int msm_vidc_memory_free(struct msm_vidc_core *core, struct msm_vidc_alloc *mem)
 		buf_name(mem->type), mem->secure, mem->region);
 
 	if (mem->kvaddr) {
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,15,0))
-		dma_buf_vunmap(mem->dmabuf, mem->kvaddr);
-#else
-		dma_buf_vunmap(mem->dmabuf, &mem->dmabuf_map);
-#endif
+		dma_buf_vunmap_unlocked(mem->dmabuf, &mem->dmabuf_map);
 		mem->kvaddr = NULL;
 		dma_buf_end_cpu_access(mem->dmabuf, DMA_BIDIRECTIONAL);
 	}
@@ -616,7 +610,7 @@ void msm_memory_pool_free(struct msm_vidc_inst *inst, void *vidc_buf)
 
 	/* sanitize buffer addr */
 	if (hdr->buf != vidc_buf) {
-		i_vpr_e(inst, "%s: invalid buf addr %#x\n", __func__, vidc_buf);
+		i_vpr_e(inst, "%s: invalid buf addr %pK\n", __func__, vidc_buf);
 		return;
 	}
 
@@ -629,7 +623,7 @@ void msm_memory_pool_free(struct msm_vidc_inst *inst, void *vidc_buf)
 
 	/* catch double-free request */
 	if (!hdr->busy) {
-		i_vpr_e(inst, "%s: double free request. type %s, addr %#x\n", __func__,
+		i_vpr_e(inst, "%s: double free request. type %s, addr %pK\n", __func__,
 			pool->name, vidc_buf);
 		return;
 	}

@@ -6,14 +6,14 @@
 
 #include "msm_vidc_lifetime.h"
 #include <linux/iommu.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/soc/qcom/smem.h>
 #include <linux/irqreturn.h>
 #include <linux/reset.h>
 #include <linux/interconnect.h>
 #include <linux/of_address.h>
 #include <linux/firmware.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/soc/qcom/mdt_loader.h>
 #include <linux/iopoll.h>
 
@@ -184,7 +184,7 @@ bool __core_in_valid_state(struct msm_vidc_core *core)
 	return core->state != MSM_VIDC_CORE_DEINIT;
 }
 
-bool is_sys_cache_present(struct msm_vidc_core *core)
+static bool is_sys_cache_present(struct msm_vidc_core *core)
 {
 	return core->dt->sys_cache_present;
 }
@@ -1489,7 +1489,7 @@ static int __register_mmrm(struct msm_vidc_core *core)
 		desc.client_type = MMRM_CLIENT_CLOCK;
 		desc.client_info.desc.client_domain = MMRM_CLIENT_DOMAIN_VIDEO;
 		desc.client_info.desc.client_id = cl->clk_id;
-		strlcpy(name, cl->name, sizeof(desc.client_info.desc.name));
+		strscpy(name, cl->name, sizeof(desc.client_info.desc.name));
 		desc.client_info.desc.clk = cl->clk;
 		desc.priority = MMRM_CLIENT_PRIOR_LOW;
 		desc.pvt_data = notifier_data.pvt_data;
@@ -2348,7 +2348,7 @@ int venus_hfi_interface_queues_init(struct msm_vidc_core *core)
 			core->iface_q_table.align_virtual_addr;
 	q_tbl_hdr->qtbl_version = 0;
 	q_tbl_hdr->device_addr = (void *)core;
-	strlcpy(q_tbl_hdr->name, "msm_v4l2_vidc", sizeof(q_tbl_hdr->name));
+	strscpy(q_tbl_hdr->name, "msm_v4l2_vidc", sizeof(q_tbl_hdr->name));
 	q_tbl_hdr->qtbl_size = VIDC_IFACEQ_TABLE_SIZE;
 	q_tbl_hdr->qtbl_qhdr0_offset = sizeof(struct hfi_queue_table_header);
 	q_tbl_hdr->qtbl_qhdr_size = sizeof(struct hfi_queue_header);
@@ -2479,7 +2479,7 @@ static int __load_fw_to_memory(struct platform_device *pdev,
 	virt = memremap(phys, res_size, MEMREMAP_WC);
 	if (!virt) {
 		rc = -ENOMEM;
-		d_vpr_e("%s: failed to remap fw memory phys %pa[p]\n",
+		d_vpr_e("%s: failed to remap fw memory phys %llua[p]\n",
 				__func__, phys);
 		goto exit;
 	}
@@ -2570,7 +2570,7 @@ int __load_fw(struct msm_vidc_core *core)
 	/* configure interface_queues memory to firmware */
 	rc = call_venus_op(core, setup_ucregion_memmap, core);
 	if (rc) {
-		d_vpr_e("%s: failed to setup ucregion\n");
+		d_vpr_e("%s: failed to setup ucregion\n", __func__);
 		goto fail_setup_ucregion;
 	}
 

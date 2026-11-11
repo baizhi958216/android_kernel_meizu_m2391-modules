@@ -869,7 +869,7 @@ struct msm_vidc_alloc {
 	u8                          map_kernel:1;
 	struct dma_buf             *dmabuf;
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,15,0))
-	struct dma_buf_map          dmabuf_map;
+	struct iosys_map          dmabuf_map;
 #endif
 	void                       *kvaddr;
 };

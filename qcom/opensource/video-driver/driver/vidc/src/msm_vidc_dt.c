@@ -3,8 +3,8 @@
  * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
  */
 
+#include <linux/qcom-iommu-util.h>
 #include <linux/iommu.h>
-#include <linux/dma-iommu.h>
 #include <linux/of.h>
 #include <linux/sort.h>
 
@@ -515,7 +515,7 @@ static int msm_vidc_load_regulator_table(struct msm_vidc_core *core)
 			d_vpr_e("Failed to alloc memory for regulator name\n");
 			goto err_reg_name_alloc;
 		}
-		strlcpy(rinfo->name, domains_property->name,
+		strscpy(rinfo->name, domains_property->name,
 			(supply - domains_property->name) + 1);
 
 		rinfo->has_hw_power_collapse = of_property_read_bool(
@@ -773,7 +773,7 @@ static int msm_vidc_setup_context_bank(struct msm_vidc_core *core,
 		struct context_bank_info *cb, struct device *dev)
 {
 	int rc = 0;
-	struct bus_type *bus;
+	const struct bus_type *bus;
 
 	if (!core || !dev || !cb) {
 		d_vpr_e("%s: Invalid Input params\n", __func__);
@@ -799,7 +799,9 @@ static int msm_vidc_setup_context_bank(struct msm_vidc_core *core,
 	 * When memory is fragmented, below configuration increases the
 	 * possibility to get a mapping for buffer in the configured CB.
 	 */
-	iommu_dma_enable_best_fit_algo(cb->dev);
+	rc = qcom_iommu_dma_enable_best_fit(cb->dev);
+	if (rc)
+		goto remove_cb;
 
 	/*
 	 * configure device segment size and segment boundary to ensure

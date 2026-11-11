@@ -41,7 +41,7 @@ struct msm_vidc_hfi_packet_handle {
 	int (*handle)(struct msm_vidc_inst *inst, struct hfi_packet *pkt);
 };
 
-void print_psc_properties(const char *str, struct msm_vidc_inst *inst,
+static void print_psc_properties(const char *str, struct msm_vidc_inst *inst,
 	struct msm_vidc_subscription_params subsc_params)
 {
 	if (!inst || !str)
@@ -83,7 +83,7 @@ static void print_sfr_message(struct msm_vidc_core *core)
 	}
 }
 
-u32 vidc_port_from_hfi(struct msm_vidc_inst *inst,
+static u32 vidc_port_from_hfi(struct msm_vidc_inst *inst,
 	enum hfi_packet_port_type hfi_port)
 {
 	enum msm_vidc_port_type port = MAX_PORT;
@@ -128,7 +128,7 @@ u32 vidc_port_from_hfi(struct msm_vidc_inst *inst,
 	return port;
 }
 
-bool is_valid_hfi_port(struct msm_vidc_inst *inst, u32 port,
+static bool is_valid_hfi_port(struct msm_vidc_inst *inst, u32 port,
 	u32 buffer_type, const char *func)
 {
 	if (!inst) {
@@ -816,7 +816,7 @@ static int handle_input_buffer(struct msm_vidc_inst *inst,
 		}
 	}
 	if (!found) {
-		i_vpr_e(inst, "%s: invalid buffer idx %d addr %#x data_offset %d\n",
+		i_vpr_e(inst, "%s: invalid buffer idx %d addr %#llx data_offset %d\n",
 			__func__, buffer->index, buffer->base_address,
 			buffer->data_offset);
 		return -EINVAL;
@@ -1078,7 +1078,7 @@ static int handle_input_metadata_buffer(struct msm_vidc_inst *inst,
 		}
 	}
 	if (!found) {
-		i_vpr_e(inst, "%s: invalid idx %d daddr %#x data_offset %d\n",
+		i_vpr_e(inst, "%s: invalid idx %d daddr %#llx data_offset %d\n",
 			__func__, buffer->index, buffer->base_address,
 			buffer->data_offset);
 		return -EINVAL;
@@ -1145,7 +1145,7 @@ static int handle_output_metadata_buffer(struct msm_vidc_inst *inst,
 		}
 	}
 	if (!found) {
-		i_vpr_e(inst, "%s: invalid idx %d daddr %#x data_offset %d\n",
+		i_vpr_e(inst, "%s: invalid idx %d daddr %#llx data_offset %d\n",
 			__func__, buffer->index, buffer->base_address,
 			buffer->data_offset);
 		return -EINVAL;
@@ -1319,7 +1319,7 @@ static int handle_release_internal_buffer(struct msm_vidc_inst *inst,
 		if (rc)
 			return rc;
 	} else {
-		i_vpr_e(inst, "%s: invalid idx %d daddr %#x\n",
+		i_vpr_e(inst, "%s: invalid idx %d daddr %#llx\n",
 			__func__, buffer->index, buffer->base_address);
 		return -EINVAL;
 	}
@@ -1340,7 +1340,7 @@ static int handle_release_output_buffer(struct msm_vidc_inst *inst,
 		}
 	}
 	if (!found) {
-		i_vpr_e(inst, "%s: invalid idx %d daddr %#x\n",
+		i_vpr_e(inst, "%s: invalid idx %d daddr %#llx\n",
 			__func__, buffer->index, buffer->base_address);
 		return -EINVAL;
 	}
@@ -1588,7 +1588,7 @@ static int handle_session_early_notify_partial_frame(struct msm_vidc_inst *inst,
 
 	fence_id = *(u64 *)((u8 *)pkt + sizeof(struct hfi_packet));
 	if (fence_id < inst->prev_fence_id) {
-		i_vpr_e(inst, "%s: invalid fence id %u, prev fence id %u\n",
+		i_vpr_e(inst, "%s: invalid fence id %llu, prev fence id %u\n",
 			__func__, fence_id, inst->prev_fence_id);
 		msm_vidc_change_state(inst, MSM_VIDC_ERROR, __func__);
 		return -EINVAL;
@@ -1699,7 +1699,7 @@ static int handle_property_fence_array(struct msm_vidc_inst *inst,
 
 	if (payload_size > sizeof(inst->hfi_frame_info.fence_id)) {
 		i_vpr_e(inst,
-			"%s: fence list payload size %d exceeds expected max size %d\n",
+			"%s: fence list payload size %d exceeds expected max size %lu\n",
 			__func__, payload_size, sizeof(inst->hfi_frame_info.fence_id));
 		msm_vidc_change_state(inst, MSM_VIDC_ERROR, __func__);
 		return -EINVAL;
@@ -1717,7 +1717,7 @@ static int handle_property_fence_array(struct msm_vidc_inst *inst,
 		inst->hfi_frame_info.fence_count++;
 		prev_fence_id = cur_fence_id;
 	}
-	i_vpr_l(inst, "%s: fence_id[0] %llu, received %d, expected %d\n", __func__,
+	i_vpr_l(inst, "%s: fence_id[0] %u, received %d, expected %d\n", __func__,
 		inst->hfi_frame_info.fence_id[0], inst->fences_per_output_counter,
 		inst->hfi_frame_info.fence_count);
 
