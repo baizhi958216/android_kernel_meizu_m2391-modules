@@ -64,6 +64,7 @@ struct cs_f71 {
 	int panel_desired; /* 0 unknown, 1 unblank, 2 blank/low power */
 	struct workqueue_struct *panel_queue;
 	void *panel_cookie;
+	unsigned int panel_retries;
 	bool misc_registered;
 	bool stopped;
 };

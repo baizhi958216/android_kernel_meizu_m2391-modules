@@ -53,6 +53,7 @@ struct cs_m68 {
 	struct work_struct blank_work;
 	struct work_struct unblank_work;
 	void *panel_cookie;
+	unsigned int panel_retries;
 	bool initialized;
 	int shortcut_position;
 	int shortcut_enabled;

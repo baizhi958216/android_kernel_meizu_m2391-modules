@@ -91,6 +91,7 @@ static void cs_f71_register_panel(struct work_struct *work)
 	struct device_node *node;
 	struct drm_panel *panel;
 	void *cookie;
+	bool deferred = false;
 	int count, i;
 
 	if (READ_ONCE(cs->removed))
@@ -102,8 +103,10 @@ static void cs_f71_register_panel(struct work_struct *work)
 			continue;
 		panel = of_drm_find_panel(node);
 		of_node_put(node);
-		if (IS_ERR_OR_NULL(panel))
+		if (IS_ERR(panel)) {
+			deferred |= PTR_ERR(panel) == -EPROBE_DEFER;
 			continue;
+		}
 		cookie = panel_event_notifier_register(PANEL_EVENT_NOTIFICATION_PRIMARY,
 				PANEL_EVENT_NOTIFIER_CLIENT_FORCE_TOUCH, panel,
 				cs_f71_panel_event, cs);
@@ -111,6 +114,10 @@ static void cs_f71_register_panel(struct work_struct *work)
 			cs->panel_cookie = cookie;
 		break;
 	}
+	/* DSI and force-touch may probe in either order during cold boot. */
+	if (deferred && !cs->panel_cookie && cs->panel_retries++ < 60 &&
+	    !READ_ONCE(cs->removed))
+		queue_delayed_work(cs->panel_queue, &cs->panel_register_work, 2 * HZ);
 }
 
 int cs_f71_runtime_init(struct cs_f71 *cs)
