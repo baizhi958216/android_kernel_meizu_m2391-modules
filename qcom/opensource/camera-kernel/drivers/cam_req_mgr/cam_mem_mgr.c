@@ -599,7 +599,17 @@ EXPORT_SYMBOL(cam_mem_mgr_cpu_access_op);
 
 static void cam_mem_mgr_put_dma_heaps(void)
 {
-	CAM_DBG(CAM_MEM, "Releasing DMA Buf heaps usage");
+	struct dma_heap **heaps[] = {
+		&tbl.system_heap, &tbl.system_uncached_heap, &tbl.camera_heap,
+		&tbl.camera_uncached_heap, &tbl.secure_display_heap, &tbl.ubwc_p_heap,
+	};
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(heaps); i++) {
+		if (*heaps[i])
+			dma_heap_put(*heaps[i]);
+		*heaps[i] = NULL;
+	}
 }
 
 static int cam_mem_mgr_get_dma_heaps(void)
@@ -615,7 +625,7 @@ static int cam_mem_mgr_get_dma_heaps(void)
 
 	tbl.system_heap = dma_heap_find("qcom,system");
 	if (IS_ERR_OR_NULL(tbl.system_heap)) {
-		rc = PTR_ERR(tbl.system_heap);
+		rc = PTR_ERR(tbl.system_heap) ?: -EPROBE_DEFER;
 		CAM_ERR(CAM_MEM, "qcom system heap not found, rc=%d", rc);
 		tbl.system_heap = NULL;
 		goto put_heaps;
@@ -631,7 +641,7 @@ static int cam_mem_mgr_get_dma_heaps(void)
 			tbl.system_uncached_heap = NULL;
 		} else {
 			/* fatal, must need uncached heaps */
-			rc = PTR_ERR(tbl.system_uncached_heap);
+			rc = PTR_ERR(tbl.system_uncached_heap) ?: -EPROBE_DEFER;
 			CAM_ERR(CAM_MEM,
 				"qcom system-uncached heap not found, rc=%d",
 				rc);
@@ -648,7 +658,7 @@ static int cam_mem_mgr_get_dma_heaps(void)
 
 	tbl.secure_display_heap = dma_heap_find("qcom,display");
 	if (IS_ERR_OR_NULL(tbl.secure_display_heap)) {
-		rc = PTR_ERR(tbl.secure_display_heap);
+		rc = PTR_ERR(tbl.secure_display_heap) ?: -EPROBE_DEFER;
 		CAM_ERR(CAM_MEM, "qcom,display heap not found, rc=%d",
 			rc);
 		tbl.secure_display_heap = NULL;
@@ -1542,6 +1552,9 @@ void cam_mem_mgr_deinit(void)
 	tbl.dbg_buf_idx = -1;
 	mutex_unlock(&tbl.m_lock);
 	mutex_destroy(&tbl.m_lock);
+#if IS_REACHABLE(CONFIG_DMABUF_HEAPS)
+	cam_mem_mgr_put_dma_heaps();
+#endif
 }
 
 static void cam_mem_util_unmap_dummy(struct kref *kref)
