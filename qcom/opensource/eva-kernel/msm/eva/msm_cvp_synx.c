@@ -164,7 +164,7 @@ static int cvp_cancel_synx_impl(struct msm_cvp_inst *inst,
 		h_synx = fc->synx[i];
 		if (h_synx) {
 			rc = synx_signal(ssid, h_synx, synx_state);
-			dprintk(CVP_SYNX, "Cancel synx %d session %llx\n",
+			dprintk(CVP_SYNX, "Cancel synx %d session %pK\n",
 					h_synx, inst);
 			if (rc)
 				dprintk(CVP_ERR,
@@ -257,7 +257,7 @@ static int cvp_synx_ops_v1(struct msm_cvp_inst *inst, enum cvp_synx_type type,
 	ssid = inst->synx_session_id;
 
 	if (fc->signature != 0xFEEDFACE) {
-		dprintk(CVP_ERR, "%s deprecated synx, type %d\n", __func__);
+		dprintk(CVP_ERR, "%s deprecated synx, type %d\n", __func__, type);
 				return -EINVAL;
 	}
 

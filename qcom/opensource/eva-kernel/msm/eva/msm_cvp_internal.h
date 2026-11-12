@@ -25,7 +25,7 @@
 #include <media/msm_eva_private.h>
 #include "cvp_hfi_api.h"
 #include "cvp_hfi_helper.h"
-#include <synx_api.h>
+#include <media/msm-synx.h>
 
 #define MAX_SUPPORTED_INSTANCES 16
 #define MAX_DEBUGFS_NAME 50

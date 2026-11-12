@@ -42,7 +42,7 @@ static int cvp_msgq_receiver(void *data)
 
 		if (rc != 0 ) {
 			dprintk(CVP_ERR,
-			"%s: gh_msgq_recv fail rc=%d handle=%#x msg_ptr=%#x\n",
+			"%s: gh_msgq_recv fail rc=%d handle=%pK msg_ptr=%pK\n",
 			__func__, rc, msgq_drv->config.handle, msg_ptr);
 
 			if (rc != -EAGAIN) {
@@ -81,7 +81,7 @@ static int cvp_msgq_receiver(void *data)
 				/* sanity check on size information */
 				if (size > sizeof(*msg_ptr)) {
 					dprintk(CVP_ERR,
-						"%s: msg size %d exceed max size supported %d \n",
+						"%s: msg size %zu exceed max size supported %lu \n",
 						__func__, size, sizeof(*msg_ptr));
 					rc = -E2BIG;
 					msgq_drv->pending_local_cmd.type = 0;
@@ -209,7 +209,7 @@ static int cvp_msgq_cb(struct notifier_block *nb,
 		dprintk(CVP_ERR, "PVM failed to register msgq %d\n", rc);
 		return rc;
 	}
-	dprintk(CVP_VM, "%s: gh_msgq_register handle: %x\n",
+	dprintk(CVP_VM, "%s: gh_msgq_register handle: %pK\n",
 			__func__, msgq_config->handle);
 
 	rc = cvp_complete_msgq_init(msgq_drv);
@@ -271,7 +271,7 @@ static int cvp_msgq_send_cmd(struct cvp_msgq_drv *msgq_drv,
 
 	if (msg_size > GH_MSGQ_MAX_MSG_SIZE_BYTES) {
 		dprintk(CVP_ERR,
-			"%s: msg size %d exceed max size supported %d \n",
+			"%s: msg size %zu exceed max size supported %d \n",
 			__func__, msg_size, GH_MSGQ_MAX_MSG_SIZE_BYTES);
 		rc = -E2BIG;
 		goto err_param_check;

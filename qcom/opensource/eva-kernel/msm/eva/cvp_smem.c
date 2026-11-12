@@ -7,12 +7,12 @@
 #include <linux/dma-heap.h>
 #include <linux/dma-direction.h>
 #include <linux/iommu.h>
-#include <linux/msm_dma_iommu_mapping.h>
+#include <linux/qcom_dma_heap.h>
 #include <soc/qcom/secure_buffer.h>
 #include <linux/mem-buf.h>
 #include <linux/slab.h>
 #include <linux/types.h>
-#include <linux/qcom-dma-mapping.h>
+#include <linux/qcom-iommu-util.h>
 #include <linux/version.h>
 #include "msm_cvp_core.h"
 #include "msm_cvp_debug.h"
@@ -22,35 +22,24 @@
 
 static void * __cvp_dma_buf_vmap(struct dma_buf *dbuf)
 {
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 13, 0))
-	return dma_buf_vmap(dbuf);
-#else
-	struct dma_buf_map map;
-	void *dma_map;
-	int err;
+	struct iosys_map map = {};
+	int ret = dma_buf_vmap_unlocked(dbuf, &map);
 
-	err = dma_buf_vmap(dbuf, &map);
-	dma_map = err ? NULL : map.vaddr;
-	if (!dma_map)
-		dprintk(CVP_ERR, "map to kvaddr failed\n");
-
-	return dma_map;
-#endif
+	if (ret)
+		return NULL;
+	if (map.is_iomem) {
+		dma_buf_vunmap_unlocked(dbuf, &map);
+		return NULL;
+	}
+	return map.vaddr;
 }
 
 static void __cvp_dma_buf_vunmap(struct dma_buf *dbuf, void *vaddr)
 {
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 13, 0))
-	dma_buf_vunmap(dbuf, vaddr);
-#else
-	struct dma_buf_map map = { \
-			.vaddr = vaddr, \
-			.is_iomem = false, \
-	};
+	struct iosys_map map = IOSYS_MAP_INIT_VADDR(vaddr);
 
 	if (vaddr)
-		dma_buf_vunmap(dbuf, &map);
-#endif
+		dma_buf_vunmap_unlocked(dbuf, &map);
 }
 
 static int msm_dma_get_device_address(struct dma_buf *dbuf, u32 align,
@@ -99,13 +88,13 @@ static int msm_dma_get_device_address(struct dma_buf *dbuf, u32 align,
 		attach->dma_map_attrs |= DMA_ATTR_SKIP_CPU_SYNC;
 		if (res->sys_cache_present)
 			attach->dma_map_attrs |=
-				DMA_ATTR_IOMMU_USE_UPSTREAM_HINT;
+				DMA_ATTR_SYS_CACHE_ONLY;
 
-		table = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+		table = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
 		if (IS_ERR_OR_NULL(table)) {
-			dprintk(CVP_ERR, "Failed to map table %d\n", PTR_ERR(table));
+			dprintk(CVP_ERR, "Failed to map table %ld\n", PTR_ERR(table));
 			dprintk(CVP_ERR,
-				"Mapping detail dma_buf 0x%llx, %s, size %#x\n",
+				"Mapping detail dma_buf 0x%pK, %s, size %#zx\n",
 				dbuf, dbuf->name, dbuf->size);
 			rc = PTR_ERR(table) ?: -ENOMEM;
 			goto mem_map_table_failed;
@@ -135,7 +124,7 @@ static int msm_dma_get_device_address(struct dma_buf *dbuf, u32 align,
 
 	return 0;
 mem_map_sg_failed:
-	dma_buf_unmap_attachment(attach, table, DMA_BIDIRECTIONAL);
+	dma_buf_unmap_attachment_unlocked(attach, table, DMA_BIDIRECTIONAL);
 mem_map_table_failed:
 	dma_buf_detach(dbuf, attach);
 mem_buf_attach_failed:
@@ -160,7 +149,7 @@ static int msm_dma_put_device_address(u32 flags,
 		return -EINVAL;
 	}
 
-	dma_buf_unmap_attachment(mapping_info->attach,
+	dma_buf_unmap_attachment_unlocked(mapping_info->attach,
 		mapping_info->table, DMA_BIDIRECTIONAL);
 	dma_buf_detach(mapping_info->buf, mapping_info->attach);
 
@@ -326,13 +315,15 @@ static int alloc_dma_mem(size_t size, u32 align, int map_kernel,
 		size, align);
 	}
 
+	if (!heap)
+		return -ENODEV;
 	dbuf = dma_heap_buffer_alloc(heap, size, 0, 0);
+	dma_heap_put(heap);
 	if (IS_ERR_OR_NULL(dbuf)) {
 		dprintk(CVP_ERR,
-			"Failed to allocate shared memory = %x bytes, %x %x\n",
+			"Failed to allocate shared memory = %zx bytes, %x %lx\n",
 			size, mem->flags, PTR_ERR(dbuf));
-		rc = -ENOMEM;
-		goto fail_shared_mem_alloc;
+		return PTR_ERR(dbuf) ?: -ENOMEM;
 	}
 
 	perms[0] = PERM_READ | PERM_WRITE;
@@ -372,11 +363,14 @@ static int alloc_dma_mem(size_t size, u32 align, int map_kernel,
 	if ((dma_addr_t)mem->device_addr != iova) {
 		dprintk(CVP_ERR, "iova(%pa) truncated to %#x",
 			&iova, mem->device_addr);
-		goto fail_device_address;
+		rc = -ERANGE;
+		goto unmap_device;
 	}
 
 	if (map_kernel) {
-		dma_buf_begin_cpu_access(dbuf, DMA_BIDIRECTIONAL);
+		rc = dma_buf_begin_cpu_access(dbuf, DMA_BIDIRECTIONAL);
+		if (rc)
+			goto unmap_device;
 		mem->kvaddr = __cvp_dma_buf_vmap(dbuf);
 		if (!mem->kvaddr) {
 			dprintk(CVP_ERR,
@@ -387,17 +381,19 @@ static int alloc_dma_mem(size_t size, u32 align, int map_kernel,
 	}
 
 	dprintk(CVP_MEM,
-		"%s: dma_buf=%pK,iova=%x,size=%d,kvaddr=%pK,flags=%#lx\n",
+		"%s: dma_buf=%pK,iova=%x,size=%d,kvaddr=%pK,flags=%#x\n",
 		__func__, mem->dma_buf, mem->device_addr, mem->size,
 		mem->kvaddr, mem->flags);
 	return rc;
 
 fail_map:
-	if (map_kernel)
-		dma_buf_end_cpu_access(dbuf, DMA_BIDIRECTIONAL);
+	dma_buf_end_cpu_access(dbuf, DMA_BIDIRECTIONAL);
+unmap_device:
+	msm_dma_put_device_address(mem->flags, &mem->mapping_info);
+	mem->device_addr = 0;
 fail_device_address:
+	mem->dma_buf = NULL;
 	dma_heap_buffer_free(dbuf);
-fail_shared_mem_alloc:
 	return rc;
 }
 

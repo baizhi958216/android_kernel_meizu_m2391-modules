@@ -429,7 +429,7 @@ static int cvp_dsp_rpmsg_callback(struct rpmsg_device *rpdev,
 			len == sizeof(struct cvp_dsp2cpu_cmd_msg)) {
 		if (me->pending_dsp2cpu_cmd.type != CVP_INVALID_RPMSG_TYPE) {
 			dprintk(CVP_ERR,
-				"%s: DSP2CPU cmd:%d pending %d %d expect %d\n",
+				"%s: DSP2CPU cmd:%d pending %d %d expect %lu\n",
 					__func__, rsp->type,
 				me->pending_dsp2cpu_cmd.type, len,
 				sizeof(struct cvp_dsp2cpu_cmd_msg));
@@ -553,10 +553,10 @@ static void cvp_remove_dsp_sessions_owned(void)
 			}
 		}
 
-		dprintk(CVP_DSP, "%s DEINIT_MSM_CVP_LIST 0x%x\n",
-				__func__, frpc_node->dsp_sessions);
+		dprintk(CVP_DSP, "%s DEINIT_MSM_CVP_LIST %pK\n",
+				__func__, &frpc_node->dsp_sessions);
 		DEINIT_MSM_CVP_LIST(&frpc_node->dsp_sessions);
-		dprintk(CVP_DSP, "%s list_del fastrpc node 0x%x\n",
+		dprintk(CVP_DSP, "%s list_del fastrpc node 0x%pK\n",
 				__func__, frpc_node);
 		__fastrpc_driver_unregister(
 				&frpc_node->cvp_fastrpc_driver);
@@ -801,7 +801,7 @@ void cvp_dsp_init_hfi_queue_hdr(struct iris_hfi_device *device)
 			device->dsp_iface_q_table.align_virtual_addr;
 	q_tbl_hdr->qtbl_version = 0;
 	q_tbl_hdr->device_addr = (void *)device;
-	strlcpy(q_tbl_hdr->name, "msm_cvp", sizeof(q_tbl_hdr->name));
+	strscpy(q_tbl_hdr->name, "msm_cvp", sizeof(q_tbl_hdr->name));
 	q_tbl_hdr->qtbl_size = CVP_IFACEQ_TABLE_SIZE;
 	q_tbl_hdr->qtbl_qhdr0_offset =
 				sizeof(struct cvp_hfi_queue_table_header);
@@ -1047,7 +1047,7 @@ static int eva_fastrpc_dev_map_dma(struct fastrpc_device *frpc_device,
 		frpc_map_buf.attrs = 0;
 
 		dprintk(CVP_DSP,
-			"%s frpc_map_buf size %d, dma_buf %pK, map %pK, 0x%x\n",
+			"%s frpc_map_buf size %zu, dma_buf %pK, map %pK, 0x%lx\n",
 			__func__, frpc_map_buf.size, frpc_map_buf.buf,
 			&frpc_map_buf, (unsigned long)&frpc_map_buf);
 		rc = __fastrpc_driver_invoke(frpc_device, FASTRPC_DEV_MAP_DMA,
@@ -1207,7 +1207,7 @@ static int eva_fastrpc_driver_register_owned(uint32_t handle)
 		list_add_tail(&frpc_node->list, &me->fastrpc_driver_list.list);
 		INIT_MSM_CVP_LIST(&frpc_node->dsp_sessions);
 		mutex_unlock(&me->fastrpc_driver_list.lock);
-		dprintk(CVP_DSP, "Add frpc node 0x%x to list\n", frpc_node);
+		dprintk(CVP_DSP, "Add frpc node 0x%pK to list\n", frpc_node);
 
 		/* register fastrpc device to this session */
 		rc = __fastrpc_driver_register(&frpc_node->cvp_fastrpc_driver);
@@ -1498,7 +1498,7 @@ static void __dsp_cvp_sess_create(struct cvp_dsp_cmd_msg *cmd)
 		cmd->ret = -1;
 		return;
 	}
-	dprintk(CVP_DSP, "%s get pid_s 0x%x from pidA 0x%x\n", __func__,
+	dprintk(CVP_DSP, "%s get pid_s 0x%pK from pidA 0x%x\n", __func__,
 			pid_s, dsp2cpu_cmd->pid);
 
 	task = get_pid_task(pid_s, PIDTYPE_TGID);
@@ -1668,7 +1668,7 @@ static void __dsp_cvp_power_req(struct cvp_dsp_cmd_msg *cmd)
 			dsp2cpu_cmd->session_cpu_low);
 
 	if (!inst || !is_cvp_inst_valid(inst)) {
-		dprintk(CVP_ERR, "%s incorrect session ID %llx\n", __func__, inst);
+		dprintk(CVP_ERR, "%s incorrect session ID %pK\n", __func__, inst);
 		cmd->ret = -1;
 		goto dsp_fail_power_req;
 	}
