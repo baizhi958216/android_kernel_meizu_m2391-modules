@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-only
+ccflags-y += -I$(src)/include
+obj-m += qcom-hv-haptics.o
+obj-m += leds-qpnp-vibrator-ldo.o
