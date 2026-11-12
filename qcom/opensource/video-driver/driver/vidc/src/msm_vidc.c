@@ -73,7 +73,7 @@ static int get_poll_flags(struct msm_vidc_inst *inst, u32 port)
 	return poll;
 }
 
-int msm_vidc_poll_live(void *instance, struct file *filp,
+static int msm_vidc_poll_live(void *instance, struct file *filp,
 		struct poll_table_struct *wait)
 {
 	int poll = 0;
@@ -102,7 +102,7 @@ int msm_vidc_poll_live(void *instance, struct file *filp,
 }
 
 
-int msm_vidc_querycap_live(void *instance, struct v4l2_capability *cap)
+static int msm_vidc_querycap_live(void *instance, struct v4l2_capability *cap)
 {
 	struct msm_vidc_inst *inst = instance;
 
@@ -111,16 +111,16 @@ int msm_vidc_querycap_live(void *instance, struct v4l2_capability *cap)
 		return -EINVAL;
 	}
 
-	strlcpy(cap->driver, MSM_VIDC_DRV_NAME, sizeof(cap->driver));
-	strlcpy(cap->bus_info, MSM_VIDC_BUS_NAME, sizeof(cap->bus_info));
+	strscpy(cap->driver, MSM_VIDC_DRV_NAME, sizeof(cap->driver));
+	strscpy(cap->bus_info, MSM_VIDC_BUS_NAME, sizeof(cap->bus_info));
 	cap->version = MSM_VIDC_VERSION;
 
 	memset(cap->reserved, 0, sizeof(cap->reserved));
 
 	if (inst->domain == MSM_VIDC_DECODER)
-		strlcpy(cap->card, "msm_vidc_decoder", sizeof(cap->card));
+		strscpy(cap->card, "msm_vidc_decoder", sizeof(cap->card));
 	else if (inst->domain == MSM_VIDC_ENCODER)
-		strlcpy(cap->card, "msm_vidc_encoder", sizeof(cap->card));
+		strscpy(cap->card, "msm_vidc_encoder", sizeof(cap->card));
 	else
 		return -EINVAL;
 
@@ -128,7 +128,7 @@ int msm_vidc_querycap_live(void *instance, struct v4l2_capability *cap)
 }
 
 
-int msm_vidc_enum_fmt_live(void *instance, struct v4l2_fmtdesc *f)
+static int msm_vidc_enum_fmt_live(void *instance, struct v4l2_fmtdesc *f)
 {
 	struct msm_vidc_inst *inst = instance;
 
@@ -146,7 +146,7 @@ int msm_vidc_enum_fmt_live(void *instance, struct v4l2_fmtdesc *f)
 }
 
 
-int msm_vidc_query_ctrl_live(void *instance, struct v4l2_queryctrl *q_ctrl)
+static int msm_vidc_query_ctrl_live(void *instance, struct v4l2_queryctrl *q_ctrl)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -177,7 +177,7 @@ int msm_vidc_query_ctrl_live(void *instance, struct v4l2_queryctrl *q_ctrl)
 }
 
 
-int msm_vidc_query_menu_live(void *instance, struct v4l2_querymenu *qmenu)
+static int msm_vidc_query_menu_live(void *instance, struct v4l2_querymenu *qmenu)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -207,7 +207,7 @@ int msm_vidc_query_menu_live(void *instance, struct v4l2_querymenu *qmenu)
 		rc = -EINVAL;
 
 	i_vpr_h(inst,
-		"%s: ctrl: %s: min %lld, max %lld, menu_skip_mask %#x, qmenu: id %u, index %d, %s\n",
+		"%s: ctrl: %s: min %lld, max %lld, menu_skip_mask %#llx, qmenu: id %u, index %d, %s\n",
 		__func__, ctrl->name, ctrl->minimum, ctrl->maximum,
 		ctrl->menu_skip_mask, qmenu->id, qmenu->index,
 		rc ? "not supported" : "supported");
@@ -215,7 +215,7 @@ int msm_vidc_query_menu_live(void *instance, struct v4l2_querymenu *qmenu)
 }
 
 
-int msm_vidc_try_fmt_live(void *instance, struct v4l2_format *f)
+static int msm_vidc_try_fmt_live(void *instance, struct v4l2_format *f)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -240,7 +240,7 @@ int msm_vidc_try_fmt_live(void *instance, struct v4l2_format *f)
 }
 
 
-int msm_vidc_s_fmt_live(void *instance, struct v4l2_format *f)
+static int msm_vidc_s_fmt_live(void *instance, struct v4l2_format *f)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -265,7 +265,7 @@ int msm_vidc_s_fmt_live(void *instance, struct v4l2_format *f)
 }
 
 
-int msm_vidc_g_fmt_live(void *instance, struct v4l2_format *f)
+static int msm_vidc_g_fmt_live(void *instance, struct v4l2_format *f)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -296,7 +296,7 @@ int msm_vidc_g_fmt_live(void *instance, struct v4l2_format *f)
 }
 
 
-int msm_vidc_s_selection_live(void *instance, struct v4l2_selection *s)
+static int msm_vidc_s_selection_live(void *instance, struct v4l2_selection *s)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -315,7 +315,7 @@ int msm_vidc_s_selection_live(void *instance, struct v4l2_selection *s)
 }
 
 
-int msm_vidc_g_selection_live(void *instance, struct v4l2_selection *s)
+static int msm_vidc_g_selection_live(void *instance, struct v4l2_selection *s)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -334,7 +334,7 @@ int msm_vidc_g_selection_live(void *instance, struct v4l2_selection *s)
 }
 
 
-int msm_vidc_s_param_live(void *instance, struct v4l2_streamparm *param)
+static int msm_vidc_s_param_live(void *instance, struct v4l2_streamparm *param)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -360,7 +360,7 @@ int msm_vidc_s_param_live(void *instance, struct v4l2_streamparm *param)
 }
 
 
-int msm_vidc_g_param_live(void *instance, struct v4l2_streamparm *param)
+static int msm_vidc_g_param_live(void *instance, struct v4l2_streamparm *param)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -386,7 +386,7 @@ int msm_vidc_g_param_live(void *instance, struct v4l2_streamparm *param)
 }
 
 
-int msm_vidc_reqbufs_live(void *instance, struct v4l2_requestbuffers *b)
+static int msm_vidc_reqbufs_live(void *instance, struct v4l2_requestbuffers *b)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -420,7 +420,7 @@ exit:
 }
 
 
-int msm_vidc_querybuf_live(void *instance, struct v4l2_buffer *b)
+static int msm_vidc_querybuf_live(void *instance, struct v4l2_buffer *b)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -449,7 +449,7 @@ exit:
 }
 
 
-int msm_vidc_create_bufs_live(void *instance, struct v4l2_create_buffers *b)
+static int msm_vidc_create_bufs_live(void *instance, struct v4l2_create_buffers *b)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -480,7 +480,7 @@ exit:
 }
 
 
-int msm_vidc_prepare_buf_live(void *instance, struct media_device *mdev,
+static int msm_vidc_prepare_buf_live(void *instance, struct media_device *mdev,
 	struct v4l2_buffer *b)
 {
 	int rc = 0;
@@ -509,7 +509,7 @@ exit:
 }
 
 
-int msm_vidc_qbuf_live(void *instance, struct media_device *mdev,
+static int msm_vidc_qbuf_live(void *instance, struct media_device *mdev,
 		struct v4l2_buffer *b)
 {
 	int rc = 0;
@@ -536,7 +536,7 @@ exit:
 }
 
 
-int msm_vidc_dqbuf_live(void *instance, struct v4l2_buffer *b)
+static int msm_vidc_dqbuf_live(void *instance, struct v4l2_buffer *b)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -566,7 +566,7 @@ exit:
 }
 
 
-int msm_vidc_streamon_live(void *instance, enum v4l2_buf_type type)
+static int msm_vidc_streamon_live(void *instance, enum v4l2_buf_type type)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -595,7 +595,7 @@ exit:
 }
 
 
-int msm_vidc_streamoff_live(void *instance, enum v4l2_buf_type type)
+static int msm_vidc_streamoff_live(void *instance, enum v4l2_buf_type type)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -624,7 +624,7 @@ exit:
 }
 
 
-int msm_vidc_try_cmd_live(void *instance, union msm_v4l2_cmd *cmd)
+static int msm_vidc_try_cmd_live(void *instance, union msm_v4l2_cmd *cmd)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -655,7 +655,7 @@ int msm_vidc_try_cmd_live(void *instance, union msm_v4l2_cmd *cmd)
 }
 
 
-int msm_vidc_cmd_live(void *instance, union msm_v4l2_cmd *cmd)
+static int msm_vidc_cmd_live(void *instance, union msm_v4l2_cmd *cmd)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = instance;
@@ -676,7 +676,7 @@ int msm_vidc_cmd_live(void *instance, union msm_v4l2_cmd *cmd)
 }
 
 
-int msm_vidc_enum_framesizes_live(void *instance, struct v4l2_frmsizeenum *fsize)
+static int msm_vidc_enum_framesizes_live(void *instance, struct v4l2_frmsizeenum *fsize)
 {
 	struct msm_vidc_inst *inst = instance;
 	struct msm_vidc_inst_capability *capability;
@@ -725,7 +725,7 @@ int msm_vidc_enum_framesizes_live(void *instance, struct v4l2_frmsizeenum *fsize
 }
 
 
-int msm_vidc_enum_frameintervals_live(void *instance, struct v4l2_frmivalenum *fival)
+static int msm_vidc_enum_frameintervals_live(void *instance, struct v4l2_frmivalenum *fival)
 {
 	struct msm_vidc_inst *inst = instance;
 	struct msm_vidc_core *core;
@@ -793,7 +793,7 @@ int msm_vidc_enum_frameintervals_live(void *instance, struct v4l2_frmivalenum *f
 }
 
 
-int msm_vidc_subscribe_event_live(void *instance,
+static int msm_vidc_subscribe_event_live(void *instance,
 		const struct v4l2_event_subscription *sub)
 {
 	int rc = 0;
@@ -815,7 +815,7 @@ int msm_vidc_subscribe_event_live(void *instance,
 }
 
 
-int msm_vidc_unsubscribe_event_live(void *instance,
+static int msm_vidc_unsubscribe_event_live(void *instance,
 		const struct v4l2_event_subscription *sub)
 {
 	int rc = 0;
@@ -834,7 +834,7 @@ int msm_vidc_unsubscribe_event_live(void *instance,
 }
 
 
-int msm_vidc_dqevent_live(void *instance, struct v4l2_event *event)
+static int msm_vidc_dqevent_live(void *instance, struct v4l2_event *event)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = (struct msm_vidc_inst *)instance;
@@ -856,7 +856,7 @@ int msm_vidc_dqevent_live(void *instance, struct v4l2_event *event)
 }
 
 
-void *msm_vidc_open_live(void *vidc_core, u32 session_type)
+static void *msm_vidc_open_live(void *vidc_core, u32 session_type)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst = NULL;
@@ -894,7 +894,7 @@ void *msm_vidc_open_live(void *vidc_core, u32 session_type)
 	inst->session_id = hash32_ptr(inst);
 	inst->state = MSM_VIDC_OPEN;
 	inst->sub_state = MSM_VIDC_SUB_STATE_NONE;
-	strlcpy(inst->sub_state_name, "SUB_STATE_NONE", sizeof(inst->sub_state_name));
+	strscpy(inst->sub_state_name, "SUB_STATE_NONE", sizeof(inst->sub_state_name));
 	inst->active = true;
 	inst->request = false;
 	inst->ipsc_properties_set = false;

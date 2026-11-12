@@ -585,23 +585,12 @@ static int msm_vidc_remove_context_bank(struct platform_device *pdev)
 	return 0;
 }
 
-static int msm_vidc_remove(struct platform_device *pdev)
+static void msm_vidc_remove(struct platform_device *pdev)
 {
-	/*
-	 * Sub devices remove will be triggered by of_platform_depopulate()
-	 * after core_deinit(). It return immediately after completing
-	 * sub-device remove.
-	 */
-	if (of_device_is_compatible(pdev->dev.of_node, "qcom,msm-vidc")) {
-		return msm_vidc_remove_video_device(pdev);
-	} else if (of_device_is_compatible(pdev->dev.of_node,
-				"qcom,msm-vidc,context-bank")) {
-		return msm_vidc_remove_context_bank(pdev);
-	}
-
-	/* How did we end up here? */
-	WARN_ON(1);
-	return -EINVAL;
+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,msm-vidc"))
+		msm_vidc_remove_video_device(pdev);
+	else if (of_device_is_compatible(pdev->dev.of_node, "qcom,msm-vidc,context-bank"))
+		msm_vidc_remove_context_bank(pdev);
 }
 
 static int msm_vidc_probe_video_device(struct platform_device *pdev)
@@ -976,4 +965,6 @@ module_init(msm_vidc_init);
 module_exit(msm_vidc_exit);
 
 MODULE_SOFTDEP("pre: subsys-pil-tz msm-mmrm");
+MODULE_DESCRIPTION("Qualcomm IRIS video decoder and encoder");
+MODULE_IMPORT_NS("DMA_BUF");
 MODULE_LICENSE("GPL v2");

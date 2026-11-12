@@ -1767,7 +1767,7 @@ int msm_venc_enum_fmt(struct msm_vidc_inst *inst, struct v4l2_fmtdesc *f)
 		if (!f->pixelformat)
 			return -EINVAL;
 		f->flags = V4L2_FMT_FLAG_COMPRESSED;
-		strlcpy(f->description, "codec", sizeof(f->description));
+		strscpy(f->description, "codec", sizeof(f->description));
 	} else if (f->type == INPUT_MPLANE) {
 		u32 formats = inst->capabilities->cap[PIX_FMTS].step_or_mask;
 		u32 idx = 0;
@@ -1786,11 +1786,11 @@ int msm_venc_enum_fmt(struct msm_vidc_inst *inst, struct v4l2_fmtdesc *f)
 				__func__);
 		if (!f->pixelformat)
 			return -EINVAL;
-		strlcpy(f->description, "colorformat", sizeof(f->description));
+		strscpy(f->description, "colorformat", sizeof(f->description));
 	} else if (f->type == INPUT_META_PLANE || f->type == OUTPUT_META_PLANE) {
 		if (!f->index) {
 			f->pixelformat = V4L2_META_FMT_VIDC;
-			strlcpy(f->description, "metadata", sizeof(f->description));
+			strscpy(f->description, "metadata", sizeof(f->description));
 		} else {
 			return -EINVAL;
 		}

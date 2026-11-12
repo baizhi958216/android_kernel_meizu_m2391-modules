@@ -4,6 +4,7 @@
  * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/iommu.h>
 #include <linux/workqueue.h>
 #include <media/v4l2_vidc_extensions.h>
@@ -350,7 +351,7 @@ exit:
 	return name;
 }
 
-const char *sub_state_name(enum msm_vidc_sub_state sub_state)
+static const char *sub_state_name(enum msm_vidc_sub_state sub_state)
 {
 	switch (sub_state) {
 	case MSM_VIDC_DRAIN:               return "DRAIN ";
@@ -674,7 +675,7 @@ enum msm_vidc_buffer_type v4l2_type_to_driver(u32 type, const char *func)
 	return buffer_type;
 }
 
-u32 v4l2_type_from_driver(enum msm_vidc_buffer_type buffer_type,
+static u32 v4l2_type_from_driver(enum msm_vidc_buffer_type buffer_type,
 	const char *func)
 {
 	u32 type = 0;
@@ -1483,10 +1484,10 @@ int msm_vidc_change_sub_state(struct msm_vidc_inst *inst,
 
 	/* print substates only when there is a change */
 	if (inst->sub_state != prev_sub_state) {
-		strlcpy(inst->sub_state_name, "\0", sizeof(inst->sub_state_name));
+		strscpy(inst->sub_state_name, "\0", sizeof(inst->sub_state_name));
 		for (i = 0; i < MSM_VIDC_MAX_SUB_STATES; i++) {
 			if (inst->sub_state == MSM_VIDC_SUB_STATE_NONE) {
-				strlcpy(inst->sub_state_name, "SUB_STATE_NONE",
+				strscpy(inst->sub_state_name, "SUB_STATE_NONE",
 					sizeof(inst->sub_state_name));
 				break;
 			}
@@ -2459,7 +2460,7 @@ int msm_vidc_state_change_psc_last_flag(struct msm_vidc_inst *inst)
 	return rc;
 }
 
-int msm_vidc_get_fence_fd(struct msm_vidc_inst *inst, int *fence_fd)
+static int msm_vidc_get_fence_fd(struct msm_vidc_inst *inst, int *fence_fd)
 {
 	int rc = 0;
 	struct msm_vidc_fence *fence, *dummy_fence;
@@ -2631,7 +2632,7 @@ static int vb2_buffer_to_driver(struct vb2_buffer *vb2,
 	return rc;
 }
 
-int msm_vidc_process_readonly_buffers(struct msm_vidc_inst *inst,
+static int msm_vidc_process_readonly_buffers(struct msm_vidc_inst *inst,
 	struct msm_vidc_buffer *buf)
 {
 	int rc = 0;
@@ -2667,7 +2668,7 @@ int msm_vidc_process_readonly_buffers(struct msm_vidc_inst *inst,
 	return rc;
 }
 
-int msm_vidc_memory_unmap_completely(struct msm_vidc_inst *inst,
+static int msm_vidc_memory_unmap_completely(struct msm_vidc_inst *inst,
 	struct msm_vidc_map *map)
 {
 	int rc = 0;
@@ -2815,7 +2816,7 @@ int msm_vidc_update_input_rate(struct msm_vidc_inst *inst, struct vb2_buffer *vb
 	return 0;
 }
 
-int msm_vidc_flush_input_timer(struct msm_vidc_inst *inst)
+static int msm_vidc_flush_input_timer(struct msm_vidc_inst *inst)
 {
 	struct msm_vidc_input_timer *input_timer, *dummy_timer;
 
@@ -3087,7 +3088,7 @@ int msm_vidc_ts_reorder_get_first_timestamp(struct msm_vidc_inst *inst, u64 *tim
 
 	/* check if list empty */
 	if (list_empty(&inst->ts_reorder.list)) {
-		i_vpr_e(inst, "%s: list empty. ts %lld\n", __func__, timestamp);
+		i_vpr_e(inst, "%s: list empty. ts %pK\n", __func__, timestamp);
 		return -EINVAL;
 	}
 
@@ -3152,7 +3153,7 @@ int msm_vidc_put_delayed_unmap(struct msm_vidc_inst *inst, struct msm_vidc_map *
 	}
 
 	if (!map->skip_delayed_unmap) {
-		i_vpr_e(inst, "%s: no delayed unmap, addr %#x\n",
+		i_vpr_e(inst, "%s: no delayed unmap, addr %#llx\n",
 			__func__, map->device_addr);
 		return -EINVAL;
 	}
@@ -3165,7 +3166,7 @@ int msm_vidc_put_delayed_unmap(struct msm_vidc_inst *inst, struct msm_vidc_map *
 	return rc;
 }
 
-int msm_vidc_unmap_buffers(struct msm_vidc_inst *inst,
+static int msm_vidc_unmap_buffers(struct msm_vidc_inst *inst,
 	enum msm_vidc_buffer_type type)
 {
 	int rc = 0;
@@ -4006,7 +4007,7 @@ int msm_vidc_destroy_internal_buffer(struct msm_vidc_inst *inst,
 		return 0;
 	}
 
-	i_vpr_h(inst, "%s: destroy: type: %8s, size: %9u, device_addr %#x\n", __func__,
+	i_vpr_h(inst, "%s: destroy: type: %8s, size: %9u, device_addr %#llx\n", __func__,
 		buf_name(buffer->type), buffer->buffer_size, buffer->device_addr);
 
 	buffers = msm_vidc_get_buffers(inst, buffer->type, __func__);
@@ -4168,7 +4169,7 @@ int msm_vidc_create_internal_buffer(struct msm_vidc_inst *inst,
 
 	buffer->dmabuf = alloc->dmabuf;
 	buffer->device_addr = map->device_addr;
-	i_vpr_h(inst, "%s: create: type: %8s, size: %9u, device_addr %#x\n", __func__,
+	i_vpr_h(inst, "%s: create: type: %8s, size: %9u, device_addr %#llx\n", __func__,
 		buf_name(buffer_type), buffers->size, buffer->device_addr);
 
 	return 0;
@@ -4253,7 +4254,7 @@ int msm_vidc_queue_internal_buffers(struct msm_vidc_inst *inst,
 		/* mark queued */
 		buffer->attr |= MSM_VIDC_ATTR_QUEUED;
 
-		i_vpr_h(inst, "%s: queue: type: %8s, size: %9u, device_addr %#x\n", __func__,
+		i_vpr_h(inst, "%s: queue: type: %8s, size: %9u, device_addr %#llx\n", __func__,
 			buf_name(buffer->type), buffer->buffer_size, buffer->device_addr);
 	}
 
@@ -4334,7 +4335,7 @@ int msm_vidc_release_internal_buffers(struct msm_vidc_inst *inst,
 		/* mark pending release */
 		buffer->attr |= MSM_VIDC_ATTR_PENDING_RELEASE;
 
-		i_vpr_h(inst, "%s: release: type: %8s, size: %9u, device_addr %#x\n", __func__,
+		i_vpr_h(inst, "%s: release: type: %8s, size: %9u, device_addr %#llx\n", __func__,
 			buf_name(buffer->type), buffer->buffer_size, buffer->device_addr);
 	}
 
@@ -4429,7 +4430,7 @@ int msm_vidc_event_queue_init(struct msm_vidc_inst *inst)
 
 	v4l2_fh_init(&inst->event_handler, &core->vdev[index].vdev);
 	inst->event_handler.ctrl_handler = &inst->ctrl_handler;
-	v4l2_fh_add(&inst->event_handler);
+	v4l2_fh_add(&inst->event_handler, NULL);
 
 	return rc;
 }
@@ -4449,7 +4450,7 @@ int msm_vidc_event_queue_deinit(struct msm_vidc_inst *inst)
 		return 0;
 	}
 
-	v4l2_fh_del(&inst->event_handler);
+	v4l2_fh_del(&inst->event_handler, NULL);
 	v4l2_fh_exit(&inst->event_handler);
 
 	return rc;
@@ -4929,7 +4930,7 @@ int msm_vidc_session_close(struct msm_vidc_inst *inst)
 
 	inst->state = MSM_VIDC_CLOSE;
 	inst->sub_state = MSM_VIDC_SUB_STATE_NONE;
-	strlcpy(inst->sub_state_name, "SUB_STATE_NONE", sizeof(inst->sub_state_name));
+	strscpy(inst->sub_state_name, "SUB_STATE_NONE", sizeof(inst->sub_state_name));
 	msm_vidc_remove_session(inst);
 
 	return rc;
@@ -5213,7 +5214,7 @@ error:
 	return rc;
 }
 
-int msm_vidc_core_deinit_locked(struct msm_vidc_core *core, bool force)
+static int msm_vidc_core_deinit_locked(struct msm_vidc_core *core, bool force)
 {
 	int rc = 0;
 	struct msm_vidc_inst *inst, *dummy;
@@ -5893,7 +5894,7 @@ int msm_vidc_flush_delayed_unmap_buffers(struct msm_vidc_inst *inst,
 			if (!found) {
 				if (map->refcount > 1) {
 					i_vpr_e(inst,
-						"%s: unexpected map refcount: %u device addr %#x\n",
+						"%s: unexpected map refcount: %u device addr %#llx\n",
 						__func__, map->refcount, map->device_addr);
 					msm_vidc_change_state(inst, MSM_VIDC_ERROR, __func__);
 				}
@@ -5946,7 +5947,7 @@ void msm_vidc_destroy_buffers(struct msm_vidc_inst *inst)
 			continue;
 		list_for_each_entry_safe(buf, dummy, &buffers->list, list) {
 			i_vpr_h(inst,
-				"destroying internal buffer: type %d idx %d fd %d addr %#x size %d\n",
+				"destroying internal buffer: type %d idx %d fd %d addr %#llx size %d\n",
 				buf->type, buf->index, buf->fd, buf->device_addr, buf->buffer_size);
 			msm_vidc_destroy_internal_buffer(inst, buf);
 		}
@@ -6010,7 +6011,7 @@ void msm_vidc_destroy_buffers(struct msm_vidc_inst *inst)
 	}
 
 	list_for_each_entry_safe(dbuf, dummy_dbuf, &inst->dmabuf_tracker, list) {
-		i_vpr_e(inst, "%s: removing dma_buf %#x, refcount %u\n",
+		i_vpr_e(inst, "%s: removing dma_buf %pK, refcount %u\n",
 			__func__, dbuf->dmabuf, dbuf->refcount);
 		msm_vidc_memory_put_dmabuf_completely(inst, dbuf);
 	}

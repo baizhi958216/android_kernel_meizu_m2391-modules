@@ -202,7 +202,7 @@ void msm_vidc_show_stats(void *inst)
 	for (x = 0; x < MAX_PROFILING_POINTS; x++) {
 		if (i->debug.pdata[x].name[0]) {
 			if (i->debug.samples) {
-				i_vpr_p(i, "%s averaged %d ms/sample\n",
+				i_vpr_p(i, "%s averaged %llu ms/sample\n",
 						i->debug.pdata[x].name,
 						i->debug.pdata[x].cumulative /
 						i->debug.samples);
@@ -548,7 +548,7 @@ static ssize_t inst_info_read(struct file *file, char __user *buf,
 			"type: %s\n", i == INPUT_PORT ?
 			"Output" : "Capture");
 		cur += write_str(cur, end - cur, "count: %u\n",
-				inst->bufq[i].vb2q->num_buffers);
+				vb2_get_num_buffers(inst->bufq[i].vb2q));
 
 		for (j = 0; j < f->fmt.pix_mp.num_planes; j++)
 			cur += write_str(cur, end - cur,

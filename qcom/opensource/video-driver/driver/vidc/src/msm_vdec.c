@@ -2086,7 +2086,7 @@ static int msm_vidc_unmap_excessive_mappings(struct msm_vidc_inst *inst)
 	list_for_each_entry_safe(map, temp, &inst->mappings.output.list, list) {
 		if (is_valid_removable_buffer(inst, map)) {
 			i_vpr_l(inst,
-				"%s: type %11s, device_addr %#x, refcount %d, region %d\n",
+				"%s: type %11s, device_addr %#llx, refcount %d, region %d\n",
 				__func__, buf_name(map->type), map->device_addr,
 				map->refcount, map->region);
 			rc = msm_vidc_put_delayed_unmap(inst, map);
@@ -2686,7 +2686,7 @@ int msm_vdec_enum_fmt(struct msm_vidc_inst *inst, struct v4l2_fmtdesc *f)
 		if (!f->pixelformat)
 			return -EINVAL;
 		f->flags = V4L2_FMT_FLAG_COMPRESSED;
-		strlcpy(f->description, "codec", sizeof(f->description));
+		strscpy(f->description, "codec", sizeof(f->description));
 	} else if (f->type == OUTPUT_MPLANE) {
 		u32 formats = inst->capabilities->cap[PIX_FMTS].step_or_mask;
 		u32 idx = 0;
@@ -2708,11 +2708,11 @@ int msm_vdec_enum_fmt(struct msm_vidc_inst *inst, struct v4l2_fmtdesc *f)
 				__func__);
 		if (!f->pixelformat)
 			return -EINVAL;
-		strlcpy(f->description, "colorformat", sizeof(f->description));
+		strscpy(f->description, "colorformat", sizeof(f->description));
 	} else if (f->type == INPUT_META_PLANE || f->type == OUTPUT_META_PLANE) {
 		if (!f->index) {
 			f->pixelformat = V4L2_META_FMT_VIDC;
-			strlcpy(f->description, "metadata", sizeof(f->description));
+			strscpy(f->description, "metadata", sizeof(f->description));
 		} else {
 			return -EINVAL;
 		}
