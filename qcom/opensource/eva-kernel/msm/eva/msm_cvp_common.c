@@ -26,7 +26,7 @@ static void handle_session_error(enum hal_command_response cmd, void *data);
 
 static void msm_cvp_comm_generate_session_error(struct msm_cvp_inst *inst)
 {
-	dprintk(CVP_WARN, "%s function is deprecated\n");
+	dprintk(CVP_WARN, "%s function is deprecated\n", __func__);
 }
 
 static void dump_hfi_queue(struct iris_hfi_device *device)
@@ -330,7 +330,7 @@ static void handle_sys_release_res_done(
 			SYS_MSG_INDEX(HAL_SYS_RELEASE_RESOURCE_DONE)]);
 }
 
-void change_cvp_inst_state(struct msm_cvp_inst *inst, enum instance_state state)
+static void change_cvp_inst_state(struct msm_cvp_inst *inst, enum instance_state state)
 {
 	if (!inst) {
 		dprintk(CVP_ERR, "Invalid parameter %s\n", __func__);
@@ -1216,23 +1216,28 @@ int msm_cvp_comm_try_state(struct msm_cvp_inst *inst, int state)
 		rc = msm_comm_init_core(inst);
 		if (rc || state <= get_flipped_state(inst->state, state))
 			break;
+		fallthrough;
 	case MSM_CVP_CORE_INIT_DONE:
 		rc = msm_comm_init_core_done(inst);
 		if (rc || state <= get_flipped_state(inst->state, state))
 			break;
+		fallthrough;
 	case MSM_CVP_OPEN:
 		rc = msm_comm_session_init(flipped_state, inst);
 		if (rc || state <= get_flipped_state(inst->state, state))
 			break;
+		fallthrough;
 	case MSM_CVP_OPEN_DONE:
 		rc = msm_comm_session_init_done(flipped_state, inst);
 		if (rc || state <= get_flipped_state(inst->state, state))
 			break;
+		fallthrough;
 	case MSM_CVP_CLOSE:
 		dprintk(CVP_INFO, "to CVP_CLOSE state\n");
 		rc = msm_comm_session_close(flipped_state, inst);
 		if (rc || state <= get_flipped_state(inst->state, state))
 			break;
+		fallthrough;
 	case MSM_CVP_CLOSE_DONE:
 		dprintk(CVP_INFO, "to CVP_CLOSE_DONE state\n");
 		rc = wait_for_state(inst, flipped_state, MSM_CVP_CLOSE_DONE,
@@ -1240,12 +1245,14 @@ int msm_cvp_comm_try_state(struct msm_cvp_inst *inst, int state)
 		if (rc || state <= get_flipped_state(inst->state, state))
 			break;
 		msm_cvp_comm_session_clean(inst);
+		fallthrough;
 	case MSM_CVP_CORE_UNINIT:
 	case MSM_CVP_CORE_INVALID:
 		dprintk(CVP_INFO, "Sending core uninit\n");
 		rc = msm_cvp_deinit_core(inst);
 		if (rc || state <= get_flipped_state(inst->state, state))
 			break;
+		fallthrough;
 	default:
 		dprintk(CVP_ERR, "State not recognized\n");
 		rc = -EINVAL;
@@ -1330,7 +1337,7 @@ void msm_cvp_ssr_handler(struct work_struct *work)
 			if (!s)
 				return;
 			dprintk(CVP_WARN,
-				"Session to abort: inst %#x ref %x\n",
+				"Session to abort: inst %pK ref %x\n",
 				inst, kref_read(&inst->kref));
 			call_hfi_op(hdev, flush_debug_queue,
 				hdev->hfi_device_data);

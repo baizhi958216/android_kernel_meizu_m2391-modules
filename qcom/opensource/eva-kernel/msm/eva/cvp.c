@@ -411,7 +411,7 @@ static int msm_probe_cvp_device(struct platform_device *pdev)
 	if (rc)
 		goto fail;
 	core->devnum_registered = true;
-	core->class = class_create(THIS_MODULE, CLASS_NAME);
+	core->class = class_create(CLASS_NAME);
 	if (IS_ERR(core->class)) {
 		rc = PTR_ERR(core->class);
 		goto fail;
@@ -525,24 +525,24 @@ static int msm_cvp_probe(struct platform_device *pdev)
 	return -EINVAL;
 }
 
-static int msm_cvp_remove(struct platform_device *pdev)
+static void msm_cvp_remove(struct platform_device *pdev)
 {
 	bool main = of_device_is_compatible(pdev->dev.of_node, "qcom,msm-cvp");
 	struct msm_cvp_core *core = main ? dev_get_drvdata(&pdev->dev) :
 		dev_get_drvdata(pdev->dev.parent);
 
 	if (!core)
-		return 0;
+		return;
 	/* Removing a context-bank/bus first must stop its parent before devm
 	 * destroys mappings or interconnects still used by hardware sessions.
 	 */
 	cvp_stop_core(core);
 	if (!main)
-		return 0;
+		return;
 	of_platform_depopulate(&pdev->dev);
 	dev_set_drvdata(&pdev->dev, NULL);
 	cvp_free_core(core);
-	return 0;
+	return;
 }
 
 static int msm_cvp_pm_suspend(struct device *dev)
@@ -654,4 +654,6 @@ module_init(msm_cvp_init);
 module_exit(msm_cvp_exit);
 
 MODULE_SOFTDEP("pre: msm-mmrm");
+MODULE_DESCRIPTION("Qualcomm Kalama EVA vision accelerator");
+MODULE_IMPORT_NS("DMA_BUF");
 MODULE_LICENSE("GPL v2");

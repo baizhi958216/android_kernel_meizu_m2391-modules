@@ -4,6 +4,7 @@
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  */
 
+#include <linux/vmalloc.h>
 #include "msm_cvp.h"
 #include "msm_cvp_lifetime.h"
 #include "cvp_hfi.h"
@@ -414,7 +415,7 @@ static int cvp_readjust_clock(struct msm_cvp_core *core,
 
 	core->curr_freq = ((avg_cycles * core->dyn_clk.sum_fps[i]) << 1)/3;
 	dprintk(CVP_PWR,
-		"%s - cycles tot %u, avg %u. sum_fps %u, cur_freq %u\n",
+		"%s - cycles tot %u, avg %u. sum_fps %u, cur_freq %lu\n",
 		__func__,
 		core->dyn_clk.cycle[i].total,
 		avg_cycles,
@@ -439,19 +440,19 @@ static int cvp_readjust_clock(struct msm_cvp_core *core,
 
 	if (core->orig_core_sum > core->curr_freq) {
 		dprintk(CVP_PWR,
-			"%s - %d - Cancel readjust, core %u, freq %u\n",
+			"%s - %d - Cancel readjust, core %lu, freq %lu\n",
 			__func__, i, core->orig_core_sum, core->curr_freq);
 		core->curr_freq = tmp;
 		return rc;
 	}
 
 	dprintk(CVP_PWR,
-			"%s:%d - %d - Readjust to %u\n",
+			"%s:%d - %d - Readjust to %lu\n",
 			__func__, __LINE__, i, core->curr_freq);
 	rc = msm_cvp_set_clocks(core);
 	if (rc) {
 		dprintk(CVP_ERR,
-			"Failed to set clock rate %u: %d %s\n",
+			"Failed to set clock rate %lu: %d %s\n",
 			core->curr_freq, rc, __func__);
 		core->curr_freq = tmp;
 	} else {
@@ -464,7 +465,7 @@ static int cvp_readjust_clock(struct msm_cvp_core *core,
 			((lo_freq*3)>>1)/core->dyn_clk.sum_fps[i] : 0;
 
 		dprintk(CVP_PWR,
-			"%s - Readjust clk to %u. New lim [%d] hi %u lo %u\n",
+			"%s - Readjust clk to %lu. New lim [%d] hi %u lo %u\n",
 			__func__, core->curr_freq, i,
 			core->dyn_clk.hi_ctrl_lim[i],
 			core->dyn_clk.lo_ctrl_lim[i]);
@@ -618,7 +619,7 @@ static int cvp_fence_proc(struct msm_cvp_inst *inst,
 				clock_check = true;
 			}
 		} else {
-			dprintk(CVP_WARN, "dcvs is disabled, %d != %d + %d\n",
+			dprintk(CVP_WARN, "dcvs is disabled, %d != %lu + %lu\n",
 				hdr.size, sizeof(struct cvp_hfi_msg_session_hdr_ext),
 				sizeof(struct cvp_hfi_buf_type));
 		}
@@ -1066,12 +1067,12 @@ static int adjust_bw_freqs(void)
 	}
 
 	aggregate_power_update(core, &nrt_pwr, &rt_pwr, cvp_max_rate);
-	dprintk(CVP_PROF, "PwrUpdate nrt %u %u rt %u %u\n",
+	dprintk(CVP_PROF, "PwrUpdate nrt %lu %lu rt %lu %lu\n",
 		nrt_pwr.core_sum, nrt_pwr.op_core_sum,
 		rt_pwr.core_sum, rt_pwr.op_core_sum);
 
 	if (rt_pwr.core_sum > cvp_max_rate) {
-		dprintk(CVP_WARN, "%s clk vote out of range %lld\n",
+		dprintk(CVP_WARN, "%s clk vote out of range %lu\n",
 			__func__, rt_pwr.core_sum);
 		return -ENOTSUPP;
 	}
@@ -1099,7 +1100,7 @@ static int adjust_bw_freqs(void)
 	bw_sum = (bw_sum > max_bw) ? max_bw : bw_sum;
 	bw_sum = (bw_sum < min_bw) ? min_bw : bw_sum;
 
-	dprintk(CVP_PROF, "%s %lld %lld\n", __func__,
+	dprintk(CVP_PROF, "%s %lu %lu\n", __func__,
 		core_sum, bw_sum);
 	if (!cl->has_scaling) {
 		dprintk(CVP_ERR, "Cannot scale CVP clock\n");
@@ -1112,7 +1113,7 @@ static int adjust_bw_freqs(void)
 	rc = msm_cvp_set_clocks(core);
 	if (rc) {
 		dprintk(CVP_ERR,
-			"Failed to set clock rate %u %s: %d %s\n",
+			"Failed to set clock rate %lu %s: %d %s\n",
 			core_sum, cl->name, rc, __func__);
 		core->curr_freq = tmp;
 		return rc;
@@ -1682,7 +1683,7 @@ static int cvp_drain_fence_sched_list(struct msm_cvp_inst *inst)
 	mutex_unlock(&q->lock);
 	wait_time = count * CVP_MAX_WAIT_TIME * 1000;
 
-	dprintk(CVP_SYNX, "%s: wait %d us for %d fence command\n",
+	dprintk(CVP_SYNX, "%s: wait %ld us for %d fence command\n",
 			__func__, wait_time, count);
 
 	count = 0;
@@ -1805,7 +1806,7 @@ static int cvp_flush_all(struct msm_cvp_inst *inst)
 	if (!s)
 		return -ECONNRESET;
 
-	dprintk(CVP_SESS, "session %llx (%#x)flush all starts\n",
+	dprintk(CVP_SESS, "session %pK (%#x)flush all starts\n",
 			inst, inst->sess_id);
 	q = &inst->fence_cmd_queue;
 	hdev = inst->core->device;

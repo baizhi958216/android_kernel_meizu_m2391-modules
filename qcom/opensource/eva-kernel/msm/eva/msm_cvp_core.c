@@ -8,6 +8,7 @@
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include "msm_cvp_core.h"
+#include "msm_cvp_lifetime.h"
 #include "msm_cvp_internal.h"
 #include "msm_cvp_debug.h"
 #include "msm_cvp.h"
@@ -242,7 +243,7 @@ void *msm_cvp_core_open(int core_id, int session_type, struct task_struct *task)
 
 	inst->debugfs_root =
 		msm_cvp_debugfs_init_inst(inst, core->debugfs_root);
-	strlcpy(inst->proc_name, task->comm, TASK_COMM_LEN);
+	strscpy(inst->proc_name, task->comm, TASK_COMM_LEN);
 
 	return inst;
 fail_init:
@@ -319,7 +320,7 @@ static void msm_cvp_cleanup_instance(struct msm_cvp_inst *inst)
 	}
 	inst = cvp_get_inst_validate(core, inst);
 	if (!inst) {
-		dprintk(CVP_ERR, "%s has a invalid session %llx\n",
+		dprintk(CVP_ERR, "%s has a invalid session %pK\n",
 			__func__, inst);
 		return;
 	}
