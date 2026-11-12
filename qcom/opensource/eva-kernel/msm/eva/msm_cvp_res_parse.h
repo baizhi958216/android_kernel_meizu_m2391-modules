@@ -30,4 +30,8 @@ int msm_cvp_core_load_u32_table(struct platform_device *pdev,
 int cvp_handle_load_u32_table(struct platform_device *pdev,
 		struct device_node *of_node, char *table_name, int struct_size,
 		u32 **table, u32 *num_elements);
+int msm_cvp_load_u32_table(struct platform_device *pdev,
+		struct device_node *of_node, char *table_name, int struct_size,
+		u32 **table, u32 *num_elements);
+
 #endif

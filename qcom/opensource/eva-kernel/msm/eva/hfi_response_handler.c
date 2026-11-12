@@ -440,7 +440,7 @@ static int hfi_process_session_dump_notify(u32 device_id,
 		dprintk(CVP_ERR, "%s: invalid param\n", __func__);
 		return -EINVAL;
 	} else if (pkt->size != sizeof(struct cvp_hfi_dumpmsg_session_hdr)) {
-		dprintk(CVP_ERR, "%s: bad_pkt_size %d, expected pkt_size %d\n",
+		dprintk(CVP_ERR, "%s: bad_pkt_size %d, expected pkt_size %lu\n",
 			__func__, pkt->size, sizeof(struct cvp_hfi_dumpmsg_session_hdr));
 		if (pkt->size > sizeof(struct cvp_hfi_dumpmsg_session_hdr))
 			return -E2BIG;

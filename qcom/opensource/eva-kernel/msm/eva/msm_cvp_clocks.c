@@ -50,7 +50,7 @@ static int __mmrm_client_set_value_in_range(struct mmrm_client *client,
 #endif
 }
 
-int msm_cvp_mmrm_notifier_cb(
+static int msm_cvp_mmrm_notifier_cb(
 	struct mmrm_client_notifier_data *notifier_data)
 {
 	if (!notifier_data) {
@@ -118,7 +118,7 @@ int msm_cvp_mmrm_register(struct iris_hfi_device *device)
 		if (cl->has_scaling) {	/* only clk source enabled in dtsi */
 			device->mmrm_desc.client_info.desc.clk=cl->clk;
 			device->mmrm_desc.client_info.desc.client_id=cl->clk_id;
-			strlcpy(name, cl->name,
+			strscpy(name, cl->name,
 			sizeof(device->mmrm_desc.client_info.desc.name));
 		}
 	}
@@ -144,7 +144,7 @@ int msm_cvp_mmrm_register(struct iris_hfi_device *device)
 		rc = -ENOENT;
 	} else {
 		dprintk(CVP_PWR,
-			"%s: mmrm_client_register done: %pK, type:%d, uid:%ld\n",
+			"%s: mmrm_client_register done: %pK, type:%d, uid:%u\n",
 			__func__, device->mmrm_cvp,
 			device->mmrm_cvp->client_type,
 			device->mmrm_cvp->client_uid);
@@ -211,7 +211,7 @@ int msm_cvp_mmrm_set_value_in_range(struct iris_hfi_device *device,
 	}
 
 	dprintk(CVP_PWR,
-		"%s: set clock rate for mmrm_cvp: %pK, type :%d, uid: %ld\n",
+		"%s: set clock rate for mmrm_cvp: %pK, type :%d, uid: %u\n",
 		__func__, device->mmrm_cvp,
 		device->mmrm_cvp->client_type, device->mmrm_cvp->client_uid);
 
@@ -221,13 +221,13 @@ int msm_cvp_mmrm_set_value_in_range(struct iris_hfi_device *device,
 	data.flags = 0;		/* Not MMRM_CLIENT_DATA_FLAG_RESERVE_ONLY */
 
 	dprintk(CVP_PWR,
-		"%s: set clock rate to min %u cur %u: %d\n",
+		"%s: set clock rate to min %lu cur %lu: %d\n",
 		__func__, val.min, val.cur, rc);
 
 	rc = __mmrm_client_set_value_in_range(device->mmrm_cvp, &data, &val);
 	if (rc) {
 		dprintk(CVP_ERR,
-			"%s: Failed to set clock rate to min %u cur %u: %d\n",
+			"%s: Failed to set clock rate to min %lu cur %lu: %d\n",
 			__func__, val.min, val.cur, rc);
 	}
 	return rc;
@@ -241,7 +241,7 @@ int msm_cvp_set_clocks_impl(struct iris_hfi_device *device, u32 freq)
 	// ratio factor for clock source : clk
 	u32 freq_min = device->res->allowed_clks_tbl[0].clock_rate * fsrc2clk;
 
-	dprintk(CVP_PWR, "%s: entering with freq : %ld\n", __func__, freq);
+	dprintk(CVP_PWR, "%s: entering with freq : %u\n", __func__, freq);
 
 	iris_hfi_for_each_clock(device, cl) {
 		if (cl->has_scaling) {/* has_scaling */
@@ -251,7 +251,7 @@ int msm_cvp_set_clocks_impl(struct iris_hfi_device *device, u32 freq)
 
 			freq = freq * fsrc2clk;
 			dprintk(CVP_PWR,
-				"%s: clock source rate set to: %ld\n",
+				"%s: clock source rate set to: %u\n",
 				__func__, freq);
 
 			if (device->mmrm_cvp != NULL) {
@@ -452,12 +452,12 @@ int msm_cvp_set_bw(struct bus_info *bus, unsigned long bw)
 
 	if (!bus->client)
 		return -EINVAL;
-	dprintk(CVP_PWR, "bus->name =  %s to bw =  %u\n",
+	dprintk(CVP_PWR, "bus->name =  %s to bw =  %lu\n",
 		bus->name, bw);
 
 	rc = icc_set_bw(bus->client, bw, 0);
 	if (rc)
-		dprintk(CVP_ERR, "Failed voting bus %s to ab %u\n",
+		dprintk(CVP_ERR, "Failed voting bus %s to ab %lu\n",
 			bus->name, bw);
 
 	return rc;

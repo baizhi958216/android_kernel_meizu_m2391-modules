@@ -577,7 +577,7 @@ static int msm_cvp_load_regulator_table(
 					"Failed to alloc memory for regulator name\n");
 			goto err_reg_name_alloc;
 		}
-		strlcpy(rinfo->name, domains_property->name,
+		strscpy(rinfo->name, domains_property->name,
 			(supply - domains_property->name) + 1);
 
 		rinfo->has_hw_power_collapse = of_property_read_bool(
@@ -921,7 +921,7 @@ static int msm_cvp_setup_context_bank(struct msm_cvp_platform_resources *res,
 		struct context_bank_info *cb, struct device *dev)
 {
 	int rc = 0;
-	struct bus_type *bus;
+	const struct bus_type *bus;
 
 	if (!dev || !cb || !res) {
 		dprintk(CVP_ERR,
@@ -960,7 +960,7 @@ remove_cb:
 	return rc;
 }
 
-int msm_cvp_smmu_fault_handler(struct iommu_domain *domain,
+static int msm_cvp_smmu_fault_handler(struct iommu_domain *domain,
 		struct device *dev, unsigned long iova, int flags, void *token)
 {
 	struct msm_cvp_core *core = token;

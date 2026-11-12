@@ -19,7 +19,7 @@
 #include <linux/workqueue.h>
 #include <linux/platform_device.h>
 #include <linux/soc/qcom/llcc-qcom.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/soc/qcom/smem.h>
 #include <linux/dma-mapping.h>
 #include <linux/reset.h>
@@ -1542,7 +1542,7 @@ static int __get_qdss_iommu_virtual_addr(struct iris_hfi_device *dev,
 			rc = iommu_map(domain, iova,
 					qdss_addr_tbl[i].start,
 					qdss_addr_tbl[i].size,
-					IOMMU_READ | IOMMU_WRITE);
+					IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
 
 			if (rc) {
 				dprintk(CVP_ERR,
@@ -1624,7 +1624,7 @@ static void __hfi_queue_init(struct iris_hfi_device *dev)
 			dev->iface_q_table.align_virtual_addr;
 	q_tbl_hdr->qtbl_version = 0;
 	q_tbl_hdr->device_addr = (void *)dev;
-	strlcpy(q_tbl_hdr->name, "msm_cvp", sizeof(q_tbl_hdr->name));
+	strscpy(q_tbl_hdr->name, "msm_cvp", sizeof(q_tbl_hdr->name));
 	q_tbl_hdr->qtbl_size = CVP_IFACEQ_TABLE_SIZE;
 	q_tbl_hdr->qtbl_qhdr0_offset =
 				sizeof(struct cvp_hfi_queue_table_header);
@@ -3304,8 +3304,7 @@ static int __init_bus(struct iris_hfi_device *device)
 		WARN(dev_get_drvdata(bus->dev), "%s's drvdata already set\n",
 				dev_name(bus->dev));
 		dev_set_drvdata(bus->dev, device);
-		bus->client = icc_get(&device->res->pdev->dev,
-				bus->master, bus->slave);
+		bus->client = of_icc_get(bus->dev, NULL);
 		if (IS_ERR_OR_NULL(bus->client)) {
 			rc = PTR_ERR(bus->client) ?: -EBADHANDLE;
 			dprintk(CVP_ERR, "Failed to register bus %s: %d\n",
@@ -3575,7 +3574,7 @@ static int __enable_regulator(struct iris_hfi_device *device,
 		return 0;
 	}
 
-	dprintk(CVP_ERR, "regulator %s not found\n");
+	dprintk(CVP_ERR, "regulator %s not found\n", name);
 	return -EINVAL;
 }
 
@@ -4652,7 +4651,7 @@ static int __initialize_packetization(struct iris_hfi_device *device)
 	return rc;
 }
 
-void __init_cvp_ops(struct iris_hfi_device *device)
+static void __init_cvp_ops(struct iris_hfi_device *device)
 {
 	device->vpu_ops = &iris2_ops;
 }
