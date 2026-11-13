@@ -467,6 +467,7 @@ static const struct mhi_event_config cnss_mhi_events[] = {
 #endif
 	{
 		.num_elements = 32,
+		.channel = U32_MAX,
 		.irq_moderation_ms = 0,
 		.irq = 1,
 		.mode = MHI_DB_BRST_DISABLE,
@@ -478,6 +479,7 @@ static const struct mhi_event_config cnss_mhi_events[] = {
 	},
 	{
 		.num_elements = 256,
+		.channel = U32_MAX,
 		.irq_moderation_ms = 0,
 		.irq = 2,
 		.mode = MHI_DB_BRST_DISABLE,
@@ -489,6 +491,7 @@ static const struct mhi_event_config cnss_mhi_events[] = {
 #if IS_ENABLED(CONFIG_MHI_BUS_MISC)
 	{
 		.num_elements = 32,
+		.channel = U32_MAX,
 		.irq_moderation_ms = 0,
 		.irq = 1,
 		.mode = MHI_DB_BRST_DISABLE,
@@ -502,6 +505,7 @@ static const struct mhi_event_config cnss_mhi_events[] = {
 #if IS_ENABLED(CONFIG_MHI_SATELLITE)
 	{
 		.num_elements = 256,
+		.channel = U32_MAX,
 		.irq_moderation_ms = 0,
 		.irq = 2,
 		.mode = MHI_DB_BRST_DISABLE,
@@ -2315,7 +2319,7 @@ static int cnss_pci_set_mhi_state(struct cnss_pci_data *pci_priv,
 		break;
 	case CNSS_MHI_POWER_ON:
 		ret = mhi_sync_power_up(pci_priv->mhi_ctrl);
-#if IS_ENABLED(CONFIG_MHI_BUS_MISC)
+#if IS_ENABLED(CONFIG_MHI_BUS_MISC) && LINUX_VERSION_CODE < KERNEL_VERSION(6, 18, 0)
 		/* Only set img_pre_alloc when power up succeeds */
 		if (!ret && !pci_priv->mhi_ctrl->img_pre_alloc) {
 			cnss_pr_dbg("Notify MHI to use already allocated images\n");
