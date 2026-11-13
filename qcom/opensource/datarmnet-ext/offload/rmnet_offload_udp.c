@@ -13,6 +13,7 @@
 #include "rmnet_descriptor.h"
 #include "rmnet_offload_main.h"
 #include "rmnet_offload_engine.h"
+#include "rmnet_offload_udp.h"
 #include "rmnet_offload_stats.h"
 #include "rmnet_offload_knob.h"
 static int DATARMNETdf8e0dc3a0(struct DATARMNETd7c9631acd*DATARMNETaa568481cf,

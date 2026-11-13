@@ -14,6 +14,7 @@
 #include "rmnet_descriptor.h"
 #include "rmnet_offload_main.h"
 #include "rmnet_offload_engine.h"
+#include "rmnet_offload_tcp.h"
 #include "rmnet_offload_stats.h"
 #include "rmnet_offload_knob.h"
 union DATARMNETe0a7777e12{struct DATARMNETd2991e8952 DATARMNETe31a04a369;u8 

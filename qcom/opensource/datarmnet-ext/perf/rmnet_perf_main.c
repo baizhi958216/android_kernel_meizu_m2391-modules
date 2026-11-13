@@ -34,7 +34,7 @@ be16_to_cpu(DATARMNETa1abb4897c->len)<sizeof(struct udphdr)+(0xd26+209-0xdf6))
 return false;DATARMNET352416e828=skb_header_pointer(DATARMNET543491eb0f,
 DATARMNET611d08d671+sizeof(struct udphdr),(0xd26+209-0xdf6),&DATARMNETd9bda61912
 );if(!DATARMNET352416e828)return false;return((*DATARMNET352416e828)&
-(0xbf7+4869-0x1e3c))==(0xbf7+4869-0x1e3c);}int DATARMNETee9214ce9b(struct 
+(0xbf7+4869-0x1e3c))==(0xbf7+4869-0x1e3c);}static int DATARMNETee9214ce9b(struct 
 sk_buff*DATARMNET543491eb0f){if(DATARMNET543491eb0f->protocol==htons(ETH_P_IP)){
 struct iphdr*DATARMNET86f1f2cdc9,DATARMNETbf6548198e;DATARMNET86f1f2cdc9=
 skb_header_pointer(DATARMNET543491eb0f,(0xd2d+202-0xdf7),sizeof(*
@@ -53,7 +53,7 @@ DATARMNET98fed39916);if(DATARMNET98fed39916||protocol!=IPPROTO_UDP||
 DATARMNET611d08d671==-(0xd26+209-0xdf6))return-EINVAL;if(DATARMNET77ab42949f(
 DATARMNET543491eb0f,DATARMNET611d08d671))goto DATARMNET606558916b;}return-EINVAL
 ;DATARMNET606558916b:DATARMNET543491eb0f->hash=(0xd2d+202-0xdf7);
-DATARMNET543491eb0f->sw_hash=(0xd26+209-0xdf6);return(0xd2d+202-0xdf7);}void 
+DATARMNET543491eb0f->sw_hash=(0xd26+209-0xdf6);return(0xd2d+202-0xdf7);}static void 
 DATARMNET05c4bf8af9(struct sk_buff*DATARMNET543491eb0f){if(DATARMNET543491eb0f->
 protocol==htons(ETH_P_IP)){struct iphdr*DATARMNET86f1f2cdc9,DATARMNETbf6548198e;
 DATARMNET86f1f2cdc9=skb_header_pointer(DATARMNET543491eb0f,(0xd2d+202-0xdf7),
@@ -74,9 +74,9 @@ DATARMNETb261f33b7b;}return;DATARMNETb261f33b7b:DATARMNET543491eb0f->priority=
 14286874;}static const struct rmnet_module_hook_register_info 
 DATARMNET95a71e03c1[]={{.hooknum=RMNET_MODULE_HOOK_PERF_INGRESS,.func=
 DATARMNETee9214ce9b,},{.hooknum=RMNET_MODULE_HOOK_PERF_EGRESS,.func=
-DATARMNET05c4bf8af9,},};void DATARMNET49c17a32bc(void){rcu_assign_pointer(
+DATARMNET05c4bf8af9,},};static void DATARMNET49c17a32bc(void){rcu_assign_pointer(
 rmnet_perf_egress_hook1,DATARMNET05c4bf8af9);rmnet_module_hook_register(
-DATARMNET95a71e03c1,ARRAY_SIZE(DATARMNET95a71e03c1));}void DATARMNET41e8cc085c(
+DATARMNET95a71e03c1,ARRAY_SIZE(DATARMNET95a71e03c1));}static void DATARMNET41e8cc085c(
 void){rcu_assign_pointer(rmnet_perf_egress_hook1,NULL);
 rmnet_module_hook_unregister(DATARMNET95a71e03c1,ARRAY_SIZE(DATARMNET95a71e03c1)
 );}static int __init DATARMNET63abbdc3d3(void){pr_info("%s(): Loading\n",
