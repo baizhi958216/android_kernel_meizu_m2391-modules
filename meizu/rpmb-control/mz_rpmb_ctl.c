@@ -13,7 +13,7 @@
 #include <linux/random.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 #include "../storage/meizu_storage.h"
 #include "../device-info/mz_info.h"
 #include "keys.h"
@@ -401,4 +401,4 @@ module_init(rpmb_ctl_init);
 module_exit(rpmb_ctl_exit);
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Meizu M2391 RPMB control ioctl interface");
-MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
+MODULE_IMPORT_NS("VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver");
