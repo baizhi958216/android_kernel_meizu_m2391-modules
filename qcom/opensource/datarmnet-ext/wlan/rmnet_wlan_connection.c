@@ -318,7 +318,7 @@ return NULL;}void DATARMNETf4e1a29dbc(void){cancel_delayed_work_sync(&
 DATARMNET0b04fde883.DATARMNET190b4452e8);DATARMNET0b04fde883.DATARMNETcd94e0d3c7
 =true;schedule_delayed_work(&DATARMNET0b04fde883.DATARMNET190b4452e8,
 (0xd2d+202-0xdf7));cancel_delayed_work_sync(&DATARMNET0b04fde883.
-DATARMNET190b4452e8);}void DATARMNET6f73df41cd(struct sk_buff*
+DATARMNET190b4452e8);}static void DATARMNET6f73df41cd(struct sk_buff*
 DATARMNET543491eb0f){int protocol=-(0xd26+209-0xdf6);struct DATARMNETe117226f58*
 DATARMNET3396919a68=rcu_dereference(DATARMNETcde6e442f5);if(!DATARMNET3396919a68
 )return;if(DATARMNET543491eb0f->protocol==htons(ETH_P_IP)){struct iphdr*
