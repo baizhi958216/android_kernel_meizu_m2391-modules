@@ -18,6 +18,14 @@
 #include <linux/skbuff.h>
 #include <linux/rtnetlink.h>
 #include <net/pkt_sched.h>
+
+static void rmnet_sch_queue_reset(struct qdisc_skb_head *queue)
+{
+	queue->head = NULL;
+	queue->tail = NULL;
+	queue->qlen = 0;
+}
+
 static char*verinfo[]={"\x65\x36\x33\x37\x31\x64\x34\x30",
 "\x37\x34\x31\x35\x39\x32\x31\x63","\x61\x65\x32\x34\x34\x61\x39\x64"};
 module_param_array(verinfo,charp,NULL,(0xcb7+5769-0x221c));MODULE_PARM_DESC(
@@ -120,7 +128,8 @@ DATARMNET9b0193c8c4,struct nlattr*DATARMNET8bdeb8bf5c,struct netlink_ext_ack*
 DATARMNET79a1f177ed){struct DATARMNET74e95d25df*DATARMNETe823dcf978=qdisc_priv(
 DATARMNET9b0193c8c4);int DATARMNET2372d14a3d;for(DATARMNET2372d14a3d=
 (0xd2d+202-0xdf7);DATARMNET2372d14a3d<DATARMNETe632b2e0b0;DATARMNET2372d14a3d++)
-{qdisc_skb_head_init(&DATARMNETe823dcf978->DATARMNETb4180393e4[
+{spin_lock_init(&DATARMNETe823dcf978->DATARMNETb4180393e4[DATARMNET2372d14a3d].q.lock);
+rmnet_sch_queue_reset(&DATARMNETe823dcf978->DATARMNETb4180393e4[
 DATARMNET2372d14a3d].q);DATARMNET8c1d8c9f65(DATARMNETe823dcf978,
 DATARMNET2372d14a3d);DATARMNET60cff0042c(DATARMNETe823dcf978,DATARMNET2372d14a3d
 ,qdisc_dev(DATARMNET9b0193c8c4)->tx_queue_len);}DATARMNET9b0193c8c4->flags|=
@@ -129,7 +138,7 @@ TCQ_F_CAN_BYPASS;return(0xd2d+202-0xdf7);}static void DATARMNET9593ab9587(struct
 qdisc_priv(DATARMNET9b0193c8c4);int DATARMNET2372d14a3d;for(DATARMNET2372d14a3d=
 (0xd2d+202-0xdf7);DATARMNET2372d14a3d<DATARMNETe632b2e0b0;DATARMNET2372d14a3d++)
 {kfree_skb_list(DATARMNETe823dcf978->DATARMNETb4180393e4[DATARMNET2372d14a3d].q.
-head);qdisc_skb_head_init(&DATARMNETe823dcf978->DATARMNETb4180393e4[
+head);rmnet_sch_queue_reset(&DATARMNETe823dcf978->DATARMNETb4180393e4[
 DATARMNET2372d14a3d].q);DATARMNET8c1d8c9f65(DATARMNETe823dcf978,
 DATARMNET2372d14a3d);DATARMNET60cff0042c(DATARMNETe823dcf978,DATARMNET2372d14a3d
 ,qdisc_dev(DATARMNET9b0193c8c4)->tx_queue_len);}}static int DATARMNET6647342968(
