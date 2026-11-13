@@ -75,7 +75,13 @@ DATARMNETecc0627c70.DATARMNETfc89d842ae){pr_info(
 ,dev->name);priv=netdev_priv(dev);port=rmnet_get_port(priv->real_dev);if(!port){
 pr_err(
 "\x72\x6d\x6e\x65\x74\x5f\x73\x68\x73\x3a\x20\x69\x6e\x76\x61\x6c\x69\x64\x20\x72\x6d\x6e\x65\x74\x5f\x70\x6f\x72\x74"
-);break;}DATARMNET45d8cdb224(priv->real_dev,dev);DATARMNET3ae0d614d6();
+);break;}
+	if (netdev_rx_queue_enable_rps_cpu(priv->real_dev->_rx,
+					  cpumask_first(cpu_online_mask))) {
+		netdev_warn(dev, "cannot enable RPS on the modem receive queue\n");
+		break;
+	}
+	DATARMNET45d8cdb224(priv->real_dev,dev);DATARMNET3ae0d614d6();
 DATARMNETe1f95274f1();DATARMNETecc0627c70.DATARMNETf5ab31b9b0=(0xd26+209-0xdf6);
 }break;case NETDEV_UP:if(!DATARMNETecc0627c70.DATARMNET9c869c1ec2&&
 DATARMNETecc0627c70.DATARMNETfc89d842ae){port=DATARMNETecc0627c70.port;if(!port)

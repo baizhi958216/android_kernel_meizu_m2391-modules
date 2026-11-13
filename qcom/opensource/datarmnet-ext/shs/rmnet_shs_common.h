@@ -16,6 +16,9 @@
 #include "rmnet_shs_wq.h"
 #include "rmnet_shs_config.h"
 #ifndef DATARMNET4e9dcb0338
+#include <net/rps.h>
+#include <net/netdev_rx_queue.h>
+
 #define DATARMNET4e9dcb0338
 void DATARMNET4095253347(struct DATARMNET9b44b71ee9*ep);void DATARMNETf7d317ed55
 (struct DATARMNET9b44b71ee9*ep);void DATARMNET36e5e526fa(struct 

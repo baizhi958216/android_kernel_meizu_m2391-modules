@@ -36,7 +36,7 @@ DATARMNETe24d518157;unsigned int i;int ret;struct freq_qos_request*
 DATARMNETddcafd8b91;cpus_read_lock();for_each_online_cpu(i){DATARMNETe24d518157=
 per_cpu_ptr(DATARMNETc4b1be7898.DATARMNET9dd9bc4abb,i);DATARMNETddcafd8b91=&
 per_cpu(DATARMNET17d6a9530a,i);ret=freq_qos_update_request(DATARMNETddcafd8b91,
-DATARMNETe24d518157->DATARMNET103c8d34fe);}cpus_read_unlock();}void 
+DATARMNETe24d518157->DATARMNET103c8d34fe);}cpus_read_unlock();}static void 
 DATARMNET82d7f4ffa2(void){struct cpu_freq*DATARMNETe24d518157;int i;
 for_each_possible_cpu(i){DATARMNETe24d518157=per_cpu_ptr(DATARMNETc4b1be7898.
 DATARMNET9dd9bc4abb,i);DATARMNETe24d518157->DATARMNET103c8d34fe=MIN_FREQ;

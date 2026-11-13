@@ -93,24 +93,22 @@ DATARMNET0f6b7f3f93,.open=DATARMNET6069bf201a,.fault=DATARMNET1ab1f570f2,};
 static const struct vm_operations_struct DATARMNET41944cc550={.close=
 DATARMNET0f6b7f3f93,.open=DATARMNET6069bf201a,.fault=DATARMNETe421c4e1db,};
 static int DATARMNET54418f934d(struct file*DATARMNET3cc114dce0,struct 
-vm_area_struct*vma){vma->vm_ops=&DATARMNETfa4e968e7d;vma->vm_flags|=
-VM_DONTEXPAND|VM_DONTDUMP;vma->vm_private_data=DATARMNET3cc114dce0->private_data
+vm_area_struct*vma){vma->vm_ops=&DATARMNETfa4e968e7d;vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);vma->vm_private_data=DATARMNET3cc114dce0->private_data
 ;return(0xd2d+202-0xdf7);}static int DATARMNETc55748448d(struct file*
 DATARMNET3cc114dce0,struct vm_area_struct*vma){vma->vm_ops=&DATARMNETe9c0626068;
-vma->vm_flags|=VM_DONTEXPAND|VM_DONTDUMP;vma->vm_private_data=
+vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);vma->vm_private_data=
 DATARMNET3cc114dce0->private_data;return(0xd2d+202-0xdf7);}static int 
 DATARMNET43c6d751a2(struct file*DATARMNET3cc114dce0,struct vm_area_struct*vma){
-vma->vm_ops=&DATARMNET9a89317a86;vma->vm_flags|=VM_DONTEXPAND|VM_DONTDUMP;vma->
+vma->vm_ops=&DATARMNET9a89317a86;vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);vma->
 vm_private_data=DATARMNET3cc114dce0->private_data;return(0xd2d+202-0xdf7);}
 static int DATARMNET7cc042bdf3(struct file*DATARMNET3cc114dce0,struct 
-vm_area_struct*vma){vma->vm_ops=&DATARMNET5462c2ce60;vma->vm_flags|=
-VM_DONTEXPAND|VM_DONTDUMP;vma->vm_private_data=DATARMNET3cc114dce0->private_data
+vm_area_struct*vma){vma->vm_ops=&DATARMNET5462c2ce60;vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);vma->vm_private_data=DATARMNET3cc114dce0->private_data
 ;return(0xd2d+202-0xdf7);}static int DATARMNET150e284e90(struct file*
 DATARMNET3cc114dce0,struct vm_area_struct*vma){vma->vm_ops=&DATARMNET523167fa26;
-vma->vm_flags|=VM_DONTEXPAND|VM_DONTDUMP;vma->vm_private_data=
+vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);vma->vm_private_data=
 DATARMNET3cc114dce0->private_data;return(0xd2d+202-0xdf7);}static int 
 DATARMNET444e2eb654(struct file*DATARMNET3cc114dce0,struct vm_area_struct*vma){
-vma->vm_ops=&DATARMNET41944cc550;vma->vm_flags|=VM_DONTEXPAND|VM_DONTDUMP;vma->
+vma->vm_ops=&DATARMNET41944cc550;vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);vma->
 vm_private_data=DATARMNET3cc114dce0->private_data;return(0xd2d+202-0xdf7);}
 static int DATARMNET33a80d3bf7(struct inode*inode,struct file*
 DATARMNET3cc114dce0){struct DATARMNETa41d4c4a12*DATARMNET54338da2ff;rm_err(
@@ -378,7 +376,7 @@ DATARMNET95266642d1;DATARMNET4af6567922->DATARMNET0d682bcb29=DATARMNETd2a694d52a
 DATARMNETd2a694d52a->DATARMNET20e8fc9db8;DATARMNET4af6567922->
 DATARMNETda8e8ae7ed=DATARMNETd2a694d52a->DATARMNET29c6349349;DATARMNETd2da2e8466
 (
-"\x53\x48\x53\x5f\x48\x57\x5f\x43\x4f\x41\x4c\x5f\x4d\x45\x4d\x3a\x20\x68\x77\x20\x63\x6f\x61\x6c\x20\x62\x79\x74\x65\x73\x20\x64\x69\x66\x66\x20\x3d\x20\x25\x6c\x75\x20\x68\x77\x20\x63\x6f\x61\x6c\x20\x62\x75\x66\x73\x69\x7a\x65\x20\x64\x69\x66\x66\x20\x3d\x20\x25\x6c\x75"
+"\x53\x48\x53\x5f\x48\x57\x5f\x43\x4f\x41\x4c\x5f\x4d\x45\x4d\x3a\x20\x68\x77\x20\x63\x6f\x61\x6c\x20\x62\x79\x74\x65\x73\x20\x64\x69\x66\x66\x20\x3d\x20%llu\x20\x68\x77\x20\x63\x6f\x61\x6c\x20\x62\x75\x66\x73\x69\x7a\x65\x20\x64\x69\x66\x66\x20\x3d\x20%llu"
 ,DATARMNET4af6567922->DATARMNET0d682bcb29,DATARMNET4af6567922->
 DATARMNET20e8fc9db8);rm_err(
 "\x53\x48\x53\x5f\x46\x4d\x55\x58\x3a\x20\x6d\x75\x78\x20\x69\x64\x20\x66\x6f\x72\x20\x4c\x4c\x20\x68\x61\x73\x68\x20\x30\x78\x25\x78\x20\x69\x73\x20\x25\x64\x20\x74\x70\x20\x25\x64"
@@ -406,7 +404,7 @@ DATARMNET95266642d1=DATARMNETd2a694d52a->DATARMNET95266642d1;DATARMNETf02b2a5be7
 ->DATARMNET0d682bcb29=DATARMNETd2a694d52a->DATARMNET0d682bcb29;
 DATARMNETf02b2a5be7->DATARMNET20e8fc9db8=DATARMNETd2a694d52a->
 DATARMNET20e8fc9db8;DATARMNETd2da2e8466(
-"\x53\x48\x53\x5f\x48\x57\x5f\x43\x4f\x41\x4c\x5f\x4d\x45\x4d\x3a\x20\x68\x77\x20\x63\x6f\x61\x6c\x20\x62\x79\x74\x65\x73\x20\x64\x69\x66\x66\x20\x3d\x20\x25\x6c\x75\x20\x68\x77\x20\x63\x6f\x61\x6c\x20\x62\x75\x66\x73\x69\x7a\x65\x20\x64\x69\x66\x66\x20\x3d\x20\x25\x6c\x75"
+"\x53\x48\x53\x5f\x48\x57\x5f\x43\x4f\x41\x4c\x5f\x4d\x45\x4d\x3a\x20\x68\x77\x20\x63\x6f\x61\x6c\x20\x62\x79\x74\x65\x73\x20\x64\x69\x66\x66\x20\x3d\x20%llu\x20\x68\x77\x20\x63\x6f\x61\x6c\x20\x62\x75\x66\x73\x69\x7a\x65\x20\x64\x69\x66\x66\x20\x3d\x20%llu"
 ,DATARMNETf02b2a5be7->DATARMNET0d682bcb29,DATARMNETf02b2a5be7->
 DATARMNET20e8fc9db8);rm_err(
 "\x53\x48\x53\x5f\x46\x4d\x55\x58\x3a\x20\x6d\x75\x78\x20\x69\x64\x20\x66\x6f\x72\x20\x66\x66\x20\x68\x61\x73\x68\x20\x30\x78\x25\x78\x20\x69\x73\x20\x25\x64\x20\x74\x70\x20\x25\x64"
@@ -618,20 +616,20 @@ rm_err(
 ,count,ep->ep->name);rm_err(
 "\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x6d\x75\x78\x5f\x69\x64\x20\x3d\x20\x25\x75\x20" "\n"
 ,count,priv->mux_id);rm_err(
-"\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x69\x70\x5f\x6d\x69\x73\x73\x20\x3d\x20\x25\x6c\x75\x20" "\n"
+"\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x69\x70\x5f\x6d\x69\x73\x73\x20\x3d\x20%llu\x20" "\n"
 ,count,priv->stats.coal.close.ip_miss);rm_err(
-"\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x63\x6f\x61\x6c\x5f\x72\x78\x5f\x70\x6b\x74\x73\x20\x3d\x20\x25\x6c\x75\x20" "\n"
+"\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x63\x6f\x61\x6c\x5f\x72\x78\x5f\x70\x6b\x74\x73\x20\x3d\x20%llu\x20" "\n"
 ,count,priv->stats.coal.coal_pkts);rm_err(
-"\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x75\x64\x70\x5f\x72\x78\x5f\x62\x70\x73\x20\x3d\x20\x25\x6c\x75\x20" "\n"
+"\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x75\x64\x70\x5f\x72\x78\x5f\x62\x70\x73\x20\x3d\x20%llu\x20" "\n"
 ,count,ep->DATARMNET257fc4b2d4);rm_err(
-"\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x74\x63\x70\x5f\x72\x78\x5f\x62\x70\x73\x20\x3d\x20\x25\x6c\x75\x20" "\n"
+"\x53\x48\x53\x5f\x4e\x45\x54\x44\x45\x56\x3a\x20\x65\x70\x20\x25\x75\x20\x68\x61\x73\x20\x74\x63\x70\x5f\x72\x78\x5f\x62\x70\x73\x20\x3d\x20%llu\x20" "\n"
 ,count,ep->DATARMNET4eb77c78e6);DATARMNETf46265286b[idx].DATARMNET77de6e34f2=
 priv->stats.coal.close.ip_miss;DATARMNETf46265286b[idx].hw_evict=priv->stats.
 coal.close.hw_evict;DATARMNETf46265286b[idx].coal_tcp=priv->stats.coal.coal_tcp;
 DATARMNETf46265286b[idx].coal_tcp_bytes=priv->stats.coal.coal_tcp_bytes;
 DATARMNETf46265286b[idx].coal_udp=priv->stats.coal.coal_udp;DATARMNETf46265286b[
 idx].coal_udp_bytes=priv->stats.coal.coal_udp_bytes;DATARMNETf46265286b[idx].
-mux_id=priv->mux_id;strlcpy(DATARMNETf46265286b[idx].name,ep->ep->name,sizeof(
+mux_id=priv->mux_id;strscpy(DATARMNETf46265286b[idx].name,ep->ep->name,sizeof(
 DATARMNETf46265286b[idx].name));DATARMNETf46265286b[idx].DATARMNET870c3dafcb=
 priv->stats.coal.coal_pkts;DATARMNETf46265286b[idx].DATARMNET4eb77c78e6=ep->
 DATARMNET4eb77c78e6;DATARMNETf46265286b[idx].DATARMNET257fc4b2d4=ep->
