@@ -664,7 +664,7 @@ static void qcrypto_ce_set_bus(struct crypto_engine *pengine,
 
 static void qcrypto_bw_reaper_timer_callback(struct timer_list *data)
 {
-	struct crypto_engine *pengine = from_timer(pengine, data,
+	struct crypto_engine *pengine = timer_container_of(pengine, data,
 		bw_reaper_timer);
 
 	schedule_work(&pengine->bw_reaper_ws);
@@ -913,7 +913,7 @@ static void _qcrypto_ahash_cra_exit(struct crypto_tfm *tfm)
 
 
 static void _crypto_sha_hmac_ahash_req_complete(
-	struct crypto_async_request *req, int err);
+	void *data, int err);
 
 static int _qcrypto_ahash_hmac_cra_init(struct crypto_tfm *tfm)
 {
@@ -1337,7 +1337,7 @@ static void _qcrypto_remove_engine(struct crypto_engine *pengine)
 
 	cancel_work_sync(&pengine->bw_reaper_ws);
 	cancel_work_sync(&pengine->bw_allocate_ws);
-	del_timer_sync(&pengine->bw_reaper_timer);
+	timer_delete_sync(&pengine->bw_reaper_timer);
 
 	if (pengine->icc_path)
 		icc_put(pengine->icc_path);
@@ -1360,7 +1360,7 @@ static void _qcrypto_remove_engine(struct crypto_engine *pengine)
 	}
 }
 
-static int _qcrypto_remove(struct platform_device *pdev)
+static void _qcrypto_remove(struct platform_device *pdev)
 {
 	struct crypto_engine *pengine;
 	struct crypto_priv *cp;
@@ -1368,7 +1368,7 @@ static int _qcrypto_remove(struct platform_device *pdev)
 	pengine = platform_get_drvdata(pdev);
 
 	if (!pengine)
-		return 0;
+		return;
 	cp = pengine->pcp;
 	mutex_lock(&cp->engine_lock);
 	_qcrypto_remove_engine(pengine);
@@ -1376,7 +1376,7 @@ static int _qcrypto_remove(struct platform_device *pdev)
 	if (pengine->qce)
 		qce_close(pengine->qce);
 	kfree_sensitive(pengine);
-	return 0;
+	return;
 }
 
 static int _qcrypto_check_aes_keylen(struct crypto_priv *cp, unsigned int len)
@@ -1388,6 +1388,7 @@ static int _qcrypto_check_aes_keylen(struct crypto_priv *cp, unsigned int len)
 	case AES_KEYSIZE_192:
 		if (cp->ce_support.aes_key_192)
 			break;
+		fallthrough;
 	default:
 		//crypto_ablkcipher_set_flags(cipher, CRYPTO_TFM_RES_BAD_KEY_LEN);
 		return -EINVAL;
@@ -1577,7 +1578,7 @@ again:
 
 		areq = arsp->async_req;
 		local_bh_disable();
-		areq->complete(areq, arsp->res);
+		crypto_request_complete(areq, arsp->res);
 		local_bh_enable();
 		atomic_dec(&cp->resp_cnt);
 	}
@@ -2338,9 +2339,9 @@ again:
 
 	spin_unlock_irqrestore(&cp->lock, flags);
 	if (backlog_eng)
-		backlog_eng->complete(backlog_eng, -EINPROGRESS);
+		crypto_request_complete(backlog_eng, -EINPROGRESS);
 	if (backlog_cp)
-		backlog_cp->complete(backlog_cp, -EINPROGRESS);
+		crypto_request_complete(backlog_cp, -EINPROGRESS);
 	switch (type) {
 	case CRYPTO_ALG_TYPE_SKCIPHER:
 		ret = _qcrypto_process_skcipher(pengine, pqcrypto_req_control);
@@ -3080,6 +3081,7 @@ static int _qcrypto_aead_ccm_setkey(struct crypto_aead *aead, const u8 *key,
 	case AES_KEYSIZE_192:
 		if (cp->ce_support.aes_key_192)
 			break;
+		fallthrough;
 	default:
 		ctx->enc_key_len = 0;
 		//crypto_aead_set_flags(aead, CRYPTO_TFM_RES_BAD_KEY_LEN);
@@ -3123,17 +3125,19 @@ static void _qcrypto_aead_aes_192_fb_a_cb(struct qcrypto_cipher_req_ctx *rctx,
 	rctx->fb_aes_req = NULL;
 	rctx->fb_hash_req = NULL;
 	kfree(rctx->fb_aes_iv);
-	areq->complete(areq, res);
+	crypto_request_complete(areq, res);
 }
 
 static void _aead_aes_fb_stage2_ahash_complete(
-				struct crypto_async_request *base, int err)
+				void *data, int err)
 {
 	struct qcrypto_cipher_req_ctx *rctx;
 	struct aead_request *req;
 	struct qcrypto_cipher_ctx *ctx;
 
-	rctx = base->data;
+	rctx = data;
+	if (err == -EINPROGRESS)
+		return;
 	req = rctx->aead_req;
 	ctx = crypto_tfm_ctx(req->base.tfm);
 	/* copy icv */
@@ -3158,11 +3162,13 @@ static int _start_aead_aes_fb_stage2_hmac(struct qcrypto_cipher_req_ctx *rctx)
 }
 
 static void _aead_aes_fb_stage2_decrypt_complete(
-			struct crypto_async_request *base, int err)
+			void *data, int err)
 {
 	struct qcrypto_cipher_req_ctx *rctx;
 
-	rctx = base->data;
+	rctx = data;
+	if (err == -EINPROGRESS)
+		return;
 	_qcrypto_aead_aes_192_fb_a_cb(rctx, err);
 }
 
@@ -3178,13 +3184,15 @@ static int _start_aead_aes_fb_stage2_decrypt(
 }
 
 static void _aead_aes_fb_stage1_ahash_complete(
-				struct crypto_async_request *base, int err)
+				void *data, int err)
 {
 	struct qcrypto_cipher_req_ctx *rctx;
 	struct aead_request *req;
 	struct qcrypto_cipher_ctx *ctx;
 
-	rctx = base->data;
+	rctx = data;
+	if (err == -EINPROGRESS)
+		return;
 	req = rctx->aead_req;
 	ctx = crypto_tfm_ctx(req->base.tfm);
 
@@ -3215,13 +3223,15 @@ ret:
 }
 
 static void _aead_aes_fb_stage1_encrypt_complete(
-				struct crypto_async_request *base, int err)
+				void *data, int err)
 {
 	struct qcrypto_cipher_req_ctx *rctx;
 	struct aead_request *req;
 	struct qcrypto_cipher_ctx *ctx;
 
-	rctx = base->data;
+	rctx = data;
+	if (err == -EINPROGRESS)
+		return;
 	req = rctx->aead_req;
 	ctx = crypto_tfm_ctx(req->base.tfm);
 
@@ -3919,9 +3929,9 @@ static int _sha256_digest(struct ahash_request *req)
 }
 
 static void _crypto_sha_hmac_ahash_req_complete(
-	struct crypto_async_request *req, int err)
+	void *data, int err)
 {
-	struct completion *ahash_req_complete = req->data;
+	struct completion *ahash_req_complete = data;
 
 	if (err == -EINPROGRESS)
 		return;
@@ -4245,7 +4255,7 @@ static int _qcrypto_prefix_alg_cra_name(char cra_name[], unsigned int size)
 	if (size >= CRYPTO_MAX_ALG_NAME - strlen("qcom-"))
 		return -EINVAL;
 	strlcat(new_cra_name, cra_name, CRYPTO_MAX_ALG_NAME);
-	strlcpy(cra_name, new_cra_name, CRYPTO_MAX_ALG_NAME);
+	strscpy(cra_name, new_cra_name, CRYPTO_MAX_ALG_NAME);
 	return 0;
 }
 
@@ -5259,7 +5269,7 @@ static int _qcrypto_engine_in_use(struct crypto_engine *pengine)
 
 static void _qcrypto_do_suspending(struct crypto_engine *pengine)
 {
-	del_timer_sync(&pengine->bw_reaper_timer);
+	timer_delete_sync(&pengine->bw_reaper_timer);
 	qcrypto_ce_set_bus(pengine, false);
 }
 

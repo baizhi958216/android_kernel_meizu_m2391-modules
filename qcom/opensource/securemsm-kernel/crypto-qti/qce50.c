@@ -24,8 +24,6 @@
 #include "linux/qcrypto.h"
 #include <crypto/hash.h>
 #include <crypto/sha1.h>
-#include <soc/qcom/socinfo.h>
-#include <linux/dma-iommu.h>
 #include <linux/iommu.h>
 
 #include "qce.h"
@@ -176,7 +174,6 @@ struct qce_device {
 	atomic_t last_intr_seq;
 	bool cadence_flag;
 	uint8_t *dummyreq_in_buf;
-	struct dma_iommu_mapping *smmu_mapping;
 	bool enable_s1_smmu;
 	bool no_clock_support;
 	bool kernel_pipes_support;
@@ -482,8 +479,8 @@ static int _probe_ce_engine(struct qce_device *pce_dev)
 
 	dev_dbg(pce_dev->pdev, "CE device = %#x IO base, CE = %pK Consumer (IN) PIPE %d,\nProducer (OUT) PIPE %d IO base BAM = %pK\nBAM IRQ %d Engines Availability = %#x\n",
 			pce_dev->ce_bam_info.ce_device, pce_dev->iobase,
-			pce_dev->ce_bam_info.dest_pipe_index,
-			pce_dev->ce_bam_info.src_pipe_index,
+			pce_dev->ce_bam_info.dest_pipe_index[QCE_OFFLOAD_NONE],
+			pce_dev->ce_bam_info.src_pipe_index[QCE_OFFLOAD_NONE],
 			pce_dev->ce_bam_info.bam_iobase,
 			pce_dev->ce_bam_info.bam_irq, pce_dev->engines_avail);
 	return 0;
@@ -3483,7 +3480,7 @@ static void _qce_req_complete(struct qce_device *pce_dev, unsigned int req_info)
 
 static void qce_multireq_timeout(struct timer_list *data)
 {
-	struct qce_device *pce_dev = from_timer(pce_dev, data, timer);
+	struct qce_device *pce_dev = timer_container_of(pce_dev, data, timer);
 	int ret = 0;
 	int last_seq;
 	unsigned long flags;
@@ -3520,7 +3517,7 @@ static void qce_multireq_timeout(struct timer_list *data)
 	pce_dev->mode = IN_INTERRUPT_MODE;
 	local_irq_restore(flags);
 
-	del_timer(&(pce_dev->timer));
+	timer_delete(&(pce_dev->timer));
 	pce_dev->qce_stats.no_of_timeouts++;
 	pr_debug("pcedev %d mode switch to INTR\n", pce_dev->dev_no);
 }
