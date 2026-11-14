@@ -53,25 +53,21 @@ struct msm_rng_device {
 	struct icc_path *icc_path;
 };
 
-static struct msm_rng_device msm_rng_device_info;
 static struct msm_rng_device *msm_rng_dev_cached;
-static struct mutex cached_rng_lock;
+static DEFINE_MUTEX(cached_rng_lock);
 static long msm_rng_ioctl(struct file *filp, unsigned int cmd,
 				unsigned long arg)
 {
 	long ret = 0;
 
-	switch (cmd) {
-	case QRNG_IOCTL_RESET_BUS_BANDWIDTH:
-		pr_debug("calling msm_rng_bus_scale(LOW)\n");
-		ret = icc_set_bw(msm_rng_device_info.icc_path, 0, 0);
-		if (ret)
-			pr_err("failed qrng_reset_bus_bw, ret = %ld\n", ret);
-		break;
-	default:
-		pr_err("Unsupported IOCTL call\n");
-		break;
-	}
+	if (cmd != QRNG_IOCTL_RESET_BUS_BANDWIDTH)
+		return -ENOTTY;
+	mutex_lock(&cached_rng_lock);
+	if (!msm_rng_dev_cached)
+		ret = -ENODEV;
+	else if (msm_rng_dev_cached->icc_path)
+		ret = icc_set_bw(msm_rng_dev_cached->icc_path, 0, 0);
+	mutex_unlock(&cached_rng_lock);
 	return ret;
 }
 
@@ -235,7 +231,6 @@ static const struct file_operations msm_rng_fops = {
 	.unlocked_ioctl = msm_rng_ioctl,
 };
 static struct class *msm_rng_class;
-static struct cdev msm_rng_cdev;
 
 static int msm_rng_probe(struct platform_device *pdev)
 {
@@ -287,9 +282,8 @@ static int msm_rng_probe(struct platform_device *pdev)
 	msm_rng_dev->pdev = pdev;
 	platform_set_drvdata(pdev, msm_rng_dev);
 
-	if (pdev->dev.of_node) {
+	if (of_property_present(pdev->dev.of_node, "interconnects")) {
 		msm_rng_dev->icc_path = of_icc_get(&pdev->dev, "data_path");
-		msm_rng_device_info.icc_path = msm_rng_dev->icc_path;
 		if (IS_ERR(msm_rng_dev->icc_path)) {
 			error = PTR_ERR(msm_rng_dev->icc_path);
 			dev_err(&pdev->dev, "get icc path err %d\n", error);
@@ -310,7 +304,6 @@ static int msm_rng_probe(struct platform_device *pdev)
 	}
 
 	mutex_init(&msm_rng_dev->rng_lock);
-	mutex_init(&cached_rng_lock);
 
 	/* register with hwrng framework */
 	msm_rng.priv = (unsigned long) msm_rng_dev;
@@ -325,7 +318,7 @@ static int msm_rng_probe(struct platform_device *pdev)
 		goto err_reg_chrdev;
 	}
 
-	msm_rng_class = class_create(THIS_MODULE, "msm-rng");
+	msm_rng_class = class_create("msm-rng");
 	if (IS_ERR(msm_rng_class)) {
 		pr_err("class_create failed\n");
 		error = PTR_ERR(msm_rng_class);
@@ -339,8 +332,9 @@ static int msm_rng_probe(struct platform_device *pdev)
 		error = PTR_ERR(dev);
 		goto err_create_dev;
 	}
-	cdev_init(&msm_rng_cdev, &msm_rng_fops);
+	mutex_lock(&cached_rng_lock);
 	msm_rng_dev_cached = msm_rng_dev;
+	mutex_unlock(&cached_rng_lock);
 	return error;
 
 err_create_dev:
@@ -363,10 +357,15 @@ err_exit:
 	return error;
 }
 
-static int msm_rng_remove(struct platform_device *pdev)
+static void msm_rng_remove(struct platform_device *pdev)
 {
 	struct msm_rng_device *msm_rng_dev = platform_get_drvdata(pdev);
 
+	mutex_lock(&cached_rng_lock);
+	msm_rng_dev_cached = NULL;
+	mutex_unlock(&cached_rng_lock);
+	device_destroy(msm_rng_class, MKDEV(QRNG_IOC_MAGIC, 0));
+	class_destroy(msm_rng_class);
 	unregister_chrdev(QRNG_IOC_MAGIC, DRIVER_NAME);
 	hwrng_unregister(&msm_rng);
 	if (msm_rng_dev->prng_clk)
@@ -377,8 +376,6 @@ static int msm_rng_remove(struct platform_device *pdev)
 		icc_put(msm_rng_dev->icc_path);
 
 	kfree_sensitive(msm_rng_dev);
-	msm_rng_dev_cached = NULL;
-	return 0;
 }
 
 static int qrng_get_random(struct crypto_rng *tfm, const u8 *src,
@@ -388,11 +385,6 @@ static int qrng_get_random(struct crypto_rng *tfm, const u8 *src,
 	int sizeread = 0;
 	int rv = -EFAULT;
 
-	if (!msm_rng_dev_cached) {
-		pr_err("%s: msm_rng_dev is not initialized\n", __func__);
-		rv = -ENODEV;
-		goto err_exit;
-	}
 
 	if (!rdata) {
 		pr_err("%s: data buffer is null\n", __func__);
@@ -405,6 +397,10 @@ static int qrng_get_random(struct crypto_rng *tfm, const u8 *src,
 		pr_err("%s: mutex lock interrupted\n", __func__);
 		rv = -ERESTARTSYS;
 		goto err_exit;
+	}
+	if (!msm_rng_dev_cached) {
+		mutex_unlock(&cached_rng_lock);
+		return -ENODEV;
 	}
 	sizeread = msm_rng_direct_read(msm_rng_dev_cached, rdata, dlen);
 
@@ -439,6 +435,8 @@ static const struct of_device_id qrng_match[] = {
 	{.compatible = "qcom,msm-rng"},
 	{},
 };
+
+MODULE_DEVICE_TABLE(of, qrng_match);
 
 static struct platform_driver rng_driver = {
 	.probe      = msm_rng_probe,
