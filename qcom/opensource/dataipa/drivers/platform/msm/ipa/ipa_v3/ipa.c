@@ -12423,8 +12423,8 @@ static void __exit ipa_module_exit(void)
 }
 module_exit(ipa_module_exit);
 
-MODULE_SOFTDEP("pre: subsys-pil-tz");
-MODULE_SOFTDEP("pre: qcom-arm-smmu-mod");
+MODULE_SOFTDEP("pre: qcom_q6v5_pas");
+MODULE_SOFTDEP("pre: arm_smmu");
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("IPA HW device driver");
 
