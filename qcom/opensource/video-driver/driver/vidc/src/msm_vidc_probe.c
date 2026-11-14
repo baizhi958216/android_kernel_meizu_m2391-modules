@@ -964,7 +964,7 @@ static void __exit msm_vidc_exit(void)
 module_init(msm_vidc_init);
 module_exit(msm_vidc_exit);
 
-MODULE_SOFTDEP("pre: subsys-pil-tz msm-mmrm");
+MODULE_SOFTDEP("pre: qcom_q6v5_pas msm-mmrm");
 MODULE_DESCRIPTION("Qualcomm IRIS video decoder and encoder");
 MODULE_IMPORT_NS("DMA_BUF");
 MODULE_LICENSE("GPL v2");
