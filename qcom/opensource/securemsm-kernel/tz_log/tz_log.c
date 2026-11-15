@@ -10,7 +10,6 @@
 #include <linux/errno.h>
 #include <linux/delay.h>
 #include <linux/io.h>
-#include <linux/msm_ion.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
@@ -20,8 +19,7 @@
 #include <linux/uaccess.h>
 #include <linux/of.h>
 #include <linux/dma-buf.h>
-#include <linux/qcom_scm.h>
-#include <soc/qcom/qseecomi.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/qtee_shmbridge.h>
 #include <linux/proc_fs.h>
 #if IS_ENABLED(CONFIG_MSM_TMECOM_QMP)
@@ -51,6 +49,7 @@
 #define TZBSP_DIAG_MINOR_VERSION_V22    4
 
 /* TZ Diag Feature Version Id */
+#define QCOM_SCM_FEAT_LOG_ID            0x0a
 #define QCOM_SCM_FEAT_DIAG_ID           0x06
 
 /*
@@ -1378,7 +1377,7 @@ static ssize_t tzdbg_fs_read_encrypted(int tz_id, char __user *buf,
 	stat->display_offset += ret;
 	stat->display_len -= ret;
 	pr_debug("ret = %d, offset = %d\n", ret, (int)(*offp));
-	pr_debug("display_len = %d, offset = %d\n",
+	pr_debug("display_len = %zu, offset = %zu\n",
 			stat->display_len, stat->display_offset);
 	return ret;
 }
@@ -1406,7 +1405,7 @@ static ssize_t tzdbg_fs_read(struct file *file, char __user *buf,
 
 static int tzdbg_procfs_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, NULL, PDE_DATA(inode));
+	return single_open(file, NULL, pde_data(inode));
 }
 
 static int tzdbg_procfs_release(struct inode *inode, struct file *file)
@@ -1500,9 +1499,9 @@ static int tzdbg_register_qsee_log_buf(struct platform_device *pdev)
 	g_qsee_log_v2->log_pos.wrap = g_qsee_log_v2->log_pos.offset = 0;
 
 	ret = qcom_scm_register_qsee_log_buf(coh_pmem, qseelog_buf_size);
-	if (ret != QSEOS_RESULT_SUCCESS) {
+	if (ret) {
 		pr_err(
-		"%s: scm_call to register log buf failed, resp result =%lld\n",
+		"%s: scm_call to register log buf failed, resp result =%d\n",
 		__func__, ret);
 		goto exit_dereg_bridge;
 	}
@@ -1520,6 +1519,13 @@ exit_free_mem:
 
 static void tzdbg_free_qsee_log_buf(struct platform_device *pdev)
 {
+	/* Firmware can continue writing after the last HLOS reader closes.
+	 * Retain the allocation and its bridge if firmware rejects detachment.
+	 */
+	if (qcom_scm_register_qsee_log_buf(0, 0)) {
+		dev_warn(&pdev->dev, "secure log buffer still owned by firmware\n");
+		return;
+	}
 	if (!tzdbg.is_encrypted_log_enabled)
 		qtee_shmbridge_deregister(qseelog_shmbridge_handle);
 	dma_free_coherent(&pdev->dev, qseelog_buf_size,
@@ -1668,7 +1674,7 @@ static int __update_hypdbg_base(struct platform_device *pdev,
 					hypdiag_phy_iobase,
 					tzdbg.hyp_debug_rw_buf_size);
 	if (!tzdbg.hyp_virt_iobase) {
-		dev_err(&pdev->dev, "ERROR could not ioremap: start=%pr, len=%u\n",
+		dev_err(&pdev->dev, "ERROR could not ioremap: start=%pa, len=%u\n",
 			&hypdiag_phy_iobase, tzdbg.hyp_debug_rw_buf_size);
 		return -ENXIO;
 	}
@@ -1720,7 +1726,7 @@ static int __update_rmlog_base(struct platform_device *pdev,
 					rmlog_address,
 					rmlog_size);
 	if (!tzdbg.rmlog_virt_iobase) {
-		dev_err(&pdev->dev, "ERROR could not ioremap: start=%pr, len=%u\n",
+		dev_err(&pdev->dev, "ERROR could not ioremap: start=%#x, len=%u\n",
 			rmlog_address, tzdbg.rmlog_rw_buf_size);
 		return -ENXIO;
 	}
@@ -1737,7 +1743,7 @@ static int tzdbg_get_tz_version(void)
 	u64 version;
 	int ret = 0;
 
-	ret = qcom_scm_get_tz_log_feat_id(&version);
+	ret = qcom_scm_get_tz_feat_id_version(QCOM_SCM_FEAT_LOG_ID, &version);
 
 	if (ret) {
 		pr_err("%s: scm_call to get tz version failed\n",
@@ -1752,7 +1758,7 @@ static int tzdbg_get_tz_version(void)
 				__func__, ret);
 		return ret;
 	}
-	pr_warn("tz diag version is %x\n", version);
+	pr_warn("tz diag version is %llx\n", version);
 	tzdbg.tz_diag_major_version =
 		((version >> TZBSP_FVER_MAJOR_SHIFT) & TZBSP_FVER_MAJOR_MINOR_MASK);
 	tzdbg.tz_diag_minor_version =
@@ -1786,7 +1792,7 @@ static void tzdbg_query_encrypted_log(void)
 			pr_err("scm_call QUERY_ENCR_LOG_FEATURE failed ret %d\n", ret);
 		tzdbg.is_encrypted_log_enabled = false;
 	} else {
-		pr_warn("encrypted qseelog enabled is %d\n", enabled);
+		pr_warn("encrypted qseelog enabled is %llu\n", enabled);
 		tzdbg.is_encrypted_log_enabled = enabled;
 	}
 }
@@ -1835,7 +1841,7 @@ static int tz_log_probe(struct platform_device *pdev)
 				debug_rw_buf_size);
 	if (!virt_iobase) {
 		dev_err(&pdev->dev,
-			"%s: ERROR could not ioremap: start=%pr, len=%u\n",
+			"%s: ERROR could not ioremap: start=%pa, len=%u\n",
 			__func__, &resource->start,
 			(unsigned int)(debug_rw_buf_size));
 		return -ENXIO;
@@ -1920,8 +1926,7 @@ static int tz_log_probe(struct platform_device *pdev)
 	ret = tzdbg_allocate_encrypted_log_buf(pdev);
 	if (ret) {
 		dev_err(&pdev->dev,
-			"Failed to allocate encrypted log buffer\n",
-			__func__);
+			"Failed to allocate encrypted log buffer: %d\n", ret);
 		goto exit_free_qsee_log_buf;
 	}
 
@@ -1955,7 +1960,7 @@ exit_free_diag_buf:
 	return -ENXIO;
 }
 
-static int tz_log_remove(struct platform_device *pdev)
+static void tz_log_remove(struct platform_device *pdev)
 {
 	tzdbg_fs_exit(pdev);
 	dma_free_coherent(&pdev->dev, display_buf_size,
@@ -1964,44 +1969,22 @@ static int tz_log_remove(struct platform_device *pdev)
 	tzdbg_free_qsee_log_buf(pdev);
 	if (!tzdbg.is_encrypted_log_enabled)
 		kfree(tzdbg.diag_buf);
-	return 0;
 }
 
 #ifdef CONFIG_PM
 static int tz_log_freeze(struct device *dev)
 {
-	/* This Boolean variable is maintained to initialise the ring buffer
-	 * log pointer to zero during restoration from hibernation
-	 */
 	restore_from_hibernation = true;
-	if (g_qsee_log)
-	dma_free_coherent(dev, QSEE_LOG_BUF_SIZE, (void *)g_qsee_log,
-				coh_pmem);
-	if (!tzdbg.is_encrypted_log_enabled)
-		qtee_shmbridge_deregister(qseelog_shmbridge_handle);
 	return 0;
 }
 
 static int tz_log_restore(struct device *dev)
 {
-	/* ring buffer log pointer needs to be re initialized
-	 * during restoration from hibernation.
-	 */
-	if (restore_from_hibernation) {
-		_disp_tz_log_stats(0);
-		_disp_qsee_log_stats(0);
-	}
-	/* Register the log bugger at TZ during hibernation resume.
-	 * After hibernation the log buffer is with HLOS as TZ encountered
-	 * a coldboot sequence.
-	 */
-	tzdbg_register_qsee_log_buf(to_platform_device(dev));
-	/* This is set back to zero after successful restoration
-	 * from hibernation.
-	 */
-	restore_from_hibernation = false;
+	int ret = qcom_scm_register_qsee_log_buf(coh_pmem, qseelog_buf_size);
 
-	return 0;
+	if (!ret)
+		restore_from_hibernation = false;
+	return ret;
 }
 
 static const struct dev_pm_ops tz_log_pmops = {
@@ -2020,6 +2003,8 @@ static const struct of_device_id tzlog_match[] = {
 	{.compatible = "qcom,tz-log"},
 	{}
 };
+
+MODULE_DEVICE_TABLE(of, tzlog_match);
 
 static struct platform_driver tz_log_driver = {
 	.probe		= tz_log_probe,
