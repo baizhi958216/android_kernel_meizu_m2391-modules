@@ -171,9 +171,12 @@ static int read_temperature(const char *name)
 	struct thermal_zone_device *zone;
 	int temp;
 
-	zone = thermal_zone_get_zone_by_name(name);
-	if (IS_ERR_OR_NULL(zone) || thermal_zone_get_temp(zone, &temp))
+	zone = thermal_zone_get_by_name(name);
+	if (IS_ERR(zone))
 		return -1;
+	if (thermal_zone_get_temp(zone, &temp))
+		temp = -1;
+	put_device(thermal_zone_device(zone));
 	return temp;
 }
 
@@ -248,26 +251,33 @@ static void init_work(struct work_struct *work)
 {
 	struct mz_thermal_log *log = container_of(to_delayed_work(work),
 			struct mz_thermal_log, init_work);
-	struct thermal_zone_device *zones[ARRAY_SIZE(sensors)];
+	struct thermal_zone_device *zone;
+	bool ready = true;
 	int i;
 
 	mutex_lock(&log->lock);
 	if (log->stopping || log->paused)
 		goto out;
 	for (i = 0; i < ARRAY_SIZE(sensors); i++) {
-		zones[i] = thermal_zone_get_zone_by_name(sensors[i].zone);
-		if (IS_ERR_OR_NULL(zones[i])) {
-			queue_delayed_work(system_wq, &log->init_work, HZ);
-			goto out;
+		if (log->linked[i])
+			continue;
+		zone = thermal_zone_get_by_name(sensors[i].zone);
+		if (IS_ERR(zone)) {
+			ready = false;
+			continue;
 		}
-	}
-	for (i = 0; i < ARRAY_SIZE(sensors); i++) {
-		if (!log->linked[i] &&
-		    !meizu_sysfslink_register_name(&zones[i]->device, sensors[i].link))
+		if (!meizu_sysfslink_register_name(thermal_zone_device(zone), sensors[i].link))
 			log->linked[i] = true;
+		else
+			ready = false;
+		put_device(thermal_zone_device(zone));
 	}
-	log->ready = true;
-	queue_delayed_work(system_wq, &log->sample_work, 0);
+	if (!log->ready) {
+		log->ready = true;
+		queue_delayed_work(system_wq, &log->sample_work, 0);
+	}
+	if (!ready)
+		queue_delayed_work(system_wq, &log->init_work, HZ);
 out:
 	mutex_unlock(&log->lock);
 }
@@ -307,7 +317,7 @@ put_kobj:
 	return ret;
 }
 
-static int thermal_log_remove(struct platform_device *pdev)
+static void thermal_log_remove(struct platform_device *pdev)
 {
 	struct mz_thermal_log *log = platform_get_drvdata(pdev);
 	int i;
@@ -323,7 +333,6 @@ static int thermal_log_remove(struct platform_device *pdev)
 		if (log->linked[i])
 			meizu_sysfslink_remove_name(sensors[i].link);
 	kobject_put(log->kobj);
-	return 0;
 }
 
 static int thermal_log_suspend(struct device *dev)
@@ -347,8 +356,7 @@ static int thermal_log_resume(struct device *dev)
 	if (log->ready)
 		queue_delayed_work(system_wq, &log->sample_work,
 			max_t(unsigned long, 1, msecs_to_jiffies(READ_ONCE(log->interval))));
-	else
-		queue_delayed_work(system_wq, &log->init_work, HZ);
+	queue_delayed_work(system_wq, &log->init_work, HZ);
 	mutex_unlock(&log->lock);
 	return 0;
 }
