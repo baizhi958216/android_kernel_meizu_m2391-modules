@@ -228,6 +228,8 @@ static int msm_rng_enable_hw(struct msm_rng_device *msm_rng_dev)
 }
 
 static const struct file_operations msm_rng_fops = {
+	.owner = THIS_MODULE,
+	.compat_ioctl = compat_ptr_ioctl,
 	.unlocked_ioctl = msm_rng_ioctl,
 };
 static struct class *msm_rng_class;
