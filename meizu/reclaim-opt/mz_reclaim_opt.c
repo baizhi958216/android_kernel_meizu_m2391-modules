@@ -23,7 +23,7 @@ static struct reclaim_configuration configuration = {
 	.swappiness = { 40, 60, 80 },
 };
 static int direct_swappiness;
-static struct proc_dir_entry *reclaim_dir;
+static struct proc_dir_entry *memory_dir;
 
 static struct reclaim_configuration configuration_snapshot(void)
 {
@@ -96,26 +96,30 @@ static ssize_t kswapd_write(struct file *file, const char __user *buffer,
 	char text[200];
 	size_t copied;
 	unsigned long flags;
-	int i;
+	int i, used;
 
-	if (!count || count > sizeof(text))
+	if (!count || count >= sizeof(text))
 		return -EINVAL;
 	copied = min_t(size_t, count, sizeof(text) - 1);
 	if (copy_from_user(text, buffer, copied))
 		return -EFAULT;
 	text[copied] = '\0';
-	if (sscanf(strim(text), "%d %d %d %d %d %d",
+	if (sscanf(strim(text), "%d %d %d %d %d %d %n",
 		&updated.threshold[0], &updated.swappiness[0],
 		&updated.threshold[1], &updated.swappiness[1],
-		&updated.threshold[2], &updated.swappiness[2]) != 6)
+		&updated.threshold[2], &updated.swappiness[2], &used) != 6 ||
+	    strim(text)[used])
 		return -EINVAL;
 	pr_info("mz_reclaim_opt: %d %d %d %d %d %d\n",
 		updated.threshold[0], updated.swappiness[0],
 		updated.threshold[1], updated.swappiness[1],
 		updated.threshold[2], updated.swappiness[2]);
-	/* Original LSL wN,#8 wraps; use unsigned arithmetic to avoid signed UB. */
-	for (i = 0; i < ARRAY_SIZE(updated.threshold); i++)
-		updated.threshold[i] = (s32)((u32)updated.threshold[i] << 8);
+	for (i = 0; i < ARRAY_SIZE(updated.threshold); i++) {
+		if (updated.threshold[i] < 0 || updated.threshold[i] > INT_MAX / 256 ||
+		    updated.swappiness[i] < 0 || updated.swappiness[i] > 200)
+			return -ERANGE;
+		updated.threshold[i] *= 256;
+	}
 	write_seqlock_irqsave(&configuration_lock, flags);
 	configuration = updated;
 	write_sequnlock_irqrestore(&configuration_lock, flags);
@@ -139,12 +143,16 @@ static ssize_t direct_write(struct file *file, const char __user *buffer,
 	size_t copied = min_t(size_t, count, sizeof(text) - 1);
 	int value, ret;
 
+	if (!count || count >= sizeof(text))
+		return -EINVAL;
 	if (copy_from_user(text, buffer, copied))
 		return -EFAULT;
 	text[copied] = '\0';
 	ret = kstrtoint(strim(text), 10, &value);
 	if (ret)
 		return ret;
+	if (value < 0 || value > 200)
+		return -ERANGE;
 	WRITE_ONCE(direct_swappiness, value);
 	return copied;
 }
@@ -160,7 +168,7 @@ static const struct proc_ops direct_ops = {
 
 static int __init mz_reclaim_opt_init(void)
 {
-	struct proc_dir_entry *memory_dir;
+	struct proc_dir_entry *reclaim_dir;
 	struct task_struct *task;
 	unsigned long pages = totalram_pages();
 	int ret, pid = -1;
@@ -174,13 +182,10 @@ static int __init mz_reclaim_opt_init(void)
 		configuration.threshold[1] = 460800;
 		configuration.threshold[2] = 358400;
 	}
-	/* mz_memory is shared with other modules and has no module callbacks.
-	 * proc_mkdir returns NULL for an existing directory: full-path fallback
-	 * resolves that parent without taking ownership of somebody else's tree.
-	 */
 	memory_dir = proc_mkdir("mz_memory", NULL);
-	reclaim_dir = memory_dir ? proc_mkdir("reclaim_opt", memory_dir) :
-		proc_mkdir("mz_memory/reclaim_opt", NULL);
+	if (!memory_dir)
+		return -ENOMEM;
+	reclaim_dir = proc_mkdir("reclaim_opt", memory_dir);
 	if (!reclaim_dir ||
 	    !proc_create("kswapd_reclaim_swappiness", 0666, reclaim_dir, &kswapd_ops) ||
 	    !proc_create("direct_reclaim_swappiness", 0666, reclaim_dir, &direct_ops)) {
@@ -200,8 +205,8 @@ static int __init mz_reclaim_opt_init(void)
 	pr_info("mz_reclaim_opt: %s get kswapd pid %d!\n", __func__, pid);
 	return 0;
 remove_proc:
-	proc_remove(reclaim_dir);
-	reclaim_dir = NULL;
+	proc_remove(memory_dir);
+
 	return ret;
 }
 
@@ -209,7 +214,7 @@ static void __exit mz_reclaim_opt_exit(void)
 {
 	unregister_trace_android_vh_tune_swappiness(set_swappiness, NULL);
 	tracepoint_synchronize_unregister();
-	proc_remove(reclaim_dir);
+	proc_remove(memory_dir);
 	pr_info("mz_reclaim_opt: %s succeed!\n", __func__);
 }
 module_init(mz_reclaim_opt_init);
