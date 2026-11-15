@@ -5,9 +5,7 @@
  * Copyright (c) 2018-2021, The Linux Foundation. All rights reserved.
  */
 
-#include <linux/dma-iommu.h>
 #include <linux/dma-mapping.h>
-#include <linux/qcom-dma-mapping.h>
 #include <linux/list.h>
 #include "linux/qcedev.h"
 #include "qcedevi.h"
@@ -54,6 +52,8 @@ int qcedev_parse_context_bank(struct platform_device *pdev)
 	}
 
 	podev = dev_get_drvdata(pdev->dev.parent);
+	if (!podev)
+		return -EPROBE_DEFER;
 	np = pdev->dev.of_node;
 	cb = devm_kzalloc(&pdev->dev, sizeof(*cb), GFP_KERNEL);
 	if (!cb) {
@@ -62,7 +62,7 @@ int qcedev_parse_context_bank(struct platform_device *pdev)
 	}
 
 	INIT_LIST_HEAD(&cb->list);
-	list_add_tail(&cb->list, &podev->context_banks);
+	
 
 	rc = of_property_read_string(np, "label", &cb->name);
 	if (rc)
@@ -76,10 +76,11 @@ int qcedev_parse_context_bank(struct platform_device *pdev)
 		goto err_setup_cb;
 	}
 
+	list_add_tail(&cb->list, &podev->context_banks);
+	platform_set_drvdata(pdev, cb);
 	return 0;
 
 err_setup_cb:
-	list_del(&cb->list);
 	devm_kfree(&pdev->dev, cb);
 	return rc;
 }
@@ -129,18 +130,13 @@ static struct context_bank_info *get_context_bank(
 }
 
 static int ion_map_buffer(struct qcedev_handle *qce_hndl,
-		struct qcedev_mem_client *mem_client, int fd,
+		struct dma_buf *buf, int fd,
 		unsigned int fd_size, struct qcedev_reg_buf_info *binfo)
 {
 	int rc = 0;
-	struct dma_buf *buf = NULL;
 	struct dma_buf_attachment *attach = NULL;
 	struct sg_table *table = NULL;
 	struct context_bank_info *cb = NULL;
-
-	buf = dma_buf_get(fd);
-	if (IS_ERR_OR_NULL(buf))
-		return -EINVAL;
 
 	if (is_iommu_present(qce_hndl)) {
 		cb = get_context_bank(qce_hndl, !mem_buf_dma_buf_exclusive_owner(buf));
@@ -160,8 +156,7 @@ static int ion_map_buffer(struct qcedev_handle *qce_hndl,
 		}
 
 		/* Get the scatterlist for the given attachment */
-		attach->dma_map_attrs |= DMA_ATTR_DELAYED_UNMAP;
-		table = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+		table = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
 		if (IS_ERR_OR_NULL(table)) {
 			rc = PTR_ERR(table) ?: -ENOMEM;
 			pr_err("%s: err: failed to map table\n", __func__);
@@ -184,9 +179,9 @@ static int ion_map_buffer(struct qcedev_handle *qce_hndl,
 		}
 
 		binfo->ion_buf.mapping_info.dev = cb->dev;
-		binfo->ion_buf.mapping_info.mapping = cb->mapping;
 		binfo->ion_buf.mapping_info.table = table;
 		binfo->ion_buf.mapping_info.attach = attach;
+		get_dma_buf(buf);
 		binfo->ion_buf.mapping_info.buf = buf;
 		binfo->ion_buf.ion_fd = fd;
 	} else {
@@ -198,11 +193,10 @@ static int ion_map_buffer(struct qcedev_handle *qce_hndl,
 	return 0;
 
 map_sg_err:
-	dma_buf_unmap_attachment(attach, table, DMA_BIDIRECTIONAL);
+	dma_buf_unmap_attachment_unlocked(attach, table, DMA_BIDIRECTIONAL);
 map_table_err:
 	dma_buf_detach(buf, attach);
 map_err:
-	dma_buf_put(buf);
 	return rc;
 }
 
@@ -212,34 +206,13 @@ static int ion_unmap_buffer(struct qcedev_handle *qce_hndl,
 	struct dma_mapping_info *mapping_info = &binfo->ion_buf.mapping_info;
 
 	if (is_iommu_present(qce_hndl)) {
-		dma_buf_unmap_attachment(mapping_info->attach,
+		dma_buf_unmap_attachment_unlocked(mapping_info->attach,
 			mapping_info->table, DMA_BIDIRECTIONAL);
 		dma_buf_detach(mapping_info->buf, mapping_info->attach);
 		dma_buf_put(mapping_info->buf);
 
 	}
 	return 0;
-}
-
-static int qcedev_map_buffer(struct qcedev_handle *qce_hndl,
-		struct qcedev_mem_client *mem_client, int fd,
-		unsigned int fd_size, struct qcedev_reg_buf_info *binfo)
-{
-	int rc = -1;
-
-	switch (mem_client->mtype) {
-	case MEM_ION:
-		rc = ion_map_buffer(qce_hndl, mem_client, fd, fd_size, binfo);
-		break;
-	default:
-		pr_err("%s: err: Mem type not supported\n", __func__);
-		break;
-	}
-
-	if (rc)
-		pr_err("%s: err: failed to map buffer\n", __func__);
-
-	return rc;
 }
 
 static int qcedev_unmap_buffer(struct qcedev_handle *qce_hndl,
@@ -263,98 +236,59 @@ static int qcedev_unmap_buffer(struct qcedev_handle *qce_hndl,
 	return rc;
 }
 
-int qcedev_check_and_map_buffer(void *handle,
-		int fd, unsigned int offset, unsigned int fd_size,
-		unsigned long long *vaddr)
+int qcedev_check_and_map_buffer(void *handle, int fd, unsigned int offset,
+		unsigned int fd_size, unsigned long long *vaddr)
 {
-	bool found = false;
-	struct qcedev_reg_buf_info *binfo = NULL, *temp = NULL;
-	struct qcedev_mem_client *mem_client = NULL;
-	struct qcedev_handle *qce_hndl = handle;
-	int rc = 0;
-	unsigned long mapped_size = 0;
+	struct qcedev_handle *client = handle;
+	struct qcedev_reg_buf_info *entry;
+	struct dma_buf *buf;
+	int ret = 0;
 
-	if (!handle || !vaddr || fd < 0 || offset >= fd_size) {
-		pr_err("%s: err: invalid input arguments\n", __func__);
+	if (!client || !client->cntl || !client->cntl->mem_client ||
+	    !vaddr || offset >= fd_size)
 		return -EINVAL;
+	buf = dma_buf_get(fd);
+	if (IS_ERR(buf))
+		return PTR_ERR(buf);
+	if (fd_size > buf->size) {
+		ret = -ERANGE;
+		goto put_buf;
 	}
 
-	if (!qce_hndl->cntl || !qce_hndl->cntl->mem_client) {
-		pr_err("%s: err: invalid qcedev handle\n", __func__);
-		return -EINVAL;
-	}
-	mem_client = qce_hndl->cntl->mem_client;
-
-	if (mem_client->mtype != MEM_ION)
-		return -EPERM;
-
-	/* Check if the buffer fd is already mapped */
-	mutex_lock(&qce_hndl->registeredbufs.lock);
-	list_for_each_entry(temp, &qce_hndl->registeredbufs.list, list) {
-		if (temp->ion_buf.ion_fd == fd) {
-			found = true;
-			*vaddr = temp->ion_buf.iova;
-			mapped_size = temp->ion_buf.mapped_buf_size;
-			atomic_inc(&temp->ref_count);
-			break;
+	mutex_lock(&client->registeredbufs.lock);
+	list_for_each_entry(entry, &client->registeredbufs.list, list) {
+		if (entry->ion_buf.ion_fd != fd)
+			continue;
+		if (entry->ion_buf.mapping_info.buf != buf) {
+			ret = -EBUSY;
+			goto unlock;
 		}
-	}
-	mutex_unlock(&qce_hndl->registeredbufs.lock);
-
-	/* If buffer fd is not mapped then create a fresh mapping */
-	if (!found) {
-		pr_debug("%s: info: ion fd not registered with driver\n",
-			__func__);
-		binfo = kzalloc(sizeof(*binfo), GFP_KERNEL);
-		if (!binfo) {
-			pr_err("%s: err: failed to allocate binfo\n",
-				__func__);
-			rc = -ENOMEM;
-			goto error;
+		if (fd_size > entry->ion_buf.mapped_buf_size) {
+			ret = -ERANGE;
+			goto unlock;
 		}
-		rc = qcedev_map_buffer(qce_hndl, mem_client, fd,
-							fd_size, binfo);
-		if (rc) {
-			pr_err("%s: err: failed to map fd (%d) error = %d\n",
-				__func__, fd, rc);
-			goto error;
-		}
-
-		*vaddr = binfo->ion_buf.iova;
-		mapped_size = binfo->ion_buf.mapped_buf_size;
-		atomic_inc(&binfo->ref_count);
-
+		refcount_inc(&entry->ref_count);
+		goto mapped;
 	}
-
-	/* Make sure the offset is within the mapped range */
-	if (offset >= mapped_size) {
-		pr_err(
-			"%s: err: Offset (%u) exceeds mapped size(%lu) for fd: %d\n",
-			__func__, offset, mapped_size, fd);
-		rc = -ERANGE;
-		goto unmap;
+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+	if (!entry) {
+		ret = -ENOMEM;
+		goto unlock;
 	}
-
-	if (!found) {
-	        /* Add buffer mapping information to regd buffer list */
-                mutex_lock(&qce_hndl->registeredbufs.lock);
-                list_add_tail(&binfo->list, &qce_hndl->registeredbufs.list);
-                mutex_unlock(&qce_hndl->registeredbufs.lock);
-        }
-
-	/* return the mapped virtual address adjusted by offset */
-	*vaddr += offset;
-
-	return 0;
-
-unmap:
-	if (!found) {
-		qcedev_unmap_buffer(handle, mem_client, binfo);
+	ret = ion_map_buffer(client, buf, fd, fd_size, entry);
+	if (ret) {
+		kfree(entry);
+		goto unlock;
 	}
-
-error:
-	kfree(binfo);
-	return rc;
+	refcount_set(&entry->ref_count, 1);
+	list_add_tail(&entry->list, &client->registeredbufs.list);
+mapped:
+	*vaddr = entry->ion_buf.iova + offset;
+unlock:
+	mutex_unlock(&client->registeredbufs.lock);
+put_buf:
+	dma_buf_put(buf);
+	return ret;
 }
 
 int qcedev_check_and_unmap_buffer(void *handle, int fd)
@@ -384,10 +318,9 @@ int qcedev_check_and_unmap_buffer(void *handle, int fd)
 		&qce_hndl->registeredbufs.list, list) {
 		if (binfo->ion_buf.ion_fd == fd) {
 			found = true;
-			atomic_dec(&binfo->ref_count);
 
 			/* Unmap only if there are no more references */
-			if (atomic_read(&binfo->ref_count) == 0) {
+			if (refcount_dec_and_test(&binfo->ref_count)) {
 				qcedev_unmap_buffer(qce_hndl,
 					mem_client, binfo);
 				list_del(&binfo->list);

@@ -8,12 +8,12 @@
 #ifndef _DRIVERS_CRYPTO_PARSE_H_
 #define _DRIVERS_CRYPTO_PARSE_H_
 
-#include <linux/dma-iommu.h>
 #include <linux/dma-buf.h>
+#include <linux/refcount.h>
 #include <linux/dma-direction.h>
 #include <linux/iommu.h>
-#include <linux/msm_dma_iommu_mapping.h>
-#include <linux/msm_ion.h>
+#include <linux/dma-buf.h>
+#include <linux/refcount.h>
 #include <linux/of.h>
 #include <linux/of_platform.h>
 #include <linux/slab.h>
@@ -27,7 +27,6 @@ struct context_bank_info {
 	u32 size;
 	bool is_secure;
 	struct device *dev;
-	struct dma_iommu_mapping *mapping;
 };
 
 enum qcedev_mem_type {
@@ -40,7 +39,6 @@ struct qcedev_mem_client {
 
 struct dma_mapping_info {
 	struct device *dev;
-	struct dma_iommu_mapping *mapping;
 	struct sg_table *table;
 	struct dma_buf_attachment *attach;
 	struct dma_buf *buf;
@@ -58,7 +56,7 @@ struct qcedev_reg_buf_info {
 	union {
 		struct qcedev_ion_buf_info ion_buf;
 	};
-	atomic_t ref_count;
+	refcount_t ref_count;
 };
 
 struct qcedev_buffer_list {

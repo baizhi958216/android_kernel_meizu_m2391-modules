@@ -534,7 +534,7 @@ unsupported:
 	return ret;
 };
 
-void qcedev_offload_cipher_req_cb(void *cookie, unsigned char *icv,
+static void qcedev_offload_cipher_req_cb(void *cookie, unsigned char *icv,
 			      unsigned char *iv, int ret)
 {
 	struct qcedev_cipher_req *areq;
@@ -2292,7 +2292,7 @@ long qcedev_ioctl(struct file *file,
 			goto exit_free_qcedev_areq;
 		}
 	}
-		/* Fall-through */
+		fallthrough;
 	case QCEDEV_IOCTL_SHA_UPDATE_REQ: {
 		struct scatterlist sg_src;
 		K_COPY_FROM_USER(err, &qcedev_areq->sha_op_req,
@@ -2464,24 +2464,19 @@ long qcedev_ioctl(struct file *file,
 					map_buf.fd_offset[i],
 					map_buf.fd_size[i],
 					&vaddr);
-			if (err) {
-				pr_err(
-					"%s: err: failed to map fd(%d) - %d\n",
-					__func__, map_buf.fd[i], err);
-				goto exit_free_qcedev_areq;
-			}
+			if (err)
+				goto undo_maps;
 			map_buf.buf_vaddr[i] = vaddr;
-			pr_info("%s: info: vaddr = %llx\n, fd = %d",
-				__func__, vaddr, map_buf.fd[i]);
 		}
 
-		K_COPY_TO_USER(err, arg, &map_buf,
-				sizeof(map_buf));
-		if (err) {
-			err = -EFAULT;
-			goto exit_free_qcedev_areq;
-		}
-		break;
+		K_COPY_TO_USER(err, arg, &map_buf, sizeof(map_buf));
+		if (!err)
+			break;
+		err = -EFAULT;
+undo_maps:
+		while (i--)
+			qcedev_check_and_unmap_buffer(handle, map_buf.fd[i]);
+		goto exit_free_qcedev_areq;
 	}
 	case QCEDEV_IOCTL_UNMAP_BUF_REQ: {
 		struct qcedev_unmap_buf_req unmap_buf = { { 0 } };
@@ -2558,7 +2553,7 @@ static int qcedev_probe_device(struct platform_device *pdev)
 		rc = PTR_ERR(podev->icc_path);
 		pr_err("%s Failed to get icc path with error %d\n",
 			__func__, rc);
-		goto exit_del_cdev;
+		return dev_err_probe(&pdev->dev, rc, "data interconnect\n");
 	}
 
 	/*
@@ -2587,8 +2582,9 @@ static int qcedev_probe_device(struct platform_device *pdev)
 	}
 
 	handle = qce_open(pdev, &rc);
-	if (handle == NULL) {
-		rc = -ENODEV;
+	if (!handle) {
+		if (!rc)
+			rc = -ENODEV;
 		goto exit_scale_busbandwidth;
 	}
 	podev->qce = handle;
@@ -2597,7 +2593,7 @@ static int qcedev_probe_device(struct platform_device *pdev)
 	if (rc) {
 		pr_err("%s: could not disable bam irqs, ret = %d",
 				__func__, rc);
-		goto exit_scale_busbandwidth;
+		goto exit_qce_close;
 	}
 
 	rc = icc_set_bw(podev->icc_path, 0, 0);
@@ -2629,6 +2625,7 @@ static int qcedev_probe_device(struct platform_device *pdev)
 
 	podev->mem_client = qcedev_mem_new_client(MEM_ION);
 	if (!podev->mem_client) {
+		rc = -ENOMEM;
 		pr_err("%s: err: qcedev_mem_new_client failed\n", __func__);
 		goto exit_qce_close;
 	}
@@ -2638,17 +2635,17 @@ static int qcedev_probe_device(struct platform_device *pdev)
 	if (rc) {
 		pr_err("%s: err: of_platform_populate failed: %d\n",
 			__func__, rc);
-		goto exit_mem_new_client;
+		goto exit_depopulate;
 	}
 	rc = alloc_chrdev_region(&qcedev_device_no, 0, 1, QCEDEV_DEV);
 	if (rc < 0) {
 		pr_err("alloc_chrdev_region failed %d\n", rc);
-		return rc;
+		goto exit_depopulate;
 	}
 
-	driver_class = class_create(THIS_MODULE, QCEDEV_DEV);
+	driver_class = class_create(QCEDEV_DEV);
 	if (IS_ERR(driver_class)) {
-		rc = -ENOMEM;
+		rc = PTR_ERR(driver_class);
 		pr_err("class_create failed %d\n", rc);
 		goto exit_unreg_chrdev_region;
 	}
@@ -2656,8 +2653,8 @@ static int qcedev_probe_device(struct platform_device *pdev)
 	class_dev = device_create(driver_class, NULL, qcedev_device_no, NULL,
 			QCEDEV_DEV);
 	if (IS_ERR(class_dev)) {
+		rc = PTR_ERR(class_dev);
 		pr_err("class_device_create failed %d\n", rc);
-		rc = -ENOMEM;
 		goto exit_destroy_class;
 	}
 
@@ -2673,35 +2670,26 @@ static int qcedev_probe_device(struct platform_device *pdev)
 
 	return 0;
 
-exit_mem_new_client:
-	if (podev->mem_client)
-		qcedev_mem_delete_client(podev->mem_client);
-	podev->mem_client = NULL;
-
-exit_qce_close:
-	if (handle) {
-		qce_close(handle);
-		handle = NULL;
-		podev->qce = NULL;
-	}
-exit_scale_busbandwidth:
-	icc_set_bw(podev->icc_path, 0, 0);
-exit_unregister_bus_scale:
-	if (podev->icc_path)
-		icc_put(podev->icc_path);
-exit_del_cdev:
-	cdev_del(&podev->cdev);
 exit_destroy_device:
 	device_destroy(driver_class, qcedev_device_no);
 exit_destroy_class:
 	class_destroy(driver_class);
 exit_unreg_chrdev_region:
 	unregister_chrdev_region(qcedev_device_no, 1);
-
+exit_depopulate:
+	of_platform_depopulate(&pdev->dev);
+	qcedev_mem_delete_client(podev->mem_client);
+	podev->mem_client = NULL;
+exit_qce_close:
+	qce_close(handle);
+	podev->qce = NULL;
+exit_scale_busbandwidth:
+	icc_set_bw(podev->icc_path, 0, 0);
+exit_unregister_bus_scale:
+	icc_put(podev->icc_path);
 	podev->icc_path = NULL;
 	platform_set_drvdata(pdev, NULL);
 	podev->pdev = NULL;
-
 	return rc;
 }
 
@@ -2716,14 +2704,25 @@ static int qcedev_probe(struct platform_device *pdev)
 	return -EINVAL;
 };
 
-static int qcedev_remove(struct platform_device *pdev)
+static void qcedev_remove(struct platform_device *pdev)
 {
 	struct qcedev_control *podev;
 
+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcedev,context-bank")) {
+		struct context_bank_info *cb = platform_get_drvdata(pdev);
+
+		if (cb)
+			list_del(&cb->list);
+		return;
+	}
+
 	podev = platform_get_drvdata(pdev);
 	if (!podev)
-		return 0;
+		return;
 	
+	of_platform_depopulate(&pdev->dev);
+	qcedev_mem_delete_client(podev->mem_client);
+	podev->mem_client = NULL;
 	qcedev_ce_high_bw_req(podev, true);
 	if (podev->qce)
 		qce_close(podev->qce);
@@ -2740,7 +2739,7 @@ static int qcedev_remove(struct platform_device *pdev)
 	class_destroy(driver_class);
 
 	unregister_chrdev_region(qcedev_device_no, 1);
-	return 0;
+	return;
 };
 
 static int qcedev_suspend(struct platform_device *pdev, pm_message_t state)
@@ -2807,6 +2806,7 @@ static struct platform_driver qcedev_plat_driver = {
 	.driver = {
 		.name = "qce",
 		.of_match_table = qcedev_match,
+		.suppress_bind_attrs = true,
 	},
 };
 
@@ -2911,3 +2911,5 @@ MODULE_DESCRIPTION("QTI DEV Crypto driver");
 
 module_init(qcedev_init);
 module_exit(qcedev_exit);
+
+MODULE_IMPORT_NS("DMA_BUF");

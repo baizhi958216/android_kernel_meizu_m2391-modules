@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-only
+ccflags-y += -I$(src)/..
+obj-m += qce50_dlkm.o qcedev-mod_dlkm.o qcrypto-msm_dlkm.o
+qce50_dlkm-y := qce50.o
+qcedev-mod_dlkm-y := qcedev.o qcedev_smmu.o
+qcedev-mod_dlkm-$(CONFIG_COMPAT) += compat_qcedev.o
+qcrypto-msm_dlkm-y := qcrypto.o
