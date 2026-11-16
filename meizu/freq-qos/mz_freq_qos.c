@@ -14,10 +14,12 @@
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <linux/slab.h>
+#include <linux/stacktrace.h>
 #include <linux/uaccess.h>
-#include <trace/events/power.h>
 #include <trace/hooks/power.h>
 #include "mz_freq_qos_strings.h"
+#define CREATE_TRACE_POINTS
+#include "mz_freq_qos_trace.h"
 
 #define HISTORY_COUNT 4
 #define STREAM_COUNT 512
@@ -175,7 +177,7 @@ static void record_request(struct freq_qos_request *req, int value,
 		kref_get(&ctx->refs);
 	spin_unlock_irqrestore(&monitor_lock, flags);
 	if (!ctx) {
-		candidate = new_context(req, second, addition);
+		candidate = new_context(req, first, addition);
 		if (!candidate)
 			return;
 		spin_lock_irqsave(&monitor_lock, flags);
@@ -217,20 +219,38 @@ static void record_request(struct freq_qos_request *req, int value,
 	wake_up_interruptible(&stream_wait);
 	context_put(ctx);
 }
-static noinline void qos_add_request(void *unused, struct freq_constraints *qos,
+static void collect_request(struct freq_qos_request *req, int value, bool addition)
+{
+	unsigned long frames[12], caller = 0, parent = 0;
+	const char *entry = addition ? "freq_qos_add_request" : "freq_qos_update_request";
+	char name[KSYM_SYMBOL_LEN];
+	unsigned int i, n;
+
+	if (!READ_ONCE(systrace_en))
+		return;
+	n = stack_trace_save(frames, ARRAY_SIZE(frames), 1);
+	for (i = 0; i + 1 < n; i++) {
+		sprint_symbol_no_offset(name, frames[i]);
+		if (strcmp(name, entry))
+			continue;
+		caller = frames[i + 1];
+		parent = i + 2 < n ? frames[i + 2] : caller;
+		break;
+	}
+	record_request(req, value, caller, parent, addition);
+}
+
+static void qos_add_request(void *unused, struct freq_constraints *qos,
 		struct freq_qos_request *req, enum freq_qos_req_type type,
 		int value, int ret)
 {
-	record_request(req, value,
-		(unsigned long)__builtin_extract_return_addr(__builtin_return_address(1)),
-		(unsigned long)__builtin_extract_return_addr(__builtin_return_address(2)), true);
+	if (ret >= 0)
+		collect_request(req, value, true);
 }
-static noinline void qos_update_request(void *unused, struct freq_qos_request *req,
-				       int value)
+
+static void qos_update_request(void *unused, struct freq_qos_request *req, int value)
 {
-	record_request(req, value,
-		(unsigned long)__builtin_extract_return_addr(__builtin_return_address(1)),
-		(unsigned long)__builtin_extract_return_addr(__builtin_return_address(2)), false);
+	collect_request(req, value, false);
 }
 static void qos_remove_request(void *unused, struct freq_qos_request *req)
 {
@@ -328,7 +348,7 @@ static int freq_qos_show(struct seq_file *seq, void *unused)
 }
 static int freq_qos_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, freq_qos_show, PDE_DATA(inode));
+	return single_open(file, freq_qos_show, pde_data(inode));
 }
 static const struct proc_ops snapshot_ops = {
 	.proc_open = freq_qos_open,
@@ -430,7 +450,6 @@ static const struct proc_ops log_ops = {
 	.proc_open = qos_log_open,
 	.proc_read = qos_log_read,
 	.proc_release = qos_log_release,
-	.proc_lseek = no_llseek,
 };
 static ssize_t systrace_read(struct file *file, char __user *buf, size_t count,
 			     loff_t *pos)
