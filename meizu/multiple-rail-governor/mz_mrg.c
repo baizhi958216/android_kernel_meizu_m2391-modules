@@ -24,6 +24,8 @@ static cpumask_t highest_cluster;
 static unsigned int highest_freq, bypass_freq;
 static bool bypass, initialized, stopping;
 static struct platform_device *owner;
+static bool policy_notifier_registered, slow_hook_registered;
+static void refresh_highest_policy(void);
 
 /* graph_lock serializes hook/notifier access; lifecycle_lock pins graph
  * objects across sleepable QoS updates and policy removal. */
@@ -172,14 +174,10 @@ static int register_policy(struct cpufreq_policy *policy)
 	freq = kzalloc(sizeof(*freq), GFP_KERNEL);
 	if (!freq)
 		return -ENOMEM;
-	freq->policy = cpufreq_cpu_get(policy->cpu);
-	if (!freq->policy) {
-		ret = -ENODEV;
-		goto free;
-	}
+	/* CPUFREQ_REMOVE_POLICY synchronously detaches all requests. */
+	freq->policy = policy;
 	freq->np = of_node_get(dev->of_node);
 	cpumask_copy(&freq->cpus, policy->related_cpus);
-	cpumask_copy(&freq->cpus_online, policy->related_cpus);
 	freq->amp = 1000;
 	freq->cur_freq = policy->cur;
 	freq->cpuinfo_min_freq = (unsigned long)policy->cpuinfo.min_freq * 1000;
@@ -202,8 +200,12 @@ static int register_policy(struct cpufreq_policy *policy)
 		goto remove_max;
 	spin_lock_irqsave(&graph_lock, flags);
 	list_add_tail(&freq->node, &freq_list);
-	list_for_each_entry(rule, &rule_list, node)
+	refresh_highest_policy();
+	list_for_each_entry(rule, &rule_list, node) {
 		match_rule(freq, rule);
+		if (initialized)
+			update_rule(rule, false);
+	}
 	spin_unlock_irqrestore(&graph_lock, flags);
 	return 0;
 remove_max:
@@ -212,20 +214,9 @@ remove_min:
 	freq_qos_remove_request(&freq->min_qos_req);
 put:
 	of_node_put(freq->np);
-	cpufreq_cpu_put(freq->policy);
-free:
 	kfree(freq);
 	return ret;
 }
-void mrg_cpufreq_register(struct cpufreq_policy *policy)
-{
-	mutex_lock(&lifecycle_lock);
-	if (owner && !stopping)
-		register_policy(policy);
-	mutex_unlock(&lifecycle_lock);
-}
-EXPORT_SYMBOL_GPL(mrg_cpufreq_register);
-
 static void unregister_policy(struct mrg_freq_device *freq)
 {
 	struct mrg_device *device, *next;
@@ -233,6 +224,7 @@ static void unregister_policy(struct mrg_freq_device *freq)
 
 	spin_lock_irqsave(&graph_lock, flags);
 	list_del(&freq->node);
+	refresh_highest_policy();
 	list_for_each_entry_safe(device, next, &freq->master_list, node) {
 		list_del_init(&device->node);
 		device->freq_dev = NULL;
@@ -249,20 +241,32 @@ static void unregister_policy(struct mrg_freq_device *freq)
 	freq_qos_remove_request(&freq->max_qos_req);
 	freq_qos_remove_request(&freq->min_qos_req);
 	of_node_put(freq->np);
-	cpufreq_cpu_put(freq->policy);
 	kfree(freq);
 }
-void mrg_cpufreq_unregister(struct cpufreq_policy *policy)
+static int mrg_policy_event(struct notifier_block *nb, unsigned long event, void *data)
 {
+	struct cpufreq_policy *policy = data;
 	struct mrg_freq_device *freq;
+	int ret = 0;
 
 	mutex_lock(&lifecycle_lock);
-	freq = find_policy(policy);
-	if (freq)
-		unregister_policy(freq);
+	if (event == CPUFREQ_CREATE_POLICY && owner && !stopping)
+		ret = register_policy(policy);
+	else if (event == CPUFREQ_REMOVE_POLICY) {
+		freq = find_policy(policy);
+		if (freq)
+			unregister_policy(freq);
+	}
 	mutex_unlock(&lifecycle_lock);
+	if (ret)
+		pr_warn("mz-mrg: failed to attach CPU%u policy: %d\n", policy->cpu, ret);
+	return NOTIFY_OK;
 }
-EXPORT_SYMBOL_GPL(mrg_cpufreq_unregister);
+
+static struct notifier_block mrg_policy_nb = {
+	.notifier_call = mrg_policy_event,
+};
+
 /* Caller holds graph_lock; tracepoint callbacks cannot sleep. */
 static unsigned long check_limit(struct mrg_freq_device *freq,
 		unsigned long target)
@@ -287,24 +291,6 @@ static unsigned long check_limit(struct mrg_freq_device *freq,
 	freq->cur_freq = normalized;
 	return normalized * 1000 / freq->amp;
 }
-unsigned int mrg_cpufreq_check_limit(struct cpufreq_policy *policy,
-		unsigned int target_freq)
-{
-	struct mrg_freq_device *freq;
-	unsigned long flags;
-
-	if (IS_ERR_OR_NULL(policy))
-		return target_freq;
-	spin_lock_irqsave(&graph_lock, flags);
-	freq = find_policy(policy);
-	if (!stopping && freq && (!list_empty(&freq->master_list) ||
-				 !list_empty(&freq->slave_list)))
-		target_freq = check_limit(freq, target_freq);
-	spin_unlock_irqrestore(&graph_lock, flags);
-	return target_freq;
-}
-EXPORT_SYMBOL_GPL(mrg_cpufreq_check_limit);
-
 static void mrg_cpufreq_freq_update(void *data, struct cpufreq_policy *policy,
 		unsigned int *target_freq, unsigned int old_freq)
 {
@@ -336,15 +322,26 @@ static void mrg_cpufreq_freq_update(void *data, struct cpufreq_policy *policy,
 	}
 	if (bypass)
 		goto unlock;
-	*target_freq = old_freq;
 	freq = find_policy(policy);
-	if (freq && (!list_empty(&freq->master_list) ||
-		     !list_empty(&freq->slave_list)))
-		*target_freq = check_limit(freq, *target_freq);
-	if (policy->freq_table) {
-		policy->cached_resolved_idx = cpufreq_frequency_table_target(policy,
-			*target_freq, CPUFREQ_RELATION_C);
-		policy->cached_target_freq = *target_freq;
+	if (freq && (!list_empty(&freq->master_list) || !list_empty(&freq->slave_list))) {
+		unsigned int max = READ_ONCE(policy->max);
+		unsigned int min = min(READ_ONCE(policy->min), max);
+		unsigned int request = clamp_val(check_limit(freq, *target_freq), min, max);
+		int index;
+
+		if (request == *target_freq)
+			goto unlock;
+		if (!policy->freq_table) {
+			*target_freq = request;
+			goto unlock;
+		}
+		index = cpufreq_frequency_table_target(policy, request, min, max,
+				request < *target_freq ? CPUFREQ_RELATION_H : CPUFREQ_RELATION_L);
+		if (index >= 0) {
+			policy->cached_resolved_idx = index;
+			policy->cached_target_freq = request;
+			*target_freq = policy->freq_table[index].frequency;
+		}
 	}
 unlock:
 	spin_unlock_irqrestore(&graph_lock, flags);
@@ -372,9 +369,9 @@ static ssize_t ruler_enable_store(struct kobject *kobj, struct kobj_attribute *a
 		spin_unlock_irqrestore(&graph_lock, flags);
 		return -ENODEV;
 	}
-	rule->enable = !!enabled;
 	rule->saved_enable = !!enabled;
-	if (enabled)
+	rule->enable = rule->saved_enable && !bypass;
+	if (rule->enable)
 		update_rule(rule, true);
 	else {
 		rule->disable_rule = true;
@@ -508,7 +505,6 @@ static int parse_rule(struct device_node *node)
 	rule->enable = !rule->user_mode_enable;
 	rule->saved_enable = rule->enable;
 	rule->state_idx = -1;
-	spin_lock_init(&rule->wip_lock);
 	kthread_init_work(&rule->exec_work, mrg_rule_update_work);
 	init_irq_work(&rule->irq_work, mrg_irq_work);
 	ret = parse_devices(node, "meizu,mrg-master", rule,
@@ -557,6 +553,27 @@ static void inspect_highest_policy(struct cpufreq_policy *policy)
 	bypass_freq = previous ?: maximum;
 	cpumask_copy(&highest_cluster, policy->related_cpus);
 }
+/* graph_lock protects the bypass cluster against fast-switch callbacks. */
+static void refresh_highest_policy(void)
+{
+	struct mrg_freq_device *freq;
+	struct mrg_rule *rule;
+	cpumask_t old;
+
+	cpumask_copy(&old, &highest_cluster);
+	cpumask_clear(&highest_cluster);
+	highest_freq = 0;
+	bypass_freq = 0;
+	list_for_each_entry(freq, &freq_list, node)
+		inspect_highest_policy(freq->policy);
+	if (bypass && !cpumask_equal(&old, &highest_cluster)) {
+		bypass = false;
+		list_for_each_entry(rule, &rule_list, node) {
+			rule->enable = rule->saved_enable;
+			update_rule(rule, true);
+		}
+	}
+}
 static void teardown(bool hook_registered)
 {
 	struct mrg_rule *rule, *next;
@@ -567,6 +584,10 @@ static void teardown(bool hook_registered)
 	stopping = true;
 	initialized = false;
 	spin_unlock_irqrestore(&graph_lock, flags);
+	if (slow_hook_registered) {
+		unregister_trace_android_vh_cpufreq_target(mrg_cpufreq_freq_update, NULL);
+		slow_hook_registered = false;
+	}
 	if (hook_registered) {
 		unregister_trace_android_vh_cpufreq_fast_switch(mrg_cpufreq_freq_update, NULL);
 		tracepoint_synchronize_unregister();
@@ -593,6 +614,12 @@ static void teardown(bool hook_registered)
 		kthread_stop(worker_task);
 		worker_task = NULL;
 	}
+	mutex_unlock(&lifecycle_lock);
+	if (policy_notifier_registered) {
+		cpufreq_unregister_notifier(&mrg_policy_nb, CPUFREQ_POLICY_NOTIFIER);
+		policy_notifier_registered = false;
+	}
+	mutex_lock(&lifecycle_lock);
 	owner = NULL;
 	mutex_unlock(&lifecycle_lock);
 }
@@ -618,7 +645,7 @@ static int mrg_probe(struct platform_device *pdev)
 	highest_freq = 0;
 	bypass_freq = 0;
 	cpumask_clear(&highest_cluster);
-	for_each_child_of_node(pdev->dev.of_node, child) {
+	for_each_available_child_of_node(pdev->dev.of_node, child) {
 		ret = parse_rule(child);
 		if (ret) {
 			of_node_put(child);
@@ -635,17 +662,15 @@ static int mrg_probe(struct platform_device *pdev)
 	ret = sched_setscheduler_nocheck(worker_task, SCHED_FIFO, &param);
 	if (ret)
 		goto fail_locked;
+	ret = cpufreq_register_notifier(&mrg_policy_nb, CPUFREQ_POLICY_NOTIFIER);
+	if (ret)
+		goto fail_locked;
+	policy_notifier_registered = true;
 	for_each_possible_cpu(cpu) {
 		policy = cpufreq_cpu_get(cpu);
 		if (!policy)
 			continue;
-		if (!find_policy(policy)) {
-			ret = register_policy(policy);
-			if (!ret)
-				inspect_highest_policy(policy);
-		} else {
-			ret = 0;
-		}
+		ret = register_policy(policy);
 		cpufreq_cpu_put(policy);
 		if (ret)
 			goto fail_locked;
@@ -659,6 +684,10 @@ static int mrg_probe(struct platform_device *pdev)
 	if (ret)
 		goto fail_locked;
 	registered = true;
+	ret = register_trace_android_vh_cpufreq_target(mrg_cpufreq_freq_update, NULL);
+	if (ret)
+		goto fail_locked;
+	slow_hook_registered = true;
 	list_for_each_entry(rule, &rule_list, node) {
 		ret = kobject_add(&rule->kobj, &pdev->dev.kobj, "%s", rule->name);
 		if (ret)
@@ -672,11 +701,10 @@ fail_locked:
 	teardown(registered);
 	return ret;
 }
-static int mrg_remove(struct platform_device *pdev)
+static void mrg_remove(struct platform_device *pdev)
 {
 	teardown(true);
 	platform_set_drvdata(pdev, NULL);
-	return 0;
 }
 static const struct of_device_id mrg_match[] = {
 	{ .compatible = "meizu,qcom-mrg" }, {},

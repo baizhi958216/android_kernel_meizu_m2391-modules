@@ -26,9 +26,7 @@ struct mrg_rule {
 	struct kobject kobj;
 	struct kthread_work exec_work;
 	struct kthread_work *coop_work;
-	bool work_in_progress;
 	struct irq_work irq_work;
-	spinlock_t wip_lock;
 	struct list_head node;
 	struct mrg_device *master_dev;
 	struct mrg_device *slave_dev;
@@ -48,10 +46,7 @@ struct mrg_rule {
 };
 struct mrg_freq_device {
 	cpumask_t cpus;
-	cpumask_t cpus_online;
-	struct devfreq *df;
 	struct device_node *np;
-	struct kthread_work destroy_work;
 	struct list_head master_list;
 	struct list_head slave_list;
 	struct list_head node;
@@ -66,27 +61,6 @@ struct mrg_freq_device {
 	struct notifier_block nb_max;
 	struct cpufreq_policy *policy;
 };
-
-/* Original private layouts are evidence, not an externally shared ABI. */
-static_assert(sizeof(struct mrg_device) == 72);
-static_assert(sizeof(struct mrg_rule) == 248);
-static_assert(sizeof(struct mrg_freq_device) == 344);
-static_assert(sizeof(struct cpufreq_policy) == 760);
-static_assert(offsetof(struct cpufreq_policy, cpus) == 0);
-static_assert(offsetof(struct cpufreq_policy, related_cpus) == 8);
-static_assert(offsetof(struct cpufreq_policy, cpu) == 28);
-static_assert(offsetof(struct cpufreq_policy, cpuinfo) == 40);
-static_assert(offsetof(struct cpufreq_policy, min) == 52);
-static_assert(offsetof(struct cpufreq_policy, max) == 56);
-static_assert(offsetof(struct cpufreq_policy, cur) == 60);
-static_assert(offsetof(struct cpufreq_policy, constraints) == 160);
-static_assert(offsetof(struct cpufreq_policy, freq_table) == 400);
-static_assert(offsetof(struct cpufreq_policy, freq_table_sorted) == 408);
-static_assert(offsetof(struct cpufreq_policy, cached_target_freq) == 636);
-static_assert(offsetof(struct cpufreq_policy, cached_resolved_idx) == 640);
-static_assert(sizeof(struct cpufreq_frequency_table) == 12);
-static_assert(offsetof(struct cpufreq_frequency_table, frequency) == 8);
-
 
 /* A rule votes with its least-demanding master unless explicitly configured
  * master_vote_max. An idle master votes zero; uninitialized masters abstain.
