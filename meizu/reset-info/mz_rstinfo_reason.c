@@ -103,7 +103,7 @@ static int rstinfo_reset_reason_show(struct seq_file *seq, void *unused)
  return 0;
 }
 static int rstinfo_reset_reason_open(struct inode *inode, struct file *file)
-{ return single_open(file, rstinfo_reset_reason_show, PDE_DATA(inode)); }
+{ return single_open(file, rstinfo_reset_reason_show, pde_data(inode)); }
 static const struct proc_ops reset_reason_ops = {
  .proc_open = rstinfo_reset_reason_open, .proc_read = seq_read,
  .proc_lseek = seq_lseek, .proc_release = single_release,

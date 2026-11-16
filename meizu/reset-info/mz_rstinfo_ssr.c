@@ -11,7 +11,8 @@
 #include <linux/slab.h>
 #include <linux/time.h>
 #include <linux/workqueue.h>
-#include <linux/soc/qcom/q6v5_rstinfo.h>
+#include <linux/remoteproc.h>
+#include <linux/remoteproc/qcom_q6v5.h>
 #include "../storage/meizu_storage.h"
 #include "mz_rstinfo_internal.h"
 struct rstssr_node {
@@ -101,7 +102,7 @@ unlock:
 put:
  kref_put(&node->ref, ssr_free);
 }
-void get_ssrinfo(const char *ss_name, char *crash_type, char *msg, size_t msg_len)
+void get_ssrinfo(const char *ss_name, const char *crash_type, const char *msg, size_t msg_len)
 {
  struct rstssr_node *node, *old;
  size_t length;
@@ -138,6 +139,19 @@ void get_ssrinfo(const char *ss_name, char *crash_type, char *msg, size_t msg_le
  mutex_unlock(&current_lock);
 }
 EXPORT_SYMBOL_GPL(get_ssrinfo);
+
+static int rstinfo_q6_crash(struct notifier_block *nb, unsigned long event, void *data)
+{
+ const struct qcom_q6v5_crash_data *crash = data;
+
+ get_ssrinfo(crash->name, event == RPROC_WATCHDOG ? "watchdog" : "fatal",
+      crash->message, crash->length);
+ return NOTIFY_OK;
+}
+
+static struct notifier_block rstinfo_q6_notifier = {
+ .notifier_call = rstinfo_q6_crash,
+};
 static void show_record(struct seq_file *seq, struct rstssr_info *info, bool index)
 {
  struct rtc_time tm;
@@ -257,7 +271,7 @@ static ssize_t rstssr_write(struct file *file, const char __user *buffer,
 }
 #define SSR_PROC(name) \
 static int name##_open(struct inode *inode, struct file *file) \
-{ return single_open(file, name##_show, PDE_DATA(inode)); } \
+{ return single_open(file, name##_show, pde_data(inode)); } \
 static const struct proc_ops name##_ops = { \
  .proc_open = name##_open, .proc_read = seq_read, .proc_lseek = seq_lseek, \
  .proc_release = single_release, .proc_write = rstssr_write }
@@ -284,7 +298,7 @@ int rstinfo_ssr_init(struct proc_dir_entry *dir)
   }
   if (!ssr_proc[i]) { ret = -ENOMEM; goto fail; }
  }
- ret = qcom_q6v5_register_rstinfo(get_ssrinfo);
+ ret = qcom_q6v5_register_crash_notifier(&rstinfo_q6_notifier);
  if (!ret)
   return 0;
 fail:
@@ -295,7 +309,7 @@ void rstinfo_ssr_exit(void)
 {
  struct rstssr_node *node, *next;
  int i;
- qcom_q6v5_unregister_rstinfo(get_ssrinfo);
+ qcom_q6v5_unregister_crash_notifier(&rstinfo_q6_notifier);
  mutex_lock(&current_lock);
  ssr_stopping = true;
  mutex_unlock(&current_lock);

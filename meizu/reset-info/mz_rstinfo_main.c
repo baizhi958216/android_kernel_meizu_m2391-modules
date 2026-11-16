@@ -546,7 +546,7 @@ retry:
 }
 #define RST_PROC(name, show, write) \
 static int name##_open(struct inode *inode, struct file *file) \
-{ return single_open(file, show, PDE_DATA(inode)); } \
+{ return single_open(file, show, pde_data(inode)); } \
 static const struct proc_ops name##_ops = { \
  .proc_open = name##_open, .proc_read = seq_read, .proc_lseek = seq_lseek, \
  .proc_release = single_release, .proc_write = write }
@@ -556,13 +556,13 @@ RST_PROC(rstlog, rstinfo_rstlog_debug_show, NULL);
 RST_PROC(android, rstinfo_cnt_android_debug_show, rstinfo_android_rst_debug_write);
 RST_PROC(root, rstinfo_cnt_android_debug_show, rstinfo_android_root_debug_write);
 static int last_open(struct inode *inode, struct file *file)
-{ return single_open_size(file, rstinfo_last_rstlog_show, PDE_DATA(inode), RSTLOG_ENTITY_SIZE); }
+{ return single_open_size(file, rstinfo_last_rstlog_show, pde_data(inode), RSTLOG_ENTITY_SIZE); }
 static const struct proc_ops last_ops = {
  .proc_open = last_open, .proc_read = seq_read, .proc_lseek = seq_lseek,
  .proc_release = single_release,
 };
 static int kelog_open(struct inode *inode, struct file *file)
-{ return single_open_size(file, rstinfo_kelog_show, PDE_DATA(inode), RSTLOG_ENTITY_SIZE); }
+{ return single_open_size(file, rstinfo_kelog_show, pde_data(inode), RSTLOG_ENTITY_SIZE); }
 static const struct proc_ops kelog_ops = {
  .proc_open = kelog_open, .proc_read = seq_read, .proc_lseek = seq_lseek,
  .proc_release = single_release, .proc_write = rstinfo_kelog_write,
@@ -572,7 +572,13 @@ static ssize_t rstinfo_enable_store(struct kobject *kobj, struct kobj_attribute 
 {
  int ret;
  mutex_lock(&rstinfo_lock);
- ret = rstinfo_encrypt_erase(buffer);
+ if (sysfs_streq(buffer, "0xff")) {
+  if (!READ_ONCE(stopping))
+   mod_delayed_work(system_wq, &rstinfo_work, 0);
+  ret = 0;
+ } else {
+  ret = rstinfo_encrypt_erase(buffer);
+ }
  mutex_unlock(&rstinfo_lock);
  return ret == -EAGAIN ? ret : count;
 }
@@ -660,25 +666,24 @@ remove:
  WRITE_ONCE(stopping, true);
  remove_interfaces();
  cancel_delayed_work_sync(&rstinfo_work);
- del_timer_sync(&encrypt_timer);
+ timer_shutdown_sync(&encrypt_timer);
  rstinfo_reason_exit();
 unlock:
  mutex_unlock(&registry_lock);
  return ret;
 }
-static int mz_rstinfo_remove(struct platform_device *pdev)
+static void mz_rstinfo_remove(struct platform_device *pdev)
 {
  mutex_lock(&registry_lock);
  WRITE_ONCE(stopping, true);
  rstinfo_ssr_exit();
  remove_interfaces();
  cancel_delayed_work_sync(&rstinfo_work);
- del_timer_sync(&encrypt_timer);
+ timer_shutdown_sync(&encrypt_timer);
  rstinfo_reason_exit();
  WRITE_ONCE(g_decrypt_flg, 0);
  device_bound = false;
  mutex_unlock(&registry_lock);
- return 0;
 }
 static const struct of_device_id mz_rstinfo_of_match[] = {
  { .compatible = "mz_rstinfo" }, { }

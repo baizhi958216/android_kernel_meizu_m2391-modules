@@ -17,5 +17,5 @@ int rstinfo_msm_init(void);
 void rstinfo_reason_exit(void);
 int rstinfo_ssr_init(struct proc_dir_entry *dir);
 void rstinfo_ssr_exit(void);
-void get_ssrinfo(const char *ss_name, char *crash_type, char *msg, size_t msg_len);
+void get_ssrinfo(const char *ss_name, const char *crash_type, const char *msg, size_t msg_len);
 #endif
