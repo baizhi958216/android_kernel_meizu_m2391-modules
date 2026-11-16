@@ -39,8 +39,7 @@ static void should_shrink_async(void *unused, gfp_t gfp, int nid,
 {
 	unsigned long flags;
 
-	*bypass = false;
-	if (!READ_ONCE(opt_enabled) || !READ_ONCE(ready) ||
+	if (*bypass || !READ_ONCE(opt_enabled) || !READ_ONCE(ready) ||
 	    (current->flags & PF_KSWAPD))
 		return;
 	spin_lock_irqsave(&request_lock, flags);
@@ -96,7 +95,7 @@ static int slabd_thread(void *unused)
 	struct reclaim_state reclaim_state = {};
 	unsigned long flags;
 
-	current->flags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
+	current->flags |= PF_MEMALLOC | PF_KSWAPD;
 	current->reclaim_state = &reclaim_state;
 	set_freezable();
 	while (!kthread_freezable_should_stop(NULL)) {
@@ -124,7 +123,7 @@ static int slabd_thread(void *unused)
 		css_put(&request.memcg->css);
 	request.memcg = NULL;
 	current->reclaim_state = NULL;
-	current->flags &= ~(PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD);
+	current->flags &= ~(PF_MEMALLOC | PF_KSWAPD);
 	return 0;
 }
 
