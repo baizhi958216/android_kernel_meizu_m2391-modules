@@ -8,7 +8,7 @@
 
 
 
-#include <linux/mm.h>
+#include <linux/io.h>
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/of_address.h>
@@ -16,12 +16,9 @@
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <linux/slab.h>
-#include <linux/vmalloc.h>
 
 struct bootloader_log_ram_zone {
-	phys_addr_t paddr;
 	size_t size;
-	void *vaddr;
 	char *buffer;
 	struct proc_dir_entry *proc;
 };
@@ -49,27 +46,14 @@ static int bootloader_log_proc_show(struct seq_file *seq, void *unused)
 	seq_putc(seq, '\n');
 	return 0;
 }
-static int bootloader_log_proc_open(struct inode *inode, struct file *file)
-{
-	return single_open(file, bootloader_log_proc_show, PDE_DATA(inode));
-}
-static const struct proc_ops bootloader_log_proc_fops = {
-	.proc_open = bootloader_log_proc_open,
-	.proc_read = seq_read,
-	.proc_lseek = seq_lseek,
-	.proc_release = single_release,
-};
-
 static int bootloader_log_probe(struct platform_device *pdev)
 {
 	struct bootloader_log_ram_zone *zone;
 	struct bootloader_log_platform_data *pdata = dev_get_platdata(&pdev->dev);
 	struct device_node *memory;
 	struct resource res;
-	struct page **pages;
 	phys_addr_t address;
 	resource_size_t length;
-	size_t offset, count, i, span;
 	int ret;
 
 	if (pdev->dev.of_node) {
@@ -94,53 +78,26 @@ static int bootloader_log_probe(struct platform_device *pdev)
 		return -EINVAL;
 	if (length - 1 > (phys_addr_t)~0 - address)
 		return -EOVERFLOW;
-	offset = offset_in_page(address);
-	if (length > SIZE_MAX - offset - (PAGE_SIZE - 1))
-		return -EOVERFLOW;
-	span = length + offset;
-	count = DIV_ROUND_UP(span, PAGE_SIZE);
-	if (count > UINT_MAX || count > SIZE_MAX / sizeof(*pages))
-		return -EOVERFLOW;
 	zone = devm_kzalloc(&pdev->dev, sizeof(*zone), GFP_KERNEL);
 	if (!zone)
 		return -ENOMEM;
-	pages = kcalloc(count, sizeof(*pages), GFP_KERNEL);
-	if (!pages)
-		return -ENOMEM;
-	for (i = 0; i < count; i++) {
-		unsigned long pfn = PHYS_PFN(address) + i;
-
-		if (!pfn_valid(pfn)) {
-			kfree(pages);
-			return -EINVAL;
-		}
-		pages[i] = pfn_to_page(pfn);
-	}
-	zone->vaddr = vmap(pages, count, VM_MAP, pgprot_noncached(PAGE_KERNEL));
-	kfree(pages);
-	if (!zone->vaddr)
-		return -ENOMEM;
-	zone->paddr = address;
+	zone->buffer = devm_memremap(&pdev->dev, address, length, MEMREMAP_WB);
+	if (IS_ERR(zone->buffer))
+		return PTR_ERR(zone->buffer);
 	zone->size = length;
-	zone->buffer = (char *)zone->vaddr + offset;
-	/* mode0 is stock; procfs supplies the regular-file read-only defaults. */
-	zone->proc = proc_create_data("bootloader_log", 0, NULL,
-			&bootloader_log_proc_fops, zone);
-	if (!zone->proc) {
-		vunmap(zone->vaddr);
+	zone->proc = proc_create_single_data("bootloader_log", 0444, NULL,
+					     bootloader_log_proc_show, zone);
+	if (!zone->proc)
 		return -ENOMEM;
-	}
 	platform_set_drvdata(pdev, zone);
 	return 0;
 }
-static int bootloader_log_remove(struct platform_device *pdev)
+static void bootloader_log_remove(struct platform_device *pdev)
 {
 	struct bootloader_log_ram_zone *zone = platform_get_drvdata(pdev);
 
 	/* Remove/drain the reader callbacks before releasing the backing map. */
 	proc_remove(zone->proc);
-	vunmap(zone->vaddr);
-	return 0;
 }
 static const struct of_device_id bootloader_log_of_match[] = {
 	{ .compatible = "bootloader_log" },
@@ -153,4 +110,5 @@ static struct platform_driver bootloader_log_driver = {
 	.driver = { .name = "bootloader_log", .of_match_table = bootloader_log_of_match },
 };
 module_platform_driver(bootloader_log_driver);
+MODULE_DESCRIPTION("Meizu ABL reserved-memory boot log");
 MODULE_LICENSE("GPL");
