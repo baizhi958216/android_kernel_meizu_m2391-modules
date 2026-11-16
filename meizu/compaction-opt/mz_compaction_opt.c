@@ -1,10 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-/* Stock .text+0x65c..0x8a0 excludes HIGHATOMIC and CMA free lists from
- * fragmentation accounting. Exact 24-byte vmstat private argument recovered
- * from base BTF contig_page_info11523 and mm/vmstat.c's live hook caller.
- * No page or free list is modified. The diagnostic event's original fields,
- * calculations, spelling and proc protocol are preserved.
- */
+/* Exclude HIGHATOMIC and CMA blocks from the proactive compaction score. */
 #include <linux/mm.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
@@ -13,53 +8,46 @@
 #define CREATE_TRACE_POINTS
 #include "compaction_opt_trace.h"
 
-struct contig_page_info {
-	unsigned long free_pages;
-	unsigned long free_blocks_total;
-	unsigned long free_blocks_suitable;
-};
 static bool opt_enabled = true;
 static struct proc_dir_entry *compaction_dir;
 
-static unsigned long count_migration_blocks(struct zone *zone,
-		unsigned int order, int migration_type)
+static void fix_extrfrag_for_order(void *unused, struct zone *zone,
+		unsigned int order, unsigned long *free_pages, unsigned long *suitable)
 {
-	struct list_head *head = &zone->free_area[order].free_list[migration_type];
-	struct list_head *cursor;
-	unsigned long flags, count = 0;
+	unsigned long nr_free = 0, nr_high = 0, reserved = 0, high_reserved = 0;
+	unsigned int o;
 
-	spin_lock_irqsave(&zone->lock, flags);
-	list_for_each(cursor, head)
-		count++;
-	spin_unlock_irqrestore(&zone->lock, flags);
-	return count;
-}
-
-static void fix_extrfrag_for_order(void *unused, void *argument,
-		struct zone *zone, unsigned int order)
-{
-	struct contig_page_info *info = argument;
-	unsigned long all_trivial = 0, high_trivial = 0, blocks;
-	unsigned int current_order;
-
-	if (!info || !READ_ONCE(opt_enabled) || !zone->present_pages || order >= MAX_ORDER)
+	if (!READ_ONCE(opt_enabled) || !zone->present_pages || order >= NR_PAGE_ORDERS)
 		return;
-	for (current_order = 0; current_order < MAX_ORDER; current_order++) {
-		if (!READ_ONCE(zone->free_area[current_order].nr_free))
-			continue;
-		blocks = count_migration_blocks(zone, current_order, MIGRATE_HIGHATOMIC);
+	for (o = 0; o < NR_PAGE_ORDERS; o++) {
+		struct free_area *area = &zone->free_area[o];
+		struct list_head *cursor;
+		unsigned long flags, blocks, excluded = 0;
+
+		/* Sample the total and reserved lists together, one order at a
+		 * time. A concurrent buddy split cannot underflow the result.
+		 */
+		spin_lock_irqsave(&zone->lock, flags);
+		blocks = area->nr_free;
+		list_for_each(cursor, &area->free_list[MIGRATE_HIGHATOMIC])
+			excluded++;
 #ifdef CONFIG_CMA
-		blocks += count_migration_blocks(zone, current_order, MIGRATE_CMA);
+		list_for_each(cursor, &area->free_list[MIGRATE_CMA])
+			excluded++;
 #endif
-		all_trivial += blocks << current_order;
-		if (current_order >= order)
-			high_trivial += blocks << (current_order - order);
+		spin_unlock_irqrestore(&zone->lock, flags);
+
+		nr_free += blocks << o;
+		reserved += excluded << o;
+		if (o >= order) {
+			nr_high += blocks << (o - order);
+			high_reserved += excluded << (o - order);
+		}
 	}
-	trace_compaction_opt_fix_extrfrag(zone, info->free_pages,
-		info->free_blocks_suitable << order, all_trivial,
-		high_trivial << order, order);
-	info->free_pages -= all_trivial;
-	info->free_blocks_suitable -= high_trivial;
+	trace_compaction_opt_fix_extrfrag(zone, nr_free, nr_high << order,
+					  reserved, high_reserved << order, order);
+	*free_pages = nr_free - reserved;
+	*suitable = nr_high - high_reserved;
 }
 
 static ssize_t proc_opt_enabled_read(struct file *file, char __user *buffer,
