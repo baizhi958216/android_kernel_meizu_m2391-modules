@@ -210,6 +210,49 @@ static int brl_reset_after(struct goodix_ts_core *cd)
 #define REG_RESUME_MIN_VOLTAGE 3200000
 #define REG_RESUME_MAX_VOLTAGE 3200000
 
+static int brl_enable_supply(struct regulator *supply, int gpio, int voltage)
+{
+	bool adjustable;
+	int ret;
+
+	if (gpio > 0)
+		return gpio_direction_output(gpio, 1);
+	if (!supply)
+		return 0;
+
+	adjustable = regulator_count_voltages(supply) > 0;
+	if (adjustable) {
+		ret = regulator_set_load(supply, REG_RESUME_CURRENT);
+		if (ret)
+			return ret;
+		if (voltage) {
+			ret = regulator_set_voltage(supply, voltage, voltage);
+			if (ret)
+				goto restore_load;
+		}
+	}
+
+	ret = regulator_enable(supply);
+	if (!ret)
+		return 0;
+
+restore_load:
+	if (adjustable)
+		regulator_set_load(supply, REG_SUSPEND_CURRENT);
+	return ret;
+}
+
+static void brl_disable_supply(struct regulator *supply, int gpio)
+{
+	if (gpio > 0) {
+		gpio_direction_output(gpio, 0);
+	} else if (supply) {
+		regulator_disable(supply);
+		if (regulator_count_voltages(supply) > 0)
+			regulator_set_load(supply, REG_SUSPEND_CURRENT);
+	}
+}
+
 static int brl_power_on(struct goodix_ts_core *cd, bool on)
 {
 	int ret = 0;
@@ -219,81 +262,43 @@ static int brl_power_on(struct goodix_ts_core *cd, bool on)
 	int avdd_uv = REG_RESUME_MIN_VOLTAGE;
 
 #ifdef CONFIG_TOUCHSCREEN_GOODIX_BRL_MEIZU
-	/* M2391 uses L9B (2.96--3.008 V), not the generic 3.2 V rail.
-	 * The stock brl_power_on requests a 3.0 V upper limit at .text+0x98d0.
-	 */
+	/* The M2391 touch controller uses the 3.0 V setting of L9B. */
 	if (of_device_is_compatible(cd->bus->dev->of_node, "goodix,brl-d"))
 		avdd_uv = 3000000;
 #endif
 
-	if (on) {
-		if (iovdd_gpio > 0) {
-			gpio_direction_output(iovdd_gpio, 1);
-		} else if (cd->iovdd) {
-			if (regulator_count_voltages(cd->iovdd) > 0) {
-				ret = regulator_set_load(cd->iovdd, REG_RESUME_CURRENT);
-				if (ret) {
-					ts_err("Setting regulator load failed:%d", ret);
-					goto power_off;
-				}
-			}
-			ret = regulator_enable(cd->iovdd);
-			if (ret < 0) {
-				ts_err("Failed to enable iovdd:%d", ret);
-				goto power_off;
-			}
-		}
-		usleep_range(3000, 3100);
-		if (avdd_gpio > 0) {
-			gpio_direction_output(avdd_gpio, 1);
-		} else if (cd->avdd) {
-			if (regulator_count_voltages(cd->avdd) > 0) {
-				ret = regulator_set_load(cd->avdd, REG_RESUME_CURRENT);
-				if (ret) {
-					ts_err("vdd regulator set_load failed ret=%d", ret);
-					return ret;
-				}
-				ret = regulator_set_voltage(cd->avdd, avdd_uv, avdd_uv);
-				if (ret) {
-					ts_err("vdd regulator set_vtg failed ret=%d", ret);
-					return ret;
-				}
-			}
-			ret = regulator_enable(cd->avdd);
-			if (ret < 0) {
-				ts_err("Failed to enable avdd:%d", ret);
-				goto power_off;
-			}
-		}
+	if (!on)
+		goto power_off;
 
-		gpio_direction_output(cd->board_data.reset_gpio, 0);
-		usleep_range(15000, 15100);
-		gpio_direction_output(cd->board_data.reset_gpio, 1);
-		msleep(GOODIX_NORMAL_RESET_DELAY_MS);
-
-		ret = brl_dev_confirm(cd);
-		if (ret < 0)
-			goto power_off;
-		ret = brl_reset_after(cd);
-		if (ret < 0)
-			goto power_off;
-
-		return 0;
+	ret = brl_enable_supply(cd->iovdd, iovdd_gpio, 0);
+	if (ret)
+		return ret;
+	usleep_range(3000, 3100);
+	ret = brl_enable_supply(cd->avdd, avdd_gpio, avdd_uv);
+	if (ret) {
+		brl_disable_supply(cd->iovdd, iovdd_gpio);
+		return ret;
 	}
+
+	ret = gpio_direction_output(reset_gpio, 0);
+	if (ret)
+		goto power_off;
+	usleep_range(15000, 15100);
+	ret = gpio_direction_output(reset_gpio, 1);
+	if (ret)
+		goto power_off;
+	msleep(GOODIX_NORMAL_RESET_DELAY_MS);
+
+	ret = brl_dev_confirm(cd);
+	if (!ret)
+		ret = brl_reset_after(cd);
+	if (!ret)
+		return 0;
 
 power_off:
 	gpio_direction_output(reset_gpio, 0);
-	if (iovdd_gpio > 0)
-		gpio_direction_output(iovdd_gpio, 0);
-	else if (cd->iovdd) {
-		regulator_disable(cd->iovdd);
-		if (regulator_count_voltages(cd->iovdd) > 0)
-			regulator_set_load(cd->iovdd, REG_SUSPEND_CURRENT);
-	}
-	if (avdd_gpio > 0)
-		gpio_direction_output(avdd_gpio, 0);
-	else if (cd->avdd)
-		regulator_disable(cd->avdd);
+	brl_disable_supply(cd->iovdd, iovdd_gpio);
+	brl_disable_supply(cd->avdd, avdd_gpio);
 	return ret;
 }
 
