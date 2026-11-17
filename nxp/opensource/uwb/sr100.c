@@ -67,6 +67,13 @@ static void *sr100_ctx, *sr100_uci_ctx;
 	pr_err("[NXP-SR100]:%d " fmt, __LINE__, ##__VA_ARGS__); \
 } while (0)
 
+enum sr100_rfclk_mode {
+	SR100_RFCLK_AUTO,
+	SR100_RFCLK_NONE,
+	SR100_RFCLK_HW,
+	SR100_RFCLK_IRQ,
+};
+
 struct sr100_dev {
 	wait_queue_head_t read_wq;
 	struct spi_device *spi;
@@ -88,7 +95,8 @@ struct sr100_dev {
 	u32 vdd_levels[2], vdd_max_load;
 	u32 rfvdd_levels[2], rfvdd_max_load;
 	bool vdd_enabled, rfvdd_enabled, refclk_enabled, slpclk_enabled;
-	int rfclk_ctrl_mode, rfclk_req_gpio;
+	enum sr100_rfclk_mode rfclk_ctrl_mode;
+	int rfclk_req_gpio;
 	struct kref ref;
 	struct rw_semaphore operation_sem;
 	struct mutex read_mutex, write_mutex, control_mutex;
@@ -202,7 +210,7 @@ static int sr100_set_clock(struct clk *clock, bool *running, bool enable)
 
 static int sr100_set_refclk(struct sr100_dev *d, bool enable)
 {
-	if (d->rfclk_ctrl_mode == 1) {
+	if (d->rfclk_ctrl_mode == SR100_RFCLK_NONE) {
 		sr100_dbg("ignored refclk control: %d\n", enable);
 		return 0;
 	}
@@ -629,28 +637,32 @@ static int sr100_parse_dt(struct sr100_dev *d)
 		return rc;
 	if (!of_property_read_string(np, "nxp,sr100-rfclk-ctrl-mode", &mode)) {
 		if (!strcmp(mode, "auto"))
-			d->rfclk_ctrl_mode = 0;
+			d->rfclk_ctrl_mode = SR100_RFCLK_AUTO;
 		else if (!strcmp(mode, "none"))
-			d->rfclk_ctrl_mode = 1;
+			d->rfclk_ctrl_mode = SR100_RFCLK_NONE;
 		else if (!strcmp(mode, "hw"))
-			d->rfclk_ctrl_mode = 2;
+			d->rfclk_ctrl_mode = SR100_RFCLK_HW;
 		else if (!strcmp(mode, "irq"))
-			d->rfclk_ctrl_mode = 3;
+			d->rfclk_ctrl_mode = SR100_RFCLK_IRQ;
 		else
 			return -EINVAL;
 	}
-	d->refclk = devm_clk_get(dev, "uwb_refclk");
-	if (IS_ERR(d->refclk)) {
-		rc = PTR_ERR(d->refclk);
-		d->refclk = NULL;
-		if (rc == -EPROBE_DEFER || d->rfclk_ctrl_mode == 0 ||
-		    d->rfclk_ctrl_mode == 3)
-			return rc;
+	/* Boards without driver-controlled RFCLK need only the sleep clock. */
+	if (d->rfclk_ctrl_mode != SR100_RFCLK_NONE) {
+		d->refclk = devm_clk_get(dev, "uwb_refclk");
+		if (IS_ERR(d->refclk)) {
+			rc = PTR_ERR(d->refclk);
+			d->refclk = NULL;
+			if (rc == -EPROBE_DEFER ||
+			    d->rfclk_ctrl_mode != SR100_RFCLK_HW)
+				return rc;
+		}
 	}
 	d->rfclk_req_gpio = of_get_named_gpio(np, "nxp,sr100-rfclk-req", 0);
 	if (d->rfclk_req_gpio == -EPROBE_DEFER)
 		return -EPROBE_DEFER;
-	if (d->rfclk_ctrl_mode == 3 && !gpio_is_valid(d->rfclk_req_gpio))
+	if (d->rfclk_ctrl_mode == SR100_RFCLK_IRQ &&
+	    !gpio_is_valid(d->rfclk_req_gpio))
 		return d->rfclk_req_gpio < 0 ? d->rfclk_req_gpio : -EINVAL;
 	d->slpclk = devm_clk_get(dev, "sleep_clk");
 	if (IS_ERR(d->slpclk)) {
