@@ -17,6 +17,7 @@
 #include <linux/mman.h>
 #include <linux/mm_types.h>
 #include <linux/msm_kgsl.h>
+#include <linux/msm_sysstats.h>
 #include <linux/of.h>
 #include <linux/of_fdt.h>
 #include <linux/pm_runtime.h>
@@ -5107,6 +5108,7 @@ static bool kgsl_usage_sysrq_registered;
 
 void kgsl_core_exit(void)
 {
+	sysstats_unregister_kgsl_stats_cb();
 #if IS_ENABLED(CONFIG_QCOM_KGSL_MEIZU_DIAGNOSTICS)
 	if (kgsl_usage_sysrq_registered) {
 		unregister_sysrq_key('y', &kgsl_usage_sysrq_op);
@@ -5265,6 +5267,7 @@ int __init kgsl_core_init(void)
 	memfree.list = kcalloc(MEMFREE_ENTRIES, sizeof(struct memfree_entry),
 		GFP_KERNEL);
 
+	sysstats_register_kgsl_stats_cb(kgsl_get_stats);
 	trace_kgsl_boot_marker("M - DRIVER KGSL Ready");
 
 	return 0;
