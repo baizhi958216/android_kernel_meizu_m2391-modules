@@ -11,6 +11,7 @@
  * Handles are opaque and protected by the manager mutex.
  */
 #include <linux/blkdev.h>
+#include <linux/file.h>
 #include <linux/kref.h>
 #include <linux/list.h>
 #include <linux/module.h>
@@ -50,7 +51,9 @@ struct key_manager {
 	struct mutex lock;
 	struct list_head keys;
 };
-static struct key_manager *managers[4];
+static const char * const partition_names[] = { "private", "camera", "rstinfo", "param" };
+static struct key_manager *managers[ARRAY_SIZE(partition_names)];
+static struct key_manager *build_manager(const char *name, size_t slots);
 static DEFINE_MUTEX(managers_lock);
 
 static u32 record_hash(const void *buffer, size_t size)
@@ -109,11 +112,15 @@ mzkv_manager_t *mzkv_get_manager(const char *name)
 		return NULL;
 	mutex_lock(&managers_lock);
 	for (i = 0; i < ARRAY_SIZE(managers); i++) {
-		if (managers[i] && !strncmp(managers[i]->name, name, 64)) {
-			manager = managers[i];
+		if (strcmp(partition_names[i], name))
+			continue;
+		/* UFS scanning may finish after this module was loaded. */
+		if (!managers[i])
+			managers[i] = build_manager(partition_names[i], i ? 0 : 64);
+		manager = managers[i];
+		if (manager)
 			kref_get(&manager->ref);
-			break;
-		}
+		break;
 	}
 	mutex_unlock(&managers_lock);
 	return (mzkv_manager_t *)manager;
@@ -301,7 +308,7 @@ static int scan_keys(struct key_manager *manager)
 	for (id = 0; id < manager->maximum; id++) {
 		ret = manager_io(manager, 0, key_offset(manager, id), &raw, sizeof(raw));
 		if (ret)
-			break;
+			goto scan_error;
 		stored_crc = le32_to_cpu(raw.crc);
 		raw.crc = 0;
 		len = le32_to_cpu(raw.keylen);
@@ -331,7 +338,7 @@ static int scan_keys(struct key_manager *manager)
 		ret = manager_io(manager, 0, key_offset(manager, id) + 4096,
 				value, sizeof(*value));
 		if (ret)
-			continue;
+			goto scan_error;
 		stored_crc = le32_to_cpu(value->crc);
 		value->crc = 0;
 		size = le32_to_cpu(value->size);
@@ -340,12 +347,19 @@ static int scan_keys(struct key_manager *manager)
 			continue;
 		if (size) {
 			key->value = kmemdup(value->value, size, GFP_KERNEL);
-			if (key->value)
-				key->size = size;
+			if (!key->value) {
+				ret = -ENOMEM;
+				goto scan_error;
+			}
+			key->size = size;
 		}
 	}
 	kfree(value);
 	return 0;
+
+scan_error:
+	kfree(value);
+	return ret;
 }
 
 static void release_cached_keys(struct key_manager *manager)
@@ -361,21 +375,18 @@ static void release_cached_keys(struct key_manager *manager)
 static struct key_manager *build_manager(const char *name, size_t slots)
 {
 	struct key_manager *manager;
-	struct block_device *bdev;
-	char label[75];
+	struct file *file;
 	u64 capacity, records, reserved = (u64)slots * 1024;
 	dev_t dev;
 	int ret;
 
-	snprintf(label, sizeof(label), "PARTLABEL=%s", name);
-	dev = name_to_dev_t(label);
-	if (!dev)
+	if (bdev_lookup_by_partlabel(name, &dev))
 		return NULL;
-	bdev = blkdev_get_by_dev(dev, FMODE_READ | FMODE_WRITE, NULL);
-	if (IS_ERR(bdev))
+	file = bdev_file_open_by_dev(dev, BLK_OPEN_READ, NULL, NULL);
+	if (IS_ERR(file))
 		return NULL;
-	capacity = i_size_read(bdev->bd_inode);
-	blkdev_put(bdev, FMODE_READ | FMODE_WRITE);
+	capacity = bdev_nr_bytes(file_bdev(file));
+	fput(file);
 	if (capacity <= reserved)
 		return NULL;
 	records = (capacity - reserved) / MZKV_RECORD_SIZE;
@@ -400,13 +411,8 @@ static struct key_manager *build_manager(const char *name, size_t slots)
 }
 static int __init mzkv_init(void)
 {
-	static const char * const names[] = { "private", "camera", "rstinfo", "param" };
-	size_t i;
-
 	BUILD_BUG_ON(sizeof(struct raw_key) != 44);
 	BUILD_BUG_ON(sizeof(struct raw_value) != 4012);
-	for (i = 0; i < ARRAY_SIZE(managers); i++)
-		managers[i] = build_manager(names[i], i ? 0 : 64);
 	return 0;
 }
 static void __exit mzkv_exit(void)
