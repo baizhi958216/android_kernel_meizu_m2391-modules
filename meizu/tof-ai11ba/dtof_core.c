@@ -296,8 +296,8 @@ static int dtof_i2c_probe(struct i2c_client *client)
 	}
 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
 	if (!chip) {
-		mutex_unlock(&dtof_registry_lock);
-		return -ENOMEM;
+		rc = -ENOMEM;
+		goto probe_error;
 	}
 	chip->client = client;
 	mutex_init(&chip->lock);
@@ -335,7 +335,7 @@ static int dtof_i2c_probe(struct i2c_client *client)
 	if (i == 5) {
 		dtof_reset_level(chip, false);
 		rc = -EIO;
-		goto failed_probe;
+		goto free_gpio;
 	}
 	dtof_reset_level(chip, false);
 	chip->misc.minor = MISC_DYNAMIC_MINOR;
@@ -345,7 +345,7 @@ static int dtof_i2c_probe(struct i2c_client *client)
 	i2c_set_clientdata(client, chip);
 	rc = misc_register(&chip->misc);
 	if (rc)
-		goto failed_probe;
+		goto free_gpio;
 	rc = sysfs_create_group(&client->dev.kobj, &dtof_group);
 	if (rc)
 		goto remove_misc;
@@ -354,7 +354,7 @@ static int dtof_i2c_probe(struct i2c_client *client)
 		goto remove_group;
 	chip->link_created = true;
 	dtof_owner = chip;
-	WRITE_ONCE(s_module_load_state, 1);
+	smp_store_release(&s_module_load_state, 1);
 	mutex_unlock(&dtof_registry_lock);
 	return 0;
 remove_group:
@@ -364,8 +364,6 @@ remove_misc:
 	chip->removing = true;
 	mutex_unlock(&chip->lock);
 	misc_deregister(&chip->misc);
-failed_probe:
-	WRITE_ONCE(s_module_load_state, 2);
 free_gpio:
 	gpio_free(chip->reset_gpio);
 destroy_log:
@@ -373,6 +371,10 @@ destroy_log:
 		ipc_log_context_destroy(chip->ipclog);
 free_chip:
 	kref_put(&chip->ref, dtof_free);
+probe_error:
+	/* A deferred Adaps probe still has priority over the ST alternate. */
+	if (rc != -EPROBE_DEFER)
+		smp_store_release(&s_module_load_state, 2);
 	mutex_unlock(&dtof_registry_lock);
 	return rc;
 }
@@ -390,10 +392,10 @@ static void dtof_i2c_remove(struct i2c_client *client)
 	misc_deregister(&chip->misc);
 	mutex_lock(&dtof_registry_lock);
 	dtof_owner = NULL;
-	WRITE_ONCE(s_module_load_state, 2);
 	gpio_free(chip->reset_gpio);
 	if (chip->ipclog)
 		ipc_log_context_destroy(chip->ipclog);
+	smp_store_release(&s_module_load_state, 2);
 	mutex_unlock(&dtof_registry_lock);
 	kref_put(&chip->ref, dtof_free);
 }

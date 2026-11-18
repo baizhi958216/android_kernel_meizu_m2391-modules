@@ -440,7 +440,7 @@ static int stmvl53l1_probe(struct i2c_client *client)
 	struct stmvl53l1_data *vl53l1_data = NULL;
 	struct i2c_data *i2c_data = NULL;
 
-	switch (READ_ONCE(s_module_load_state)) {
+	switch (smp_load_acquire(&s_module_load_state)) {
 	case 0:
 		return -EPROBE_DEFER;
 	case 1:
