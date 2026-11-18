@@ -4877,13 +4877,11 @@ static int  _qcrypto_probe(struct platform_device *pdev)
 	rc = icc_set_bw(pengine->icc_path, CRYPTO_AVG_BW, CRYPTO_PEAK_BW);
 	if (rc) {
 		dev_err(&pdev->dev, "failed to set high bandwidth\n");
-		goto exit_kzfree;
+		goto exit_put_icc;
 	}
 	handle = qce_open(pdev, &rc);
-	if (handle == NULL) {
-		rc = -ENODEV;
+	if (handle == NULL)
 		goto exit_free_pdata;
-	}
 	rc = icc_set_bw(pengine->icc_path, 0, 0);
 	if (rc) {
 		dev_err(&pdev->dev, "failed to set low bandwidth\n");
@@ -5251,6 +5249,8 @@ exit_qce_close:
 exit_free_pdata:
 	icc_set_bw(pengine->icc_path, 0, 0);
 	platform_set_drvdata(pdev, NULL);
+exit_put_icc:
+	icc_put(pengine->icc_path);
 exit_kzfree:
 	memset(pengine, 0, ksize((void *)pengine));
 	kfree(pengine);

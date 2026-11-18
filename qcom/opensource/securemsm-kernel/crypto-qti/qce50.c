@@ -6233,8 +6233,8 @@ EXPORT_SYMBOL(qce_f9_req);
 static int __qce_get_device_tree_data(struct platform_device *pdev,
 		struct qce_device *pce_dev)
 {
-	struct resource *resource;
-	int rc = 0, i = 0;
+	struct resource *crypto, *bam;
+	int irq, i;
 
 	pce_dev->is_shared = of_property_read_bool((&pdev->dev)->of_node,
 				"qcom,ce-hw-shared");
@@ -6338,49 +6338,33 @@ static int __qce_get_device_tree_data(struct platform_device *pdev,
 			pce_dev->ce_bam_info.dest_pipe_index[i] + 1;
 	}
 
-	resource = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-							"crypto-base");
-	if (resource) {
-		pce_dev->phy_iobase = resource->start;
-		pce_dev->iobase = ioremap(resource->start,
-					resource_size(resource));
-		if (!pce_dev->iobase) {
-			pr_err("Can not map CRYPTO io memory\n");
-			return -ENOMEM;
-		}
-	} else {
+	crypto = platform_get_resource_byname(pdev, IORESOURCE_MEM, "crypto-base");
+	if (!crypto) {
 		pr_err("CRYPTO HW mem unavailable.\n");
 		return -ENODEV;
 	}
 
-	resource = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-							"crypto-bam-base");
-	if (resource) {
-		pce_dev->bam_mem = resource->start;
-		pce_dev->bam_mem_size = resource_size(resource);
-	} else {
+	bam = platform_get_resource_byname(pdev, IORESOURCE_MEM, "crypto-bam-base");
+	if (!bam) {
 		pr_err("CRYPTO BAM mem unavailable.\n");
-		rc = -ENODEV;
-		goto err_getting_bam_info;
+		return -ENODEV;
 	}
 
-	resource  = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-	if (resource) {
-		pce_dev->ce_bam_info.bam_irq = resource->start;
-	} else {
-		pr_err("CRYPTO BAM IRQ unavailable.\n");
-		goto err_dev;
+	irq = platform_get_irq(pdev, 0);
+	if (irq < 0)
+		return irq;
+
+	pce_dev->iobase = ioremap(crypto->start, resource_size(crypto));
+	if (!pce_dev->iobase) {
+		pr_err("Can not map CRYPTO io memory\n");
+		return -ENOMEM;
 	}
-	return rc;
-err_dev:
-	if (pce_dev->ce_bam_info.bam_iobase)
-		iounmap(pce_dev->ce_bam_info.bam_iobase);
 
-err_getting_bam_info:
-	if (pce_dev->iobase)
-		iounmap(pce_dev->iobase);
-
-	return rc;
+	pce_dev->phy_iobase = crypto->start;
+	pce_dev->bam_mem = bam->start;
+	pce_dev->bam_mem_size = resource_size(bam);
+	pce_dev->ce_bam_info.bam_irq = irq;
+	return 0;
 }
 
 static int __qce_init_clk(struct qce_device *pce_dev)
@@ -6626,10 +6610,9 @@ void *qce_open(struct platform_device *pdev, int *rc)
 	}
 
 	if (pce_dev->enable_s1_smmu) {
-		if (qce_smmu_init(pce_dev)) {
-			*rc = -EIO;
-			goto err_pce_dev;
-		}
+		*rc = qce_smmu_init(pce_dev);
+		if (*rc)
+			goto err_iobase;
 	}
 
 	for (i = 0; i < MAX_QCE_ALLOC_BAM_REQ; i++)
@@ -6649,12 +6632,16 @@ void *qce_open(struct platform_device *pdev, int *rc)
 	pce_dev->iovec_memsize = TOTAL_IOVEC_SPACE_PER_PIPE *
 						MAX_QCE_ALLOC_BAM_REQ * 2;
 	pce_dev->iovec_vmem = kzalloc(pce_dev->iovec_memsize, GFP_KERNEL);
-	if (pce_dev->iovec_vmem == NULL)
+	if (pce_dev->iovec_vmem == NULL) {
+		*rc = -ENOMEM;
 		goto err_mem;
+	}
 
 	pce_dev->dummyreq_in_buf = kzalloc(DUMMY_REQ_DATA_LEN, GFP_KERNEL);
-	if (pce_dev->dummyreq_in_buf == NULL)
+	if (pce_dev->dummyreq_in_buf == NULL) {
+		*rc = -ENOMEM;
 		goto err_mem;
+	}
 
 	*rc = __qce_init_clk(pce_dev);
 	if (*rc)
