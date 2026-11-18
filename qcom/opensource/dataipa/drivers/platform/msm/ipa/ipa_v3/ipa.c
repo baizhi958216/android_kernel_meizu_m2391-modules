@@ -10669,13 +10669,12 @@ static int get_ipa_dts_configuration(struct platform_device *pdev,
 			ipa_drv_res->transport_mem_size);
 
 	/* Get IPA GSI IRQ number */
-	resource = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
-			"gsi-irq");
-	if (!resource) {
-		IPAERR(":get resource failed for gsi-irq\n");
-		return -ENODEV;
+	result = platform_get_irq_byname(pdev, "gsi-irq");
+	if (result < 0) {
+		IPAERR(":get resource failed for gsi-irq: %d\n", result);
+		return result;
 	}
-	ipa_drv_res->transport_irq = resource->start;
+	ipa_drv_res->transport_irq = result;
 	IPADBG(": gsi-irq = %d\n", ipa_drv_res->transport_irq);
 
 	/* Get IPA pipe mem start ofst */
@@ -10692,13 +10691,12 @@ static int get_ipa_dts_configuration(struct platform_device *pdev,
 	}
 
 	/* Get IPA IRQ number */
-	resource = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
-			"ipa-irq");
-	if (!resource) {
-		IPAERR(":get resource failed for ipa-irq\n");
-		return -ENODEV;
+	result = platform_get_irq_byname(pdev, "ipa-irq");
+	if (result < 0) {
+		IPAERR(":get resource failed for ipa-irq: %d\n", result);
+		return result;
 	}
-	ipa_drv_res->ipa_irq = resource->start;
+	ipa_drv_res->ipa_irq = result;
 	IPADBG(":ipa-irq = %d\n", ipa_drv_res->ipa_irq);
 
 	result = of_property_read_u32(pdev->dev.of_node, "qcom,ee",

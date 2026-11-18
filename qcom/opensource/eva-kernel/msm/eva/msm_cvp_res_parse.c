@@ -842,9 +842,6 @@ int cvp_read_platform_resources_from_dt(
 	res->register_base = kres ? kres->start : -1;
 	res->register_size = kres ? (kres->end + 1 - kres->start) : -1;
 
-	kres = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-	res->irq = kres ? kres->start : -1;
-
 	rc = msm_cvp_load_subcache_info(res);
 	if (rc)
 		dprintk(CVP_WARN, "Failed to load subcache info: %d\n", rc);

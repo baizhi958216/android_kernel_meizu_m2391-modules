@@ -2435,13 +2435,13 @@ int cam_soc_util_get_dt_properties(struct cam_hw_soc_info *soc_info)
 			soc_info->dev_name);
 		rc = 0;
 	} else {
-		soc_info->irq_line =
-			platform_get_resource_byname(soc_info->pdev,
-			IORESOURCE_IRQ, soc_info->irq_name);
-		if (!soc_info->irq_line) {
-			CAM_ERR(CAM_UTIL, "no irq resource");
+		int irq = platform_get_irq_byname(soc_info->pdev,
+			soc_info->irq_name);
+
+		if (irq < 0) {
+			CAM_ERR(CAM_UTIL, "no irq resource: %d", irq);
 #ifndef CONFIG_CAM_PRESIL
-			rc = -ENODEV;
+			rc = irq;
 			return rc;
 #else
 			/* Pre-sil for new devices not present on old */
@@ -2451,6 +2451,10 @@ int cam_soc_util_get_dt_properties(struct cam_hw_soc_info *soc_info)
 				soc_info->dev_name, soc_info->irq_name,
 				soc_info->irq_line->start);
 #endif
+		} else {
+			soc_info->irq_res = (struct resource)
+				DEFINE_RES_IRQ_NAMED(irq, soc_info->irq_name);
+			soc_info->irq_line = &soc_info->irq_res;
 		}
 	}
 

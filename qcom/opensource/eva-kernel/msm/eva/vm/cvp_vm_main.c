@@ -101,10 +101,15 @@ static int msm_cvp_vm_init_reg_and_irq(struct iris_hfi_device *device,
 		struct msm_cvp_platform_resources *res)
 {
 	struct cvp_hal_data *hal = NULL;
-	int rc = 0;
+	int irq, rc = 0;
 
 	if (vm_manager.vm_id == VM_TRUSTED)
 		return 0;
+
+	irq = platform_get_irq(res->pdev, 0);
+	if (irq < 0)
+		return irq;
+	res->irq = irq;
 
 	rc = __check_core_registered(device, res->firmware_base,
 			(u8 *)(uintptr_t)res->register_base,

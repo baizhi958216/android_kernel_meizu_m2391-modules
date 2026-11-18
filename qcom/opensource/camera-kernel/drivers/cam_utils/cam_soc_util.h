@@ -221,6 +221,7 @@ struct cam_hw_soc_info {
 	const char                     *irq_name;
 	const char                     *label_name;
 	struct resource                *irq_line;
+	struct resource                 irq_res;
 	void                           *irq_data;
 	const char                     *compatible;
 

@@ -4741,7 +4741,7 @@ err_cleanup:
 	kfree(hdevice->raw_packet);
 	kfree(hdevice);
 exit:
-	return NULL;
+	return ERR_PTR(rc ?: -ENOMEM);
 }
 
 static struct iris_hfi_device *__get_device(u32 device_id,
