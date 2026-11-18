@@ -56,7 +56,7 @@ static int msm_vidc_deinit_irq(struct msm_vidc_core *core)
 
 static int msm_vidc_init_irq(struct msm_vidc_core *core)
 {
-	int rc = 0;
+	int irq, rc;
 	struct msm_vidc_dt *dt;
 
 	if (!core || !core->pdev || !core->dt) {
@@ -64,6 +64,11 @@ static int msm_vidc_init_irq(struct msm_vidc_core *core)
 		return -EINVAL;
 	}
 	dt = core->dt;
+
+	irq = platform_get_irq(core->pdev, 0);
+	if (irq < 0)
+		return irq;
+	dt->irq = irq;
 
 	core->register_base_addr = devm_ioremap(&core->pdev->dev,
 			dt->register_base, dt->register_size);
