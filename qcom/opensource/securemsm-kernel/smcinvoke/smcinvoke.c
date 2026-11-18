@@ -28,6 +28,7 @@
 #include <linux/unaligned.h>
 #include <linux/firmware.h>
 #include <linux/firmware/qcom/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_tzmem.h>
 #include <linux/freezer.h>
 #include <linux/ratelimit.h>
 #include <asm/cacheflush.h>
@@ -353,14 +354,73 @@ static const char thread_name[MAX_THREAD_NUMBER][MAX_CHAR_NAME] = {
 static struct Object adci_rootEnv = Object_NULL;
 
 
+struct smcinvoke_message {
+	struct qtee_shm shm;
+	u64 bridge;
+};
+
+/* Keep the original Kalama transport budget across concurrent invocations. */
+static atomic_long_t smcinvoke_message_bytes = ATOMIC_LONG_INIT(0);
+
+static int smcinvoke_alloc_message(size_t size, struct smcinvoke_message *msg)
+{
+	struct qtee_shm *shm = &msg->shm;
+	int ret = -ENOMEM;
+
+	if (legacy_smc_call)
+		return qtee_shmbridge_allocate_shm(size, shm);
+	if (!size || size > SZ_4M || !PAGE_ALIGNED(size))
+		return -EINVAL;
+	if (atomic_long_add_return(size, &smcinvoke_message_bytes) > SZ_4M)
+		goto release_budget;
+
+	/* The QTEE object transport shares each cacheable message separately. */
+	shm->vaddr = alloc_pages_exact(size, GFP_KERNEL | __GFP_ZERO);
+	if (!shm->vaddr)
+		goto release_budget;
+	shm->size = size;
+	shm->paddr = virt_to_phys(shm->vaddr);
+	ret = qcom_tzmem_shm_bridge_create(shm->paddr, size, &msg->bridge);
+	if (!ret)
+		return 0;
+
+	free_pages_exact(shm->vaddr, size);
+	shm->vaddr = NULL;
+release_budget:
+	atomic_long_sub(size, &smcinvoke_message_bytes);
+	return ret;
+}
+
+static void smcinvoke_free_message(struct smcinvoke_message *msg)
+{
+	struct qtee_shm *shm = &msg->shm;
+	int ret;
+
+	if (!shm->vaddr)
+		return;
+	if (legacy_smc_call) {
+		qtee_shmbridge_free_shm(shm);
+		return;
+	}
+
+	ret = qcom_scm_shm_bridge_delete(msg->bridge);
+	if (ret) {
+		/* Keep the pages and their charge while firmware can access them. */
+		pr_err_ratelimited("cannot retire QTEE message bridge: %d\n", ret);
+		return;
+	}
+	memzero_explicit(shm->vaddr, shm->size);
+	free_pages_exact(shm->vaddr, shm->size);
+	atomic_long_sub(shm->size, &smcinvoke_message_bytes);
+}
+
 static int prepare_send_scm_msg(const uint8_t *in_buf, phys_addr_t in_paddr,
 		size_t in_buf_len,
 		uint8_t *out_buf, phys_addr_t out_paddr,
 		size_t out_buf_len,
 		struct smcinvoke_cmd_req *req,
 		union smcinvoke_arg *args_buf,
-		bool *tz_acked, uint32_t context_type,
-		struct qtee_shm *in_shm, struct qtee_shm *out_shm, bool retry);
+		bool *tz_acked, uint32_t context_type, bool retry);
 
 static void process_piggyback_data(void *buf, size_t buf_size);
 
@@ -532,7 +592,7 @@ static int smcinvoke_release_tz_object(struct qtee_shm *in_shm, struct qtee_shm 
 	ret = prepare_send_scm_msg(in_buf, in_shm->paddr,
 			SMCINVOKE_TZ_MIN_BUF_SIZE, out_buf, out_shm->paddr,
 			SMCINVOKE_TZ_MIN_BUF_SIZE, &req, NULL,
-			&release_handles, context_type, in_shm, out_shm, false);
+			&release_handles, context_type, false);
 	process_piggyback_data(out_buf, SMCINVOKE_TZ_MIN_BUF_SIZE);
 	if (ret) {
 		smci_err_ratelimited("Failed to release object(0x%x), ret:%d\n",
@@ -551,16 +611,16 @@ static int smcinvoke_object_post_process(void)
 	struct smcinvoke_object_release_pending_list *entry = NULL;
 	struct list_head *pos;
 	int ret = 0;
-	struct qtee_shm in_shm = {0}, out_shm = {0};
+	struct smcinvoke_message in_shm = {}, out_shm = {};
 
-	ret = qtee_shmbridge_allocate_shm(SMCINVOKE_TZ_MIN_BUF_SIZE, &in_shm);
+	ret = smcinvoke_alloc_message(SMCINVOKE_TZ_MIN_BUF_SIZE, &in_shm);
 	if (ret) {
 		ret = -ENOMEM;
 		pr_err("shmbridge alloc failed for in msg in object release\n");
 		goto out;
 	}
 
-	ret = qtee_shmbridge_allocate_shm(SMCINVOKE_TZ_MIN_BUF_SIZE, &out_shm);
+	ret = smcinvoke_alloc_message(SMCINVOKE_TZ_MIN_BUF_SIZE, &out_shm);
 	if (ret) {
 		ret = -ENOMEM;
 		pr_err("shmbridge alloc failed for out msg in object release\n");
@@ -581,7 +641,7 @@ static int smcinvoke_object_post_process(void)
 
 		if (entry) {
 			do {
-				ret = smcinvoke_release_tz_object(&in_shm, &out_shm,
+				ret = smcinvoke_release_tz_object(&in_shm.shm, &out_shm.shm,
 					       	entry->data.tzhandle,  entry->data.context_type);
 			} while (-EBUSY == ret);
 		} else {
@@ -591,8 +651,8 @@ static int smcinvoke_object_post_process(void)
 	} while (1);
 
 out:
-	qtee_shmbridge_free_shm(&in_shm);
-	qtee_shmbridge_free_shm(&out_shm);
+	smcinvoke_free_message(&in_shm);
+	smcinvoke_free_message(&out_shm);
 
 	return ret;
 }
@@ -1238,7 +1298,9 @@ static int smcinvoke_create_bridge(struct smcinvoke_mem_obj *mem_obj)
 		return ret;
 	}
 
-	/* The exporter supplies the actual permissions of each VM. */
+	/* Private QSEECom data buffers need read/write access, never execute. */
+	if (nelems == 1 && mem_buf_dma_buf_exclusive_owner(dmabuf))
+		perms_list[0] &= PERM_READ | PERM_WRITE;
 
 	ret = qtee_shmbridge_register(phys, size, vmid_list, perms_list, nelems,
 			tz_perm, &mem_obj->shmbridge_handle);
@@ -1276,19 +1338,20 @@ static int32_t smcinvoke_map_mem_region(void *buf, size_t buf_len)
 {
 	int ret = OBJECT_OK;
 	struct smcinvoke_tzcb_req *msg = buf;
+	/* QTEE's mapping descriptor is a 20-byte wire structure. */
 	struct {
 		uint64_t p_addr;
 		uint64_t len;
 		uint32_t perms;
-	} *ob = NULL;
+	} __packed *ob = NULL;
 	int32_t *oo = NULL;
 	struct smcinvoke_mem_obj *mem_obj = NULL;
 	struct dma_buf_attachment *buf_attach = NULL;
 	struct sg_table *sgt = NULL;
 
+	static_assert(sizeof(*ob) == 20);
 	if (msg->hdr.counts != OBJECT_COUNTS_PACK(0, 1, 1, 1) ||
-	    msg->args[0].b.size < sizeof(*ob) ||
-	    !IS_ALIGNED(msg->args[0].b.offset, __alignof__(*ob))) {
+	    msg->args[0].b.size < sizeof(*ob)) {
 		pr_err("Invalid counts received for mapping mem obj\n");
 		return OBJECT_ERROR_INVALID;
 	}
@@ -1748,9 +1811,7 @@ static int prepare_send_scm_msg(const uint8_t *in_buf, phys_addr_t in_paddr,
 		size_t out_buf_len,
 		struct smcinvoke_cmd_req *req,
 		union smcinvoke_arg *args_buf,
-		bool *tz_acked, uint32_t context_type,
-		struct qtee_shm *in_shm, struct qtee_shm *out_shm,
-		bool retry)
+		bool *tz_acked, uint32_t context_type, bool retry)
 {
 	int ret = 0, cmd, retry_count = 0;
 	u64 response_type = 0;
@@ -2352,7 +2413,7 @@ static long process_invoke_req(struct file *filp, unsigned int cmd,
 	size_t inmsg_size = 0, outmsg_size = SMCINVOKE_TZ_MIN_BUF_SIZE;
 	union  smcinvoke_arg *args_buf = NULL;
 	struct smcinvoke_file_data *tzobj = filp->private_data;
-	struct qtee_shm in_shm = {0}, out_shm = {0};
+	struct smcinvoke_message in_shm = {}, out_shm = {};
 
 	/*
 	 * Hold reference to remote object until invoke op is not
@@ -2429,24 +2490,24 @@ static long process_invoke_req(struct file *filp, unsigned int cmd,
 	}
 
 	inmsg_size = compute_in_msg_size(&req, args_buf);
-	ret = qtee_shmbridge_allocate_shm(inmsg_size, &in_shm);
+	ret = smcinvoke_alloc_message(inmsg_size, &in_shm);
 	if (ret) {
 		ret = -ENOMEM;
 		pr_err("shmbridge alloc failed for in msg in invoke req\n");
 		goto out;
 	}
-	in_msg = in_shm.vaddr;
+	in_msg = in_shm.shm.vaddr;
 
 	mutex_lock(&g_smcinvoke_lock);
 	outmsg_size = PAGE_ALIGN(g_max_cb_buf_size);
 	mutex_unlock(&g_smcinvoke_lock);
-	ret = qtee_shmbridge_allocate_shm(outmsg_size, &out_shm);
+	ret = smcinvoke_alloc_message(outmsg_size, &out_shm);
 	if (ret) {
 		ret = -ENOMEM;
 		pr_err("shmbridge alloc failed for out msg in invoke req\n");
 		goto out;
 	}
-	out_msg = out_shm.vaddr;
+	out_msg = out_shm.shm.vaddr;
 
 	trace_process_invoke_req_tzhandle(tzobj->tzhandle, req.op, req.counts);
 
@@ -2458,10 +2519,9 @@ static long process_invoke_req(struct file *filp, unsigned int cmd,
 		goto out;
 	}
 
-	ret = prepare_send_scm_msg(in_msg, in_shm.paddr, inmsg_size,
-			out_msg, out_shm.paddr, outmsg_size,
-			&req, args_buf, &tz_acked, context_type,
-			&in_shm, &out_shm, true);
+	ret = prepare_send_scm_msg(in_msg, in_shm.shm.paddr, inmsg_size,
+			out_msg, out_shm.shm.paddr, outmsg_size,
+			&req, args_buf, &tz_acked, context_type, true);
 
 	/*
 	 * If scm_call is success, TZ owns responsibility to release
@@ -2510,8 +2570,8 @@ out:
 	release_filp(filp_to_release, OBJECT_COUNTS_MAX_OO);
 	if (ret)
 		release_tzhandles(tzhandles_to_release, OBJECT_COUNTS_MAX_OO);
-	qtee_shmbridge_free_shm(&in_shm);
-	qtee_shmbridge_free_shm(&out_shm);
+	smcinvoke_free_message(&in_shm);
+	smcinvoke_free_message(&out_shm);
 	kfree(args_buf);
 
 	if (ret)
@@ -2638,7 +2698,7 @@ static int smcinvoke_release_filp(struct file *filp)
 	struct smcinvoke_file_data *file_data = filp->private_data;
 	uint32_t tzhandle = 0;
 	struct smcinvoke_object_release_pending_list *entry = NULL;
-	struct qtee_shm in_shm = {0}, out_shm = {0};
+	struct smcinvoke_message in_shm = {}, out_shm = {};
 
 	trace_smcinvoke_release_filp(current->files, filp,
 			file_count(filp), file_data->context_type);
@@ -2656,21 +2716,21 @@ static int smcinvoke_release_filp(struct file *filp)
 		goto out;
 	}
 
-	ret = qtee_shmbridge_allocate_shm(SMCINVOKE_TZ_MIN_BUF_SIZE, &in_shm);
+	ret = smcinvoke_alloc_message(SMCINVOKE_TZ_MIN_BUF_SIZE, &in_shm);
 	if (ret) {
 		pr_err("shmbridge alloc failed for in msg in object release"
 				"with ret %d\n", ret);
 		goto out;
 	}
 
-	ret = qtee_shmbridge_allocate_shm(SMCINVOKE_TZ_MIN_BUF_SIZE, &out_shm);
+	ret = smcinvoke_alloc_message(SMCINVOKE_TZ_MIN_BUF_SIZE, &out_shm);
 	if (ret) {
 		pr_err("shmbridge alloc failed for out msg in object release"
 				"with ret:%d\n", ret);
 		goto out;
 	}
 
-	ret = smcinvoke_release_tz_object(&in_shm, &out_shm,
+	ret = smcinvoke_release_tz_object(&in_shm.shm, &out_shm.shm,
 		tzhandle, file_data->context_type);
 
 	if (-EBUSY == ret) {
@@ -2691,8 +2751,8 @@ static int smcinvoke_release_filp(struct file *filp)
 	}
 
 out:
-	qtee_shmbridge_free_shm(&in_shm);
-	qtee_shmbridge_free_shm(&out_shm);
+	smcinvoke_free_message(&in_shm);
+	smcinvoke_free_message(&out_shm);
 	kfree(filp->private_data);
 	filp->private_data = NULL;
 

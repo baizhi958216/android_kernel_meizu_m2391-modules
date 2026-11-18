@@ -1843,6 +1843,9 @@ static const struct drm_ioctl_desc msm_ioctls[] = {
 
 static const struct file_operations fops = {
 	.owner              = THIS_MODULE,
+#ifdef FOP_UNSIGNED_OFFSET
+	.fop_flags          = FOP_UNSIGNED_OFFSET,
+#endif
 	.open               = drm_open,
 	.release            = msm_release,
 	.unlocked_ioctl     = drm_ioctl,
