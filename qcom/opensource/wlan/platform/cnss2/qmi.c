@@ -5,6 +5,7 @@
  */
 
 #include <linux/module.h>
+#include <linux/version.h>
 #include <linux/soc/qcom/qmi.h>
 
 #include "bus.h"
@@ -337,7 +338,9 @@ static int cnss_wlfw_host_cap_send_sync(struct cnss_plat_data *plat_priv)
 			    plat_priv->supported_link_speed);
 	}
 
-	if (cnss_bus_is_smmu_s1_enabled(plat_priv) &&
+	/* Upstream DMA-IOMMU has no fixed downstream fastmap DDR window. */
+	if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0) &&
+	    cnss_bus_is_smmu_s1_enabled(plat_priv) &&
 	    !cnss_bus_get_iova(plat_priv, &iova_start, &iova_size) &&
 	    !cnss_bus_get_iova_ipa(plat_priv, &iova_ipa_start,
 				   &iova_ipa_size)) {

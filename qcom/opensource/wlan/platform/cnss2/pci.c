@@ -7257,6 +7257,15 @@ static int cnss_pci_register_mhi(struct cnss_pci_data *pci_priv)
 		cnss_pci_set_mhi_event_config_for_one_msi();
 	}
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 2, 0))
+	/*
+	 * Upstream DMA-IOMMU does not allocate from the downstream fastmap
+	 * pool. MHI contexts may therefore lie outside smmu_iova_start/len.
+	 * Advertise the device DMA aperture, as the upstream ath12k host does.
+	 */
+	mhi_ctrl->iova_start = 0;
+	mhi_ctrl->iova_stop = pci_priv->dma_bit_mask;
+#else
 	if (pci_priv->smmu_s1_enable) {
 		mhi_ctrl->iova_start = pci_priv->smmu_iova_start;
 		mhi_ctrl->iova_stop = pci_priv->smmu_iova_start +
@@ -7265,6 +7274,7 @@ static int cnss_pci_register_mhi(struct cnss_pci_data *pci_priv)
 		mhi_ctrl->iova_start = 0;
 		mhi_ctrl->iova_stop = pci_priv->dma_bit_mask;
 	}
+#endif
 
 	mhi_ctrl->status_cb = cnss_mhi_notify_status;
 	mhi_ctrl->runtime_get = cnss_mhi_pm_runtime_get;
