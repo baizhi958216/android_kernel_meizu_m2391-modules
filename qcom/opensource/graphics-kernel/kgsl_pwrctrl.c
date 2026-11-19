@@ -1404,6 +1404,7 @@ static int kgsl_pwtctrl_enable_gx_gdsc(struct kgsl_device *device)
 void kgsl_pwrctrl_disable_cx_gdsc(struct kgsl_device *device)
 {
 	struct regulator *regulator = device->pwrctrl.cx_gdsc;
+	int ret;
 
 	if (IS_ERR_OR_NULL(regulator))
 		return;
@@ -1411,7 +1412,19 @@ void kgsl_pwrctrl_disable_cx_gdsc(struct kgsl_device *device)
 	kgsl_mmu_send_tlb_hint(&device->mmu, true);
 	reinit_completion(&device->pwrctrl.cx_gdsc_gate);
 	device->pwrctrl.cx_gdsc_wait = true;
-	regulator_disable(regulator);
+	ret = regulator_disable(regulator);
+	if (ret) {
+		dev_err(device->dev, "Failed to disable CX regulator: %d\n", ret);
+		return;
+	}
+
+	/* The upstream regulator core completes this vote synchronously.
+	 * Other consumers (notably the SMMU) can keep CX on, in which case
+	 * no REGULATOR_EVENT_DISABLE notification is sent. Do not wait for
+	 * their votes to disappear before the GPU can acquire its next one.
+	 */
+	device->pwrctrl.cx_gdsc_wait = false;
+	complete_all(&device->pwrctrl.cx_gdsc_gate);
 }
 
 static void kgsl_pwrctrl_disable_gx_gdsc(struct kgsl_device *device)

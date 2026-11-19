@@ -2349,6 +2349,36 @@ put_device:
 	return ret;
 }
 
+/* KGSL uses child context-bank devices, so their IOMMU PM links do not
+ * cover GPU execution. Keep the actual SMMU active with the GPU: runtime
+ * resume restores the default TTBR0 and must not race CP table switches.
+ */
+static int kgsl_iommu_link_supplier(struct kgsl_device *device,
+		struct device_node *parent)
+{
+	struct device_node *node, *supplier_node;
+	struct platform_device *supplier;
+	struct device_link *link;
+
+	node = of_get_child_by_name(parent, "gfx3d_user");
+	if (!node)
+		return -ENODEV;
+	supplier_node = of_parse_phandle(node, "iommus", 0);
+	of_node_put(node);
+	if (!supplier_node)
+		return -ENODEV;
+	supplier = of_find_device_by_node(supplier_node);
+	of_node_put(supplier_node);
+	if (!supplier)
+		return -EPROBE_DEFER;
+
+	link = device_link_add(&device->pdev->dev, &supplier->dev,
+		DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE |
+		DL_FLAG_AUTOREMOVE_CONSUMER);
+	platform_device_put(supplier);
+	return link ? 0 : -EINVAL;
+}
+
 static int iommu_probe_user_context(struct kgsl_device *device,
 		struct device_node *node)
 {
@@ -2528,6 +2558,10 @@ int kgsl_iommu_bind(struct kgsl_device *device, struct platform_device *pdev)
 
 	/* Peek at the phandle to set up configuration */
 	kgsl_iommu_check_config(mmu, node);
+
+	ret = kgsl_iommu_link_supplier(device, node);
+	if (ret)
+		goto err;
 
 	/* Probe the default pagetable */
 	ret = iommu_probe_user_context(device, node);
