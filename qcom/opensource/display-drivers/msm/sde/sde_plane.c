@@ -4925,7 +4925,35 @@ static void sde_plane_early_unregister(struct drm_plane *plane)
 	_sde_plane_destroy_debugfs(plane);
 }
 
+static bool sde_plane_format_mod_supported(struct drm_plane *plane,
+		u32 format, u64 modifier)
+{
+	struct sde_plane *psde = to_sde_plane(plane);
+	const struct sde_format_extended *entry = psde->is_virtual ?
+		psde->pipe_sblk->virt_format_list : psde->pipe_sblk->format_list;
+
+	for (; entry->fourcc_format; entry++)
+		if (entry->fourcc_format == format && entry->modifier == modifier)
+			return true;
+
+	return false;
+}
+
+/* The per-pipe catalog filters the combinations exposed in IN_FORMATS. */
+static const u64 sde_plane_modifiers[] = {
+	DRM_FORMAT_MOD_LINEAR,
+	DRM_FORMAT_MOD_QCOM_COMPRESSED,
+	DRM_FORMAT_MOD_QCOM_ALPHA_SWAP,
+	DRM_FORMAT_MOD_QCOM_DX,
+	DRM_FORMAT_MOD_QCOM_DX | DRM_FORMAT_MOD_QCOM_TIGHT,
+	DRM_FORMAT_MOD_QCOM_DX | DRM_FORMAT_MOD_QCOM_COMPRESSED,
+	DRM_FORMAT_MOD_QCOM_DX | DRM_FORMAT_MOD_QCOM_TIGHT |
+		DRM_FORMAT_MOD_QCOM_COMPRESSED,
+	DRM_FORMAT_MOD_INVALID,
+};
+
 static const struct drm_plane_funcs sde_plane_funcs = {
+		.format_mod_supported = sde_plane_format_mod_supported,
 		.update_plane = drm_atomic_helper_update_plane,
 		.disable_plane = drm_atomic_helper_disable_plane,
 		.destroy = sde_plane_destroy,
@@ -5062,7 +5090,7 @@ struct drm_plane *sde_plane_init(struct drm_device *dev,
 		type = DRM_PLANE_TYPE_OVERLAY;
 	ret = drm_universal_plane_init(dev, plane, 0xff, &sde_plane_funcs,
 				psde->formats, psde->nformats,
-				NULL, type, NULL);
+				sde_plane_modifiers, type, NULL);
 	if (ret)
 		goto clean_sspp;
 
