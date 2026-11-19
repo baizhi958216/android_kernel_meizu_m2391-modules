@@ -152,7 +152,8 @@ int ptt_sock_send_msg_to_app(tAniHdr *wmsg, int radio, int src_mod, int pid)
 	}
 	wnl = (tAniNlHdr *) nlh;
 	wnl->radio = radio;
-	memcpy(&wnl->wmsg, wmsg, wmsg_length);
+	/* The message extends past the fixed ANI header into the skb payload. */
+	memcpy((u8 *)nlmsg_data(nlh) + sizeof(wnl->radio), wmsg, wmsg_length);
 #ifdef PTT_SOCK_DEBUG_VERBOSE
 	ptt_sock_dump_buf((const unsigned char *)skb->data, skb->len);
 #endif

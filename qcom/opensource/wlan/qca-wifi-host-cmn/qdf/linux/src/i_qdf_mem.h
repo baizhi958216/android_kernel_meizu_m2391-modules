@@ -297,6 +297,21 @@ static inline int
 __qdf_iommu_domain_get_attr(__qdf_iommu_domain_t *domain,
 			    enum qdf_iommu_attr attr, void *data)
 {
+	if (!domain || !data)
+		return -EINVAL;
+
+	/* DMA-IOMMU domains still translate without downstream QCOM helpers. */
+	if (attr == QDF_DOMAIN_ATTR_S1_BYPASS) {
+		if (domain->type == IOMMU_DOMAIN_IDENTITY) {
+			*(int *)data = 1;
+			return 0;
+		}
+		if (domain->type & __IOMMU_DOMAIN_PAGING) {
+			*(int *)data = 0;
+			return 0;
+		}
+	}
+
 	return -ENOTSUPP;
 }
 #endif /* CONFIG_QCOM_IOMMU_UTIL */

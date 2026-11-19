@@ -1436,7 +1436,7 @@ struct scan_chan_list_params {
 	uint16_t nallchans;
 	bool append;
 	bool max_bw_support_present;
-	struct channel_param ch_param[1];
+	struct channel_param ch_param[];
 };
 
 #ifdef QCA_SUPPORT_AGILE_DFS

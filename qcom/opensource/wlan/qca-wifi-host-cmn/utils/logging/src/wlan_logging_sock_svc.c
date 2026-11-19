@@ -725,7 +725,8 @@ static int send_filled_buffers_to_user(void)
 
 		wnl = (tAniNlHdr *) nlh;
 		wnl->radio = plog_msg->radio;
-		memcpy(&wnl->wmsg, plog_msg->logbuf,
+		/* The log payload extends beyond the fixed ANI message header. */
+		memcpy((u8 *)nlmsg_data(nlh) + sizeof(wnl->radio), plog_msg->logbuf,
 		       plog_msg->filled_length + sizeof(tAniHdr));
 
 		spin_lock_irqsave(&gwlan_logging.spin_lock, flags);

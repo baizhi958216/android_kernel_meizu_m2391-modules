@@ -2171,7 +2171,7 @@ typedef struct sSirUpdateChan {
 	uint8_t vht_24_en;
 	bool he_en;
 	bool eht_en;
-	tSirUpdateChanParam chanParam[1];
+	tSirUpdateChanParam chanParam[];
 } tSirUpdateChanList, *tpSirUpdateChanList;
 
 typedef enum eSirAddonPsReq {
@@ -3128,7 +3128,7 @@ struct wifi_peer_info {
 		uint32_t power_saving;
 		uint32_t num_rate;
 	};
-	struct wifi_rate_stat rate_stats[0];
+	struct wifi_rate_stat rate_stats[];
 };
 
 /**
