@@ -265,6 +265,9 @@ static int32_t cam_sensor_handle_random_write(
 	uint32_t *cmd_length_in_bytes, int32_t *offset,
 	struct list_head **list, uint32_t payload_count)
 {
+	/* Use the checked variable payload without changing the legacy UAPI size. */
+	struct i2c_random_wr_payload *payload = (void *)cam_cmd_i2c_random_wr +
+		offsetof(struct cam_cmd_i2c_random_wr, random_wr_payload);
 	struct i2c_settings_list  *i2c_list;
 	int32_t rc = 0, cnt;
 
@@ -287,9 +290,9 @@ static int32_t cam_sensor_handle_random_write(
 
 	for (cnt = 0; cnt < payload_count; cnt++) {
 		i2c_list->i2c_settings.reg_setting[cnt].reg_addr =
-			cam_cmd_i2c_random_wr->random_wr_payload[cnt].reg_addr;
+			payload[cnt].reg_addr;
 		i2c_list->i2c_settings.reg_setting[cnt].reg_data =
-			cam_cmd_i2c_random_wr->random_wr_payload[cnt].reg_data;
+			payload[cnt].reg_data;
 		i2c_list->i2c_settings.reg_setting[cnt].data_mask = 0;
 	}
 	*offset = cnt;
@@ -304,6 +307,9 @@ static int32_t cam_sensor_handle_continuous_write(
 	uint32_t *cmd_length_in_bytes, int32_t *offset,
 	struct list_head **list, uint32_t payload_count)
 {
+	/* Use the checked variable payload without changing the legacy UAPI size. */
+	struct cam_cmd_read *payload = (void *)cam_cmd_i2c_continuous_wr +
+		offsetof(struct cam_cmd_i2c_continuous_wr, data_read);
 	struct i2c_settings_list *i2c_list;
 	int32_t rc = 0, cnt;
 
@@ -339,7 +345,7 @@ static int32_t cam_sensor_handle_continuous_write(
 		i2c_list->i2c_settings.reg_setting[cnt].reg_addr =
 			cam_cmd_i2c_continuous_wr->reg_addr;
 		i2c_list->i2c_settings.reg_setting[cnt].reg_data =
-			cam_cmd_i2c_continuous_wr->data_read[cnt].reg_data;
+			payload[cnt].reg_data;
 		i2c_list->i2c_settings.reg_setting[cnt].data_mask = 0;
 	}
 	*offset = cnt;
@@ -456,6 +462,9 @@ static int32_t cam_sensor_handle_random_read(
 	struct list_head **list,
 	struct cam_buf_io_cfg *io_cfg, uint32_t payload_count)
 {
+	/* Use the checked variable payload without changing the legacy UAPI size. */
+	struct cam_cmd_read *payload = (void *)cmd_i2c_random_rd +
+		offsetof(struct cam_cmd_i2c_random_rd, data_read);
 	struct i2c_settings_list *i2c_list;
 	int32_t rc = 0, cnt = 0;
 
@@ -486,7 +495,7 @@ static int32_t cam_sensor_handle_random_read(
 
 		for (cnt = 0; cnt < payload_count; cnt++) {
 			i2c_list->i2c_settings.reg_setting[cnt].reg_addr =
-				cmd_i2c_random_rd->data_read[cnt].reg_data;
+				payload[cnt].reg_data;
 		}
 		*offset = cnt;
 		*list = &(i2c_list->list);
@@ -1377,6 +1386,15 @@ static int32_t cam_sensor_validate(void *ptr, size_t remain_buf)
 			remain_buf, validate_size);
 		return -EINVAL;
 	}
+	if (cmm_hdr->cmd_type == CAMERA_SENSOR_CMD_TYPE_PWR_UP ||
+		cmm_hdr->cmd_type == CAMERA_SENSOR_CMD_TYPE_PWR_DOWN) {
+		struct cam_cmd_power *power = ptr;
+
+		if (power->count > (remain_buf -
+			offsetof(struct cam_cmd_power, power_settings)) /
+			sizeof(struct cam_power_settings))
+			return -EINVAL;
+	}
 	return 0;
 }
 
@@ -1440,6 +1458,9 @@ int32_t cam_sensor_update_power_settings(void *cmd_buf,
 			CAMERA_SENSOR_CMD_TYPE_PWR_UP) {
 			struct cam_cmd_power *pwr_up_cmd =
 				(struct cam_cmd_power *)ptr;
+			/* The UAPI keeps a one-element tail; the packet carries count entries. */
+			struct cam_power_settings *settings = ptr +
+				offsetof(struct cam_cmd_power, power_settings);
 
 			if ((U16_MAX - power_info->power_setting_size) <
 				pwr_up_cmd->count) {
@@ -1466,9 +1487,9 @@ int32_t cam_sensor_update_power_settings(void *cmd_buf,
 
 			for (i = 0; i < pwr_up_cmd->count; i++, pwr_up++) {
 				power_info->power_setting[pwr_up].seq_type =
-				pwr_up_cmd->power_settings[i].power_seq_type;
+				settings[i].power_seq_type;
 				power_info->power_setting[pwr_up].config_val =
-				pwr_up_cmd->power_settings[i].config_val_low;
+				settings[i].config_val_low;
 				power_info->power_setting[pwr_up].delay = 0;
 				if (i) {
 					scr = scr +
@@ -1546,6 +1567,8 @@ int32_t cam_sensor_update_power_settings(void *cmd_buf,
 			CAMERA_SENSOR_CMD_TYPE_PWR_DOWN) {
 			struct cam_cmd_power *pwr_dwn_cmd  =
 				(struct cam_cmd_power *)ptr;
+			struct cam_power_settings *settings = ptr +
+				offsetof(struct cam_cmd_power, power_settings);
 
 			scr = ptr + sizeof(struct cam_cmd_power);
 			tot_size = tot_size + sizeof(struct cam_cmd_power);
@@ -1575,9 +1598,9 @@ int32_t cam_sensor_update_power_settings(void *cmd_buf,
 				pwr_settings =
 				&power_info->power_down_setting[pwr_down];
 				pwr_settings->seq_type =
-				pwr_dwn_cmd->power_settings[i].power_seq_type;
+				settings[i].power_seq_type;
 				pwr_settings->config_val =
-				pwr_dwn_cmd->power_settings[i].config_val_low;
+				settings[i].config_val_low;
 				power_info->power_down_setting[pwr_down].delay
 					= 0;
 				if (i) {

@@ -447,6 +447,7 @@ static int32_t cam_eeprom_parse_memory_map(
 		(struct common_header *)cmd_buf;
 	uint16_t                           cmd_length_in_bytes = 0;
 	struct cam_cmd_i2c_random_wr      *i2c_random_wr = NULL;
+	struct i2c_random_wr_payload     *random_payload;
 	struct cam_cmd_i2c_continuous_rd  *i2c_cont_rd = NULL;
 	struct cam_cmd_conditional_wait   *i2c_poll = NULL;
 	struct cam_cmd_unconditional_wait *i2c_uncond_wait = NULL;
@@ -471,6 +472,8 @@ static int32_t cam_eeprom_parse_memory_map(
 	case CAMERA_SENSOR_CMD_TYPE_I2C_RNDM_WR:
 		i2c_random_wr = (struct cam_cmd_i2c_random_wr *)cmd_buf;
 		payload_count = i2c_random_wr->header.count;
+		random_payload = (void *)i2c_random_wr +
+			offsetof(struct cam_cmd_i2c_random_wr, random_wr_payload);
 
 		if (payload_count == 0 ||
 		    payload_count >= MSM_EEPROM_MAX_MEM_MAP_CNT ||
@@ -491,11 +494,11 @@ static int32_t cam_eeprom_parse_memory_map(
 		for (cnt = 0; cnt < (payload_count);
 			cnt++) {
 			map[*num_map + cnt].page.addr =
-				i2c_random_wr->random_wr_payload[cnt].reg_addr;
+				random_payload[cnt].reg_addr;
 			map[*num_map + cnt].page.addr_type =
 				i2c_random_wr->header.addr_type;
 			map[*num_map + cnt].page.data =
-				i2c_random_wr->random_wr_payload[cnt].reg_data;
+				random_payload[cnt].reg_data;
 			map[*num_map + cnt].page.data_type =
 				i2c_random_wr->header.data_type;
 			map[*num_map + cnt].page.valid_size = 1;
