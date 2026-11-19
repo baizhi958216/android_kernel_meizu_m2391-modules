@@ -2747,6 +2747,13 @@ static int qcedev_suspend(struct platform_device *pdev, pm_message_t state)
 	struct qcedev_control *podev;
 	int ret;
 
+	/* Context-bank drvdata is context_bank_info, not qcedev_control.
+	 * The parent owns the CE clocks and BAM interrupt state.
+	 */
+	if (of_device_is_compatible(pdev->dev.of_node,
+				"qcom,qcedev,context-bank"))
+		return 0;
+
 	podev = platform_get_drvdata(pdev);
 
 	if (!podev)
@@ -2774,6 +2781,13 @@ static int qcedev_resume(struct platform_device *pdev)
 {
 	struct qcedev_control *podev;
 	int ret;
+
+	/* Context-bank drvdata is context_bank_info, not qcedev_control.
+	 * The parent owns the CE clocks and BAM interrupt state.
+	 */
+	if (of_device_is_compatible(pdev->dev.of_node,
+				"qcom,qcedev,context-bank"))
+		return 0;
 
 	podev = platform_get_drvdata(pdev);
 
