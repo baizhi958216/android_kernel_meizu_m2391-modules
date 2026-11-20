@@ -2150,6 +2150,7 @@ static int cam_smmu_map_buffer_validate(struct dma_buf *buf,
 	struct sg_table *table = NULL;
 	struct iommu_domain *domain;
 	ssize_t size = 0;
+	size_t map_len;
 	unsigned long iova = 0;
 	int rc = 0;
 	struct timespec64 ts1, ts2;
@@ -2194,12 +2195,22 @@ static int cam_smmu_map_buffer_validate(struct dma_buf *buf,
 			goto err_unmap_sg;
 		}
 
-		rc = cam_smmu_alloc_iova(*len_ptr, iommu_cb_set.cb_info[idx].handle, &iova);
+		/* Map the complete, page-aligned dma-buf scatterlist, not the
+		 * caller's unaligned payload length. Reserve and validate that
+		 * same extent so the mapping cannot exceed the IOVA allocation.
+		 */
+		map_len = buf->size;
+		if (!*len_ptr || *len_ptr > map_len) {
+			rc = -EINVAL;
+			goto err_unmap_sg;
+		}
+
+		rc = cam_smmu_alloc_iova(map_len, iommu_cb_set.cb_info[idx].handle, &iova);
 
 		if (rc < 0) {
 			CAM_ERR(CAM_SMMU,
 				"IOVA alloc failed for shared memory, size=%zu, idx=%d, handle=%d",
-				*len_ptr, idx,
+				map_len, idx,
 				iommu_cb_set.cb_info[idx].handle);
 			goto err_unmap_sg;
 		}
@@ -2211,11 +2222,11 @@ static int cam_smmu_map_buffer_validate(struct dma_buf *buf,
 		size = iommu_map_sg(domain, iova, table->sgl, table->orig_nents,
 				prot, GFP_KERNEL);
 
-		if (size < 0 || size != *len_ptr) {
+		if (size < 0 || size != map_len) {
 			rc = size < 0 ? size : -EIO;
 			if (size > 0)
 				iommu_unmap(domain, iova, size);
-			cam_smmu_free_iova(iova, *len_ptr, iommu_cb_set.cb_info[idx].handle);
+			cam_smmu_free_iova(iova, map_len, iommu_cb_set.cb_info[idx].handle);
 			goto err_unmap_sg;
 		} else {
 			CAM_DBG(CAM_SMMU,
