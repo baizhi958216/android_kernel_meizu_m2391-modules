@@ -5289,6 +5289,7 @@ static int cam_icp_packet_generic_blob_handler(void *user_data,
 	struct cam_icp_clk_bw_request *soc_req;
 	struct cam_icp_clk_bw_request *clk_info;
 	struct cam_icp_clk_bw_request_v2 *soc_req_v2;
+	struct cam_axi_per_path_bw_vote *paths;
 	struct cam_icp_clk_bw_req_internal_v2 *clk_info_v2;
 	struct cam_cmd_mem_regions *cmd_mem_regions;
 	struct icp_cmd_generic_blob *blob;
@@ -5361,7 +5362,8 @@ static int cam_icp_packet_generic_blob_handler(void *user_data,
 		}
 
 		soc_req_v2 = (struct cam_icp_clk_bw_request_v2 *)blob_data;
-		if (soc_req_v2->num_paths > CAM_ICP_MAX_PER_PATH_VOTES) {
+		if (!soc_req_v2->num_paths ||
+		    soc_req_v2->num_paths > CAM_ICP_MAX_PER_PATH_VOTES) {
 			CAM_ERR(CAM_PERF, "Invalid num paths: %d",
 				soc_req_v2->num_paths);
 			return -EINVAL;
@@ -5396,16 +5398,19 @@ static int cam_icp_packet_generic_blob_handler(void *user_data,
 		clk_info_v2->rt_flag = soc_req_v2->rt_flag;
 		clk_info_v2->num_paths = soc_req_v2->num_paths;
 
+		/* The complete variable tail was validated above. */
+		paths = (void *)((u8 *)soc_req_v2 +
+			offsetof(typeof(*soc_req_v2), axi_path));
 		for (i = 0; i < soc_req_v2->num_paths; i++) {
-			clk_info_v2->axi_path[i].usage_data = soc_req_v2->axi_path[i].usage_data;
+			clk_info_v2->axi_path[i].usage_data = paths[i].usage_data;
 			clk_info_v2->axi_path[i].transac_type =
-				soc_req_v2->axi_path[i].transac_type;
+				paths[i].transac_type;
 			clk_info_v2->axi_path[i].path_data_type =
-				soc_req_v2->axi_path[i].path_data_type;
+				paths[i].path_data_type;
 			clk_info_v2->axi_path[i].vote_level = 0;
-			clk_info_v2->axi_path[i].camnoc_bw = soc_req_v2->axi_path[i].camnoc_bw;
-			clk_info_v2->axi_path[i].mnoc_ab_bw = soc_req_v2->axi_path[i].mnoc_ab_bw;
-			clk_info_v2->axi_path[i].mnoc_ib_bw = soc_req_v2->axi_path[i].mnoc_ib_bw;
+			clk_info_v2->axi_path[i].camnoc_bw = paths[i].camnoc_bw;
+			clk_info_v2->axi_path[i].mnoc_ab_bw = paths[i].mnoc_ab_bw;
+			clk_info_v2->axi_path[i].mnoc_ib_bw = paths[i].mnoc_ib_bw;
 		}
 
 		/* Use v1 structure for clk fields */

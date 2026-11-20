@@ -7219,9 +7219,7 @@ int cam_tfe_hw_mgr_init(struct cam_hw_mgr_intf *hw_mgr_intf, int *iommu_hdl)
 		}
 
 		g_tfe_hw_mgr.ctx_pool[i].cdm_cmd =
-			kzalloc(((sizeof(struct cam_cdm_bl_request)) +
-				((CAM_ISP_CTX_CFG_MAX - 1) *
-				 sizeof(struct cam_cdm_bl_cmd))), GFP_KERNEL);
+			kzalloc(struct_size(g_tfe_hw_mgr.ctx_pool[i].cdm_cmd, cmd, CAM_ISP_CTX_CFG_MAX), GFP_KERNEL);
 		if (!g_tfe_hw_mgr.ctx_pool[i].cdm_cmd) {
 			rc = -ENOMEM;
 			CAM_ERR(CAM_ISP, "Allocation Failed for cdm command");

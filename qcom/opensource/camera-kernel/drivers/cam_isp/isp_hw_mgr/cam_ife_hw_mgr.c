@@ -29,6 +29,15 @@
 #include "cam_common_util.h"
 #include "cam_presil_hw_access.h"
 
+/*
+ * Legacy UAPI blobs use fixed one-element tails. Callers validate the complete
+ * payload before these arrays are accessed; retain the userspace ABI while
+ * addressing the validated variable-length storage.
+ */
+#define CAM_ISP_UAPI_TAIL(ptr, member) \
+	((typeof(&(ptr)->member[0]))((u8 *)(ptr) + \
+		offsetof(typeof(*(ptr)), member)))
+
 #define CAM_IFE_SAFE_DISABLE 0
 #define CAM_IFE_SAFE_ENABLE 1
 #define SMMU_SE_IFE 0
@@ -502,9 +511,7 @@ static inline int cam_ife_mgr_allocate_cdm_cmd(
 	if (is_sfe_en)
 		cfg_max = CAM_ISP_SFE_CTX_CFG_MAX;
 
-	*cdm_cmd = kzalloc(((sizeof(struct cam_cdm_bl_request)) +
-		((cfg_max - 1) *
-		sizeof(struct cam_cdm_bl_cmd))), GFP_KERNEL);
+	*cdm_cmd = kzalloc(struct_size(*cdm_cmd, cmd, cfg_max), GFP_KERNEL);
 
 	if (!(*cdm_cmd)) {
 		CAM_ERR(CAM_ISP, "Failed to allocate cdm bl memory");
@@ -4043,7 +4050,7 @@ static int cam_ife_mgr_check_and_update_fe_v2(
 	for (i = 0; i < acquire_hw_info->num_inputs; i++) {
 
 		if (((uint8_t *)in_port +
-			sizeof(struct cam_isp_in_port_info)) >
+			sizeof(struct cam_isp_in_port_info_v2)) >
 			((uint8_t *)acquire_hw_info +
 			acquire_info_size)) {
 			CAM_ERR(CAM_ISP, "Invalid size");
@@ -4061,6 +4068,10 @@ static int cam_ife_mgr_check_and_update_fe_v2(
 		in_port_length = sizeof(struct cam_isp_in_port_info_v2) +
 			(in_port->num_out_res - 1) *
 			sizeof(struct cam_isp_out_port_info_v2);
+		if (in_port_length > (uint8_t *)acquire_hw_info +
+		    acquire_info_size - (uint8_t *)in_port)
+			return -EINVAL;
+
 		total_in_port_length += in_port_length;
 
 		if (total_in_port_length > acquire_hw_info->input_info_size) {
@@ -4116,6 +4127,14 @@ static int cam_ife_mgr_check_and_update_fe(
 	uint32_t major_ver = 0, minor_ver = 0;
 
 	if (acquire_hw_info == NULL || ife_ctx == NULL)
+		return -EINVAL;
+
+	if (acquire_info_size < offsetof(typeof(*acquire_hw_info), data) ||
+	    acquire_hw_info->input_info_offset > acquire_info_size -
+		    offsetof(typeof(*acquire_hw_info), data) ||
+	    acquire_hw_info->input_info_size > acquire_info_size -
+		    offsetof(typeof(*acquire_hw_info), data) -
+		    acquire_hw_info->input_info_offset)
 		return -EINVAL;
 
 	major_ver = (acquire_hw_info->common_info_version >> 12) & 0xF;
@@ -5011,6 +5030,7 @@ static int cam_ife_mgr_acquire_get_unified_structure_v2(
 	struct cam_isp_in_port_generic_info *in_port)
 {
 	struct cam_isp_in_port_info_v2 *in = NULL;
+	struct cam_isp_out_port_info_v2 *out;
 	uint32_t in_port_length = 0;
 	int32_t rc = 0, i;
 
@@ -5099,14 +5119,19 @@ static int cam_ife_mgr_acquire_get_unified_structure_v2(
 		goto err;
 	}
 
+	/*
+	 * Bounds were checked by cam_ife_mgr_check_and_update_fe_v2().
+	 * Address the variable tail without changing the legacy UAPI layout.
+	 */
+	out = (void *)((u8 *)in + offsetof(typeof(*in), data));
 	for (i = 0; i < in_port->num_out_res; i++) {
-		in_port->data[i].res_type     = in->data[i].res_type;
-		in_port->data[i].format       = in->data[i].format;
-		in_port->data[i].width        = in->data[i].width;
-		in_port->data[i].height       = in->data[i].height;
-		in_port->data[i].comp_grp_id  = in->data[i].comp_grp_id;
-		in_port->data[i].split_point  = in->data[i].split_point;
-		in_port->data[i].secure_mode  = in->data[i].secure_mode;
+		in_port->data[i].res_type     = out[i].res_type;
+		in_port->data[i].format       = out[i].format;
+		in_port->data[i].width        = out[i].width;
+		in_port->data[i].height       = out[i].height;
+		in_port->data[i].comp_grp_id  = out[i].comp_grp_id;
+		in_port->data[i].split_point  = out[i].split_point;
+		in_port->data[i].secure_mode  = out[i].secure_mode;
 	}
 
 	return 0;
@@ -6196,9 +6221,9 @@ static int cam_isp_blob_bw_update(
 					continue;
 
 				cam_bw_bps =
-					bw_config->rdi_vote[idx].cam_bw_bps;
+					CAM_ISP_UAPI_TAIL(bw_config, rdi_vote)[idx].cam_bw_bps;
 				ext_bw_bps =
-					bw_config->rdi_vote[idx].ext_bw_bps;
+					CAM_ISP_UAPI_TAIL(bw_config, rdi_vote)[idx].ext_bw_bps;
 			} else {
 				if (hw_mgr_res->hw_res[i]) {
 					CAM_ERR(CAM_ISP, "Invalid res_id %u",
@@ -7651,7 +7676,7 @@ static int cam_isp_blob_ubwc_update(
 
 		kmd_buf_info = blob_info->kmd_buf_info;
 		for (i = 0; i < ubwc_config->num_ports; i++) {
-			ubwc_plane_cfg = &ubwc_config->ubwc_plane_cfg[i][0];
+			ubwc_plane_cfg = &CAM_ISP_UAPI_TAIL(ubwc_config, ubwc_plane_cfg)[i][0];
 			res_id_out = ubwc_plane_cfg->port_type & 0xFF;
 
 			CAM_DBG(CAM_ISP, "UBWC config idx %d, port_type=%d", i,
@@ -7809,7 +7834,7 @@ static int cam_isp_blob_ubwc_update_v2(
 
 	kmd_buf_info = blob_info->kmd_buf_info;
 	for (i = 0; i < ubwc_config->num_ports; i++) {
-		ubwc_plane_cfg = &ubwc_config->ubwc_plane_cfg[i][0];
+		ubwc_plane_cfg = &CAM_ISP_UAPI_TAIL(ubwc_config, ubwc_plane_cfg)[i][0];
 		res_id_out = ubwc_plane_cfg->port_type & 0xFF;
 
 		CAM_DBG(CAM_ISP, "UBWC config idx %d, port_type=%d", i,
@@ -7943,7 +7968,7 @@ static int cam_isp_blob_ife_scratch_buf_update(
 	ife_scratch_config = ctx->scratch_buf_info.ife_scratch_config;
 
 	for (i = 0; i < scratch_config->num_ports; i++) {
-		buffer_info = &scratch_config->port_scratch_cfg[i];
+		buffer_info = &CAM_ISP_UAPI_TAIL(scratch_config, port_scratch_cfg)[i];
 		if (!cam_ife_hw_mgr_is_ife_out_port(buffer_info->resource_type))
 			continue;
 
@@ -7993,7 +8018,7 @@ static int cam_isp_blob_sfe_scratch_buf_update(
 	ife_hw_mgr = ctx->hw_mgr;
 
 	for (i = 0; i < scratch_config->num_ports; i++) {
-		buffer_info = &scratch_config->port_scratch_cfg[i];
+		buffer_info = &CAM_ISP_UAPI_TAIL(scratch_config, port_scratch_cfg)[i];
 		if (!cam_ife_hw_mgr_is_sfe_out_port(buffer_info->resource_type))
 			continue;
 
@@ -8164,7 +8189,7 @@ static int cam_isp_blob_sfe_exp_order_update(
 	 */
 	exp_order_max = exp_config->num_ports - 1;
 	for (i = 0; i < exp_config->num_ports; i++) {
-		order_cfg = &exp_config->wm_config[i];
+		order_cfg = &CAM_ISP_UAPI_TAIL(exp_config, wm_config)[i];
 
 		rc = cam_ife_hw_mgr_is_sfe_rdi_for_fetch(
 			order_cfg->res_type);
@@ -8419,7 +8444,7 @@ static int cam_isp_blob_hfr_update(
 
 	kmd_buf_info = blob_info->kmd_buf_info;
 	for (i = 0; i < hfr_config->num_ports; i++) {
-		port_hfr_config = &hfr_config->port_hfr_config[i];
+		port_hfr_config = &CAM_ISP_UAPI_TAIL(hfr_config, port_hfr_config)[i];
 		res_id_out = port_hfr_config->resource_type & 0xFF;
 
 		CAM_DBG(CAM_ISP, "type %d hfr config idx %d, type=%d",
@@ -8824,7 +8849,7 @@ static int cam_isp_blob_ife_clock_update(
 				CAM_ISP_HW_VFE_IN_RD) && (hw_mgr_res->res_id
 				<= CAM_ISP_HW_VFE_IN_RDI3))
 				for (j = 0; j < clock_config->num_rdi; j++)
-					clk_rate = max(clock_config->rdi_hz[j],
+					clk_rate = max(CAM_ISP_UAPI_TAIL(clock_config, rdi_hz)[j],
 						clk_rate);
 			else
 				if (hw_mgr_res->res_id != CAM_ISP_HW_VFE_IN_LCR
@@ -8912,7 +8937,7 @@ static int cam_isp_blob_sfe_clock_update(
 				}
 			} else {
 				for (j = 0; j < clock_config->num_rdi; j++)
-					clk_rate = max(clock_config->rdi_hz[j],
+					clk_rate = max(CAM_ISP_UAPI_TAIL(clock_config, rdi_hz)[j],
 						clk_rate);
 			}
 
@@ -9064,7 +9089,7 @@ static int cam_isp_blob_vfe_out_update(
 
 	kmd_buf_info = blob_info->kmd_buf_info;
 	for (i = 0; i < vfe_out_config->num_ports; i++) {
-		wm_config = &vfe_out_config->wm_config[i];
+		wm_config = &CAM_ISP_UAPI_TAIL(vfe_out_config, wm_config)[i];
 		if ((hw_type == CAM_ISP_HW_TYPE_VFE) &&
 			(!cam_ife_hw_mgr_is_ife_out_port(wm_config->port_type)))
 			continue;
@@ -9235,7 +9260,7 @@ static int cam_isp_blob_bw_limit_update(
 
 	kmd_buf_info = blob_info->kmd_buf_info;
 	for (i = 0; i < bw_limit_cfg->num_ports; i++) {
-		wm_bw_limit_cfg = &bw_limit_cfg->bw_limiter_config[i];
+		wm_bw_limit_cfg = &CAM_ISP_UAPI_TAIL(bw_limit_cfg, bw_limiter_config)[i];
 		res_id_out = wm_bw_limit_cfg->res_type & 0xFF;
 
 		if ((hw_type == CAM_ISP_HW_TYPE_SFE) &&
@@ -9860,6 +9885,8 @@ static int cam_isp_packet_generic_blob_handler(void *user_data,
 
 		bw_config_size = sizeof(struct cam_isp_bw_config) + ((bw_config_u->num_rdi-1)*
 					sizeof(struct cam_isp_bw_vote));
+		if (bw_config_size > blob_size)
+			return -EINVAL;
 
 		rc = cam_common_mem_kdup((void **)&bw_config, bw_config_u, bw_config_size);
 		if (rc) {
@@ -9943,6 +9970,8 @@ free_kdup:
 
 		bw_config_size = sizeof(struct cam_isp_bw_config_v2) + ((bw_config_u->num_paths-1)*
 					sizeof(struct cam_axi_per_path_bw_vote));
+		if (bw_config_size > blob_size)
+			return -EINVAL;
 
 		rc = cam_common_mem_kdup((void **)&bw_config, bw_config_u, bw_config_size);
 		if (rc) {
@@ -10001,13 +10030,13 @@ free_kdup:
 
 		for (i = 0; i < bw_config->num_paths; i++) {
 			path_vote = &prepare_hw_data->bw_clk_config.bw_config_v2.axi_path[i];
-			path_vote->usage_data = bw_config->axi_path[i].usage_data;
-			path_vote->transac_type = bw_config->axi_path[i].transac_type;
-			path_vote->path_data_type = bw_config->axi_path[i].path_data_type;
+			path_vote->usage_data = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].usage_data;
+			path_vote->transac_type = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].transac_type;
+			path_vote->path_data_type = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].path_data_type;
 			path_vote->vote_level = 0;
-			path_vote->camnoc_bw = bw_config->axi_path[i].camnoc_bw;
-			path_vote->mnoc_ab_bw = bw_config->axi_path[i].mnoc_ab_bw;
-			path_vote->mnoc_ib_bw = bw_config->axi_path[i].mnoc_ib_bw;
+			path_vote->camnoc_bw = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].camnoc_bw;
+			path_vote->mnoc_ab_bw = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].mnoc_ab_bw;
+			path_vote->mnoc_ib_bw = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].mnoc_ib_bw;
 		}
 
 		ife_mgr_ctx->bw_config_version = CAM_ISP_BW_CONFIG_V2;
@@ -10073,13 +10102,13 @@ free_mem:
 
 		for (i = 0; i < bw_config->num_paths; i++) {
 			path_vote = &prepare_hw_data->bw_clk_config.bw_config_v2.axi_path[i];
-			path_vote->usage_data = bw_config->axi_path[i].usage_data;
-			path_vote->transac_type = bw_config->axi_path[i].transac_type;
-			path_vote->path_data_type = bw_config->axi_path[i].path_data_type;
-			path_vote->vote_level = bw_config->axi_path[i].vote_level;
-			path_vote->camnoc_bw = bw_config->axi_path[i].camnoc_bw;
-			path_vote->mnoc_ab_bw = bw_config->axi_path[i].mnoc_ab_bw;
-			path_vote->mnoc_ib_bw = bw_config->axi_path[i].mnoc_ib_bw;
+			path_vote->usage_data = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].usage_data;
+			path_vote->transac_type = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].transac_type;
+			path_vote->path_data_type = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].path_data_type;
+			path_vote->vote_level = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].vote_level;
+			path_vote->camnoc_bw = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].camnoc_bw;
+			path_vote->mnoc_ab_bw = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].mnoc_ab_bw;
+			path_vote->mnoc_ib_bw = CAM_ISP_UAPI_TAIL(bw_config, axi_path)[i].mnoc_ib_bw;
 		}
 
 		ife_mgr_ctx->bw_config_version = CAM_ISP_BW_CONFIG_V3;

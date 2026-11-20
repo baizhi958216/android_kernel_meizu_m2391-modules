@@ -157,7 +157,7 @@ struct cam_cdm_bl_request {
 	uint32_t cmd_arrary_count;
 	struct cam_kmd_buf_info *genirq_buff;
 	uint64_t cookie;
-	struct cam_cdm_bl_cmd cmd[1];
+	struct cam_cdm_bl_cmd cmd[];
 };
 
 /**

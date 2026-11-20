@@ -1114,9 +1114,7 @@ int cam_fd_hw_reserve(void *hw_priv, void *hw_reserve_args, uint32_t arg_size)
 		return -EINVAL;
 	}
 
-	cdm_cmd = kzalloc(((sizeof(struct cam_cdm_bl_request)) +
-			((CAM_FD_MAX_HW_ENTRIES - 1) *
-			sizeof(struct cam_cdm_bl_cmd))), GFP_KERNEL);
+	cdm_cmd = kzalloc(struct_size(cdm_cmd, cmd, CAM_FD_MAX_HW_ENTRIES), GFP_KERNEL);
 	if (!cdm_cmd)
 		return -ENOMEM;
 

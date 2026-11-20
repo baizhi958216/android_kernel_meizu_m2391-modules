@@ -37,9 +37,7 @@ static int cam_lrme_hw_dev_util_cdm_acquire(struct cam_lrme_core *lrme_core,
 		return -ENOMEM;
 	}
 
-	cdm_cmd = kzalloc((sizeof(struct cam_cdm_bl_request) +
-		((CAM_LRME_MAX_HW_ENTRIES - 1) *
-		sizeof(struct cam_cdm_bl_cmd))), GFP_KERNEL);
+	cdm_cmd = kzalloc(struct_size(cdm_cmd, cmd, CAM_LRME_MAX_HW_ENTRIES), GFP_KERNEL);
 	if (!cdm_cmd) {
 		CAM_ERR(CAM_LRME, "No memory for cdm_cmd");
 		kfree(hw_cdm_info);

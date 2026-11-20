@@ -1449,9 +1449,7 @@ static int cam_jpeg_mgr_acquire_hw(void *hw_mgr_priv, void *acquire_hw_args)
 	ctx_data = &hw_mgr->ctx_data[ctx_id];
 
 	ctx_data->cdm_cmd =
-		kzalloc(((sizeof(struct cam_cdm_bl_request)) +
-			((CAM_JPEG_HW_ENTRIES_MAX - 1) *
-			sizeof(struct cam_cdm_bl_cmd))), GFP_KERNEL);
+		kzalloc(struct_size(ctx_data->cdm_cmd, cmd, CAM_JPEG_HW_ENTRIES_MAX), GFP_KERNEL);
 	if (!ctx_data->cdm_cmd) {
 		rc = -ENOMEM;
 		goto jpeg_release_ctx;
