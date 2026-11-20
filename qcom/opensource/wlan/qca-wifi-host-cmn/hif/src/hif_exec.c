@@ -739,10 +739,12 @@ static void hif_exec_napi_kill(struct hif_exec_context *ctx)
 	struct hif_napi_exec_context *n_ctx = hif_exec_get_napi(ctx);
 	int irq_ind;
 
-	if (ctx->inited) {
-		qdf_napi_disable(&n_ctx->napi);
-		ctx->inited = 0;
-	}
+	/* ISR shutdown and group deregistration can both kill this context. */
+	if (!ctx->inited)
+		return;
+
+	qdf_napi_disable(&n_ctx->napi);
+	ctx->inited = false;
 
 	for (irq_ind = 0; irq_ind < ctx->numirq; irq_ind++)
 		hif_irq_affinity_remove(ctx->os_irq[irq_ind]);
@@ -750,6 +752,7 @@ static void hif_exec_napi_kill(struct hif_exec_context *ctx)
 	hif_core_ctl_set_boost(false);
 	qdf_netif_napi_del(&(n_ctx->napi));
 	free_netdev(n_ctx->netdev);
+	n_ctx->netdev = NULL;
 }
 
 struct hif_execution_ops napi_sched_ops = {
