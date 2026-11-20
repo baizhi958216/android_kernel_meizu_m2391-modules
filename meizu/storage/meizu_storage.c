@@ -4,6 +4,7 @@
  * RSA/SHA verification is implemented separately in meizu_rsa.c.
  */
 #include <linux/blkdev.h>
+#include <linux/bio.h>
 #include <linux/file.h>
 #include <linux/fs.h>
 #include <linux/init.h>
@@ -54,23 +55,31 @@ static struct file *partition_get(const char *name)
 static int storage_block_rw(struct file *file, bool write, loff_t base,
 		size_t block_len, size_t offset, void *buf, size_t len, u8 *block)
 {
-	loff_t pos = base;
-	ssize_t done;
+	struct block_device *bdev = file_bdev(file);
+	int ret;
 
-	done = kernel_read(file, block, block_len, &pos);
-	if (done != block_len)
-		return done < 0 ? done : -EIO;
+	/*
+	 * bdev_file_open_by_dev() supplies a driver-owned anonymous file, not
+	 * a labelled devtmpfs inode. Submit partition I/O as a block driver;
+	 * kernel_read/write would incorrectly apply the current HAL's file
+	 * permissions to that anonymous inode. The caller holds storage_lock
+	 * and has checked the fixed partition allowlist and all byte bounds.
+	 */
+	ret = bdev_rw_virt(bdev, base >> SECTOR_SHIFT, block, block_len, REQ_OP_READ);
+	if (ret)
+		return ret;
 	if (!write) {
 		memcpy(buf, block + offset, len);
 		return 0;
 	}
+	if (bdev_read_only(bdev))
+		return -EROFS;
 
 	memcpy(block + offset, buf, len);
-	pos = base;
-	done = kernel_write(file, block, block_len, &pos);
-	if (done != block_len)
-		return done < 0 ? done : -EIO;
-	return vfs_fsync_range(file, base, pos - 1, 1);
+	ret = bdev_rw_virt(bdev, base >> SECTOR_SHIFT, block, block_len, REQ_OP_WRITE);
+	if (ret)
+		return ret;
+	return blkdev_issue_flush(bdev);
 }
 
 int sd_partition_rw(const char *part_name, int rw, loff_t offset,
