@@ -553,7 +553,7 @@ static void hfi_process_sys_get_prop_image_version(
 	u8 *str_image_version;
 	int req_bytes;
 
-	req_bytes = pkt->size - sizeof(*pkt);
+	req_bytes = pkt->size - offsetof(typeof(*pkt), rg_property_data[1]);
 	if (req_bytes < (signed int)version_string_size ||
 			!pkt->rg_property_data[1] ||
 			pkt->num_properties > 1) {
@@ -584,7 +584,8 @@ static int hfi_process_sys_property_info(u32 device_id,
 	if (!pkt) {
 		dprintk(CVP_ERR, "%s: invalid param\n", __func__);
 		return -EINVAL;
-	} else if (pkt->size > sizeof(*pkt)) {
+	} else if (pkt->size < offsetof(typeof(*pkt), rg_property_data[1]) ||
+		   pkt->size > sizeof(*pkt)) {
 		dprintk(CVP_ERR,
 				"%s: bad_pkt_size %d\n", __func__, pkt->size);
 		return -E2BIG;
