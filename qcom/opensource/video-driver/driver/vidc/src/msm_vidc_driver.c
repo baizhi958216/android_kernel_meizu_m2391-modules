@@ -4469,6 +4469,8 @@ static int vb2q_init(struct msm_vidc_inst *inst,
 	core = inst->core;
 
 	q->type = type;
+	/* Metadata queues need the same serialization as the m2m queues. */
+	q->lock = &inst->request_lock;
 	q->io_modes = VB2_MMAP | VB2_DMABUF;
 	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
 	q->ops = core->vb2_ops;
@@ -4497,14 +4499,12 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
 	core = inst->core;
 
 	src_vq->supports_requests = 1;
-	src_vq->lock = &inst->request_lock;
 	src_vq->dev = &core->pdev->dev;
 	rc = vb2q_init(inst, src_vq, INPUT_MPLANE);
 	if (rc)
 		goto fail_input_vb2q_init;
 	inst->bufq[INPUT_PORT].vb2q = src_vq;
 
-	dst_vq->lock = src_vq->lock;
 	dst_vq->dev = &core->pdev->dev;
 	rc = vb2q_init(inst, dst_vq, OUTPUT_MPLANE);
 	if (rc)
