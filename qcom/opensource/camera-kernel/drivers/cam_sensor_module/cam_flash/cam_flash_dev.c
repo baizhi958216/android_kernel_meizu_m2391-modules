@@ -14,6 +14,13 @@
 #include "cam_common_util.h"
 #include "camera_main.h"
 
+static int cam_flash_meizu_power_ops(struct cam_flash_ctrl *fctrl, bool enable)
+{
+	if (fctrl->is_regulator_enabled == enable)
+		return 0;
+	return cam_flash_meizu_prepare(fctrl, enable);
+}
+
 static int32_t cam_flash_driver_cmd(struct cam_flash_ctrl *fctrl,
 		void *arg, struct cam_flash_private_soc *soc_private)
 {
@@ -209,6 +216,12 @@ static int32_t cam_flash_driver_cmd(struct cam_flash_ctrl *fctrl,
 			goto release_mutex;
 		}
 
+		/* Per-frame preflash commands need the SY7808 powered before I/O. */
+		if (cam_flash_meizu_matches(fctrl)) {
+			rc = cam_flash_meizu_power_ops(fctrl, true);
+			if (rc)
+				goto release_mutex;
+		}
 		fctrl->apply_streamoff = false;
 		fctrl->flash_state = CAM_FLASH_STATE_START;
 		break;
@@ -227,6 +240,8 @@ static int32_t cam_flash_driver_cmd(struct cam_flash_ctrl *fctrl,
 		fctrl->func_tbl.flush_req(fctrl, FLUSH_ALL, 0);
 		fctrl->last_flush_req = 0;
 		cam_flash_off(fctrl);
+		if (cam_flash_meizu_matches(fctrl))
+			cam_flash_meizu_power_ops(fctrl, false);
 		fctrl->flash_state = CAM_FLASH_STATE_ACQUIRE;
 		break;
 	}
@@ -571,7 +586,8 @@ static int cam_flash_component_bind(struct device *dev,
 		/* PMIC Flash */
 		fctrl->func_tbl.parser = cam_flash_pmic_pkt_parser;
 		fctrl->func_tbl.apply_setting = cam_flash_pmic_apply_setting;
-		fctrl->func_tbl.power_ops = NULL;
+		fctrl->func_tbl.power_ops = cam_flash_meizu_matches(fctrl) ?
+			cam_flash_meizu_power_ops : NULL;
 		fctrl->func_tbl.flush_req = cam_flash_pmic_flush_request;
 	}
 
