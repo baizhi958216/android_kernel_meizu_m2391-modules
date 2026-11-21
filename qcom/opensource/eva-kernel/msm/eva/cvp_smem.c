@@ -112,6 +112,19 @@ static int msm_dma_get_device_address(struct dma_buf *dbuf, u32 align,
 			goto mem_map_sg_failed;
 		}
 
+		/* Preserve both ends of the firmware's legacy DMA aperture. */
+		if (!(flags & SMEM_CAMERA) && cb->addr_range.size) {
+			u64 end = (u64)cb->addr_range.start + cb->addr_range.size;
+
+			if (*iova < cb->addr_range.start || *iova >= end ||
+			    dbuf->size > end - *iova) {
+				dprintk(CVP_ERR, "DMA mapping outside %s address pool\n",
+					cb->name);
+				rc = -ERANGE;
+				goto mem_map_sg_failed;
+			}
+		}
+
 		mapping_info->dev = cb->dev;
 		mapping_info->domain = cb->domain;
 		mapping_info->table = table;
