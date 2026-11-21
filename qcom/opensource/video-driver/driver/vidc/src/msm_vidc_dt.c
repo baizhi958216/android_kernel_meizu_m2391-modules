@@ -777,6 +777,11 @@ static int msm_vidc_setup_context_bank(struct msm_vidc_core *core,
 	}
 	cb->dev = dev;
 
+	/* Keep generic DMA-IOMMU mappings within the firmware address window. */
+	if (cb->addr_range.size)
+		dev->bus_dma_limit = min_not_zero(dev->bus_dma_limit,
+			(u64)cb->addr_range.start + cb->addr_range.size - 1);
+
 	bus = cb->dev->bus;
 	if (IS_ERR_OR_NULL(bus)) {
 		d_vpr_e("%s: failed to get bus type\n", __func__);

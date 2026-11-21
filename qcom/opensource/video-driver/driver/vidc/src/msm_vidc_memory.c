@@ -261,6 +261,18 @@ int msm_vidc_memory_map(struct msm_vidc_core *core, struct msm_vidc_map *map)
 		goto error_sg;
 	}
 
+	if (cb->addr_range.size) {
+		u64 iova = sg_dma_address(table->sgl);
+		u64 end = (u64)cb->addr_range.start + cb->addr_range.size;
+
+		if (iova < cb->addr_range.start || iova >= end ||
+		    map->dmabuf->size > end - iova) {
+			d_vpr_e("%s: DMA mapping exceeds context bank address pool\n",
+				__func__);
+			rc = -ERANGE;
+			goto error_sg;
+		}
+	}
 	map->device_addr = table->sgl->dma_address;
 	map->table = table;
 	map->attach = attach;
