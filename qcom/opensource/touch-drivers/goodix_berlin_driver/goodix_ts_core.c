@@ -1928,12 +1928,9 @@ static void goodix_panel_notifier_callback(enum panel_event_notifier_tag tag,
 		break;
 
 	case DRM_PANEL_EVENT_BLANK:
+	case DRM_PANEL_EVENT_BLANK_LP:
 		if (notification->notif_data.early_trigger)
 			goodix_ts_suspend(core_data);
-		break;
-
-	case DRM_PANEL_EVENT_BLANK_LP:
-		ts_debug("received lp event\n");
 		break;
 
 	case DRM_PANEL_EVENT_FPS_CHANGE:

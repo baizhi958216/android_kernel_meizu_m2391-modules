@@ -1638,6 +1638,7 @@ static void qts_panel_notifier_callback(enum panel_event_notifier_tag tag,
 		}
 		break;
 	case DRM_PANEL_EVENT_BLANK:
+	case DRM_PANEL_EVENT_BLANK_LP:
 		if (notification->notif_data.early_trigger) {
 #ifdef CONFIG_ARCH_QTI_VM
 			if ((qts_trusted_touch_get_vm_state(qts_data) != TRUSTED_TOUCH_TVM_INIT) &&
@@ -1654,9 +1655,6 @@ static void qts_panel_notifier_callback(enum panel_event_notifier_tag tag,
 		} else {
 			pr_debug("suspend notification post commit\n");
 		}
-		break;
-	case DRM_PANEL_EVENT_BLANK_LP:
-		pr_debug("received lp event\n");
 		break;
 	case DRM_PANEL_EVENT_FPS_CHANGE:
 		pr_debug("Received fps change old fps:%d new fps:%d\n",
