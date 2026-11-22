@@ -11006,6 +11006,11 @@ static int ipa_smmu_perph_cb_probe(struct device *dev,
 		cb->va_start = iova_ap_mapping[0];
 		cb->va_size  = iova_ap_mapping[1];
 		cb->va_end   = cb->va_start + cb->va_size;
+		if (!cb->va_size)
+			return -EINVAL;
+		/* Keep DMA allocations below the manually mapped IOVA range. */
+		dev->bus_dma_limit = min_not_zero(dev->bus_dma_limit,
+				(u64)cb->va_start + cb->va_size - 1);
 	}
 
 	IPADBG("CB %d PROBE dev=%pK va_start=0x%x va_size=0x%x\n",
@@ -11118,6 +11123,11 @@ static int ipa_smmu_uc_cb_probe(struct device *dev)
 		cb->va_start = iova_ap_mapping[0];
 		cb->va_size  = iova_ap_mapping[1];
 		cb->va_end   = cb->va_start + cb->va_size;
+		if (!cb->va_size)
+			return -EINVAL;
+		/* Keep DMA allocations below the manually mapped IOVA range. */
+		dev->bus_dma_limit = min_not_zero(dev->bus_dma_limit,
+				(u64)cb->va_start + cb->va_size - 1);
 	}
 
 	IPADBG("UC CB PROBE dev=%pK va_start=0x%x va_size=0x%x\n",
@@ -11233,6 +11243,11 @@ static int ipa_smmu_ap_cb_probe(struct device *dev)
 		cb->va_start = iova_ap_mapping[0];
 		cb->va_size  = iova_ap_mapping[1];
 		cb->va_end   = cb->va_start + cb->va_size;
+		if (!cb->va_size)
+			return -EINVAL;
+		/* Keep DMA allocations below the manually mapped IOVA range. */
+		dev->bus_dma_limit = min_not_zero(dev->bus_dma_limit,
+				(u64)cb->va_start + cb->va_size - 1);
 	}
 
 	IPADBG("AP CB PROBE dev=%pK va_start=0x%x va_size=0x%x\n",
@@ -11399,6 +11414,11 @@ static int ipa_smmu_11ad_cb_probe(struct device *dev)
 		cb->va_start = iova_ap_mapping[0];
 		cb->va_size  = iova_ap_mapping[1];
 		cb->va_end   = cb->va_start + cb->va_size;
+		if (!cb->va_size)
+			return -EINVAL;
+		/* Keep DMA allocations below the manually mapped IOVA range. */
+		dev->bus_dma_limit = min_not_zero(dev->bus_dma_limit,
+				(u64)cb->va_start + cb->va_size - 1);
 	}
 
 	IPADBG("11AD CB PROBE dev=%pK va_start=0x%x va_size=0x%x\n",
