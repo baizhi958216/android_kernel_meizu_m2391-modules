@@ -4108,9 +4108,9 @@ static int __init aw_i2c_init(void)
 {
 	int ret = 0;
 
-	/* The original skips driver registration in boot modes 2 and 3. */
-	if (get_boot_mode() == 3 || get_boot_mode() == 2) {
-		aw_err("boot mode isn't NORMAL.");
+	/* Skip driver registration in charger mode (3); allow recovery mode (2). */
+	if (get_boot_mode() == 3) {
+		aw_err("boot mode is charger, skip aw_i2c_init.");
 		return 0;
 	}
 	pr_info("<%s>%s: aw_haptic driver version %s\n", AW_I2C_NAME, __func__,
