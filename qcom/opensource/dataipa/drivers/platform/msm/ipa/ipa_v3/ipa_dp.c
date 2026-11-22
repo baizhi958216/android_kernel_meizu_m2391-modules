@@ -1940,9 +1940,12 @@ fail_napi:
 		netif_napi_del(&ep->sys->napi_rx);
 	}
 	/* Delete NAPI TX object. */
-	if (ipa3_ctx->tx_napi_enable &&
-		(IPA_CLIENT_IS_PROD(sys_in->client)))
+	if (ep->sys->napi_tx_enable &&
+		(IPA_CLIENT_IS_PROD(sys_in->client))) {
+		napi_disable(&ep->sys->napi_tx);
 		netif_napi_del(&ep->sys->napi_tx);
+		ep->sys->napi_tx_enable = false;
+	}
 fail_gen2:
 	ipa_pm_deregister(ep->sys->pm_hdl);
 fail_pm:
@@ -2019,12 +2022,12 @@ int ipa3_teardown_sys_pipe(u32 clnt_hdl)
 		} while (1);
 
 		delete_avail_tx_wrapper_list(ep);
-		/* Delete NAPI TX object. For WAN_PROD, it is deleted
-		 * in rmnet_ipa driver.
-		 */
-		if (ipa3_ctx->tx_napi_enable &&
-			(ep->client != IPA_CLIENT_APPS_WAN_PROD))
+		/* Release each TX NAPI context before its netdev is freed. */
+		if (ep->sys->napi_tx_enable) {
+			napi_disable(&ep->sys->napi_tx);
 			netif_napi_del(&ep->sys->napi_tx);
+			ep->sys->napi_tx_enable = false;
+		}
 	}
 
 	if(ep->client == IPA_CLIENT_APPS_WAN_LOW_LAT_DATA_CONS) {
