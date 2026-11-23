@@ -399,7 +399,7 @@ rrm_process_neighbor_report_response(struct mac_context *mac,
 		pNeighborRep->num_NeighborReport = MAX_SUPPORTED_NEIGHBOR_RPT;
 	length = (sizeof(tSirNeighborReportInd)) +
 		 (sizeof(tSirNeighborBssDescription) *
-		  (pNeighborRep->num_NeighborReport - 1));
+		  pNeighborRep->num_NeighborReport);
 
 	/* Prepare the request to send to SME. */
 	pSmeNeighborRpt = qdf_mem_malloc(length);
@@ -1220,7 +1220,8 @@ rrm_process_beacon_report_xmit(struct mac_context *mac_ctx,
 			num_frames++;
 
 		/* Calculate num of maximum mgmt reports per frame */
-		dot11_meas_rpt_size = sizeof(tDot11fRadioMeasurementReport);
+		dot11_meas_rpt_size = sizeof(tDot11fRadioMeasurementReport) +
+			sizeof(tDot11fIEMeasurementReport);
 		max_reports_in_frame = MAX_MGMT_MPDU_LEN / dot11_meas_rpt_size;
 
 		for (j = 0; j < num_frames; j++) {

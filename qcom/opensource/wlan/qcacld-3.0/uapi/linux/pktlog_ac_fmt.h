@@ -280,7 +280,7 @@ struct ath_pktlog_buf {
 	uint32_t msg_index;
 	/* Offset for read */
 	loff_t offset;
-	char log_data[0];
+	char log_data[];
 };
 
 #define PKTLOG_MOV_RD_IDX(_rd_offset, _log_buf, _log_size)  \

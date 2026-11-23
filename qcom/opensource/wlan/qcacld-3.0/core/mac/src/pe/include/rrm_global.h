@@ -142,7 +142,7 @@ typedef struct sSirNeighborReportInd {
 	uint8_t measurement_idx;
 	uint16_t numNeighborReports;
 	tSirMacAddr bssId;      /* For the session. */
-	tSirNeighborBssDescription sNeighborBssDescription[1];
+	tSirNeighborBssDescription sNeighborBssDescription[];
 } tSirNeighborReportInd, *tpSirNeighborReportInd;
 
 typedef struct sRRMBeaconReportRequestedIes {

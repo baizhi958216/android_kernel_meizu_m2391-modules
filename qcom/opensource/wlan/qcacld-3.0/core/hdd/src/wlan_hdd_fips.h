@@ -39,13 +39,13 @@ struct iw_fips_test_request {
 	uint32_t key_len;
 	uint8_t  key[FIPS_KEY_LEN];
 	uint32_t data_len;
-	uint8_t  data[0];
+	uint8_t  data[];
 };
 
 struct iw_fips_test_response {
 	uint32_t status;
 	uint32_t data_len;
-	uint8_t  data[0];
+	uint8_t  data[];
 };
 
 

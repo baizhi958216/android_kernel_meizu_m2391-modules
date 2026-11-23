@@ -67,7 +67,7 @@ struct wifi_pos_field {
  */
 struct wifi_pos_field_info {
 	uint32_t count;
-	struct wifi_pos_field fields[1];
+	struct wifi_pos_field fields[];
 };
 
 /* Length of interface name */

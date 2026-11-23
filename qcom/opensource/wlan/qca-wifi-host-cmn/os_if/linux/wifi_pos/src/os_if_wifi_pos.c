@@ -834,7 +834,8 @@ static int wifi_pos_parse_req(struct sk_buff *skb, struct wifi_pos_req_msg *req,
 	if (field_info_len) {
 		req->field_info_buf =
 			(struct wifi_pos_field_info *)(req->buf + req->buf_len);
-		req->field_info_buf_len = sizeof(struct wifi_pos_field_info);
+		req->field_info_buf_len = sizeof(struct wifi_pos_field_info) +
+			sizeof(struct wifi_pos_field);
 	}
 
 	interface_len = nlh->nlmsg_len -

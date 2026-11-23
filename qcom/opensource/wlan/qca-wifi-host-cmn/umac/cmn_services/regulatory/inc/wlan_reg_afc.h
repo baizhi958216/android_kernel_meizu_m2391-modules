@@ -65,7 +65,7 @@ struct wlan_afc_freq_range_obj {
  */
 struct wlan_afc_frange_list {
 	uint32_t num_ranges;
-	struct wlan_afc_freq_range_obj range_objs[0];
+	struct wlan_afc_freq_range_obj range_objs[];
 } qdf_packed;
 
 /**
@@ -78,7 +78,7 @@ struct wlan_afc_frange_list {
 struct wlan_afc_opclass_obj {
 	uint8_t opclass_num_cfis;
 	uint8_t opclass;
-	uint8_t cfis[0];
+	uint8_t cfis[];
 } qdf_packed;
 
 /**
@@ -200,7 +200,7 @@ struct wlan_afc_host_resp {
 	uint32_t time_to_live;
 	uint32_t length;
 	uint32_t resp_format;
-	uint8_t  afc_resp[0];
+	uint8_t  afc_resp[];
 } qdf_packed;
 
 /**
