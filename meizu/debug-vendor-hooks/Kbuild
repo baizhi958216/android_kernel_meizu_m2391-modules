@@ -1,2 +1,0 @@
-# SPDX-License-Identifier: GPL-2.0-only
-obj-m += mz_debug_vendor_hooks.o

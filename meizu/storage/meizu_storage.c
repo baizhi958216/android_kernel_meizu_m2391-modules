@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * M2391 storage partitions: private, camera, rstinfo and param.
- * RSA/SHA verification is implemented separately in meizu_rsa.c.
  */
 #include <linux/blkdev.h>
 #include <linux/bio.h>

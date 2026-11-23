@@ -13,21 +13,4 @@ int sd_partition_rw(const char *part_name, int rw, loff_t offset,
 int sd_is_storage_ready(const char *part_name);
 int sd_get_storage_block_size(void);
 int register_meizu_storage_notifier(struct notifier_block *nb);
-
-
-
-
-
-#define MZ_RSA_NUMBYTES 256
-#define MZ_RSA_NUMWORDS (MZ_RSA_NUMBYTES / sizeof(uint32_t))
-typedef struct RSAPublicKey {
-	int len;
-	uint32_t n0inv;
-	uint32_t n[MZ_RSA_NUMWORDS];
-	uint32_t rr[MZ_RSA_NUMWORDS];
-	int exponent;
-} RSAPublicKey;
-
-int rsa_with_sha1_verify(const uint8_t *data, uint16_t len,
-		const RSAPublicKey *key, const uint8_t *signature);
 #endif

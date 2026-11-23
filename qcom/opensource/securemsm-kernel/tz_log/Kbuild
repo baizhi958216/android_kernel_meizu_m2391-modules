@@ -1,4 +1,0 @@
-# SPDX-License-Identifier: GPL-2.0-only
-ccflags-y += -I$(src)/..
-obj-m += tz_log_dlkm.o
-tz_log_dlkm-y := tz_log.o

@@ -1,1 +1,0 @@
-obj-m += mz_kshrink_slabd.o

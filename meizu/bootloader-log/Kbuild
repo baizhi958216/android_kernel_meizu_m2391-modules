@@ -1,1 +1,0 @@
-obj-m += bootloader_log.o

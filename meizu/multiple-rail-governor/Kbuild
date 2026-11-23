@@ -1,2 +1,0 @@
-obj-m += mz_mrg.o
-ccflags-y += -I$(src)
