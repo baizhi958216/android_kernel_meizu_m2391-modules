@@ -1,24 +1,21 @@
-#By default build for CLD
-RMNET_OFFLOAD_SELECT := CONFIG_RMNET_OFFLOAD=m
+# SPDX-License-Identifier: GPL-2.0-only
+KERNEL_SRC ?= /lib/modules/$(shell uname -r)/build
+M ?= $(CURDIR)
+MO ?= $(OUT_DIR)/$(M)
 
-DATARMNET_CORE_PATH := datarmnet/core
-RMNET_CORE_PATH := $(KERNEL_SRC)/$(M)/../../$(DATARMNET_CORE_PATH)
-RMNET_CORE_INC_DIR := $(RMNET_CORE_PATH)
+KBUILD_OPTIONS :=
+KBUILD_OPTIONS += CONFIG_ARCH_KALAMA=y
+KBUILD_OPTIONS += RMNET_CORE_INC_DIR=$(abspath $(KERNEL_SRC)/$(M)/../../datarmnet/core)
 
-KBUILD_OPTIONS += $(RMNET_OFFLOAD_SELECT)
-KBUILD_OPTIONS += $(KBUILD_EXTRA) # Extra config if any
-KBUILD_OPTIONS += RMNET_CORE_INC_DIR=$(RMNET_CORE_INC_DIR)
-KBUILD_OPTIONS += RMNET_CORE_PATH=$(RMNET_CORE_PATH)
-KBUILD_OPTIONS += DATARMNET_CORE_PATH=$(DATARMNET_CORE_PATH)
-KBUILD_EXTRA_SYMBOLS := $(M)/../../$(DATARMNET_CORE_PATH)/Module.symvers
+all: modules
 
-M ?= $(shell pwd)
-
-all:
-	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules $(KBUILD_OPTIONS) $(KBUILD_EXTRA_SYMBOLS)
+modules:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) modules $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(OUT_DIR)/../m2391-modules/qcom/opensource/datarmnet/core/Module.symvers"
 
 modules_install:
-	$(MAKE) INSTALL_MOD_STRIP=1 -C $(KERNEL_SRC) M=$(M) modules_install
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) INSTALL_MOD_STRIP=1 modules_install $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(OUT_DIR)/../m2391-modules/qcom/opensource/datarmnet/core/Module.symvers"
 
 clean:
-	$(MAKE) -C $(KERNEL_SRC) M=$(M) clean
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) clean $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(OUT_DIR)/../m2391-modules/qcom/opensource/datarmnet/core/Module.symvers"
+
+.PHONY: all modules modules_install clean

@@ -1,50 +1,22 @@
-ifeq ($(RELEASE_PACKAGE),1)
-EXTRA_CFLAGS+=-DRELEASE_PACKAGE
-endif
-LBITS ?= $(shell getconf LONG_BIT)
-ifeq ($(LBITS),64)
-CCFLAGS += -m64
-EXTRA_CFLAGS+=-DSYSTEM_IS_64
-else
-CCFLAGS += -m32
-endif
-
-M ?= $(shell pwd)
-#obj-m := rmnet_core.o rmnet_ctl.o
-
-rmnet_core-y += 	rmnet_config.o \
-			rmnet_descriptor.o \
-			rmnet_genl.o \
-			rmnet_handlers.o \
-			rmnet_map_command.o \
-			rmnet_map_data.o \
-			rmnet_module.o \
-			rmnet_vnd.o \
-			dfc_qmap.c \
-			dfc_qmi.c \
-			qmi_rmnet.0 \
-			wda_qmi.0 \
-			rmnet_ll.o \
-			rmnet_ll_ipa.o \
-			rmnet_qmap.o \
-			rmnet_ll_qmap.o
-
-ifneq (, $(filter y, $(CONFIG_ARCH_LAHAINA) $(CONFIG_ARCH_WAIPIO) $(CONFIG_ARCH_KALAMA)))
-rmnet_ctl-y += 		rmnet_ctl_client.o \
-			rmnet_ctl_ipa.o \
-			rmnet_ctl_mhi.o
-endif
-
+# SPDX-License-Identifier: GPL-2.0-only
 KERNEL_SRC ?= /lib/modules/$(shell uname -r)/build
+M ?= $(CURDIR)
+MO ?= $(OUT_DIR)/$(M)
 
-KBUILD_OPTIONS := RMNET_CORE_ROOT=$(PWD)
-KBUILD_OPTIONS += MODNAME?=rmnet_core
+KBUILD_OPTIONS :=
+KBUILD_OPTIONS += RMNET_CORE_ROOT=$(abspath $(KERNEL_SRC)/$(M))
+KBUILD_OPTIONS += RMNET_CORE_INC_DIR=$(abspath $(KERNEL_SRC)/$(M))
+KBUILD_OPTIONS += CONFIG_ARCH_KALAMA=y
 
-all:
-	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules $(KBUILD_OPTIONS)
+all: modules
+
+modules:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) modules $(KBUILD_OPTIONS)
 
 modules_install:
-	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules_install
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) INSTALL_MOD_STRIP=1 modules_install $(KBUILD_OPTIONS)
 
 clean:
-	$(MAKE) -C $(KERNEL_SRC) M=$(M) clean
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) clean $(KBUILD_OPTIONS)
+
+.PHONY: all modules modules_install clean
