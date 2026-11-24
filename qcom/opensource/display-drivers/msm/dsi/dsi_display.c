@@ -9033,6 +9033,8 @@ int dsi_display_enable(struct dsi_display *display)
 	 * resource/trusted vm and hence we return early
 	 */
 	if (is_skip_op_required(display)) {
+		bool splash_dms = display->is_cont_splash_enabled &&
+			(display->panel->cur_mode->dsi_mode_flags & DSI_MODE_FLAG_DMS);
 
 		dsi_display_config_ctrl_for_cont_splash(display);
 
@@ -9044,10 +9046,26 @@ int dsi_display_enable(struct dsi_display *display)
 		}
 
 		display->panel->panel_initialized = true;
-		DSI_DEBUG("cont splash enabled, display enable not required\n");
-		dsi_display_panel_id_notification(display);
+		if (!splash_dms) {
+			DSI_DEBUG("cont splash enabled, display enable not required\n");
+			dsi_display_panel_id_notification(display);
 
-		return 0;
+			return 0;
+		}
+
+		/*
+		 * Continuous splash handoff requested a DMS resolution/timing
+		 * switch from the bootloader mode. Now that splash resources
+		 * are released, update controller timing and resync FIFO, then
+		 * fall through to send DSC PPS and panel switch commands.
+		 */
+		mutex_lock(&display->display_lock);
+		rc = dsi_display_ctrl_update(display);
+		if (rc)
+			DSI_ERR("[%s] cont_splash DMS ctrl update failed, rc=%d\n",
+				display->name, rc);
+		dsi_display_toggle_resync_fifo(display);
+		mutex_unlock(&display->display_lock);
 	}
 
 	if (dsi_panel_is_m2391(display->panel)) display_set_power_status(1);
