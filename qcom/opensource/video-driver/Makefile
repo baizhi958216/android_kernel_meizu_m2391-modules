@@ -1,19 +1,22 @@
 # SPDX-License-Identifier: GPL-2.0-only
+KERNEL_SRC ?= /lib/modules/$(shell uname -r)/build
+M ?= $(CURDIR)
+MO ?= $(OUT_DIR)/$(M)
 
-KBUILD_OPTIONS += VIDEO_ROOT=$(KERNEL_SRC)/$(M)
-KBUILD_OPTIONS += BOARD_PLATFORM=$(TARGET_BOARD_PLATFORM)
+KBUILD_OPTIONS :=
+KBUILD_OPTIONS += VIDEO_ROOT=$(abspath $(KERNEL_SRC)/$(M))
+KBUILD_OPTIONS += CONFIG_ARCH_KALAMA=y
+KBUILD_OPTIONS += BOARD_PLATFORM=kalama
 
-KBUILD_OPTIONS += KBUILD_EXTRA_SYMBOLS=$(OUT_DIR)/../m2391-modules/qcom/opensource/mmrm-driver/Module.symvers
+all: modules
 
-all:
-	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules $(KBUILD_OPTIONS)
+modules:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) modules $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(OUT_DIR)/../m2391-modules/qcom/opensource/mmrm-driver/Module.symvers"
 
 modules_install:
-	$(MAKE) INSTALL_MOD_STRIP=1 -C $(KERNEL_SRC) M=$(M) modules_install
-
-%:
-	$(MAKE) -C $(KERNEL_SRC) M=$(M) $@ $(KBUILD_OPTIONS)
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) INSTALL_MOD_STRIP=1 modules_install $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(OUT_DIR)/../m2391-modules/qcom/opensource/mmrm-driver/Module.symvers"
 
 clean:
-	rm -f *.o *.ko *.mod.c *.mod.o *~ .*.cmd Module.symvers
-	rm -rf .tmp_versions
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) MO=$(MO) clean $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(OUT_DIR)/../m2391-modules/qcom/opensource/mmrm-driver/Module.symvers"
+
+.PHONY: all modules modules_install clean
