@@ -740,8 +740,8 @@ int kgsl_cache_range_op(struct kgsl_memdesc *memdesc, uint64_t offset,
 	if (offset + size > memdesc->size)
 		return -ERANGE;
 
-	size += offset & PAGE_MASK;
-	offset &= ~PAGE_MASK;
+	size += offset & ~PAGE_MASK;
+	offset &= PAGE_MASK;
 
 	/* If there is a sgt, use for_each_sg_page to walk it */
 	if (memdesc->sgt) {
