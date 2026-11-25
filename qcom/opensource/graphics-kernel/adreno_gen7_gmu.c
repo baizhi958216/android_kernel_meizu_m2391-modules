@@ -2431,11 +2431,8 @@ int gen7_gmu_probe(struct kgsl_device *device,
 	if (ret)
 		goto error;
 
-	/* Set up GMU idle state */
-	if (ADRENO_FEATURE(adreno_dev, ADRENO_IFPC))
-		gmu->idle_level = GPU_HW_IFPC;
-	else
-		gmu->idle_level = GPU_HW_ACTIVE;
+	/* Set up GMU idle state (default to ACTIVE; IFPC remains toggleable via sysfs) */
+	gmu->idle_level = GPU_HW_ACTIVE;
 
 	gen7_gmu_acd_probe(device, gmu, pdev->dev.of_node);
 
