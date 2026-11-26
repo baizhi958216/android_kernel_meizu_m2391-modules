@@ -1713,7 +1713,7 @@ cnss_qmp_send_msg(struct cnss_plat_data *plat_priv, char *mbox_msg)
 		return -ENODEV;
 
 	cnss_pr_dbg("Sending AOP QMP msg: %s\n", mbox_msg);
-	ret = qmp_send(plat_priv->qmp, mbox_msg, CNSS_MBOX_MSG_MAX_LEN);
+	ret = qmp_send(plat_priv->qmp, "%s", mbox_msg);
 	if (ret)
 		cnss_pr_err("Failed to send AOP QMP msg: %d[%s]\n", ret, mbox_msg);
 
