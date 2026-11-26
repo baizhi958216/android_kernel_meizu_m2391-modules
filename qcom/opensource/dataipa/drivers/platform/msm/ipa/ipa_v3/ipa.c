@@ -11842,6 +11842,7 @@ int ipa3_ap_suspend(struct device *dev)
 		IPADBG("Exit deepsleep suspend\n");
 	}
 #endif
+	ipa_wdi_pm_suspend();
 	ipa_pm_deactivate_all_deferred();
 
 	IPADBG("Exit\n");
@@ -11900,6 +11901,10 @@ int ipa3_ap_freeze(struct device *dev)
  */
 int ipa3_ap_resume(struct device *dev)
 {
+	if (!of_device_is_compatible(dev->of_node, "qcom,ipa"))
+		return 0;
+
+	ipa_wdi_pm_resume();
 	return 0;
 }
 

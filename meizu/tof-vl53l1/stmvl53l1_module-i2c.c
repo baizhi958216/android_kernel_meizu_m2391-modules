@@ -441,8 +441,16 @@ static int stmvl53l1_probe(struct i2c_client *client)
 	struct i2c_data *i2c_data = NULL;
 
 	switch (smp_load_acquire(&s_module_load_state)) {
-	case 0:
-		return -EPROBE_DEFER;
+	case 0: {
+		struct device_node *ai11ba_np =
+			of_find_compatible_node(NULL, NULL, "adaps,ai11ba_i2c");
+		bool wait_ai11ba = ai11ba_np && of_device_is_available(ai11ba_np);
+
+		of_node_put(ai11ba_np);
+		if (wait_ai11ba)
+			return -EPROBE_DEFER;
+		break;
+	}
 	case 1:
 		return -ENODEV;
 	}

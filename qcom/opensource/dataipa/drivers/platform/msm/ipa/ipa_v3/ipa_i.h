@@ -3676,6 +3676,8 @@ int ipa3_iommu_map(struct iommu_domain *domain, unsigned long iova,
 int ipa3_ap_suspend(struct device *dev);
 int ipa3_ap_freeze(struct device *dev);
 int ipa3_ap_resume(struct device *dev);
+void ipa_wdi_pm_suspend(void);
+void ipa_wdi_pm_resume(void);
 int ipa3_init_interrupts(void);
 struct iommu_domain *ipa3_get_smmu_domain(void);
 int ipa3_release_wdi_mapping(u32 num_buffers, struct ipa_wdi_buffer_info *info);

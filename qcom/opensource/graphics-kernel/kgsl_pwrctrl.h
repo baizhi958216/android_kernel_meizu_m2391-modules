@@ -170,6 +170,8 @@ struct kgsl_pwrctrl {
 	ktime_t last_stat_updated;
 	/** @nb_max: Notifier block for DEV_PM_QOS_MAX_FREQUENCY */
 	struct notifier_block nb_max;
+	/** @rpm_active: True while runtime PM is held for CX GDSC */
+	bool rpm_active;
 };
 
 int kgsl_pwrctrl_init(struct kgsl_device *device);

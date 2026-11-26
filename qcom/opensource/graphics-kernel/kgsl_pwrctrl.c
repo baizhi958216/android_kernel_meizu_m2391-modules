@@ -1322,6 +1322,18 @@ int kgsl_pwrctrl_enable_cx_gdsc(struct kgsl_device *device)
 	if (IS_ERR_OR_NULL(regulator))
 		return 0;
 
+	if (!pwr->rpm_active) {
+		ret = pm_runtime_get_sync(&device->pdev->dev);
+		if (ret < 0) {
+			pm_runtime_put_noidle(&device->pdev->dev);
+			dev_err(device->dev,
+				"Runtime PM: Unable to resume suppliers for CX, rc = %d\n",
+				ret);
+			return ret;
+		}
+		pwr->rpm_active = true;
+	}
+
 	ret = wait_for_completion_timeout(&pwr->cx_gdsc_gate, msecs_to_jiffies(5000));
 	if (!ret) {
 		dev_err(device->dev, "GPU CX wait timed out, regulator enabled=%d\n",
@@ -1329,8 +1341,14 @@ int kgsl_pwrctrl_enable_cx_gdsc(struct kgsl_device *device)
 	}
 
 	ret = regulator_enable(regulator);
-	if (ret)
+	if (ret) {
 		dev_err(device->dev, "Failed to enable CX regulator: %d\n", ret);
+		if (pwr->rpm_active) {
+			pwr->rpm_active = false;
+			pm_runtime_put(&device->pdev->dev);
+		}
+		return ret;
+	}
 
 	kgsl_mmu_send_tlb_hint(&device->mmu, false);
 	pwr->cx_gdsc_wait = false;
@@ -1375,6 +1393,11 @@ void kgsl_pwrctrl_disable_cx_gdsc(struct kgsl_device *device)
 	 */
 	device->pwrctrl.cx_gdsc_wait = false;
 	complete_all(&device->pwrctrl.cx_gdsc_gate);
+
+	if (device->pwrctrl.rpm_active) {
+		device->pwrctrl.rpm_active = false;
+		pm_runtime_put(&device->pdev->dev);
+	}
 }
 
 static void kgsl_pwrctrl_disable_gx_gdsc(struct kgsl_device *device)

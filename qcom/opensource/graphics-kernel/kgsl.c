@@ -1383,9 +1383,13 @@ static int kgsl_release(struct inode *inodep, struct file *filep)
 {
 	struct kgsl_device_private *dev_priv = filep->private_data;
 	struct kgsl_device *device = dev_priv->device;
-	int result;
+	int result, rpm_ret;
 
 	filep->private_data = NULL;
+
+	rpm_ret = pm_runtime_get_sync(&device->pdev->dev);
+	if (rpm_ret < 0)
+		pm_runtime_put_noidle(&device->pdev->dev);
 
 	/* Release the contexts for the file */
 	device_release_contexts(dev_priv);
@@ -1397,7 +1401,8 @@ static int kgsl_release(struct inode *inodep, struct file *filep)
 	device->ftbl->device_private_destroy(dev_priv);
 
 	result = kgsl_close_device(device);
-	pm_runtime_put(&device->pdev->dev);
+	if (rpm_ret >= 0)
+		pm_runtime_put(&device->pdev->dev);
 
 	return result;
 }
@@ -1433,6 +1438,7 @@ static int kgsl_open(struct inode *inodep, struct file *filep)
 
 	result = pm_runtime_get_sync(&device->pdev->dev);
 	if (result < 0) {
+		pm_runtime_put_noidle(&device->pdev->dev);
 		dev_err(device->dev,
 			     "Runtime PM: Unable to wake up the device, rc = %d\n",
 			     result);
@@ -1469,8 +1475,8 @@ err:
 	if (result) {
 		filep->private_data = NULL;
 		kfree(dev_priv);
-		pm_runtime_put(&device->pdev->dev);
 	}
+	pm_runtime_put(&device->pdev->dev);
 	return result;
 }
 

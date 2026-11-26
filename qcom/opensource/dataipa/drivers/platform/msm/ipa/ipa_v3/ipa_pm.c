@@ -1116,6 +1116,47 @@ int ipa_pm_deferred_deactivate(u32 hdl)
 }
 EXPORT_SYMBOL(ipa_pm_deferred_deactivate);
 
+static unsigned long ipa_wdi_suspended_mask;
+
+void ipa_wdi_pm_suspend(void)
+{
+	int i;
+
+	if (!ipa_pm_ctx)
+		return;
+
+	for (i = 1; i < IPA_PM_MAX_CLIENTS; i++) {
+		struct ipa_pm_client *client = ipa_pm_ctx->clients[i];
+
+		if (!client)
+			continue;
+		if (strcmp(client->name, "wdi") && strcmp(client->name, "wdi1"))
+			continue;
+		if (client->state != IPA_PM_ACTIVATED)
+			continue;
+		if (!ipa_pm_deactivate_sync(client->hdl))
+			set_bit(i, &ipa_wdi_suspended_mask);
+	}
+}
+
+void ipa_wdi_pm_resume(void)
+{
+	int i;
+
+	if (!ipa_pm_ctx)
+		return;
+
+	for (i = 1; i < IPA_PM_MAX_CLIENTS; i++) {
+		struct ipa_pm_client *client = ipa_pm_ctx->clients[i];
+
+		if (!test_and_clear_bit(i, &ipa_wdi_suspended_mask))
+			continue;
+		if (!client)
+			continue;
+		ipa_pm_activate_sync(client->hdl);
+	}
+}
+
 /**
  * ipa_pm_deactivate_all_deferred(): Cancel the deferred deactivation timer and
  * immediately devotes for IPA clocks
